@@ -14,10 +14,21 @@
 		<!-- App Bar -->
 		<AppBar>
 			<svelte:fragment slot="lead">
-				<strong class="text-xl uppercase">Bocantino</strong>
+				<a href="/">
+					<strong class="text-xl uppercase">Bocantino</strong>
+				</a>
 			</svelte:fragment>
 			<svelte:fragment slot="trail"></svelte:fragment>
 		</AppBar>
+	</svelte:fragment>
+
+	<svelte:fragment slot="sidebarLeft">
+		<ul id="sidebar-left" class="lg:block w-5/12 h-full p-6 pt-5 bg-surface-900 grid grid-cols-1">
+			<a class="btn variant-filled mb-5 w-full" href="/materias-primas">Materias primas</a>
+			<a class="btn variant-filled mb-5 w-full" href="#">Proveedores</a>
+			<a class="btn variant-filled mb-5 w-full" href="#">Productos</a>
+			<a class="btn variant-filled mb-5 w-full" href="#">Lotes</a>
+		</ul>
 	</svelte:fragment>
 	<!-- Page Route Content -->
 	<slot />
