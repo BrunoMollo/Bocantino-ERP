@@ -7,7 +7,7 @@
 	type Route = { name: string; href: string };
 	const routes: Route[] = [
 		{ name: 'Materias Primas', href: '/materias-primas' },
-		{ name: 'Productores', href: '/productores' },
+		{ name: 'Proveedores', href: '/proveedores' },
 		{ name: 'Productos', href: '/productos' },
 		{ name: 'Lotes', href: '/lotes' }
 	];

@@ -1,6 +1,6 @@
 import type { Actions } from "@sveltejs/kit";
 import { backendValidate } from "zod-actions";
-import { tipoMateriaPrima_schema } from "./tipoMateriaPrima_schema";
+import { tipoMateriaPrima_schema } from "../tipoMateriaPrima_schema";
 import { db } from "$lib";
 import { tipoMateriaPrima } from "$lib/server/schema";
 

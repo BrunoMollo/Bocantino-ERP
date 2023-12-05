@@ -13,12 +13,17 @@
 	const drawerStore = getDrawerStore();
 </script>
 
+<svelte:head>
+	<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
+</svelte:head>
+
 <Drawer>
 	<div class="pt-4">
 		<strong class="p-4 text-xl uppercase">Bocantino</strong>
 		<Navigation />
 	</div>
 </Drawer>
+
 <!-- App Shell -->
 <AppShell slotSidebarLeft="w-0 lg:w-64  bg-surface-900 ">
 	<svelte:fragment slot="header">
