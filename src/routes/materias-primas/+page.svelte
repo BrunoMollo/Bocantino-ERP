@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Spinner from '$lib/ui/Spinner.svelte';
 	import { createForm } from 'zod-actions';
 	import type { ActionData } from './$types';
 	import { VALID_UNITS, tipoMateriaPrima_schema } from './tipoMateriaPrima_schema';
@@ -7,7 +8,9 @@
 	export let form: ActionData;
 	const zodAction = createForm(tipoMateriaPrima_schema, form);
 	const { zodActionEnhance, revalidateInput } = zodAction;
-	const { errors } = zodAction;
+	const { errors, state } = zodAction;
+
+	$: console.log($state);
 </script>
 
 <main class="container h-full mx-auto flex justify-center items-center">
@@ -20,17 +23,19 @@
 	>
 		<h2 class="h2">Alta Tipo de Materia Prima</h2>
 		<label for="name" class="label">
-			<span>Nombre:</span>
-			{#if $errors.name}
-				<b class="text-error-400" transition:fade>{$errors.name}</b>
-			{/if}
+			<span
+				>Nombre:
+				{#if $errors.name}
+					<b class=" text-error-400" transition:fade>{$errors.name}</b>
+				{/if}
+			</span>
 			<input class="input {$errors.name ? 'input-error' : ''}" name="name" type="text" id="name" />
 		</label>
 
 		<label for="unit" class="label">
 			<span>Unidad: </span>
 			{#if $errors.unit}
-				<b class="text-error-400" transition:fade>elija una opcion valida</b>
+				<b class=" text-error-400" transition:fade>elija una opcion valida</b>
 			{/if}
 			<select class="select {$errors.unit ? 'input-error' : ''}" name="unit">
 				<option disabled selected>---</option>
@@ -40,6 +45,9 @@
 			</select>
 		</label>
 
-		<button class="btn variant-filled-primary" type="submit">Agregar</button>
+		<button class="btn variant-filled-primary" type="submit">
+			Agregar
+			<Spinner showIf={$state.loading} />
+		</button>
 	</form>
 </main>

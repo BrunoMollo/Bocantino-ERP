@@ -1,6 +1,8 @@
 import type { Actions } from "@sveltejs/kit";
 import { backendValidate } from "zod-actions";
 import { tipoMateriaPrima_schema } from "./tipoMateriaPrima_schema";
+import { db } from "$lib";
+import { tipoMateriaPrima } from "$lib/server/schema";
 
 
 export const actions: Actions = {
@@ -10,6 +12,8 @@ export const actions: Actions = {
 
 		console.log(data);
 
+		await db.insert(tipoMateriaPrima).values(data)
 
+		return {}
 	}
 };
