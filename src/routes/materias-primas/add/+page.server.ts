@@ -14,6 +14,6 @@ export const actions: Actions = {
 
 		await db.insert(tipoMateriaPrima).values(data)
 
-		throw redirect(302, '/materias-primas')
+		throw redirect(302, '/materias-primas?toast=Materia prima agregada con exito')
 	}
 };

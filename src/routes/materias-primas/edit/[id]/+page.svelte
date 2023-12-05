@@ -10,6 +10,6 @@
 </script>
 
 <div class="card p-6">
-	<h2 class="h2">Alta Tipo Materia Prima</h2>
+	<h2 class="h2">Editar Tipo Materia Prima</h2>
 	<MateriaPrimaForm {zodAction} btnMsj="Editar" value={data.tipoMateriaPrima} />
 </div>

@@ -30,7 +30,8 @@ export const actions: Actions = {
 
 		await db.update(tipoMateriaPrima).set(data).where(eq(tipoMateriaPrima.id, id))
 
-		throw redirect(302, '/materias-primas')
+		throw redirect(302, '/materias-primas?toast=Editado con exito')
+
 	}
 };
 

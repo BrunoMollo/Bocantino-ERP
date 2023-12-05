@@ -1,16 +1,25 @@
 <script lang="ts">
 	import '../app.postcss';
-	import { AppShell, AppBar } from '@skeletonlabs/skeleton';
+	import { AppShell, AppBar, Toast, getToastStore } from '@skeletonlabs/skeleton';
 	import { initializeStores, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
 	import Navigation from './Navigation.svelte';
 
 	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
+	import { page } from '$app/stores';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	initializeStores();
 	const drawerStore = getDrawerStore();
+
+	const toastStore = getToastStore();
+	page.subscribe(({ url }) => {
+		const message = url.searchParams.get('toast');
+		if (message) {
+			toastStore.trigger({ message, timeout: 1500, classes: 'end-0' });
+		}
+	});
 </script>
 
 <svelte:head>
@@ -24,6 +33,7 @@
 	</div>
 </Drawer>
 
+<Toast class="w-64" />
 <!-- App Shell -->
 <AppShell slotSidebarLeft="w-0 lg:w-64  bg-surface-900 ">
 	<svelte:fragment slot="header">
