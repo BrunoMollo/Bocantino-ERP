@@ -3,7 +3,7 @@
 </script>
 
 <TabGroup>
-	<TabAnchor href="/materias-primas/list">
+	<TabAnchor href="/materias-primas">
 		<span>Lista</span>
 	</TabAnchor>
 	<TabAnchor href="/materias-primas/add">

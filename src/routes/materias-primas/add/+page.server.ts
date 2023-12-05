@@ -1,4 +1,4 @@
-import type { Actions } from "@sveltejs/kit";
+import { redirect, type Actions } from "@sveltejs/kit";
 import { backendValidate } from "zod-actions";
 import { tipoMateriaPrima_schema } from "../tipoMateriaPrima_schema";
 import { db } from "$lib";
@@ -14,6 +14,6 @@ export const actions: Actions = {
 
 		await db.insert(tipoMateriaPrima).values(data)
 
-		return {}
+		throw redirect(302, '/materias-primas')
 	}
 };

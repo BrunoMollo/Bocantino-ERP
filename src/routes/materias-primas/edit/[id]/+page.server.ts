@@ -2,7 +2,7 @@ import { db } from "$lib"
 import { tipoMateriaPrima } from "$lib/server/schema"
 import { eq } from "drizzle-orm"
 import type { PageServerLoad, RouteParams, Actions } from "./$types"
-import { error } from "@sveltejs/kit"
+import { error, redirect } from "@sveltejs/kit"
 import { backendValidate } from "zod-actions"
 import { tipoMateriaPrima_schema } from "../../tipoMateriaPrima_schema"
 
@@ -30,7 +30,7 @@ export const actions: Actions = {
 
 		await db.update(tipoMateriaPrima).set(data).where(eq(tipoMateriaPrima.id, id))
 
-		return {}
+		throw redirect(302, '/materias-primas')
 	}
 };
 
