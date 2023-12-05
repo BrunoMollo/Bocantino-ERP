@@ -3,12 +3,12 @@
 	import { fade } from 'svelte/transition';
 	import { createForm, createSlots } from 'zod-actions';
 	import type { ActionData, PageData } from './$types';
-	import { producto_schema } from '../producto_schema.js';
+	import { product_schema } from '../product_schema.js';
 
 	export let data: PageData;
 	export let form: ActionData;
 
-	const zodAction = createForm(producto_schema, form);
+	const zodAction = createForm(product_schema, form);
 	const { zodActionEnhance, revalidateInput } = zodAction;
 	const { errors, state } = zodAction;
 	const ingredientsSlots = createSlots(1, 300);

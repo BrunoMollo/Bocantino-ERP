@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { createForm } from 'zod-actions';
 	import type { ActionData, PageData } from './$types';
-	import { tipoMateriaPrima_schema } from '../../tipoMateriaPrima_schema.js';
 	import MateriaPrimaForm from '../../MateriaPrimaForm.svelte';
+	import { ingredient_schema } from '../../ingredient_schema';
 
 	export let data: PageData;
 	export let form: ActionData;
-	const zodAction = createForm(tipoMateriaPrima_schema, form);
+	const zodAction = createForm(ingredient_schema, form);
 </script>
 
 <div class="card p-6">
