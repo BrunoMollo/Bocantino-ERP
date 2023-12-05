@@ -1,10 +1,10 @@
 <script lang="ts">
 	import Spinner from '$lib/ui/Spinner.svelte';
 	import { fade } from 'svelte/transition';
-	import { VALID_UNITS } from './tipoMateriaPrima_schema.js';
-	import type { createForm } from 'zod-actions';
+	import { VALID_UNITS, tipoMateriaPrima_schema } from './tipoMateriaPrima_schema.js';
+	import type { ZodAction } from 'zod-actions';
 
-	export let zodAction: ReturnType<typeof createForm>;
+	export let zodAction: ZodAction<typeof tipoMateriaPrima_schema.shape>;
 
 	export let btnMsj = 'Agregar';
 	export let value = { name: '', unit: '' };
