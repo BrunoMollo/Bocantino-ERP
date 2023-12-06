@@ -5,7 +5,7 @@ export const product_schema = z.object({
 	ingredients: z.array(z.object({
 		id: z.coerce.number().positive().int(),
 		amount: z.coerce.number().positive('debe ser positivo')
-	}))
+	})).nonempty()
 })
 
 
