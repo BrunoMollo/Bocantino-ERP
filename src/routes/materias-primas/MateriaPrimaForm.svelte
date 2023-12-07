@@ -50,7 +50,7 @@
 	</label>
 
 	<button class="btn variant-filled-primary" type="submit">
-		{btnMsj}
+		<b>{btnMsj}</b>
 		<Spinner showIf={$state.loading} />
 	</button>
 </form>

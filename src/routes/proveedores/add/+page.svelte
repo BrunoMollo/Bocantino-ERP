@@ -57,7 +57,7 @@
 		</div>
 
 		<button type="submit" class="btn variant-filled-primary">
-			Crear
+			<b> Crear </b>
 			<Spinner showIf={$state.loading} />
 		</button>
 	</form>
