@@ -31,9 +31,13 @@
 								{#each ingredients as ingredient}
 									<TreeViewItem class="grid justify-between">
 										{ingredient.name}
-										<i class="bx bx-edit align-middle" style="font-size:24px;"></i>
 									</TreeViewItem>
 								{/each}
+								{#if ingredients.length === 0}
+									<TreeViewItem class="grid justify-between">
+										No tiene ingredientes asignados
+									</TreeViewItem>
+								{/if}
 							</svelte:fragment>
 						</TreeViewItem>
 					</TreeView>
