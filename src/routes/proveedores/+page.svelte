@@ -1,9 +1,8 @@
 <script lang="ts">
 	import { TreeView, TreeViewItem } from '@skeletonlabs/skeleton';
-	import type { PageData } from './$types';
 
-	export let data: PageData;
-	const { proveedores } = data;
+	export let data;
+	const { suppliers } = data;
 </script>
 
 <div
@@ -20,18 +19,18 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each proveedores as proveedor, i}
+			{#each suppliers as { id, name, email, ingredients }}
 				<tr class="align-middle">
-					<td class="align-middle">{i}</td>
-					<td>{proveedor.nombre}</td>
-					<td>{proveedor.email}</td>
+					<td class="align-middle">{id}</td>
+					<td>{name}</td>
+					<td>{email}</td>
 					<TreeView>
 						<TreeViewItem>
 							Expandir materias primas
 							<svelte:fragment slot="children">
-								{#each proveedor.materias as materiaPrima}
+								{#each ingredients as ingredient}
 									<TreeViewItem class="grid justify-between">
-										{materiaPrima}
+										{ingredient.name}
 										<i class="bx bx-edit align-middle" style="font-size:24px;"></i>
 									</TreeViewItem>
 								{/each}
@@ -43,4 +42,3 @@
 		</tbody>
 	</table>
 </div>
-
