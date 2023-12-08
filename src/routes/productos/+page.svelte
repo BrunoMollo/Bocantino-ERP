@@ -2,12 +2,16 @@
 	import { TreeView, TreeViewItem } from '@skeletonlabs/skeleton';
 
 	export let data;
-	const { products } = data;
+	let { products } = data;
+
+
+	function eliminar(id: number): void {
+		products = products.filter((_,i) => products[i].id != id);
+	}
 </script>
 
 <div
-	class="table-container w-11/12"
-	style="border-radius: 10px; box-shadow: 0 6px 12px rgba(0,0,0,0.8)"
+	class="table-container w-11/12 rounded-lg shadow-lg"
 >
 	<table class="table table-hover">
 		<thead>
@@ -18,12 +22,12 @@
 				<th></th>
 			</tr>
 		</thead>
-		<tbody>
+		<tbody >
 			{#each products as {id, desc, ingredients}}
 				<tr >
-					<td >{id}</td>
-					<td>{desc}</td>
-					<td>
+					<td class="w-1/12">{id}</td>
+					<td class="w-2/12">{desc}</td>
+					<td class="w-4/12">
 						<TreeView>
 							<TreeViewItem>
 								Receta
@@ -37,13 +41,21 @@
 							</TreeViewItem>
 						</TreeView>
 					</td>
-					<td class="grid">
-						<a class="btn-icon btn-icon-md variant-soft-secondary" href="/productos/edit/{id}">
+					<td class="w-1/12">
+						<a class="my-2 mr-5 btn-icon btn-icon-md variant-soft-secondary" href="/productos/edit/{id}">
 							<i class="bx bx-edit place-self-center text-2xl"></i>
 						</a>
+						<button on:click={() => eliminar(id)} class="my-2 btn-icon btn-icon-md variant-soft-secondary">
+						<i class='bx bxs-trash place-self-center text-2xl' ></i></button>
 					</td>
 				</tr>
 			{/each}
 		</tbody>
 	</table>
 </div>
+
+<style>
+	table tbody td{
+		vertical-align: middle;
+	} 
+</style>

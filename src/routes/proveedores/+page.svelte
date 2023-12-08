@@ -5,10 +5,7 @@
 	const { suppliers } = data;
 </script>
 
-<div
-	class="table-container w-11/12"
-	style="border-radius: 10px; box-shadow: 0 6px 12px rgba(0,0,0,0.8)"
->
+<div class="table-container w-11/12 shadow-lg rounded-lg" >
 	<table class="table table-hover">
 		<thead>
 			<tr>
