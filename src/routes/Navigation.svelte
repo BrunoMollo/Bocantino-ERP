@@ -6,10 +6,10 @@
 
 	type Route = { name: string; href: string };
 	const routes: Route[] = [
+		{ name: 'Ingreso insumos', href: '/ingreso-insumos' },
 		{ name: 'Materias Primas', href: '/materias-primas' },
 		{ name: 'Proveedores', href: '/proveedores' },
-		{ name: 'Productos', href: '/productos' },
-		{ name: 'Ingresar Insumos', href: '/ingreso-insumos' }
+		{ name: 'Productos', href: '/productos' }
 	];
 </script>
 
@@ -20,16 +20,24 @@
 	<ul>
 		{#each routes as { name, href }}
 			<li>
-				<a class="btn variant-filled mb-5 w-full hover:text-slate-50 uppercase" {href} on:click={drawerStore.close} tabindex="0"
-					>{name}</a
+				<a
+					class="btn variant-filled mb-5 w-full hover:text-slate-50 uppercase"
+					{href}
+					on:click={drawerStore.close}
+					tabindex="0"
 				>
+					{name}
+				</a>
 			</li>
 		{/each}
 	</ul>
 </nav>
+
 <style>
-	a{
+	a {
 		border-radius: 12px;
-		box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+		box-shadow:
+			0 10px 15px -3px rgb(0 0 0 / 0.1),
+			0 4px 6px -4px rgb(0 0 0 / 0.1);
 	}
 </style>
