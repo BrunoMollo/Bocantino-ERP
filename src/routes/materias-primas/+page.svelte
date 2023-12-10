@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type internal from 'stream';
 	import type { PageData } from './$types';
-
 	export let data: PageData;
 	let i;
 

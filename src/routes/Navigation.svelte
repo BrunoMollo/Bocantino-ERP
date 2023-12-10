@@ -9,7 +9,7 @@
 		{ name: 'Materias Primas', href: '/materias-primas' },
 		{ name: 'Proveedores', href: '/proveedores' },
 		{ name: 'Productos', href: '/productos' },
-		{ name: 'Lotes', href: '/lotes' }
+		{ name: 'Ingresar Insumos', href: '/ingreso-insumos' }
 	];
 </script>
 
@@ -20,7 +20,7 @@
 	<ul>
 		{#each routes as { name, href }}
 			<li>
-				<a class="btn variant-filled mb-5 w-full hover:text-slate-50" {href} on:click={drawerStore.close} tabindex="0"
+				<a class="btn variant-filled mb-5 w-full hover:text-slate-50 uppercase" {href} on:click={drawerStore.close} tabindex="0"
 					>{name}</a
 				>
 			</li>
