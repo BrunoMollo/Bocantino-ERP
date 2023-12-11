@@ -130,3 +130,18 @@ export const rel_ingredient_bag = relations(t_ingredient_bag, ({ one }) => ({
 }));
 //-------------------------------------------------------------------------------------////
 //
+
+////-------------------------------------------------------------------------------------//
+// PURCHASE INVOICE
+export const t_purchase_invoice = sqliteTable('purchase_invoice', {
+	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+	invoice_number: text('invoice_number').notNull(),
+	issue_date: integer('issue_date', { mode: 'timestamp' }).notNull(),
+	total: integer('total').notNull(),
+	currency_alpha_code: text('currency_alpha_code', { length: 4 }).notNull().default('ARG'),
+	creation_date: integer('creation_date', { mode: 'timestamp' })
+		.notNull()
+		.$defaultFn(() => new Date())
+});
+//-------------------------------------------------------------------------------------////
+//

@@ -1,5 +1,4 @@
 import type { PageServerLoad } from './$types';
-import { db } from '$lib';
 import type { Actions } from '@sveltejs/kit';
 import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';

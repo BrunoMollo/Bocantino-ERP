@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Autocomplete from './Autocomplete.svelte';
-	import { fade, fly } from 'svelte/transition';
+	import {  fly } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 	import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
 	export let data;
