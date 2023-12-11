@@ -4,9 +4,9 @@ import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';
 
 const newBagsSchema = z.object({
+	supplierId: z.number().positive().int(),
 	bags: z
 		.object({
-			supplierId: z.number().positive().int(),
 			ingredientId: z.number().positive().int(),
 			supplier_batch_code: z.string().min(2).max(256),
 			autoGenerateCode: z.boolean(),
@@ -16,7 +16,7 @@ const newBagsSchema = z.object({
 		.nonempty()
 });
 
-export const load: PageServerLoad = async ({}) => {
+export const load: PageServerLoad = async ({ }) => {
 	// const resultSet = await db.query.tr_supplier_ingredient.findMany({
 	// 	columns: { ingredientId: false, supplierId: false },
 	// 	with: {

@@ -7,7 +7,7 @@
 	<TabAnchor href="/proveedores" selected={$page.url.pathname === '/proveedores'}>
 		<span>Lista</span>
 	</TabAnchor>
-	<TabAnchor href="/proveedores/add"  selected={$page.url.pathname === '/proveedores/add'}>
+	<TabAnchor href="/proveedores/add" selected={$page.url.pathname === '/proveedores/add'}>
 		<span>Agregar</span>
 	</TabAnchor>
 </TabGroup>

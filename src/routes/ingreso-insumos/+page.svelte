@@ -26,11 +26,34 @@
 </script>
 
 <form action="" method="post">
-	<div class="table-container w-11/12 shadow-lg rounded-lg">
+	<div class="w-11/12 flex mx-auto justify-between mt-10">
+		<div class="flex mt-5 w-3/12 justify-between">
+			<h1 class="my-auto mr-1 uppercase">Proveedor:</h1>
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">
+				<Autocomplete
+					name="supplierId"
+					bind:value={$form.supplierId}
+					labels={['Juan', 'Pedro', 'Martidsdsadan']}
+					values={[1, 2, 3]}
+				/>
+			</label>
+		</div>
+		<div class="flex mt-5 px-5 w-4/12 justify-between">
+			<h1 class="my-auto mr-1 uppercase">Numero de factura:</h1>
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<input type="text" class="input w-fit" />
+		</div>
+		<div class="flex mt-5 pl-16 w-4/12 justify-between">
+			<h1 class="my-auto mr-1 uppercase">Emision factura:</h1>
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<input type="text" class="input w-fit" maxlength="10" />
+		</div>
+	</div>
+	<div class="table-container w-11/12 mx-auto my-5 shadow-lg rounded-lg" style="">
 		<table class="table">
 			<thead>
 				<tr>
-					<th>Proveedor</th>
 					<th>Materia Prima</th>
 					<th>Cantidad</th>
 					<th>Codigo</th>
@@ -44,18 +67,6 @@
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label">
 								<Autocomplete
-									name="supplierId-{i}"
-									bind:value={$form.bags[i].supplierId}
-									labels={['Juan', 'Pedro', 'Martidsdsadan']}
-									values={[1, 2, 3]}
-								/>
-							</label>
-						</td>
-
-						<td>
-							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">
-								<Autocomplete
 									name="ingredientId-{i}"
 									bind:value={$form.bags[i].ingredientId}
 									labels={['Zapallo', 'Papa', 'Huevo']}
@@ -64,7 +75,10 @@
 							</label>
 						</td>
 						<td>
-							<input class="input" type="text" bind:value={$form.bags[i].fullAmount} />
+							<div class="relative inline-block">
+								<input class="input" type="text" bind:value={$form.bags[i].fullAmount} />
+								<span class="suffix absolute right-3 top-1/4">kg.</span>
+							</div>
 						</td>
 						<td>
 							<div class="input-group input-group-divider grid-cols-[auto_auto] w-70">
@@ -84,12 +98,24 @@
 						</td>
 					</tr>
 				{/each}
-				<button type="button" class="btn variant-filled" on:click={addLine}>Agregar Renglon</button>
 			</tbody>
 		</table>
+		<div class="w-full flex justify-end p-3 bg-gray-600">
+			<button
+				type="button"
+				class="btn variant-filled-secondary rounded-lg"
+				style="color:white;"
+				on:click={addLine}>Agregar Renglon</button
+			>
+		</div>
 	</div>
-	<button type="submit" class="btn variant-filled-secondary">Enviar</button>
+	<div class="w-11/12 mx-auto flex justify-end">
+		<button type="submit" class="btn rounded-lg variant-filled-secondary w-1/5">Enviar</button>
+	</div>
 </form>
 
 <br /><br />
 <SuperDebug data={$form} />
+
+<style>
+</style>
