@@ -5,9 +5,11 @@
 		type AutocompleteOption,
 		type PopupSettings
 	} from '@skeletonlabs/skeleton';
+	import { writable } from 'svelte/store';
 
 	export let value;
 	export let name: string;
+	export let className = '';
 
 	export let labels: string[];
 	export let values: (number | string)[];
@@ -26,21 +28,28 @@
 		placement: 'bottom'
 	};
 
-	let label = '';
+	let label = writable('');
+	let selectedLabel = '';
+	label.subscribe((lab) => {
+		if (lab !== selectedLabel) {
+			value = 0;
+		}
+	});
+
 	function onFlavorSelection(event: CustomEvent<AutocompleteOption<string>>): void {
-		label = event.detail.label;
+		$label = event.detail.label;
+		selectedLabel = $label;
 		value = event.detail.value;
 	}
 </script>
 
 <input
-	class="input autocomplete mb-0"
+	class={`input autocomplete mb-0 ${className}`}
 	type="search"
-	{name}
-	bind:value={label}
+	bind:value={$label}
 	placeholder="Buscar..."
 	use:popup={popupSettings}
 />
 <div data-popup={name} class="card w-1/6">
-	<Autocomplete bind:input={label} {options} on:selection={onFlavorSelection} emptyState=":(" />
+	<Autocomplete bind:input={$label} {options} on:selection={onFlavorSelection} emptyState=":(" />
 </div>

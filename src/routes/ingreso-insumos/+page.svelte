@@ -7,7 +7,7 @@
 
 	export let data;
 	const { EMPTY_BAG } = data;
-	const { form, enhance } = superForm(data.form, { dataType: 'json' });
+	const { form, enhance, errors } = superForm(data.form, { dataType: 'json' });
 	const proxyDate = dateProxy(form, 'issueDate', { format: 'date' });
 
 	function addLine() {
@@ -31,24 +31,35 @@
 <form action="" method="post" use:enhance>
 	<div class="w-11/12 flex mx-auto justify-between mt-10">
 		<div class="flex mt-5 w-3/12 justify-between">
-			<h1 class="my-auto mr-1 uppercase">Proveedor:</h1>
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label">
+				<small class="my-auto mr-1 font-black text-lg">Proveedor</small>
 				<Autocomplete
 					name="supplierId"
 					bind:value={$form.supplierId}
+					className="input {$errors.supplierId ? 'input-error' : ''}"
 					labels={['Juan', 'Pedro', 'Martidsdsadan']}
 					values={[1, 2, 3]}
 				/>
 			</label>
 		</div>
 		<div class="flex mt-5 px-5 w-4/12 justify-between">
-			<h1 class="my-auto mr-1 uppercase">Numero de factura:</h1>
-			<input type="text" class="input w-fit" />
+			<label class="label">
+				<small class="my-auto mr-1 font-black text-lg">Numero de factura</small>
+				<input
+					type="text"
+					bind:value={$form.invoiceNumber}
+					class="input {$errors.invoiceNumber ? 'input-error' : ''}"
+					aria-invalid={$errors.invoiceNumber ? 'true' : undefined}
+				/>
+			</label>
 		</div>
 		<div class="flex mt-5 pl-16 w-4/12 justify-between">
-			<h1 class="my-auto mr-1 uppercase">Emision factura:</h1>
-			<InputDate className="input" bind:value={$proxyDate} />
+			<!-- svelte-ignore a11y-label-has-associated-control -->
+			<label class="label">
+				<small class="my-auto mr-1 font-black text-lg">Fecha emision factura</small>
+				<!-- <InputDate className="input" bind:value={$proxyDate} /> -->
+			</label>
 		</div>
 	</div>
 	<div class="table-container w-11/12 mx-auto my-5 shadow-lg rounded-lg" style="">
