@@ -4,9 +4,7 @@
 </script>
 
 <TabGroup active="variant-filled-primary" border="border-solid border-b border-primary-500">
-	
 	<TabAnchor href="/materias-primas" selected={$page.url.pathname === '/materias-primas'}>
-		
 		<span>Lista</span>
 	</TabAnchor>
 	<TabAnchor href="/materias-primas/add" selected={$page.url.pathname === '/materias-primas/add'}>

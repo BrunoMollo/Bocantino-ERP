@@ -26,7 +26,7 @@ export const actions: Actions = {
 				.returning({ generatedId: t_supplier.id })
 				.then(getFirst);
 
-			for (let ingredient of ingredients) {
+			for (const ingredient of ingredients) {
 				await tx
 					.insert(tr_supplier_ingredient)
 					.values({ supplierId: generatedId, ingredientId: ingredient.id });

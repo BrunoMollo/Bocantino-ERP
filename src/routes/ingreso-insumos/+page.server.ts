@@ -3,7 +3,6 @@ import type { Actions } from '@sveltejs/kit';
 import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';
 
-// TODO: fix sending date
 const newBagsSchema = z.object({
 	supplierId: z.number().positive().int(),
 	invoiceNumber: z.string().min(4).max(255),
@@ -19,7 +18,7 @@ const newBagsSchema = z.object({
 		.nonempty()
 });
 
-export const load: PageServerLoad = async ({}) => {
+export const load: PageServerLoad = async () => {
 	const EMPTY_BAG = {
 		supplierId: 0,
 		ingredientId: 0,

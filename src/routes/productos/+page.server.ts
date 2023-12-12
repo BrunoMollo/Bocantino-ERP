@@ -1,7 +1,7 @@
 import type { PageServerLoad } from './$types';
 import { db } from '$lib';
 
-export const load: PageServerLoad = async ({}) => {
+export const load: PageServerLoad = async () => {
 	const resultSet = await db.query.t_product.findMany({
 		with: {
 			r_ingredient_product: {
@@ -23,8 +23,6 @@ export const load: PageServerLoad = async ({}) => {
 			amount
 		}))
 	}));
-
-	console.log(JSON.stringify(products));
 
 	return { products };
 };

@@ -10,7 +10,7 @@
 		"sourceMap": true,
 		"strict": true,
 		"moduleResolution": "bundler",
-        "types": [],
+		"types": [],
 		"exclude": [
 			"node_modules",
 			"./node_modules",
