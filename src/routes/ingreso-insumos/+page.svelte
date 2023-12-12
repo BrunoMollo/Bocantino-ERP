@@ -1,11 +1,14 @@
 <script lang="ts">
 	import Autocomplete from './Autocomplete.svelte';
-	import {  fly } from 'svelte/transition';
-	import { superForm } from 'sveltekit-superforms/client';
+	import { fly } from 'svelte/transition';
+	import { dateProxy, superForm } from 'sveltekit-superforms/client';
 	import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
+	import InputDate from '$lib/ui/InputDate.svelte';
+
 	export let data;
 	const { EMPTY_BAG } = data;
-	const { form } = superForm(data.form, { dataType: 'json' });
+	const { form, enhance } = superForm(data.form, { dataType: 'json' });
+	const proxyDate = dateProxy(form, 'issueDate', { format: 'date' });
 
 	function addLine() {
 		form.update((f) => {
@@ -25,7 +28,7 @@
 	}
 </script>
 
-<form action="" method="post">
+<form action="" method="post" use:enhance>
 	<div class="w-11/12 flex mx-auto justify-between mt-10">
 		<div class="flex mt-5 w-3/12 justify-between">
 			<h1 class="my-auto mr-1 uppercase">Proveedor:</h1>
@@ -41,13 +44,11 @@
 		</div>
 		<div class="flex mt-5 px-5 w-4/12 justify-between">
 			<h1 class="my-auto mr-1 uppercase">Numero de factura:</h1>
-			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<input type="text" class="input w-fit" />
 		</div>
 		<div class="flex mt-5 pl-16 w-4/12 justify-between">
 			<h1 class="my-auto mr-1 uppercase">Emision factura:</h1>
-			<!-- svelte-ignore a11y-label-has-associated-control -->
-			<input type="text" class="input w-fit" maxlength="10" />
+			<InputDate className="input" bind:value={$proxyDate} />
 		</div>
 	</div>
 	<div class="table-container w-11/12 mx-auto my-5 shadow-lg rounded-lg" style="">

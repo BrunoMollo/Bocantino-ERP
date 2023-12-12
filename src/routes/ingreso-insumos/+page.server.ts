@@ -3,8 +3,11 @@ import type { Actions } from '@sveltejs/kit';
 import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';
 
+// TODO: fix sending date
 const newBagsSchema = z.object({
 	supplierId: z.number().positive().int(),
+	invoiceNumber: z.string().min(4).max(255),
+	issueDate: z.date(),
 	bags: z
 		.object({
 			ingredientId: z.number().positive().int(),
@@ -16,27 +19,7 @@ const newBagsSchema = z.object({
 		.nonempty()
 });
 
-export const load: PageServerLoad = async ({ }) => {
-	// const resultSet = await db.query.tr_supplier_ingredient.findMany({
-	// 	columns: { ingredientId: false, supplierId: false },
-	// 	with: {
-	// 		ingredient: true,
-	// 		supplier: true
-	// 	}
-	// });
-	//
-	// const list = [] as {
-	// 	supplier: {
-	// 		id: number;
-	// 		name: string;
-	// 		email: string;
-	// 	};
-	// }[];
-	// for (let row of resultSet) {
-	// 	const supplier = list.find((x) => x.supplier.id === row.supplier.id) ?? row.supplier;
-	// }
-	//
-
+export const load: PageServerLoad = async ({}) => {
 	const EMPTY_BAG = {
 		supplierId: 0,
 		ingredientId: 0,
@@ -50,9 +33,7 @@ export const load: PageServerLoad = async ({ }) => {
 
 export const actions: Actions = {
 	default: async ({ request }) => {
-		console.log('recived');
-		//	await db.insert(t_ingredient_bag).values(data);
-
-		console.log(':)');
+		const form = await superValidate(request, newBagsSchema);
+		console.log('POST', form);
 	}
 };
