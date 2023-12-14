@@ -13,6 +13,9 @@
 			value = '';
 		}
 		if (val.length < prevValue.length) {
+			if (val.length == 2 || val.length == 5) {
+				$valueStore = val.substring(0, val.length - 1);
+			}
 			prevValue = val;
 			return;
 		}
@@ -47,3 +50,4 @@
 		if (Number.isNaN(num)) e.preventDefault();
 	}}
 />
+
