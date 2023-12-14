@@ -58,7 +58,7 @@
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label">
 				<small class="my-auto mr-1 font-black text-lg">Fecha emision factura</small>
-				<!-- <InputDate className="input" bind:value={$proxyDate} /> -->
+				<InputDate className="input" bind:value={$proxyDate} />
 			</label>
 		</div>
 	</div>

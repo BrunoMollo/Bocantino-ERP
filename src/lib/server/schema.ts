@@ -103,7 +103,7 @@ export const rel_supplier_ingredient = relations(tr_supplier_ingredient, ({ one 
 ////-------------------------------------------------------------------------------------//
 // INGREDIENT BAG
 export const t_ingredient_batch = sqliteTable(
-	'ingredient_bag',
+	'ingredient_batch',
 	{
 		id: integer('id').notNull().primaryKey({ autoIncrement: true }),
 		supplier_bag_code: text('supplier_bag_code'), //may or may not be provided by the supplier
@@ -140,22 +140,26 @@ export const rel_ingredient_batch = relations(t_ingredient_batch, ({ one }) => (
 
 ////-------------------------------------------------------------------------------------//
 // INGRIDEINT ENTRY
-export const t_ingrideint_entry = sqliteTable('purchase_invoice', {
+export const t_ingridient_entry = sqliteTable('ingridient_entry', {
 	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
 	creation_date: integer('creation_date', { mode: 'timestamp' })
 		.notNull()
 		.$defaultFn(() => new Date()),
 	totalCost: integer('total_cost').notNull(),
 	currency_alpha_code: text('currency_alpha_code', { length: 4 }).notNull().default('ARG'),
-	documentIndetifier: text('invoice_number').notNull()
+	documentIndetifier: text('invoice_number').notNull(),
+	documentId: integer('document_id').references(() => t_entry_document.id)
 });
-export const rel_ingredient_entry = relations(t_ingrideint_entry, ({ one }) => ({
+export const rel_ingredient_entry = relations(t_ingridient_entry, ({ one }) => ({
 	doc: one(t_entry_document)
 }));
-export const t_entry_document = sqliteTable('purchase_invoice', {
+export const t_entry_document = sqliteTable('entry_document', {
 	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
 	number: text('document_identifier').notNull(),
-	issue_date: integer('issue_date', { mode: 'timestamp' }).notNull()
+	issue_date: integer('issue_date', { mode: 'timestamp' }).notNull(),
+	typeId: integer('type_id')
+		.notNull()
+		.references(() => t_document_type.id)
 });
 export const rel_entry_docuement = relations(t_entry_document, ({ one }) => ({
 	type: one(t_document_type)
