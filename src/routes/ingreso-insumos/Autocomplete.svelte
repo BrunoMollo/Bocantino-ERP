@@ -10,6 +10,7 @@
 	export let value;
 	export let name: string;
 	export let className = '';
+	export let placeholder = 'Buscar...';
 
 	export let labels: string[];
 	export let values: (number | string)[];
@@ -47,7 +48,7 @@
 	class={`input autocomplete mb-0 ${className}`}
 	type="search"
 	bind:value={$label}
-	placeholder="Buscar..."
+	{placeholder}
 	use:popup={popupSettings}
 />
 <div data-popup={name} class="card w-1/6">

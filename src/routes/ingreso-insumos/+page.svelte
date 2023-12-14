@@ -16,6 +16,15 @@
 			return f;
 		});
 	}
+	let inputValue = '';
+
+	function formatAndInsertSlash() {
+		const cleanedValue = inputValue.replace(/\D/g, '');
+		const firstTwo = cleanedValue.substring(0, 2);
+		const nextTwo = cleanedValue.substring(2, 4);
+		const lastFour = cleanedValue.substring(4, 8);
+		inputValue = `${firstTwo}/${nextTwo}/${lastFour}`;
+	}
 
 	function removeLine(index: number) {
 		form.update((f) => {
@@ -29,8 +38,8 @@
 </script>
 
 <form action="" method="post" use:enhance>
-	<div class="w-11/12 flex mx-auto justify-between mt-10">
-		<div class="flex mt-5 w-3/12 justify-between">
+	<div class="grid grid-cols-4 gap-3 w-11/12 mx-auto">
+		<div>
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label">
 				<small class="my-auto mr-1 font-black text-lg">Proveedor</small>
@@ -38,13 +47,27 @@
 					name="supplierId"
 					bind:value={$form.supplierId}
 					className="input {$errors.supplierId ? 'input-error' : ''}"
-					labels={['Juan', 'Pedro', 'Martidsdsadan']}
+					labels={['Juan', 'Pedro', 'Martin']}
 					values={[1, 2, 3]}
 				/>
 			</label>
 		</div>
-		<div class="flex mt-5 px-5 w-4/12 justify-between">
+		<div>
+			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label">
+				<small class="my-auto mr-1 font-black text-lg">Tipo de documento</small>
+				<Autocomplete
+					placeholder="Seleccionar..."
+					name="tipe_of_document"
+					bind:value={$form.supplierId}
+					className="input {$errors.supplierId ? 'input-error' : ''}"
+					labels={['Remito', 'Factura', 'Nota de compra']}
+					values={[1, 2, 3]}
+				/>
+			</label>
+		</div>
+		<div>
+			<label class="label ml-auto">
 				<small class="my-auto mr-1 font-black text-lg">Numero de factura</small>
 				<input
 					type="text"
@@ -54,11 +77,11 @@
 				/>
 			</label>
 		</div>
-		<div class="flex mt-5 pl-16 w-4/12 justify-between">
+		<div>
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label">
-				<small class="my-auto mr-1 font-black text-lg">Fecha emision factura</small>
-				<InputDate className="input" bind:value={$proxyDate} />
+				<small class="my-auto mr-1 font-black text-lg"> Fecha factura</small>
+				<InputDate className="input" />
 			</label>
 		</div>
 	</div>
@@ -66,10 +89,14 @@
 		<table class="table">
 			<thead>
 				<tr>
-					<th>Materia Prima</th>
-					<th>Cantidad</th>
-					<th>Codigo</th>
-					<th></th>
+					<th class="text-center">Materia Prima</th>
+					<th class="text-center">Cantidad</th>
+					<th class="text-center">Bolsas</th>
+					<th class="text-center w-32">Fecha produccion</th>
+					<th class="text-center w-32">Fecha vencimiento</th>
+					<th class="text-center w-24">Monto</th>
+					<th class="text-center">Codigo</th>
+					<th class="text-center"></th>
 				</tr>
 			</thead>
 			<tbody>
@@ -77,7 +104,7 @@
 					<tr transition:fly={{ x: -350 }}>
 						<td>
 							<!-- svelte-ignore a11y-label-has-associated-control -->
-							<label class="label">
+							<label class="label w-52">
 								<Autocomplete
 									name="ingredientId-{i}"
 									bind:value={$form.bags[i].ingredientId}
@@ -87,18 +114,40 @@
 							</label>
 						</td>
 						<td>
-							<div class="relative inline-block">
+							<div class="relative inline-block w-24">
 								<input class="input" type="text" bind:value={$form.bags[i].fullAmount} />
 								<span class="suffix absolute right-3 top-1/4">kg.</span>
 							</div>
 						</td>
+						<td>
+							<div class="relative inline-block w-20">
+								<input class="input" type="text" bind:value={$form.bags[i].fullAmount} />
+							</div>
+						</td>
+						<td class="w-32">
+							<div class="relative inline-block">
+								<InputDate className="input w-32"></InputDate>
+							</div>
+						</td>
+						<td>
+							<div class="relative inline-block">
+								<InputDate className="input w-32"></InputDate>
+							</div>
+						</td>
+						<td class="w-24">
+							<div class="relative inline-block">
+								<input class="input w-24" type="text" bind:value={$form.bags[i].fullAmount} />
+								<span class="suffix absolute right-3 top-1/4">$</span>
+							</div>
+						</td>
+
 						<td>
 							<div class="input-group input-group-divider grid-cols-[auto_auto] w-70">
 								<input type="text" bind:value={$form.bags[i].supplier_batch_code} />
 								<button type="button" class="variant-filled-surface">Autogenerar</button>
 							</div>
 						</td>
-						<td>
+						<td class="flex align-middle h-full mt-1 mr-1">
 							<button
 								type="button"
 								class="btn-icon btn-icon-sm variant-soft-secondary"
@@ -131,4 +180,3 @@
 
 <style>
 </style>
-
