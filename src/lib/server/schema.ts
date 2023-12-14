@@ -102,12 +102,19 @@ export const rel_supplier_ingredient = relations(tr_supplier_ingredient, ({ one 
 
 ////-------------------------------------------------------------------------------------//
 // INGREDIENT BAG
-export const t_ingredient_bag = sqliteTable(
+export const t_ingredient_batch = sqliteTable(
 	'ingredient_bag',
 	{
 		id: integer('id').notNull().primaryKey({ autoIncrement: true }),
 		supplier_bag_code: text('supplier_bag_code'), //may or may not be provided by the supplier
-		fullAmount: real('full_amount').notNull(),
+		amountOfBags: integer('amount_of_bags').notNull(),
+		initialAmount: real('full_amount').notNull(),
+		usedAmount: real('used_amount').notNull().default(0),
+		productionDate: integer('production_date', { mode: 'timestamp' }).notNull(),
+		expirationDate: integer('expiration_date', { mode: 'timestamp' }).notNull(),
+		total: integer('cost').notNull(),
+		currency_alpha_code: text('currency_alpha_code', { length: 4 }).notNull().default('ARG'),
+		loss: real('loss'),
 		supplierId: integer('supplier_id').notNull(),
 		ingredientId: integer('ingredient_id').notNull()
 	},
@@ -118,13 +125,13 @@ export const t_ingredient_bag = sqliteTable(
 		})
 	})
 );
-export const rel_ingredient_bag = relations(t_ingredient_bag, ({ one }) => ({
+export const rel_ingredient_batch = relations(t_ingredient_batch, ({ one }) => ({
 	supplier: one(t_supplier, {
-		fields: [t_ingredient_bag.supplierId],
+		fields: [t_ingredient_batch.supplierId],
 		references: [t_supplier.id]
 	}),
 	ingredient: one(t_ingredient, {
-		fields: [t_ingredient_bag.ingredientId],
+		fields: [t_ingredient_batch.ingredientId],
 		references: [t_ingredient.id]
 	})
 }));
@@ -132,16 +139,31 @@ export const rel_ingredient_bag = relations(t_ingredient_bag, ({ one }) => ({
 //
 
 ////-------------------------------------------------------------------------------------//
-// PURCHASE INVOICE
-export const t_purchase_invoice = sqliteTable('purchase_invoice', {
+// INGRIDEINT ENTRY
+export const t_ingrideint_entry = sqliteTable('purchase_invoice', {
 	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
-	invoice_number: text('invoice_number').notNull(),
-	issue_date: integer('issue_date', { mode: 'timestamp' }).notNull(),
-	total: integer('total').notNull(),
-	currency_alpha_code: text('currency_alpha_code', { length: 4 }).notNull().default('ARG'),
 	creation_date: integer('creation_date', { mode: 'timestamp' })
 		.notNull()
-		.$defaultFn(() => new Date())
+		.$defaultFn(() => new Date()),
+	totalCost: integer('total_cost').notNull(),
+	currency_alpha_code: text('currency_alpha_code', { length: 4 }).notNull().default('ARG'),
+	documentIndetifier: text('invoice_number').notNull()
+});
+export const rel_ingredient_entry = relations(t_ingrideint_entry, ({ one }) => ({
+	doc: one(t_entry_document)
+}));
+export const t_entry_document = sqliteTable('purchase_invoice', {
+	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+	number: text('document_identifier').notNull(),
+	issue_date: integer('issue_date', { mode: 'timestamp' }).notNull()
+});
+export const rel_entry_docuement = relations(t_entry_document, ({ one }) => ({
+	type: one(t_document_type)
+}));
+export const t_document_type = sqliteTable('document_type', {
+	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+	desc: text('description').notNull()
 });
 //-------------------------------------------------------------------------------------////
 //
+
