@@ -12,7 +12,7 @@
 
 	function addLine() {
 		form.update((f) => {
-			f.bags.push(EMPTY_BAG);
+			f.bags.push({ ...EMPTY_BAG });
 			return f;
 		});
 	}
@@ -131,3 +131,4 @@
 
 <style>
 </style>
+
