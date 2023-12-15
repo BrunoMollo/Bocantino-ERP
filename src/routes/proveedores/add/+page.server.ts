@@ -5,10 +5,10 @@ import type { PageServerLoad } from '../$types';
 import { supplier_schema } from '../supplier_schema';
 import { backendValidate } from 'zod-actions';
 import { getFirst } from '$lib/utils';
-import { getAllIngredients } from '$lib/logic/ingredients';
+import { ingredients_ctrl } from '$lib/logic/ingredients';
 
 export const load: PageServerLoad = async () => {
-	const ingredients = await getAllIngredients();
+	const ingredients = await ingredients_ctrl.getAll();
 
 	return { ingredients };
 };

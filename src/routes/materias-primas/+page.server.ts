@@ -1,8 +1,8 @@
 import type { PageServerLoad } from './$types';
-import { getAllIngredients } from '$lib/logic/ingredients';
+import { ingredients_ctrl } from '$lib/logic/ingredients';
 
 export const load: PageServerLoad = async () => {
-	const list = await getAllIngredients();
+	const list = await ingredients_ctrl.getAll();
 	return { list };
 };
 
