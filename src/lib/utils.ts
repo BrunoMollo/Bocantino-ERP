@@ -14,3 +14,4 @@ export function isValidDate(day: string, month: string, year: string) {
 		date.getFullYear() === yearNum && date.getMonth() === monthNum - 1 && date.getDate() === dayNum
 	);
 }
+

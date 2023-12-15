@@ -5,16 +5,17 @@ import { error, redirect } from '@sveltejs/kit';
 import { backendValidate } from 'zod-actions';
 import { t_ingredient } from '$lib/server/schema';
 import { ingredient_schema } from '../../ingredient_schema';
+import { ingredients_ctrl } from '$lib/logic/ingredients';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = parseParams(params);
-	const list = await db.select().from(t_ingredient).where(eq(t_ingredient.id, id));
+	const ingredient = await ingredients_ctrl.getById(id);
 
-	if (list.length === 0) {
+	if (!ingredient) {
 		throw error(400, { message: 'invalid id' });
 	}
 
-	return { tipoMateriaPrima: list[0] };
+	return { ingredient };
 };
 
 export const actions: Actions = {
@@ -37,3 +38,4 @@ function parseParams(params: RouteParams) {
 	}
 	return { id };
 }
+

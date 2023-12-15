@@ -32,5 +32,62 @@ describe('ingredients logic', () => {
 			expect(list[1].unit).toBe('Kg');
 		});
 	});
+	describe('getByID', () => {
+		it('return null when there are not ingredients', async () => {
+			await db.delete(t_ingredient);
+			const data = await ingredients_ctrl.getById(1);
+			expect(data).toBe(null);
+		});
+		it('return element 1 when it exist', async () => {
+			await db.delete(t_ingredient);
+			await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg' });
+			await db.insert(t_ingredient).values({ id: 2, name: 'Egg', unit: 'Kg' });
+			const data = await ingredients_ctrl.getById(1);
+
+			expect(data?.id).toBe(1);
+			expect(data?.name).toBe('Banana');
+			expect(data?.unit).toBe('Kg');
+		});
+		it('return element 2 when it exist', async () => {
+			await db.delete(t_ingredient);
+			await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg' });
+			await db.insert(t_ingredient).values({ id: 2, name: 'Egg', unit: 'Kg' });
+			const data = await ingredients_ctrl.getById(2);
+
+			expect(data?.id).toBe(2);
+			expect(data?.name).toBe('Egg');
+			expect(data?.unit).toBe('Kg');
+		});
+
+		it('return null when element 2 does not exist', async () => {
+			await db.delete(t_ingredient);
+			await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg' });
+			await db.insert(t_ingredient).values({ id: 3, name: 'Water', unit: 'Kg' });
+			const data = await ingredients_ctrl.getById(2);
+
+			expect(data).toBe(null);
+		});
+		it('return null when id is negative, without making db call', async () => {
+			const spy_select = vi.spyOn(db, 'select');
+			await db.delete(t_ingredient);
+			await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg' });
+			await db.insert(t_ingredient).values({ id: 3, name: 'Water', unit: 'Kg' });
+			const data = await ingredients_ctrl.getById(-1);
+
+			expect(spy_select).not.toHaveBeenCalled();
+			expect(data).toBe(null);
+		});
+
+		it('return null when id is zero, without making db call', async () => {
+			const spy_select = vi.spyOn(db, 'select');
+			await db.delete(t_ingredient);
+			await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg' });
+			await db.insert(t_ingredient).values({ id: 3, name: 'Water', unit: 'Kg' });
+			const data = await ingredients_ctrl.getById(0);
+
+			expect(spy_select).not.toHaveBeenCalled();
+			expect(data).toBe(null);
+		});
+	});
 });
 
