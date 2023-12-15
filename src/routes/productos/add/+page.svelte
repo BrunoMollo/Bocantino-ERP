@@ -2,11 +2,10 @@
 	import Spinner from '$lib/ui/Spinner.svelte';
 	import { fade } from 'svelte/transition';
 	import { createForm, createSlots } from 'zod-actions';
-	import type { ActionData, PageData } from './$types';
 	import { product_schema } from '../product_schema.js';
 
-	export let data: PageData;
-	export let form: ActionData;
+	export let data;
+	export let form;
 
 	const zodAction = createForm(product_schema, form);
 	const { zodActionEnhance, revalidateInput } = zodAction;
@@ -43,7 +42,7 @@
 					{/if}
 					<select name="ingredients[{i}].id" class="select">
 						<option selected disabled>---</option>
-						{#each data.materiasPrimas as { id, name, unit }}
+						{#each data.ingredients as { id, name, unit }}
 							<option value={id}>{name} ({unit})</option>
 						{/each}
 					</select>
@@ -72,3 +71,4 @@
 		</button>
 	</form>
 </article>
+

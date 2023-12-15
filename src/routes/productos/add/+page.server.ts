@@ -3,12 +3,13 @@ import { backendValidate } from 'zod-actions';
 import { product_schema } from '../product_schema';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib';
-import { t_ingredient, t_product, tr_ingredient_product } from '$lib/server/schema';
+import { t_product, tr_ingredient_product } from '$lib/server/schema';
 import { getFirst } from '$lib/utils';
+import { ingredients_ctrl } from '$lib/logic/ingredients';
 
 export const load: PageServerLoad = async () => {
-	const materiasPrimas = await db.select().from(t_ingredient);
-	return { materiasPrimas };
+	const ingredients = await ingredients_ctrl.getAll();
+	return { ingredients };
 };
 
 export const actions: Actions = {
@@ -37,3 +38,4 @@ export const actions: Actions = {
 		return {};
 	}
 };
+
