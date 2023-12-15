@@ -1,13 +1,14 @@
 import { db } from '$lib';
-import { t_ingredient, t_supplier, tr_supplier_ingredient } from '$lib/server/schema';
+import { t_supplier, tr_supplier_ingredient } from '$lib/server/schema';
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from '../$types';
 import { supplier_schema } from '../supplier_schema';
 import { backendValidate } from 'zod-actions';
 import { getFirst } from '$lib/utils';
+import { getAllIngredients } from '$lib/logic/ingredients';
 
 export const load: PageServerLoad = async () => {
-	const ingredients = await db.select().from(t_ingredient);
+	const ingredients = await getAllIngredients();
 
 	return { ingredients };
 };
@@ -36,3 +37,4 @@ export const actions: Actions = {
 		throw redirect(302, '/proveedores?toast=Proveedor registrado');
 	}
 };
+

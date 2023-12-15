@@ -11,7 +11,8 @@
 		"test": "vitest",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
-		"db-push": "drizzle-kit push:sqlite"
+		"db-push": "drizzle-kit push:sqlite",
+		"db-migrate": "drizzle-kit generate:sqlite"
 	},
 	"devDependencies": {
 		"@skeletonlabs/skeleton": "2.5.1",
@@ -52,3 +53,4 @@
 		"zod-actions": "0.0.7"
 	}
 }
+
