@@ -89,5 +89,18 @@ describe('ingredients logic', () => {
 			expect(data).toBe(null);
 		});
 	});
+	describe('add', () => {
+		it('insert new ingredient', async () => {
+			await db.delete(t_ingredient);
+			const element = { name: 'Orange', unit: 'Kg' };
+			await ingredients_ctrl.add(element);
+			const list = await db.select().from(t_ingredient);
+			expect(list.length).toBe(1);
+			expect(list[0].id).toBeTruthy();
+			expect(list[0].name).toBe(element.name);
+			expect(list[0].unit).toBe(element.unit);
+			expect(list[1]).toBeFalsy();
+		});
+	});
 });
 

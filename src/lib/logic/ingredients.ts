@@ -16,6 +16,10 @@ export const ingredients_ctrl = {
 		} else {
 			return first;
 		}
+	},
+
+	add: (data: Omit<typeof t_ingredient.$inferInsert, 'id'>) => {
+		return db.insert(t_ingredient).values(data);
 	}
 };
 
