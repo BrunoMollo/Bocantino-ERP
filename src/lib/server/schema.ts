@@ -106,13 +106,13 @@ export const t_ingredient_batch = sqliteTable(
 	'ingredient_batch',
 	{
 		id: integer('id').notNull().primaryKey({ autoIncrement: true }),
-		supplier_bag_code: text('supplier_bag_code'), //may or may not be provided by the supplier
+		supplier_bag_code: text('supplier_bag_code').notNull(), //may or may not be provided by the supplier
 		amountOfBags: integer('amount_of_bags').notNull(),
 		initialAmount: real('full_amount').notNull(),
 		usedAmount: real('used_amount').notNull().default(0),
 		productionDate: integer('production_date', { mode: 'timestamp' }).notNull(),
 		expirationDate: integer('expiration_date', { mode: 'timestamp' }).notNull(),
-		total: integer('cost').notNull(),
+		cost: integer('cost').notNull(),
 		currency_alpha_code: text('currency_alpha_code', { length: 4 }).notNull().default('ARG'),
 		loss: real('loss'),
 		supplierId: integer('supplier_id').notNull(),

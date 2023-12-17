@@ -1,7 +1,7 @@
 import { redirect, type Actions } from '@sveltejs/kit';
 import { backendValidate } from 'zod-actions';
 import { ingredient_schema } from '../ingredient_schema';
-import { ingredients_ctrl } from '$lib/logic/ingredients';
+import * as ingredients_ctrl from '$lib/logic/ingredients';
 
 export const actions: Actions = {
 	default: async ({ request }) => {

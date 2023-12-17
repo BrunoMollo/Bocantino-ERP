@@ -1,3 +1,5 @@
+import type { InferInsertModel, Table } from 'drizzle-orm';
+
 export const getFirst = <T>(x: Array<T>) => x[0];
 
 export function isValidDate(day: string, month: string, year: string) {
@@ -14,4 +16,18 @@ export function isValidDate(day: string, month: string, year: string) {
 		date.getFullYear() === yearNum && date.getMonth() === monthNum - 1 && date.getDate() === dayNum
 	);
 }
+
+/**
+ * Type Helper to show nicer types
+ * Source: https://www.totaltypescript.com/concepts/the-prettify-helper
+ **/
+export type Prettify<T> = {
+	[K in keyof T]: T[K];
+} & {};
+
+/**
+ * Type Helper to creates dtos from tables of the drizzle schema
+ * T:
+ **/
+export type TableInsert<T, O extends keyof T> = Prettify<Omit<T, O>>;
 

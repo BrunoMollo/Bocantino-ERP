@@ -1,6 +1,6 @@
 import { describe, it, expect, vi } from 'vitest';
-import { ingredients_ctrl } from './ingredients';
-import { db } from '../__mocks__';
+import * as ingredients_ctrl from '.';
+import { db } from '$lib/__mocks__/index';
 import { t_ingredient } from '$lib/server/schema';
 
 vi.mock('$lib/index');
