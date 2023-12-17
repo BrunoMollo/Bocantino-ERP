@@ -145,16 +145,15 @@ export const t_ingridient_entry = sqliteTable('ingridient_entry', {
 	creation_date: integer('creation_date', { mode: 'timestamp' })
 		.notNull()
 		.$defaultFn(() => new Date()),
-	totalCost: integer('total_cost').notNull(),
+	totalCost: integer('total_cost'), // is calulated later, so can be null
 	currency_alpha_code: text('currency_alpha_code', { length: 4 }).notNull().default('ARG'),
-	documentIndetifier: text('invoice_number').notNull(),
 	documentId: integer('document_id').references(() => t_entry_document.id)
 });
 export const rel_ingredient_entry = relations(t_ingridient_entry, ({ one }) => ({
 	doc: one(t_entry_document)
 }));
 export const t_entry_document = sqliteTable('entry_document', {
-	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+	id: integer('id').primaryKey({ autoIncrement: true }),
 	number: text('document_identifier').notNull(),
 	issue_date: integer('issue_date', { mode: 'timestamp' }).notNull(),
 	typeId: integer('type_id')

@@ -19,7 +19,7 @@ CREATE TABLE `ingredient` (
 --> statement-breakpoint
 CREATE TABLE `ingredient_batch` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
-	`supplier_bag_code` text,
+	`supplier_bag_code` text NOT NULL,
 	`amount_of_bags` integer NOT NULL,
 	`full_amount` real NOT NULL,
 	`used_amount` real DEFAULT 0 NOT NULL,
@@ -36,11 +36,10 @@ CREATE TABLE `ingredient_batch` (
 CREATE TABLE `ingridient_entry` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`creation_date` integer NOT NULL,
-	`total_cost` integer NOT NULL,
+	`total_cost` integer,
 	`currency_alpha_code` text(4) DEFAULT 'ARG' NOT NULL,
-	`invoice_number` text NOT NULL,
-	`document_id` integer,
-	FOREIGN KEY (`document_id`) REFERENCES `entry_document`(`id`) ON UPDATE no action ON DELETE no action
+	`document_id` integer NOT NULL,
+    FOREIGN KEY (`document_id`) REFERENCES `entry_document`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `product` (

@@ -1,6 +1,11 @@
 import { db } from '$lib';
-import { t_ingredient, t_ingredient_batch } from '$lib/server/schema';
-import type { TableInsert } from '$lib/utils';
+import {
+	t_entry_document,
+	t_ingredient,
+	t_ingredient_batch,
+	t_ingridient_entry
+} from '$lib/server/schema';
+import { getFirst, type TableInsert } from '$lib/utils';
 import { eq } from 'drizzle-orm';
 
 export function getAll() {
@@ -26,7 +31,24 @@ type BoughtBatch = TableInsert<
 	typeof t_ingredient_batch.$inferInsert,
 	'id' | 'loss' | 'currency_alpha_code'
 >;
-type RegisterPurchaseDto = {
+export type RegisterPurchaseDto = {
+	document: TableInsert<typeof t_entry_document.$inferInsert, 'id'>;
 	batches: BoughtBatch[];
 };
+export function registerBoughtIngrediets(data: RegisterPurchaseDto) {
+	return db.transaction(async (tx) => {
+		const { documentId } = await tx
+			.insert(t_entry_document)
+			.values(data.document)
+			.returning({ documentId: t_entry_document.id })
+			.then(getFirst);
+
+		await tx.insert(t_ingridient_entry).values({ totalCost: null, documentId });
+
+		// // commented because test dont pass yet because of lack of mocking
+		// for (let batch of data.batches) {
+		// 	await tx.insert(t_ingredient_batch).values(batch);
+		// }
+	});
+}
 

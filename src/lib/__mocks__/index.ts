@@ -8,3 +8,5 @@ export const mockDrizzleClient = new Database(':memory:');
 export const db = drizzle(mockDrizzleClient, { schema });
 migrate(db, { migrationsFolder: 'drizzle' });
 
+export const INVOICE_TYPE = { id: 1, desc: 'invoice' };
+

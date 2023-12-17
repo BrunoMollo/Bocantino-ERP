@@ -1,11 +1,20 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, test, beforeEach, beforeAll } from 'vitest';
 import * as ingredients_ctrl from '.';
-import { db } from '$lib/__mocks__/index';
-import { t_ingredient } from '$lib/server/schema';
+import { INVOICE_TYPE, db } from '$lib/__mocks__/index';
+import {
+	t_document_type,
+	t_entry_document,
+	t_ingredient,
+	t_ingredient_batch,
+	t_ingridient_entry,
+	t_supplier
+} from '$lib/server/schema';
+import { eq } from 'drizzle-orm';
+import type { RegisterPurchaseDto } from '.';
 
 vi.mock('$lib/index');
 
-describe('ingredients logic', () => {
+describe('ingredients crud', () => {
 	describe('getAll', () => {
 		it('return empty when there are not ingredients', async () => {
 			await db.delete(t_ingredient);
@@ -100,6 +109,66 @@ describe('ingredients logic', () => {
 			expect(list[0].name).toBe(element.name);
 			expect(list[0].unit).toBe(element.unit);
 			expect(list[1]).toBeFalsy();
+		});
+	});
+});
+
+describe('buy ingredients', () => {
+	beforeAll(async () => {
+		await db.insert(t_document_type).values(INVOICE_TYPE);
+	});
+	beforeEach(async () => {
+		await db.delete(t_ingredient_batch);
+		await db.delete(t_ingridient_entry);
+		await db.delete(t_entry_document);
+	});
+	describe('valid case', () => {
+		const valid_input: RegisterPurchaseDto = {
+			document: {
+				number: 'FACTURA-12345',
+				issue_date: new Date(2023, 1, 1),
+				typeId: INVOICE_TYPE.id
+			},
+			batches: [
+				{
+					supplier_bag_code: 'ABC123',
+					amountOfBags: 100,
+					initialAmount: 500,
+					usedAmount: 0,
+					productionDate: new Date(2000, 1, 1), // Example timestamp for January 1, 2000
+					expirationDate: new Date(2000, 1, 20), // Example timestamp for January 20, 2000
+					cost: 5000,
+					supplierId: 1,
+					ingredientId: 1
+				}
+			]
+		};
+		test('creates new document row', async () => {
+			await ingredients_ctrl.registerBoughtIngrediets(valid_input);
+			const listDocs = await db.select().from(t_entry_document);
+			expect(listDocs.length).toBe(1);
+			const newDoc = listDocs[0];
+			expect(newDoc).toBeTruthy();
+			expect(newDoc.id).toBeTruthy();
+			expect(newDoc.typeId).toBe(INVOICE_TYPE.id);
+			expect(newDoc.number).toBe(valid_input.document.number);
+			expect(newDoc.issue_date.toISOString()).toBe(valid_input.document.issue_date.toISOString());
+		});
+		test('creates new entry row', async () => {
+			await ingredients_ctrl.registerBoughtIngrediets(valid_input);
+			const entryList = await db.select().from(t_ingridient_entry);
+			expect(entryList.length).toBe(1);
+			expect(entryList[0]).toBeTruthy();
+			expect(entryList[0].id).toBeTruthy();
+			expect(entryList[0].currency_alpha_code).toBe('ARG');
+			expect(entryList[0].totalCost).toBe(null);
+			expect(entryList[0].documentId).toBeTruthy();
+			const referencedDoc = await db
+				.select()
+				.from(t_entry_document)
+				.where(eq(t_entry_document.id, entryList[0].documentId ?? -1));
+			expect(referencedDoc.length).toBe(1);
+			expect(referencedDoc[0].typeId).toBe(1); //Invoice
 		});
 	});
 });
