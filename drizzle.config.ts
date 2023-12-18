@@ -9,10 +9,11 @@ if (!TURSO_URL || !TURSO_TOKEN) {
 
 export default {
 	schema: 'src/lib/server/schema.ts',
-	out: 'drizzle',
+	out: 'migrations',
 	driver: 'turso',
 	dbCredentials: {
 		url: TURSO_URL,
 		authToken: TURSO_TOKEN
 	}
 } satisfies Config;
+

@@ -38,8 +38,8 @@ CREATE TABLE `ingridient_entry` (
 	`creation_date` integer NOT NULL,
 	`total_cost` integer,
 	`currency_alpha_code` text(4) DEFAULT 'ARG' NOT NULL,
-	`document_id` integer NOT NULL,
-    FOREIGN KEY (`document_id`) REFERENCES `entry_document`(`id`) ON UPDATE no action ON DELETE no action
+	`document_id` integer,
+	FOREIGN KEY (`document_id`) REFERENCES `entry_document`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
 CREATE TABLE `product` (
