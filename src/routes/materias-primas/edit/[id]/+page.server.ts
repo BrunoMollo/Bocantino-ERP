@@ -5,7 +5,7 @@ import { error, redirect } from '@sveltejs/kit';
 import { backendValidate } from 'zod-actions';
 import { t_ingredient } from '$lib/server/schema';
 import { ingredient_schema } from '../../ingredient_schema';
-import * as ingredients_ctrl from '$lib/logic/ingredients';
+import * as ingredients_ctrl from '$lib/server/logic/ingredients';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = parseParams(params);
