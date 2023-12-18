@@ -2,8 +2,8 @@ import type { Actions } from '@sveltejs/kit';
 import { backendValidate } from 'zod-actions';
 import { product_schema } from '../product_schema';
 import type { PageServerLoad } from './$types';
-import { db } from '$lib';
-import { t_product, tr_ingredient_product } from '$lib/server/schema';
+import { db } from '$lib/server/db';
+import { t_product, tr_ingredient_product } from '$lib/server/db/schema';
 import { getFirst } from '$lib/utils';
 import * as ingredients_ctrl from '$lib/server/logic/ingredients';
 

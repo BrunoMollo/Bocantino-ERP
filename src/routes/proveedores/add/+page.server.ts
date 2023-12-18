@@ -1,5 +1,5 @@
-import { db } from '$lib';
-import { t_supplier, tr_supplier_ingredient } from '$lib/server/schema';
+import { db } from '$lib/server/db';
+import { t_supplier, tr_supplier_ingredient } from '$lib/server/db/schema';
 import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from '../$types';
 import { supplier_schema } from '../supplier_schema';

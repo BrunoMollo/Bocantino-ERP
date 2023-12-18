@@ -1,9 +1,9 @@
-import { db } from '$lib';
+import { db } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import type { PageServerLoad, RouteParams, Actions } from './$types';
 import { error, redirect } from '@sveltejs/kit';
 import { backendValidate } from 'zod-actions';
-import { t_ingredient } from '$lib/server/schema';
+import { t_ingredient } from '$lib/server/db/schema';
 import { ingredient_schema } from '../../ingredient_schema';
 import * as ingredients_ctrl from '$lib/server/logic/ingredients';
 

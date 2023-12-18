@@ -1,18 +1,17 @@
 import { describe, it, expect, vi, test, beforeEach, beforeAll } from 'vitest';
 import * as ingredients_ctrl from '.';
-import { INVOICE_TYPE, db } from '$lib/__mocks__/index';
+import { INVOICE_TYPE, db } from '$lib/server/db/__mocks__';
 import {
 	t_document_type,
 	t_entry_document,
 	t_ingredient,
 	t_ingredient_batch,
-	t_ingridient_entry,
-	t_supplier
-} from '$lib/server/schema';
+	t_ingridient_entry
+} from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import type { RegisterPurchaseDto } from '.';
 
-vi.mock('$lib/index');
+vi.mock('$lib/server/db/index.ts');
 
 describe('ingredients crud', () => {
 	describe('getAll', () => {

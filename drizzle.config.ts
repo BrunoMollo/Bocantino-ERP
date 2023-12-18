@@ -8,7 +8,7 @@ if (!TURSO_URL || !TURSO_TOKEN) {
 }
 
 export default {
-	schema: 'src/lib/server/schema.ts',
+	schema: 'src/lib/server/db/schema.ts',
 	out: 'migrations',
 	driver: 'turso',
 	dbCredentials: {

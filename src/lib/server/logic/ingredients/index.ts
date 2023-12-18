@@ -1,10 +1,10 @@
-import { db } from '$lib';
+import { db } from '$lib/server/db';
 import {
 	t_entry_document,
 	t_ingredient,
 	t_ingredient_batch,
 	t_ingridient_entry
-} from '$lib/server/schema';
+} from '$lib/server/db/schema';
 import { getFirst, type TableInsert } from '$lib/utils';
 import { eq } from 'drizzle-orm';
 
