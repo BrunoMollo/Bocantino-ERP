@@ -1,23 +1,27 @@
-import type { Actions } from '@sveltejs/kit';
-import { backendValidate } from 'zod-actions';
-import { product_schema } from '../product_schema';
+import { redirect, type Actions, fail } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 import { db } from '$lib/server/db';
 import { t_product, tr_ingredient_product } from '$lib/server/db/schema';
 import { getFirst } from '$lib/utils';
 import * as ingredients_ctrl from '$lib/server/logic/ingredients';
+import { message, superValidate } from 'sveltekit-superforms/server';
+import { product_schema } from '../_shared/zodSchema';
+import { LibsqlError } from '@libsql/client';
 
 export const load: PageServerLoad = async () => {
+	const form = superValidate(product_schema);
 	const ingredients = await ingredients_ctrl.getAll();
-	return { ingredients };
+	return { ingredients, form };
 };
 
 export const actions: Actions = {
 	default: async ({ request }) => {
-		const { failure, data } = await backendValidate(product_schema, request);
-		if (failure) return failure;
+		const form = await superValidate(request, product_schema);
+		if (!form.valid) {
+			return { form };
+		}
 
-		const { desc, ingredients } = data;
+		const { desc, ingredients } = form.data;
 
 		await db.transaction(async (tx) => {
 			const { generatedId } = await tx
@@ -35,6 +39,7 @@ export const actions: Actions = {
 			}
 		});
 
-		return {};
+		throw redirect(302, '/productos?toast=Producto agregado');
 	}
 };
+

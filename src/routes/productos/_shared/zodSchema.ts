@@ -11,3 +11,6 @@ export const product_schema = z.object({
 		)
 		.nonempty()
 });
+
+export type ProductSchema = typeof product_schema;
+
