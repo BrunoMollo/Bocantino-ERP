@@ -9,7 +9,7 @@
 		popup
 	} from '@skeletonlabs/skeleton';
 	import { initializeStores, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
-	import Navigation from './Navigation.svelte';
+	import Navigation from './_components/Navigation.svelte';
 
 	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';

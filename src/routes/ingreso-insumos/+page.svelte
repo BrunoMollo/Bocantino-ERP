@@ -1,9 +1,9 @@
 <script lang="ts">
-	import Autocomplete from './Autocomplete.svelte';
 	import { fly } from 'svelte/transition';
 	import { dateProxy, superForm } from 'sveltekit-superforms/client';
 	import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
 	import InputDate from '$lib/ui/InputDate.svelte';
+	import Autocomplete from '$lib/ui/Autocomplete.svelte';
 
 	export let data;
 	const { EMPTY_BAG } = data;
@@ -180,3 +180,4 @@
 
 <style>
 </style>
+

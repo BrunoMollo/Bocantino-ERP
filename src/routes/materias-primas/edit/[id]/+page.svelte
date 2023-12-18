@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { createForm } from 'zod-actions';
-	import MateriaPrimaForm from '../../MateriaPrimaForm.svelte';
+	import MateriaPrimaForm from '../../_components/MateriaPrimaForm.svelte';
 	import { ingredient_schema } from '../../ingredient_schema';
 
 	export let data;
