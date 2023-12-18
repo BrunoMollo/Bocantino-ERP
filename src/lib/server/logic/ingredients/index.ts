@@ -1,11 +1,13 @@
 import { db } from '$lib/server/db';
 import {
+	t_document_type,
 	t_entry_document,
 	t_ingredient,
 	t_ingredient_batch,
 	t_ingridient_entry
 } from '$lib/server/db/schema';
 import { getFirst, type TableInsert } from '$lib/utils';
+import { error } from '@sveltejs/kit';
 import { eq } from 'drizzle-orm';
 
 export function getAll() {
@@ -24,7 +26,7 @@ export async function getById(id: number) {
 }
 
 export function add(data: Omit<typeof t_ingredient.$inferInsert, 'id'>) {
-	return db.insert(t_ingredient).values(data);
+	return db.insert(t_ingredient).values(data).returning({ id: t_ingredient.id }).then(getFirst);
 }
 
 type BoughtBatch = TableInsert<
@@ -45,9 +47,9 @@ export function registerBoughtIngrediets(data: RegisterPurchaseDto) {
 
 		await tx.insert(t_ingridient_entry).values({ totalCost: null, documentId });
 
-		// // commented because test dont pass yet because of lack of mocking
-		// for (let batch of data.batches) {
-		// 	await tx.insert(t_ingredient_batch).values(batch);
-		// }
+		for (let batch of data.batches) {
+			await tx.insert(t_ingredient_batch).values(batch);
+		}
 	});
 }
+
