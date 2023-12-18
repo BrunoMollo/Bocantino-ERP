@@ -1,13 +1,13 @@
 {
-  "version": "5",
-  "dialect": "sqlite",
-  "entries": [
-    {
-      "idx": 0,
-      "version": "5",
-      "when": 1702860105538,
-      "tag": "0000_shallow_dragon_lord",
-      "breakpoints": true
-    }
-  ]
+	"version": "5",
+	"dialect": "sqlite",
+	"entries": [
+		{
+			"idx": 0,
+			"version": "5",
+			"when": 1702860105538,
+			"tag": "0000_shallow_dragon_lord",
+			"breakpoints": true
+		}
+	]
 }

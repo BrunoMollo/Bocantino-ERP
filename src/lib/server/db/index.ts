@@ -6,4 +6,3 @@ import { dev } from '$app/environment';
 
 const client = createClient({ url: TURSO_URL, authToken: TURSO_TOKEN });
 export const db = drizzle(client, { schema, logger: dev });
-

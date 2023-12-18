@@ -18,4 +18,3 @@ export function createForm(value?: { name: string; unit: string }) {
 		return superValidate(ingredient_schema);
 	}
 }
-

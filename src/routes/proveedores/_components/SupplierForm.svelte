@@ -57,4 +57,3 @@
 		<Spinner showIf={$delayed} />
 	</button>
 </form>
-

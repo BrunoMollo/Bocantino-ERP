@@ -8,4 +8,3 @@
 	<h2 class="h2">Alta Proveedor</h2>
 	<SupplierForm {data} ingridientsAvailables={data.ingredients} />
 </article>
-

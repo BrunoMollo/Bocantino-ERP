@@ -16,4 +16,3 @@ export default {
 		authToken: TURSO_TOKEN
 	}
 } satisfies Config;
-

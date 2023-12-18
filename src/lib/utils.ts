@@ -29,4 +29,3 @@ export type Prettify<T> = {
  * Type Helper to creates dtos from tables of the drizzle schema
  **/
 export type TableInsert<T, O extends keyof T | ''> = Prettify<O extends '' ? T : Omit<T, O>>;
-

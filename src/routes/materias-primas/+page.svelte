@@ -55,4 +55,3 @@
 		vertical-align: middle;
 	}
 </style>
-

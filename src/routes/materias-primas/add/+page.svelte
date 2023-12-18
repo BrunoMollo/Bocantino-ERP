@@ -8,4 +8,3 @@
 	<h2 class="h2">Alta Tipo Materia Prima</h2>
 	<MateriaPrimaForm {data} />
 </div>
-

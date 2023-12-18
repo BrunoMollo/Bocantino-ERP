@@ -51,4 +51,3 @@ export function registerBoughtIngrediets(data: RegisterPurchaseDto) {
 		// }
 	});
 }
-

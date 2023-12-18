@@ -41,4 +41,3 @@ function parseParams(params: RouteParams) {
 	}
 	return { id };
 }
-

@@ -8,4 +8,3 @@
 	<h2 class="h2">Editar Tipo Materia Prima</h2>
 	<MateriaPrimaForm {data} btnMsj="Editar" />
 </div>
-

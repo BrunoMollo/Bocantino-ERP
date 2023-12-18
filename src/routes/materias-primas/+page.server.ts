@@ -5,4 +5,3 @@ export const load: PageServerLoad = async () => {
 	const list = await ingredients_ctrl.getAll();
 	return { list };
 };
-
