@@ -1,25 +1,16 @@
 <script lang="ts">
 	import Spinner from '$lib/ui/Spinner.svelte';
 	import { fade } from 'svelte/transition';
-	import type { ZodAction } from 'zod-actions';
-	import { VALID_UNITS, type ingredient_schema } from './ingredient_schema';
+	import { superForm } from 'sveltekit-superforms/client';
+	import { VALID_UNITS, type IngredientSchema } from './shared';
 
-	export let zodAction: ZodAction<typeof ingredient_schema.shape>;
+	export let data: { form: any };
+	const { form, enhance, errors, delayed } = superForm<IngredientSchema>(data.form);
 
 	export let btnMsj = 'Agregar';
-	export let value = { name: '', unit: '' };
-
-	const { zodActionEnhance, revalidateInput } = zodAction;
-	const { errors, state } = zodAction;
 </script>
 
-<form
-	class="flex flex-col gap-4 p-9"
-	action=""
-	method="post"
-	use:zodActionEnhance
-	use:revalidateInput
->
+<form class="flex flex-col gap-4 p-9" action="" method="post" use:enhance>
 	<label for="name" class="label">
 		<span
 			>Nombre:
@@ -28,11 +19,11 @@
 			{/if}
 		</span>
 		<input
-			class="input {$errors.name ? 'input-error' : ''}"
+			class={`input ${$errors.unit ? 'input-error' : ''}`}
 			name="name"
 			type="text"
 			id="name"
-			value={value.name}
+			bind:value={$form.name}
 		/>
 	</label>
 
@@ -41,16 +32,21 @@
 		{#if $errors.unit}
 			<b class=" text-error-400" transition:fade>elija una opcion valida</b>
 		{/if}
-		<select class="select {$errors.unit ? 'input-error' : ''}" name="unit">
-			<option disabled selected={value.unit == ''}>---</option>
+		<select
+			class={`select ${$errors.unit ? 'input-error' : ''}`}
+			name="unit"
+			bind:value={$form.unit}
+		>
+			<option disabled selected={!$form.unit}>---</option>
 			{#each VALID_UNITS as unit}
-				<option value={unit} selected={value.unit == unit}>{unit}</option>
+				<option value={unit} selected={$form.unit == unit}>{unit}</option>
 			{/each}
 		</select>
 	</label>
 
 	<button class="btn variant-filled-primary" type="submit">
 		<b>{btnMsj}</b>
-		<Spinner showIf={$state.loading} />
+		<Spinner showIf={$delayed} />
 	</button>
 </form>
+

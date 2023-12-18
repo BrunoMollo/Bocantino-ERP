@@ -1,6 +1,5 @@
 <script lang="ts">
-	import type { PageData } from './$types';
-	export let data: PageData;
+	export let data;
 
 	function eliminar(id: number) {
 		data.list = data.list.filter((_, i) => data.list[i].id !== id);
@@ -13,26 +12,24 @@
 			<th>ID</th>
 			<th>Nombre</th>
 			<th>Unidad</th>
-			<th>Stock</th>
 			<th></th>
 		</tr>
 	</thead>
 	<tbody>
-		{#each data.list as tipoMateriaPrima}
+		{#each data.list as ingredient}
 			<tr class="align-middle">
-				<td class="w-1/12 align-middle">{tipoMateriaPrima.id}</td>
-				<td class="w-2/12">{tipoMateriaPrima.name}</td>
-				<td class="w-2/12">{tipoMateriaPrima.unit}</td>
-				<td class="w-2/12"></td>
-				<td class="w-1/12">
+				<td class="w-2/12 align-middle">{ingredient.id}</td>
+				<td class="w-3/12">{ingredient.name}</td>
+				<td class="w-2/12">{ingredient.unit}</td>
+				<td class="w-2/12">
 					<a
 						class="my-2 btn-icon btn-icon-md variant-soft-secondary mr-5"
-						href="/materias-primas/edit/{tipoMateriaPrima.id}"
+						href="/materias-primas/edit/{ingredient.id}"
 					>
 						<i class="bx bx-edit place-self-center text-2xl"></i></a
 					>
 					<button
-						on:click={() => eliminar(tipoMateriaPrima.id)}
+						on:click={() => eliminar(ingredient.id)}
 						class="my-2 btn-icon btn-icon-md variant-soft-secondary"
 					>
 						<i class="bx bxs-trash place-self-center text-2xl"></i></button
@@ -40,6 +37,16 @@
 				</td>
 			</tr>
 		{/each}
+		{#if 10 - data.list.length > 0}
+			{#each Array(10 - data.list.length) as _}
+				<tr>
+					<td />
+					<td />
+					<td />
+					<td />
+				</tr>
+			{/each}
+		{/if}
 	</tbody>
 </table>
 
@@ -48,3 +55,4 @@
 		vertical-align: middle;
 	}
 </style>
+

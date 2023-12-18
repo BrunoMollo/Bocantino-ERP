@@ -2,10 +2,10 @@ import { db } from '$lib/server/db';
 import { eq } from 'drizzle-orm';
 import type { PageServerLoad, RouteParams, Actions } from './$types';
 import { error, redirect } from '@sveltejs/kit';
-import { backendValidate } from 'zod-actions';
 import { t_ingredient } from '$lib/server/db/schema';
-import { ingredient_schema } from '../../ingredient_schema';
 import * as ingredients_ctrl from '$lib/server/logic/ingredients';
+import { createForm, ingredient_schema } from '../../_components/shared';
+import { superValidate } from 'sveltekit-superforms/server';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = parseParams(params);
@@ -14,18 +14,21 @@ export const load: PageServerLoad = async ({ params }) => {
 	if (!ingredient) {
 		throw error(400, { message: 'invalid id' });
 	}
+	const { name, unit } = ingredient;
+	const form = createForm({ name, unit });
 
-	return { ingredient };
+	return { form };
 };
 
 export const actions: Actions = {
 	default: async ({ request, params }) => {
-		const { failure, data } = await backendValidate(ingredient_schema, request);
-		if (failure) return failure;
-
 		const { id } = parseParams(params);
 
-		await db.update(t_ingredient).set(data).where(eq(t_ingredient.id, id));
+		const form = await superValidate(request, ingredient_schema);
+		if (!form.valid) {
+			return { form };
+		}
+		await db.update(t_ingredient).set(form.data).where(eq(t_ingredient.id, id));
 
 		throw redirect(302, '/materias-primas?toast=Editado con exito');
 	}
