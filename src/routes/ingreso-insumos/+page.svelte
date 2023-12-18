@@ -8,11 +8,12 @@
 	export let data;
 	const { EMPTY_BAG } = data;
 	const { form, enhance, errors } = superForm(data.form, { dataType: 'json' });
-	const proxyDate = dateProxy(form, 'issueDate', { format: 'date' });
+	const proxyIssueDate = dateProxy(form, 'issueDate', { format: 'date' });
 
 	function addLine() {
 		form.update((f) => {
-			f.bags.push({ ...EMPTY_BAG });
+			//@ts-ignore
+			f.batch.push({});
 			return f;
 		});
 	}
@@ -28,9 +29,9 @@
 
 	function removeLine(index: number) {
 		form.update((f) => {
-			if (f.bags.length > 1) {
+			if (f.batch.length > 1) {
 				//@ts-ignore
-				f.bags = f.bags.filter((_, i) => i !== index);
+				f.batch = f.batch.filter((_, i) => i !== index);
 			}
 			return f;
 		});
@@ -59,8 +60,8 @@
 				<Autocomplete
 					placeholder="Seleccionar..."
 					name="tipe_of_document"
-					bind:value={$form.supplierId}
-					className="input {$errors.supplierId ? 'input-error' : ''}"
+					bind:value={$form.idDocumentType}
+					className="input {$errors.idDocumentType ? 'input-error' : ''}"
 					labels={['Remito', 'Factura', 'Nota de compra']}
 					values={[1, 2, 3]}
 				/>
@@ -81,7 +82,7 @@
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label">
 				<small class="my-auto mr-1 font-black text-lg"> Fecha factura</small>
-				<InputDate className="input" />
+				<InputDate className="input" bind:value={$proxyIssueDate} />
 			</label>
 		</div>
 	</div>
@@ -100,14 +101,14 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each $form.bags as _, i}
+				{#each $form.batch as _, i}
 					<tr transition:fly={{ x: -350 }}>
 						<td>
 							<!-- svelte-ignore a11y-label-has-associated-control -->
 							<label class="label w-52">
 								<Autocomplete
 									name="ingredientId-{i}"
-									bind:value={$form.bags[i].ingredientId}
+									bind:value={$form.batch[i].ingredientId}
 									labels={['Zapallo', 'Papa', 'Huevo']}
 									values={[1, 2, 3]}
 								/>
@@ -115,35 +116,36 @@
 						</td>
 						<td>
 							<div class="relative inline-block w-24">
-								<input class="input" type="text" bind:value={$form.bags[i].fullAmount} />
+								<input class="input" type="text" bind:value={$form.batch[i].fullAmount} />
 								<span class="suffix absolute right-3 top-1/4">kg.</span>
 							</div>
 						</td>
 						<td>
 							<div class="relative inline-block w-20">
-								<input class="input" type="text" bind:value={$form.bags[i].fullAmount} />
+								<input class="input" type="text" bind:value={$form.batch[i].numberOfBags} />
 							</div>
 						</td>
 						<td class="w-32">
 							<div class="relative inline-block">
-								<InputDate className="input w-32"></InputDate>
+								<InputDate className="input w-32" bind:value={$form.batch[i].productionDate}
+								></InputDate>
 							</div>
 						</td>
 						<td>
 							<div class="relative inline-block">
-								<InputDate className="input w-32"></InputDate>
+								<InputDate className="input w-32" bind:value={$form.batch[i].expirationDate}
+								></InputDate>
 							</div>
 						</td>
 						<td class="w-24">
 							<div class="relative inline-block">
-								<input class="input w-24" type="text" bind:value={$form.bags[i].fullAmount} />
+								<input class="input w-24" type="text" bind:value={$form.batch[i].cost} />
 								<span class="suffix absolute right-3 top-1/4">$</span>
 							</div>
 						</td>
-
 						<td>
 							<div class="input-group input-group-divider grid-cols-[auto_auto] w-70">
-								<input type="text" bind:value={$form.bags[i].supplier_batch_code} />
+								<input type="text" bind:value={$form.batch[i].supplier_batch_code} />
 								<button type="button" class="variant-filled-surface">Autogenerar</button>
 							</div>
 						</td>
@@ -151,7 +153,7 @@
 							<button
 								type="button"
 								class="btn-icon btn-icon-sm variant-soft-secondary"
-								disabled={$form.bags.length === 1}
+								disabled={$form.batch.length === 1}
 								on:click={() => removeLine(i)}
 							>
 								<i class="bx bxs-trash place-self-center text-xl" />

@@ -5,14 +5,19 @@ import { superValidate } from 'sveltekit-superforms/server';
 
 const newBagsSchema = z.object({
 	supplierId: z.coerce.number().int().min(1, 'Requerido'),
+	idDocumentType: z.coerce.number().int().min(1, ''),
 	invoiceNumber: z.string().min(4, 'Requerido').max(255),
 	issueDate: z
 		.date()
 		.min(new Date(2000, 1, 1))
 		.max(new Date(2200, 1, 1)),
-	bags: z
+	batch: z
 		.object({
 			ingredientId: z.number().int().min(1),
+			cost: z.number().positive(),
+			numberOfBags: z.number().positive(),
+			productionDate: z.string(), //Todo
+			expirationDate: z.string(), //Todo
 			supplier_batch_code: z.string().min(2).max(256),
 			autoGenerateCode: z.boolean(),
 			fullAmount: z.number().positive()
@@ -22,15 +27,8 @@ const newBagsSchema = z.object({
 });
 
 export const load: PageServerLoad = async () => {
-	const EMPTY_BAG = {
-		supplierId: 0,
-		ingredientId: 0,
-		supplier_batch_code: '',
-		autoGenerateCode: false,
-		fullAmount: 0
-	};
 	const form = superValidate(newBagsSchema, { errors: false });
-	return { form, EMPTY_BAG };
+	return { form };
 };
 
 export const actions: Actions = {
