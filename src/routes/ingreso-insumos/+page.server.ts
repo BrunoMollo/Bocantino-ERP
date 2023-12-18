@@ -13,14 +13,13 @@ const newBagsSchema = z.object({
 		.max(new Date(2200, 1, 1)),
 	batch: z
 		.object({
-			ingredientId: z.number().int().min(1),
-			cost: z.number().positive(),
-			numberOfBags: z.number().positive(),
+			ingredientId: z.coerce.number().int().min(1),
+			cost: z.coerce.number().positive(),
+			numberOfBags: z.coerce.number().positive(),
 			productionDate: z.string(), //Todo
 			expirationDate: z.string(), //Todo
 			supplier_batch_code: z.string().min(2).max(256),
-			autoGenerateCode: z.boolean(),
-			fullAmount: z.number().positive()
+			fullAmount: z.coerce.number().positive()
 		})
 		.array()
 		.nonempty()
@@ -35,7 +34,7 @@ export const actions: Actions = {
 	default: async ({ request }) => {
 		const form = await superValidate(request, newBagsSchema);
 		if (!form.valid) {
-			console.log(form.errors);
+			console.log(form.errors.batch);
 			return { form };
 		}
 		console.log('POST', form.data);

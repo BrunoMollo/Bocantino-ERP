@@ -38,7 +38,7 @@ export type RegisterPurchaseDto = {
 	batches: BoughtBatch[];
 };
 export function registerBoughtIngrediets(data: RegisterPurchaseDto) {
-	return db.transaction(async (tx) => {
+	return db.transaction(async (tx: any) => {
 		const { documentId } = await tx
 			.insert(t_entry_document)
 			.values(data.document)
