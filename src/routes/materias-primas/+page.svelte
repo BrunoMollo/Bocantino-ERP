@@ -1,8 +1,15 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+
 	export let data;
 
-	function eliminar(id: number) {
-		data.list = data.list.filter((_, i) => data.list[i].id !== id);
+	async function eliminar(id: number) {
+		try {
+			const response = await fetch($page.url + '/delete/' + id, { method: 'POST' });
+			if (response.status == 200) {
+				data.list = data.list.filter((_, i) => data.list[i].id !== id);
+			}
+		} catch (error) {}
 	}
 </script>
 

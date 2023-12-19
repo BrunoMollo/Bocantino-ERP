@@ -11,6 +11,9 @@ import { eq } from 'drizzle-orm';
 export function getAll() {
 	return db.select().from(t_ingredient);
 }
+export async function deletebyID(id: number){
+	await db.delete(t_ingredient).where(eq(t_ingredient.id, id));
+}
 
 export async function getById(id: number) {
 	if (id <= 0) return null;
