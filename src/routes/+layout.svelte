@@ -15,6 +15,7 @@
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { page } from '$app/stores';
+	import { writable } from 'svelte/store';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	initializeStores();
@@ -36,6 +37,8 @@
 			toastStore.trigger({ message, timeout: 1500, classes: 'end-0' });
 		}
 	});
+
+	const title = writable('');
 </script>
 
 <svelte:head>
@@ -45,22 +48,19 @@
 <Drawer>
 	<div class="pt-4">
 		<strong class="p-4 text-xl uppercase">Bocantino</strong>
-		<Navigation />
+		<Navigation {title} />
 	</div>
 </Drawer>
 
 <Toast class="w-64" />
 <!-- App Shell -->
-<AppShell slotSidebarLeft="w-0 lg:w-64  bg-surface-900 ">
+<AppShell slotSidebarLeft="w-0  bg-surface-900 ">
 	<svelte:fragment slot="header">
 		<!-- App Bar -->
 		<AppBar>
 			<svelte:fragment slot="lead">
 				<div class="flex items-center">
-					<button
-						class="lg:hidden btn btn-sm mr-4"
-						on:click={() => drawerStore.open({ width: '64px' })}
-					>
+					<button class="btn btn-sm mr-4" on:click={() => drawerStore.open({ width: '64px' })}>
 						<span>
 							<svg viewBox="0 0 100 80" class="fill-token w-4 h-4">
 								<rect width="100" height="20" />
@@ -70,6 +70,7 @@
 						</span>
 					</button>
 				</div>
+				<h1 class="h2 pl-4">{$title}</h1>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<button class="btn variant-filled-secondary rounded-full mr-4" use:popup={popupFeatured}
@@ -92,3 +93,4 @@
 	<!-- Page Route Content -->
 	<slot />
 </AppShell>
+
