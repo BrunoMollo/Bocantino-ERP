@@ -15,7 +15,8 @@
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { page } from '$app/stores';
-	import { writable } from 'svelte/store';
+	import { derived } from 'svelte/store';
+	import { routes } from './_components/routes';
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	initializeStores();
@@ -38,7 +39,16 @@
 		}
 	});
 
-	const title = writable('');
+	const title = derived(page, ({ url }) => {
+		for (let group of routes) {
+			for (let { href, name } of group.routes) {
+				if (url.pathname === href) {
+					return name;
+				}
+			}
+		}
+		return '';
+	});
 </script>
 
 <svelte:head>
@@ -46,9 +56,9 @@
 </svelte:head>
 
 <Drawer>
-	<div class="pt-4">
+	<div class="pt-4 w-80">
 		<strong class="p-4 text-xl uppercase">Bocantino</strong>
-		<Navigation {title} />
+		<Navigation />
 	</div>
 </Drawer>
 
@@ -60,7 +70,7 @@
 		<AppBar>
 			<svelte:fragment slot="lead">
 				<div class="flex items-center">
-					<button class="btn btn-sm mr-4" on:click={() => drawerStore.open({ width: '64px' })}>
+					<button class="btn btn-sm mr-4" on:click={() => drawerStore.open({ width: '800px' })}>
 						<span>
 							<svg viewBox="0 0 100 80" class="fill-token w-4 h-4">
 								<rect width="100" height="20" />
@@ -87,9 +97,6 @@
 		</AppBar>
 	</svelte:fragment>
 
-	<svelte:fragment slot="sidebarLeft">
-		<Navigation />
-	</svelte:fragment>
 	<!-- Page Route Content -->
 	<slot />
 </AppShell>
