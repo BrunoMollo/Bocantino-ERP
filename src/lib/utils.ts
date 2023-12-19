@@ -1,5 +1,3 @@
-import type { InferInsertModel, Table } from 'drizzle-orm';
-
 export const getFirst = <T>(x: Array<T>) => x[0];
 
 export function isValidDate(day: string, month: string, year: string) {
@@ -29,3 +27,28 @@ export type Prettify<T> = {
  * Type Helper to creates dtos from tables of the drizzle schema
  **/
 export type TableInsert<T, O extends keyof T | ''> = Prettify<O extends '' ? T : Omit<T, O>>;
+
+/**
+ * This function is a helper to organize an array to be consumed by the Autocomplete component
+ *
+ *<pre>
+ *<script lang="ts">
+ *  const optionsDocumentTypes = makeOptions(data.documentTypes, { value: 'id', label: 'desc' });
+ *</script>
+ *<Autocomplete name="tipe_of_document"{...optionsDocumentTypes}/>
+ *
+ *</pre>
+ *
+ **/
+export function makeOptions<T>(arr: T[], fields: { label: keyof T; value: keyof T }) {
+	const { label, value } = fields;
+	return arr.reduce(
+		(prev, curr) => {
+			prev.values.push(curr[value]);
+			prev.labels.push(curr[label]);
+			return prev;
+		},
+		{ labels: [] as any[], values: [] as any[] }
+	);
+}
+

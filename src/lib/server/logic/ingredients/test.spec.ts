@@ -1,6 +1,5 @@
 import { describe, it, expect, vi, test, beforeEach, beforeAll } from 'vitest';
 import * as ingredients_ctrl from '.';
-import * as supplier_ctrl from '$lib/server/logic/suppliers';
 import { INVOICE_TYPE, db } from '$lib/server/db/__mocks__';
 import {
 	t_document_type,
@@ -138,6 +137,7 @@ describe('buy ingredients', async () => {
 
 	describe('valid case, one batches', () => {
 		const valid_input = {
+			supplierId: 1,
 			document: {
 				number: 'FACTURA-12345',
 				issue_date: new Date(2023, 1, 1),
@@ -145,17 +145,16 @@ describe('buy ingredients', async () => {
 			},
 			batches: [
 				{
-					supplier_bag_code: 'ABC123',
-					amountOfBags: 100,
+					batch_code: 'ABC123',
+					numberOfBags: 100,
 					initialAmount: 500,
 					productionDate: new Date(2000, 1, 1), // Example timestamp for January 1, 2000
 					expirationDate: new Date(2000, 1, 20), // Example timestamp for January 20, 2000
 					cost: 5000,
-					supplierId: 1,
 					ingredientId: 1
 				}
 			]
-		};
+		} satisfies RegisterPurchaseDto;
 		test('creates new document row', async () => {
 			await ingredients_ctrl.registerBoughtIngrediets(valid_input);
 			const listDocs = await db.select().from(t_entry_document);
@@ -193,8 +192,8 @@ describe('buy ingredients', async () => {
 			expect(list[0].supplierId).toBe(1);
 			expect(list[0].currency_alpha_code).toBe('ARG');
 			expect(list[0].cost).toBe(valid_input.batches[0].cost);
-			expect(list[0].supplier_bag_code).toBe(valid_input.batches[0].supplier_bag_code);
-			expect(list[0].amountOfBags).toBe(valid_input.batches[0].amountOfBags);
+			expect(list[0].batch_code).toBe(valid_input.batches[0].batch_code);
+			expect(list[0].numberOfBags).toBe(valid_input.batches[0].numberOfBags);
 			expect(list[0].initialAmount).toBe(valid_input.batches[0].initialAmount);
 			expect(list[0].expirationDate.toISOString()).toBe(
 				valid_input.batches[0].expirationDate.toISOString()
@@ -210,6 +209,7 @@ describe('buy ingredients', async () => {
 
 	describe('valid case, two batches', () => {
 		const valid_input = {
+			supplierId: 1,
 			document: {
 				number: 'FACTURA-12345',
 				issue_date: new Date(2023, 1, 1),
@@ -217,8 +217,8 @@ describe('buy ingredients', async () => {
 			},
 			batches: [
 				{
-					supplier_bag_code: 'ABC123',
-					amountOfBags: 100,
+					batch_code: 'ABC123',
+					numberOfBags: 100,
 					initialAmount: 500,
 					productionDate: new Date(2000, 1, 1), // Example timestamp for January 1, 2000
 					expirationDate: new Date(2000, 1, 20), // Example timestamp for January 20, 2000
@@ -228,17 +228,16 @@ describe('buy ingredients', async () => {
 				},
 
 				{
-					supplier_bag_code: 'XYZ123',
-					amountOfBags: 200,
+					batch_code: 'XYZ123',
+					numberOfBags: 200,
 					initialAmount: 530,
 					productionDate: new Date(2000, 1, 1), // Example timestamp for January 1, 2000
 					expirationDate: new Date(2000, 1, 20), // Example timestamp for January 20, 2000
 					cost: 5000,
-					supplierId: 1,
 					ingredientId: 1
 				}
 			]
-		};
+		} satisfies RegisterPurchaseDto;
 		test('creates new document row', async () => {
 			await ingredients_ctrl.registerBoughtIngrediets(valid_input);
 			const listDocs = await db.select().from(t_entry_document);
@@ -277,8 +276,8 @@ describe('buy ingredients', async () => {
 				expect(list[i].supplierId).toBe(1);
 				expect(list[i].currency_alpha_code).toBe('ARG');
 				expect(list[i].cost).toBe(valid_input.batches[i].cost);
-				expect(list[i].supplier_bag_code).toBe(valid_input.batches[i].supplier_bag_code);
-				expect(list[i].amountOfBags).toBe(valid_input.batches[i].amountOfBags);
+				expect(list[i].batch_code).toBe(valid_input.batches[i].batch_code);
+				expect(list[i].numberOfBags).toBe(valid_input.batches[i].numberOfBags);
 				expect(list[i].initialAmount).toBe(valid_input.batches[i].initialAmount);
 				expect(list[i].expirationDate.toISOString()).toBe(
 					valid_input.batches[i].expirationDate.toISOString()

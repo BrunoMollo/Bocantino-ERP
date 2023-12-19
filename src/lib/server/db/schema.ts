@@ -106,17 +106,19 @@ export const t_ingredient_batch = sqliteTable(
 	'ingredient_batch',
 	{
 		id: integer('id').notNull().primaryKey({ autoIncrement: true }),
-		supplier_bag_code: text('supplier_bag_code').notNull(), //may or may not be provided by the supplier
-		amountOfBags: integer('amount_of_bags').notNull(),
+		batch_code: text('supplier_bag_code').notNull(), //may or may not be provided by the supplier
 		initialAmount: real('full_amount').notNull(),
 		usedAmount: real('used_amount').notNull().default(0),
 		productionDate: integer('production_date', { mode: 'timestamp' }).notNull(),
 		expirationDate: integer('expiration_date', { mode: 'timestamp' }).notNull(),
-		cost: integer('cost').notNull(),
+		supplierId: integer('supplier_id').notNull(), //may be Bocantino
+		ingredientId: integer('ingredient_id').notNull(),
+		numberOfBags: integer('amount_of_bags').notNull(),
+		//external only
+		cost: integer('cost'),
 		currency_alpha_code: text('currency_alpha_code', { length: 4 }).notNull().default('ARG'),
-		loss: real('loss'),
-		supplierId: integer('supplier_id').notNull(),
-		ingredientId: integer('ingredient_id').notNull()
+		//internal only
+		loss: real('loss')
 	},
 	({ supplierId, ingredientId }) => ({
 		unq: foreignKey({
@@ -169,3 +171,4 @@ export const t_document_type = sqliteTable('document_type', {
 });
 //-------------------------------------------------------------------------------------////
 //
+

@@ -1,5 +1,5 @@
 import { db } from '$lib/server/db';
-import { t_document_type, t_supplier, tr_supplier_ingredient } from '$lib/server/db/schema';
+import { t_supplier, tr_supplier_ingredient } from '$lib/server/db/schema';
 import { getFirst, type TableInsert } from '$lib/utils';
 
 type NewSupplierDto = TableInsert<typeof t_supplier.$inferInsert, 'id'> & {
@@ -21,5 +21,26 @@ export async function add(data: NewSupplierDto) {
 	});
 
 	return { id };
+}
+
+export async function getAll() {
+	const resultSet = await db.query.t_supplier.findMany({
+		with: {
+			r_supplier_ingredient: {
+				columns: {},
+				with: {
+					ingredient: true
+				}
+			}
+		}
+	});
+	const suppliers = resultSet.map(({ id, name, email, r_supplier_ingredient }) => ({
+		id,
+		name,
+		email,
+		ingredients: r_supplier_ingredient.map(({ ingredient }) => ingredient)
+	}));
+
+	return suppliers;
 }
 

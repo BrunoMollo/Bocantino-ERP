@@ -1,24 +1,8 @@
-import { db } from '$lib/server/db';
 import type { PageServerLoad } from './$types';
+import * as suppliers_ctrl from '$lib/server/logic/suppliers';
 
 export const load: PageServerLoad = async () => {
-	const resultSet = await db.query.t_supplier.findMany({
-		with: {
-			r_supplier_ingredient: {
-				columns: {},
-				with: {
-					ingredient: true
-				}
-			}
-		}
-	});
-
-	const suppliers = resultSet.map(({ id, name, email, r_supplier_ingredient }) => ({
-		id,
-		name,
-		email,
-		ingredients: r_supplier_ingredient.map(({ ingredient }) => ingredient)
-	}));
-
+	const suppliers = suppliers_ctrl.getAll();
 	return { suppliers };
 };
+

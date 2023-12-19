@@ -1,13 +1,11 @@
 import { db } from '$lib/server/db';
 import {
-	t_document_type,
 	t_entry_document,
 	t_ingredient,
 	t_ingredient_batch,
 	t_ingridient_entry
 } from '$lib/server/db/schema';
-import { getFirst, type TableInsert } from '$lib/utils';
-import { error } from '@sveltejs/kit';
+import { getFirst, type Prettify, type TableInsert } from '$lib/utils';
 import { eq } from 'drizzle-orm';
 
 export function getAll() {
@@ -25,18 +23,20 @@ export async function getById(id: number) {
 	}
 }
 
-export function add(data: Omit<typeof t_ingredient.$inferInsert, 'id'>) {
-	return db.insert(t_ingredient).values(data).returning({ id: t_ingredient.id }).then(getFirst);
+export async function add(data: Omit<typeof t_ingredient.$inferInsert, 'id'>) {
+	const x = await db.insert(t_ingredient).values(data).returning({ id: t_ingredient.id });
+	return getFirst(x);
 }
 
 type BoughtBatch = TableInsert<
 	typeof t_ingredient_batch.$inferInsert,
-	'id' | 'loss' | 'currency_alpha_code'
+	'id' | 'loss' | 'currency_alpha_code' | 'supplierId'
 >;
-export type RegisterPurchaseDto = {
+export type RegisterPurchaseDto = Prettify<{
+	supplierId: number;
 	document: TableInsert<typeof t_entry_document.$inferInsert, 'id'>;
 	batches: BoughtBatch[];
-};
+}>;
 export function registerBoughtIngrediets(data: RegisterPurchaseDto) {
 	return db.transaction(async (tx: any) => {
 		const { documentId } = await tx
@@ -47,8 +47,9 @@ export function registerBoughtIngrediets(data: RegisterPurchaseDto) {
 
 		await tx.insert(t_ingridient_entry).values({ totalCost: null, documentId });
 
+		const { supplierId } = data;
 		for (let batch of data.batches) {
-			await tx.insert(t_ingredient_batch).values(batch);
+			await tx.insert(t_ingredient_batch).values({ ...batch, supplierId });
 		}
 	});
 }
