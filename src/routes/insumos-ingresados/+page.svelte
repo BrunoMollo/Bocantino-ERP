@@ -5,22 +5,23 @@
 		type PopupSettings,
 		type TableSource,
 		tableMapperValues,
-		Table
+		Table,
+		FileButton
 	} from '@skeletonlabs/skeleton';
 	import { Paginator } from '@skeletonlabs/skeleton';
 
 	const source = [
-		{ position: 1, name: 'Hydrogen', weight: 1.0079, symbol: 'H' },
-		{ position: 2, name: 'Helium', weight: 4.0026, symbol: 'He' },
-		{ position: 3, name: 'Lithium', weight: 6.941, symbol: 'Li' },
-		{ position: 4, name: 'Beryllium', weight: 9.0122, symbol: 'Be' },
-		{ position: 5, name: 'Boron', weight: 10.811, symbol: 'B' }
+		{ position: 1, proveedor: 'Juan S.A', fechaAlta: '11-04-2023', codigoFactura: '32084fc08' },
+		{ position: 2, proveedor: 'Fernando S.A', fechaAlta: '11-04-2023', codigoFactura: '249fj24' },
+		{ position: 3, proveedor: 'Zapallo S.A', fechaAlta: '11-04-2023', codigoFactura: '428983rd' },
+		{ position: 4, proveedor: 'Beryllium S.A', fechaAlta: '11-04-2023', codigoFactura: '49fjw942' },
+		{ position: 5, proveedor: 'Corral S.A.', fechaAlta: '11-04-2023', codigoFactura: '5f8j39f' }
 	];
 
 	const tableSimple: TableSource = {
-		head: ['Name', 'Symbol', 'Weight'],
-		body: tableMapperValues(source, ['name', 'symbol', 'weight']),
-		meta: tableMapperValues(source, ['position', 'name', 'symbol', 'weight'])
+		head: ['ID', 'Proveedor', 'Fecha alta', 'Codigo Factura'],
+		body: tableMapperValues(source, ['position', 'proveedor', 'fechaAlta', 'codigoFactura']),
+		meta: tableMapperValues(source, ['position', 'Proveedor', 'FechaAlta', 'codigoFactura'])
 	};
 
 	let paginationSettings = {
@@ -53,7 +54,7 @@
 	<div class="arrow variant-filled-primary" />
 </div>
 <div class="w-11/12 mx-auto mt-10">
-	<Table source={tableSimple} class="mb-4" />
+	<Table source={tableSimple} interactive={true} class="mb-4" />
 	<Paginator
 		bind:settings={paginationSettings}
 		showFirstLastButtons={true}

@@ -60,13 +60,13 @@
 	];
 </script>
 
-<main class="container h-full mx-auto flex justify-center items-start mt-4">
+<main class="container h-full mx-auto flex justify-center items-start">
 	<div
 		class="snap-x scroll-px-4 snap-mandatory scroll-smooth flex gap-4 overflow-x-auto px-4 py-10"
 	>
 		{#each listaTipos as tipoMateriaPrima}
 			<div
-				class=" shrink-0 card p-5 h-56 w-40 md:w-80 rounded-lg shadow-lg relative"
+				class=" shrink-0 card p-5 h-48 w-40 md:w-80 rounded-lg shadow-lg relative"
 				style="background-color:{tipoMateriaPrima.stockR / tipoMateriaPrima.stockD > 0.5
 					? ''
 					: 'rgba(127, 29, 29, 0.4)'};box-shadow:{tipoMateriaPrima.stockR /

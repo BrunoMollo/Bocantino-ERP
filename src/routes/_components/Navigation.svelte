@@ -7,24 +7,26 @@
 	export let title: Writable<String>;
 
 	type Route = { name: string; href: string; clases: string };
-	const routes: Route[] = [
+	const configurationRoutes: Route[] = [
+		{
+			name: 'Materias Primas',
+			href: '/materias-primas',
+			clases: 'bx bx-vial text-xl'
+		},
+		{ name: 'Proveedores', href: '/proveedores', clases: 'bx bx-group text-xl' },
+		{ name: 'Productos', href: '/productos', clases: 'bx bx-package text-xl' }
+	];
+	const productiveRoutes: Route[] = [
 		{
 			name: 'Ingreso insumos',
 			href: '/ingreso-insumos',
 			clases: 'bx bxs-archive-in text-xl'
 		},
 		{
-			name: 'Materias Primas',
-			href: '/materias-primas',
-			clases: 'bx bx-vial text-xl'
-		},
-		{
 			name: 'Listado',
 			href: '/insumos-ingresados',
 			clases: 'bx bx-list-ul text-xl'
-		},
-		{ name: 'Proveedores', href: '/proveedores', clases: 'bx bx-group text-xl' },
-		{ name: 'Productos', href: '/productos', clases: 'bx bx-package text-xl' }
+		}
 	];
 </script>
 
@@ -33,7 +35,34 @@
 	<a class="invisible" href={$page.url.href} on:click={drawerStore.close}>volver</a>
 
 	<ul>
-		{#each routes as { name, href, clases }}
+		<div class="mb-5 w-full flex justify-between uppercase h-full">
+			<i class="bx bx-cog text-xl"></i>
+			<p class="align-middle my-auto">Configuraciones</p>
+		</div>
+		{#each configurationRoutes as { name, href, clases }}
+			<li>
+				<a
+					class="btn variant-filled mb-5 w-full flex justify-between hover:text-slate-50 uppercase"
+					{href}
+					on:click={() => {
+						drawerStore.close();
+						title.set(name);
+					}}
+					class:active={$page.url.pathname === href}
+					tabindex="0"
+				>
+					<i class={clases}></i>
+					{name}
+				</a>
+			</li>
+		{/each}
+		<div class="pb-10"></div>
+		<div class="pb-5 w-full flex justify-between uppercase h-full">
+			<i class="bx bxs-grid-alt text-xl"></i>
+			<p class="align-middle my-auto">Produccion</p>
+		</div>
+
+		{#each productiveRoutes as { name, href, clases }}
 			<li>
 				<a
 					class="btn variant-filled mb-5 w-full flex justify-between hover:text-slate-50 uppercase"
@@ -65,4 +94,3 @@
 		color: whitesmoke;
 	}
 </style>
-
