@@ -9,7 +9,6 @@
 
 	export let data;
 	const { form, enhance, errors } = superForm(data.form, { dataType: 'json' });
-	const proxyIssueDate = dateProxy(form, 'issueDate', { format: 'date' });
 
 	if ($form.batches.length === 0) {
 		addLine();
@@ -88,7 +87,7 @@
 			<!-- svelte-ignore a11y-label-has-associated-control -->
 			<label class="label">
 				<small class="my-auto mr-1 font-black text-lg"> Fecha factura</small>
-				<InputDate className="input" bind:value={$proxyIssueDate} />
+				<InputDate className="input" bind:value={$form.issueDate} />
 			</label>
 		</div>
 	</div>
@@ -134,8 +133,7 @@
 						</td>
 						<td class="w-32">
 							<div class="relative inline-block">
-								<InputDate className="input w-32" bind:value={$form.batches[i].productionDate}
-								></InputDate>
+								<InputDate className="input w-32" bind:value={$form.batches[i].productionDate} />
 							</div>
 						</td>
 						<td>

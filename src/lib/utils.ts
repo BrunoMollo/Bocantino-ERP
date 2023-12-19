@@ -1,18 +1,49 @@
 export const getFirst = <T>(x: Array<T>) => x[0];
 
-export function isValidDate(day: string, month: string, year: string) {
-	// Convert strings to numbers
-	const dayNum = parseInt(day, 10);
-	const monthNum = parseInt(month, 10);
-	const yearNum = parseInt(year, 10);
+type DateString = string & { __pattern: 'yyyy-mm-dd' };
+/**
+ * Check if a given string can make a calid date, following the html standar given by the date input (yyyy-mm-dd)
+ * Source: https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/date#technical_summary
+ **/
+export function isValidDateBackend(str: string): str is DateString {
+	if (str.length !== 10) {
+		return false;
+	}
+	const splited = str.split('-');
+	if (splited.length !== 3) {
+		return false;
+	}
 
-	// Create a Date object using the provided values
-	const date = new Date(yearNum, monthNum - 1, dayNum);
+	if (splited[0].length != 4) {
+		return false;
+	}
+	if (splited[1].length != 2) {
+		return false;
+	}
+	if (splited[2].length != 2) {
+		return false;
+	}
+	const year = parseInt(splited[0], 10);
+	const month = parseInt(splited[1], 10);
+	const day = parseInt(splited[2], 10);
 
-	// Check if the input values match the components of the created date
-	return (
-		date.getFullYear() === yearNum && date.getMonth() === monthNum - 1 && date.getDate() === dayNum
-	);
+	if (day < 1 || month < 1 || year < 1) {
+		return false;
+	}
+
+	const date = new Date(year, month - 1, day);
+
+	const makesSense =
+		date.getFullYear() === year && date.getMonth() === month - 1 && date.getDate() === day;
+	return makesSense;
+}
+
+export function parseStringToDate(str: DateString) {
+	const splited = str.split('-');
+	const year = parseInt(splited[0], 10);
+	const month = parseInt(splited[1], 10);
+	const day = parseInt(splited[2], 10);
+	return new Date(year, month - 1, day);
 }
 
 /**

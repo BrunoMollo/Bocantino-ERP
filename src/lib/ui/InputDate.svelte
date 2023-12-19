@@ -1,10 +1,9 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
-	import { isValidDate } from '$lib/utils';
 
 	export let delimiter = '-';
 	export let className = '';
-	export let value = '';
+	export let value = '' as any;
 
 	const valueStore = writable('');
 	let prevValue = '';
@@ -29,8 +28,20 @@
 		}
 
 		if (val.length == 10) {
-			const [day, month, year] = val.split(delimiter);
-			if (isValidDate(day, month, year)) {
+			const [dayNum, monthNum, yearNum] = val.split(delimiter).map((x) => Number(x));
+
+			if (dayNum < 1 || monthNum < 1 || yearNum < 1) {
+				return;
+			}
+
+			const date = new Date(yearNum, monthNum - 1, dayNum);
+
+			if (
+				date.getFullYear() === yearNum &&
+				date.getMonth() === monthNum - 1 &&
+				date.getDate() === dayNum
+			) {
+				const [day, month, year] = val.split(delimiter);
 				value = `${year}-${month}-${day}`;
 			}
 		}
@@ -50,3 +61,4 @@
 		if (Number.isNaN(num)) e.preventDefault();
 	}}
 />
+
