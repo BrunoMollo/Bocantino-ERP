@@ -6,5 +6,5 @@
 
 <div class="card p-6">
 	<h2 class="h2">Alta Tipo Materia Prima</h2>
-	<MateriaPrimaForm {data} />
+	<MateriaPrimaForm {data} ingredients={data.ingredients} />
 </div>
