@@ -10,8 +10,18 @@ export const t_ingredient = sqliteTable('ingredient', {
 });
 export const rel_ingredient = relations(t_ingredient, ({ many }) => ({
 	r_ingredient_product: many(tr_ingredient_product),
-	r_supplier_ingredient: many(tr_supplier_ingredient)
+	r_supplier_ingredient: many(tr_supplier_ingredient),
+	r_ingredient_ingredient: many(tr_ingredient_ingredient)
 }));
+export const tr_ingredient_ingredient = sqliteTable('r_ingredient_ingredient', {
+	amount: real('amount').notNull(),
+	derivedId: integer('derived_id')
+		.notNull()
+		.references(() => t_ingredient.id),
+	sourceId: integer('source_id')
+		.notNull()
+		.references(() => t_ingredient.id)
+});
 //-------------------------------------------------------------------------------------////
 //
 
@@ -38,7 +48,7 @@ export const tr_ingredient_product = sqliteTable(
 		productId: integer('product_id')
 			.notNull()
 			.references(() => t_product.id),
-		amount: integer('amount').notNull()
+		amount: real('amount').notNull()
 	},
 	({ ingredientId, productId }) => ({
 		pk: primaryKey({ columns: [ingredientId, productId] })

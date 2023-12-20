@@ -3,7 +3,8 @@ import {
 	t_entry_document,
 	t_ingredient,
 	t_ingredient_batch,
-	t_ingridient_entry
+	t_ingridient_entry,
+	tr_ingredient_ingredient
 } from '$lib/server/db/schema';
 import { getFirst, type Prettify, type TableInsert } from '$lib/utils';
 import { eq } from 'drizzle-orm';
@@ -26,9 +27,26 @@ export async function getById(id: number) {
 	}
 }
 
-export async function add(data: Omit<typeof t_ingredient.$inferInsert, 'id'>) {
-	const x = await db.insert(t_ingredient).values(data).returning({ id: t_ingredient.id });
-	return getFirst(x);
+export async function add(
+	ingredient: Omit<typeof t_ingredient.$inferInsert, 'id'>,
+	derivedFrom?: { derivedId: number; amount: number }
+) {
+	return await db.transaction(async (tx) => {
+		const insertedIngredient = await tx
+			.insert(t_ingredient)
+			.values(ingredient)
+			.returning({ id: t_ingredient.id })
+			.then(getFirst);
+
+		if (derivedFrom) {
+			const { derivedId, amount } = derivedFrom;
+			await tx
+				.insert(tr_ingredient_ingredient)
+				.values({ sourceId: insertedIngredient.id, derivedId, amount });
+		}
+
+		return insertedIngredient;
+	});
 }
 
 type BoughtBatch = TableInsert<

@@ -8,6 +8,7 @@ import {
 	t_ingredient_batch,
 	t_ingridient_entry,
 	t_supplier,
+	tr_ingredient_ingredient,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
 import type { RegisterPurchaseDto } from '.';
@@ -16,28 +17,26 @@ import { eq } from 'drizzle-orm';
 vi.mock('$lib/server/db/index.ts');
 
 describe('ingredients crud', () => {
-	beforeAll(async () => {
+	beforeEach(async () => {
+		await db.delete(tr_ingredient_ingredient);
 		await db.delete(t_ingredient_batch);
 		await db.delete(tr_supplier_ingredient);
 		await db.delete(t_supplier);
 		await db.delete(t_ingredient);
 	});
 	describe('getAll', () => {
-		it('return empty when there are not ingredients', async () => {
-			await db.delete(t_ingredient);
+		test('return empty when there are not ingredients', async () => {
 			const list = await ingredients_ctrl.getAll();
 			expect(list.length).toBe(0);
 		});
-		it('return one element', async () => {
-			await db.delete(t_ingredient);
+		test('return one element', async () => {
 			await db.insert(t_ingredient).values({ name: 'Banana', unit: 'Kg' });
 			const list = await ingredients_ctrl.getAll();
 			expect(list.length).toBe(1);
 			expect(list[0].name).toBe('Banana');
 			expect(list[0].unit).toBe('Kg');
 		});
-		it('return two element', async () => {
-			await db.delete(t_ingredient);
+		test('return two element', async () => {
 			await db.insert(t_ingredient).values({ name: 'Banana', unit: 'Kg' });
 			await db.insert(t_ingredient).values({ name: 'Egg', unit: 'Kg' });
 			const list = await ingredients_ctrl.getAll();
@@ -49,13 +48,11 @@ describe('ingredients crud', () => {
 		});
 	});
 	describe('getByID', () => {
-		it('return null when there are not ingredients', async () => {
-			await db.delete(t_ingredient);
+		test('return null when there are not ingredients', async () => {
 			const data = await ingredients_ctrl.getById(1);
 			expect(data).toBe(null);
 		});
-		it('return element 1 when it exist', async () => {
-			await db.delete(t_ingredient);
+		test('return element 1 when it exist', async () => {
 			await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg' });
 			await db.insert(t_ingredient).values({ id: 2, name: 'Egg', unit: 'Kg' });
 			const data = await ingredients_ctrl.getById(1);
@@ -64,8 +61,7 @@ describe('ingredients crud', () => {
 			expect(data?.name).toBe('Banana');
 			expect(data?.unit).toBe('Kg');
 		});
-		it('return element 2 when it exist', async () => {
-			await db.delete(t_ingredient);
+		test('return element 2 when it exist', async () => {
 			await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg' });
 			await db.insert(t_ingredient).values({ id: 2, name: 'Egg', unit: 'Kg' });
 			const data = await ingredients_ctrl.getById(2);
@@ -75,17 +71,15 @@ describe('ingredients crud', () => {
 			expect(data?.unit).toBe('Kg');
 		});
 
-		it('return null when element 2 does not exist', async () => {
-			await db.delete(t_ingredient);
+		test('return null when element 2 does not exist', async () => {
 			await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg' });
 			await db.insert(t_ingredient).values({ id: 3, name: 'Water', unit: 'Kg' });
 			const data = await ingredients_ctrl.getById(2);
 
 			expect(data).toBe(null);
 		});
-		it('return null when id is negative, without making db call', async () => {
+		test('return null when id is negative, without making db call', async () => {
 			const spy_select = vi.spyOn(db, 'select');
-			await db.delete(t_ingredient);
 			await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg' });
 			await db.insert(t_ingredient).values({ id: 3, name: 'Water', unit: 'Kg' });
 			const data = await ingredients_ctrl.getById(-1);
@@ -94,7 +88,7 @@ describe('ingredients crud', () => {
 			expect(data).toBe(null);
 		});
 
-		it('return null when id is zero, without making db call', async () => {
+		test('return null when id is zero, without making db call', async () => {
 			const spy_select = vi.spyOn(db, 'select');
 			await db.delete(t_ingredient);
 			await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg' });
@@ -106,8 +100,7 @@ describe('ingredients crud', () => {
 		});
 	});
 	describe('add', () => {
-		it('insert new ingredient', async () => {
-			await db.delete(t_ingredient);
+		test('insert new ingredient', async () => {
 			const element = { name: 'Orange', unit: 'Kg' };
 			await ingredients_ctrl.add(element);
 			const list = await db.select().from(t_ingredient);
@@ -116,6 +109,26 @@ describe('ingredients crud', () => {
 			expect(list[0].name).toBe(element.name);
 			expect(list[0].unit).toBe(element.unit);
 			expect(list[1]).toBeFalsy();
+			const derived = await db.select().from(tr_ingredient_ingredient);
+			expect(derived.length).toBe(0);
+		});
+		test('insert new derived ingredient', async () => {
+			await db.insert(t_ingredient).values({ id: 100, name: 'Higado', unit: 'Kg' });
+			const ingredientPrev = await db.select().from(t_ingredient);
+			expect(ingredientPrev.length).toBe(1);
+			const inserted = await ingredients_ctrl.add(
+				{ name: 'Higado desidratado', unit: 'Kg' },
+				{ derivedId: 100, amount: 50 }
+			);
+			expect(inserted.id).toBeTruthy();
+
+			const listIngredients = await db.select().from(t_ingredient);
+			expect(listIngredients.length).toBe(2);
+			const derivedRelationsList = await db.select().from(tr_ingredient_ingredient);
+			expect(derivedRelationsList.length).toBe(1);
+			expect(derivedRelationsList[0].amount).toBe(50);
+			expect(derivedRelationsList[0].derivedId).toBe(100);
+			expect(derivedRelationsList[0].sourceId).toBe(inserted.id);
 		});
 	});
 });

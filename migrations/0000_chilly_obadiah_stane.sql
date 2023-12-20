@@ -20,16 +20,16 @@ CREATE TABLE `ingredient` (
 CREATE TABLE `ingredient_batch` (
 	`id` integer PRIMARY KEY AUTOINCREMENT NOT NULL,
 	`supplier_bag_code` text NOT NULL,
-	`amount_of_bags` integer NOT NULL,
 	`full_amount` real NOT NULL,
 	`used_amount` real DEFAULT 0 NOT NULL,
 	`production_date` integer NOT NULL,
 	`expiration_date` integer NOT NULL,
-	`cost` integer NOT NULL,
-	`currency_alpha_code` text(4) DEFAULT 'ARG' NOT NULL,
-	`loss` real,
 	`supplier_id` integer NOT NULL,
 	`ingredient_id` integer NOT NULL,
+	`amount_of_bags` integer NOT NULL,
+	`cost` integer,
+	`currency_alpha_code` text(4) DEFAULT 'ARG' NOT NULL,
+	`loss` real,
 	FOREIGN KEY (`supplier_id`,`ingredient_id`) REFERENCES `r_supplier_ingredient`(`supplier_id`,`ingredient_id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
@@ -53,10 +53,18 @@ CREATE TABLE `supplier` (
 	`email` text NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE `r_ingredient_ingredient` (
+	`amount` real NOT NULL,
+	`derived_id` integer NOT NULL,
+	`source_id` integer NOT NULL,
+	FOREIGN KEY (`derived_id`) REFERENCES `ingredient`(`id`) ON UPDATE no action ON DELETE no action,
+	FOREIGN KEY (`source_id`) REFERENCES `ingredient`(`id`) ON UPDATE no action ON DELETE no action
+);
+--> statement-breakpoint
 CREATE TABLE `r_ingredient_product` (
 	`ingredient_id` integer NOT NULL,
 	`product_id` integer NOT NULL,
-	`amount` integer NOT NULL,
+	`amount` real NOT NULL,
 	PRIMARY KEY(`ingredient_id`, `product_id`),
 	FOREIGN KEY (`ingredient_id`) REFERENCES `ingredient`(`id`) ON UPDATE no action ON DELETE no action,
 	FOREIGN KEY (`product_id`) REFERENCES `product`(`id`) ON UPDATE no action ON DELETE no action
