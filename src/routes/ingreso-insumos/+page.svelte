@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
 	import { dateProxy, superForm } from 'sveltekit-superforms/client';
-	import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
 	import InputDate from '$lib/ui/InputDate.svelte';
 	import Autocomplete from '$lib/ui/Autocomplete.svelte';
 	import { makeOptions } from '$lib/utils.js';
@@ -25,8 +24,9 @@
 	function removeLine(index: number) {
 		form.update((f) => {
 			if (f.batches.length > 1) {
+				const newBatches = f.batches.filter((_, i) => i !== index);
 				//@ts-ignore
-				f.batches = f.batches.filter((_, i) => i !== index);
+				f.batches = newBatches;
 			}
 			return f;
 		});
@@ -43,6 +43,17 @@
 		}
 		return makeOptions(selectedSupplier.ingredients, { value: 'id', label: 'name' });
 	});
+
+	// This shit could be removed with Svelte 5 support of ts in markdown
+	const batchesError = derived(
+		errors,
+		({ batches }) =>
+			(i: number, key: keyof (typeof $form.batches)[0]) => {
+				if (batches && batches[i]) {
+					return batches[i][key];
+				}
+			}
+	);
 </script>
 
 <main class="container h-full mx-auto flex justify-center items-center">
@@ -68,7 +79,7 @@
 						placeholder="Seleccionar..."
 						name="tipe_of_document"
 						bind:value={$form.idDocumentType}
-						className="input {$errors.idDocumentType ? 'input-error' : ''}"
+						className={`input ${$errors.idDocumentType ? 'input-error' : ''}`}
 						{...optionsDocumentTypes}
 					/>
 				</label>
@@ -79,7 +90,8 @@
 					<input
 						type="text"
 						bind:value={$form.invoiceNumber}
-						class="input {$errors.invoiceNumber ? 'input-error' : ''}"
+						class="input"
+						class:input-error={$errors.invoiceNumber}
 						aria-invalid={$errors.invoiceNumber ? 'true' : undefined}
 					/>
 				</label>
@@ -88,7 +100,10 @@
 				<!-- svelte-ignore a11y-label-has-associated-control -->
 				<label class="label">
 					<small class="my-auto mr-1 font-black text-lg"> Fecha factura</small>
-					<InputDate className="input" bind:value={$form.issueDate} />
+					<InputDate
+						className={`input ${$errors.issueDate ? 'input-error' : ''}`}
+						bind:value={$form.issueDate}
+					/>
 				</label>
 			</div>
 		</div>
@@ -114,6 +129,7 @@
 								<label class="label w-52">
 									{#key $form.supplierId}
 										<Autocomplete
+											className={`input ${$batchesError(i, 'ingredientId') ? 'input-error' : ''}`}
 											name={`ingredientId-${i}`}
 											bind:value={$form.batches[i].ingredientId}
 											{...$optionsIngredients}
@@ -123,35 +139,64 @@
 							</td>
 							<td>
 								<div class="relative inline-block w-24">
-									<input class="input" type="text" bind:value={$form.batches[i].initialAmount} />
+									<input
+										class="input"
+										class:input-error={$batchesError(i, 'initialAmount')}
+										type="text"
+										bind:value={$form.batches[i].initialAmount}
+									/>
 									<span class="suffix absolute right-3 top-1/4">kg.</span>
 								</div>
 							</td>
 							<td>
 								<div class="relative inline-block w-20">
-									<input class="input" type="text" bind:value={$form.batches[i].numberOfBags} />
+									<input
+										class="input"
+										class:input-error={$batchesError(i, 'numberOfBags')}
+										type="text"
+										bind:value={$form.batches[i].numberOfBags}
+									/>
 								</div>
 							</td>
 							<td class="w-32">
 								<div class="relative inline-block">
-									<InputDate className="input w-32" bind:value={$form.batches[i].productionDate} />
+									<InputDate
+										className={`input w-32 ${
+											$batchesError(i, 'productionDate') ? 'input-error' : ''
+										}`}
+										bind:value={$form.batches[i].productionDate}
+									/>
 								</div>
 							</td>
 							<td>
 								<div class="relative inline-block">
-									<InputDate className="input w-32" bind:value={$form.batches[i].expirationDate}
+									<InputDate
+										className={`input w-32 ${
+											$batchesError(i, 'expirationDate') ? 'input-error' : ''
+										}`}
+										bind:value={$form.batches[i].expirationDate}
 									></InputDate>
 								</div>
 							</td>
 							<td class="w-24">
 								<div class="relative inline-block">
-									<input class="input w-24" type="text" bind:value={$form.batches[i].cost} />
+									<input
+										class="input w-24"
+										type="text"
+										class:input-error={$batchesError(i, 'cost')}
+										bind:value={$form.batches[i].cost}
+									/>
 									<span class="suffix absolute right-3 top-1/4">$</span>
 								</div>
 							</td>
 							<td>
 								<div class="input-group input-group-divider grid-cols-[auto_auto] w-70">
-									<input type="text" bind:value={$form.batches[i].batch_code} />
+									<input
+										type="text"
+										class="input"
+										class:input-error={$batchesError(i, 'batch_code')}
+										bind:value={$form.batches[i].batch_code}
+									/>
 									<button type="button" class="variant-filled-surface">Autogenerar</button>
 								</div>
 							</td>
