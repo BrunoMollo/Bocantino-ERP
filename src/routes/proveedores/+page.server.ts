@@ -1,8 +1,8 @@
+import { suppliers_service } from '$logic';
 import type { PageServerLoad } from './$types';
-import * as suppliers_ctrl from '$lib/server/logic/suppliers';
 
 export const load: PageServerLoad = async () => {
-	const suppliers = suppliers_ctrl.getAll();
+	const suppliers = suppliers_service.getAll();
 	return { suppliers };
 };
 

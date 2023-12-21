@@ -25,7 +25,6 @@
 								{href}
 								on:click={() => {
 									drawerStore.close();
-									title.set(name);
 								}}
 								class:active={$page.url.pathname === href}
 								tabindex="0"

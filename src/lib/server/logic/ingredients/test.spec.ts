@@ -1,5 +1,4 @@
 import { describe, it, expect, vi, test, beforeEach, beforeAll } from 'vitest';
-import * as ingredients_ctrl from '.';
 import { INVOICE_TYPE, db } from '$lib/server/db/__mocks__';
 import {
 	t_document_type,
@@ -13,6 +12,7 @@ import {
 } from '$lib/server/db/schema';
 import type { RegisterPurchaseDto } from '.';
 import { eq } from 'drizzle-orm';
+import { ingredients_service } from '$logic';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -26,12 +26,12 @@ describe('ingredients crud', () => {
 	});
 	describe('getAll', () => {
 		test('return empty when there are not ingredients', async () => {
-			const list = await ingredients_ctrl.getAll();
+			const list = await ingredients_service.getAll();
 			expect(list.length).toBe(0);
 		});
 		test('return one element', async () => {
 			await db.insert(t_ingredient).values({ name: 'Banana', unit: 'Kg' });
-			const list = await ingredients_ctrl.getAll();
+			const list = await ingredients_service.getAll();
 			expect(list.length).toBe(1);
 			expect(list[0].name).toBe('Banana');
 			expect(list[0].unit).toBe('Kg');
@@ -39,7 +39,7 @@ describe('ingredients crud', () => {
 		test('return two element', async () => {
 			await db.insert(t_ingredient).values({ name: 'Banana', unit: 'Kg' });
 			await db.insert(t_ingredient).values({ name: 'Egg', unit: 'Kg' });
-			const list = await ingredients_ctrl.getAll();
+			const list = await ingredients_service.getAll();
 			expect(list.length).toBe(2);
 			expect(list[0].name).toBe('Banana');
 			expect(list[0].unit).toBe('Kg');
@@ -49,13 +49,13 @@ describe('ingredients crud', () => {
 	});
 	describe('getByID', () => {
 		test('return null when there are not ingredients', async () => {
-			const data = await ingredients_ctrl.getById(1);
+			const data = await ingredients_service.getById(1);
 			expect(data).toBe(null);
 		});
 		test('return element 1 when it exist', async () => {
 			await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg' });
 			await db.insert(t_ingredient).values({ id: 2, name: 'Egg', unit: 'Kg' });
-			const data = await ingredients_ctrl.getById(1);
+			const data = await ingredients_service.getById(1);
 
 			expect(data?.id).toBe(1);
 			expect(data?.name).toBe('Banana');
@@ -64,7 +64,7 @@ describe('ingredients crud', () => {
 		test('return element 2 when it exist', async () => {
 			await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg' });
 			await db.insert(t_ingredient).values({ id: 2, name: 'Egg', unit: 'Kg' });
-			const data = await ingredients_ctrl.getById(2);
+			const data = await ingredients_service.getById(2);
 
 			expect(data?.id).toBe(2);
 			expect(data?.name).toBe('Egg');
@@ -74,7 +74,7 @@ describe('ingredients crud', () => {
 		test('return null when element 2 does not exist', async () => {
 			await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg' });
 			await db.insert(t_ingredient).values({ id: 3, name: 'Water', unit: 'Kg' });
-			const data = await ingredients_ctrl.getById(2);
+			const data = await ingredients_service.getById(2);
 
 			expect(data).toBe(null);
 		});
@@ -82,7 +82,7 @@ describe('ingredients crud', () => {
 			const spy_select = vi.spyOn(db, 'select');
 			await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg' });
 			await db.insert(t_ingredient).values({ id: 3, name: 'Water', unit: 'Kg' });
-			const data = await ingredients_ctrl.getById(-1);
+			const data = await ingredients_service.getById(-1);
 
 			expect(spy_select).not.toHaveBeenCalled();
 			expect(data).toBe(null);
@@ -93,7 +93,7 @@ describe('ingredients crud', () => {
 			await db.delete(t_ingredient);
 			await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg' });
 			await db.insert(t_ingredient).values({ id: 3, name: 'Water', unit: 'Kg' });
-			const data = await ingredients_ctrl.getById(0);
+			const data = await ingredients_service.getById(0);
 
 			expect(spy_select).not.toHaveBeenCalled();
 			expect(data).toBe(null);
@@ -102,7 +102,7 @@ describe('ingredients crud', () => {
 	describe('add', () => {
 		test('insert new ingredient', async () => {
 			const element = { name: 'Orange', unit: 'Kg' };
-			await ingredients_ctrl.add(element);
+			await ingredients_service.add(element);
 			const list = await db.select().from(t_ingredient);
 			expect(list.length).toBe(1);
 			expect(list[0].id).toBeTruthy();
@@ -116,7 +116,7 @@ describe('ingredients crud', () => {
 			await db.insert(t_ingredient).values({ id: 100, name: 'Higado', unit: 'Kg' });
 			const ingredientPrev = await db.select().from(t_ingredient);
 			expect(ingredientPrev.length).toBe(1);
-			const inserted = await ingredients_ctrl.add(
+			const inserted = await ingredients_service.add(
 				{ name: 'Higado desidratado', unit: 'Kg' },
 				{ derivedId: 100, amount: 50 }
 			);
@@ -169,7 +169,7 @@ describe('buy ingredients', async () => {
 			]
 		} satisfies RegisterPurchaseDto;
 		test('creates new document row', async () => {
-			await ingredients_ctrl.registerBoughtIngrediets(valid_input);
+			await ingredients_service.registerBoughtIngrediets(valid_input);
 			const listDocs = await db.select().from(t_entry_document);
 			expect(listDocs.length).toBe(1);
 			const newDoc = listDocs[0];
@@ -180,7 +180,7 @@ describe('buy ingredients', async () => {
 			expect(newDoc.issue_date.toISOString()).toBe(valid_input.document.issue_date.toISOString());
 		});
 		test('creates new entry row', async () => {
-			await ingredients_ctrl.registerBoughtIngrediets(valid_input);
+			await ingredients_service.registerBoughtIngrediets(valid_input);
 			const entryList = await db.select().from(t_ingridient_entry);
 			expect(entryList.length).toBe(1);
 			expect(entryList[0]).toBeTruthy();
@@ -197,7 +197,7 @@ describe('buy ingredients', async () => {
 		});
 
 		test('save the batch', async () => {
-			await ingredients_ctrl.registerBoughtIngrediets(valid_input);
+			await ingredients_service.registerBoughtIngrediets(valid_input);
 			const list = await db.select().from(t_ingredient_batch);
 			expect(list.length).toBe(valid_input.batches.length);
 			expect(list[0].id).toBeTruthy();
@@ -252,7 +252,7 @@ describe('buy ingredients', async () => {
 			]
 		} satisfies RegisterPurchaseDto;
 		test('creates new document row', async () => {
-			await ingredients_ctrl.registerBoughtIngrediets(valid_input);
+			await ingredients_service.registerBoughtIngrediets(valid_input);
 			const listDocs = await db.select().from(t_entry_document);
 			expect(listDocs.length).toBe(1);
 			const newDoc = listDocs[0];
@@ -263,7 +263,7 @@ describe('buy ingredients', async () => {
 			expect(newDoc.issue_date.toISOString()).toBe(valid_input.document.issue_date.toISOString());
 		});
 		test('creates new entry row', async () => {
-			await ingredients_ctrl.registerBoughtIngrediets(valid_input);
+			await ingredients_service.registerBoughtIngrediets(valid_input);
 			const entryList = await db.select().from(t_ingridient_entry);
 			expect(entryList.length).toBe(1);
 			expect(entryList[0]).toBeTruthy();
@@ -280,7 +280,7 @@ describe('buy ingredients', async () => {
 		});
 
 		test('save the two batches', async () => {
-			await ingredients_ctrl.registerBoughtIngrediets(valid_input);
+			await ingredients_service.registerBoughtIngrediets(valid_input);
 			const list = await db.select().from(t_ingredient_batch);
 			expect(list.length).toBe(valid_input.batches.length);
 			for (let i of [0, 1]) {
