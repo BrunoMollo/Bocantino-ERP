@@ -15,9 +15,10 @@ export const load: PageServerLoad = async ({ params }) => {
 		throw error(400, { message: 'invalid id' });
 	}
 	const { name, unit } = ingredient;
-	const form = createForm({ name, unit });
+	const form = createForm({ name, unit, derivedId, amount });
+	const ingredients = await ingredients_service.getAll();
 
-	return { form };
+	return { form, ingredients };
 };
 
 export const actions: Actions = {

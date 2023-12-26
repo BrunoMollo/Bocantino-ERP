@@ -13,7 +13,7 @@ export const ingredient_schema = z.object({
 
 export type IngredientSchema = typeof ingredient_schema;
 
-export function createForm(value?: { name: string; unit: string }) {
+export function createForm(value?: { name: string; unit: string; derivedId:number; amount:number }) {
 	if (value) {
 		//@ts-ignore
 		return superValidate(value, ingredient_schema);

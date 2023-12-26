@@ -4,7 +4,8 @@ import {
 	t_ingredient,
 	t_ingredient_batch,
 	t_ingridient_entry,
-	tr_ingredient_ingredient
+	tr_ingredient_ingredient,
+	tr_supplier_ingredient
 } from '$lib/server/db/schema';
 import { getFirst, type Prettify, type TableInsert } from '$lib/utils';
 import { eq } from 'drizzle-orm';
@@ -12,7 +13,7 @@ import { eq } from 'drizzle-orm';
 export function getAll() {
 	return db.select().from(t_ingredient);
 }
-export async function deletebyID(id: number){
+export async function deletebyID(id: number) {
 	await db.delete(t_ingredient).where(eq(t_ingredient.id, id));
 }
 
