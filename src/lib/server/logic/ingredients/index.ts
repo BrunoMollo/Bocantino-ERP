@@ -4,8 +4,7 @@ import {
 	t_ingredient,
 	t_ingredient_batch,
 	t_ingridient_entry,
-	tr_ingredient_ingredient,
-	tr_supplier_ingredient
+	tr_ingredient_ingredient
 } from '$lib/server/db/schema';
 import { getFirst, type Prettify, type TableInsert } from '$lib/utils';
 import { eq } from 'drizzle-orm';
@@ -40,9 +39,11 @@ export async function add(
 			.then(getFirst);
 
 		if (derivedFrom) {
-			await tx
-				.insert(tr_ingredient_ingredient)
-				.values({ derivedId: insertedIngredient.id, sourceId: derivedFrom.derivedId, amount: derivedFrom.amount });
+			await tx.insert(tr_ingredient_ingredient).values({
+				derivedId: insertedIngredient.id,
+				sourceId: derivedFrom.derivedId,
+				amount: derivedFrom.amount
+			});
 		}
 		return insertedIngredient;
 	});
@@ -74,5 +75,17 @@ export function registerBoughtIngrediets(data: RegisterPurchaseDto) {
 			await tx.insert(t_ingredient_batch).values({ ...batch, supplierId });
 		}
 	});
+}
+
+export async function getRecipie(id: number) {
+	return await db
+		.select({
+			amount: tr_ingredient_ingredient.amount,
+			source: { id: t_ingredient.id, name: t_ingredient.name, unit: t_ingredient.unit }
+		})
+		.from(tr_ingredient_ingredient)
+		.where(eq(tr_ingredient_ingredient.derivedId, id))
+		.innerJoin(t_ingredient, eq(tr_ingredient_ingredient.sourceId, t_ingredient.id))
+		.then(getFirst);
 }
 
