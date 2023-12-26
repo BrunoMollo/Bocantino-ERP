@@ -7,7 +7,10 @@
 	import { derived } from 'svelte/store';
 
 	export let data;
-	const { form, enhance, errors } = superForm(data.form, { dataType: 'json' });
+	const { form, enhance, errors } = superForm(data.form, {
+		dataType: 'json',
+		defaultValidator: 'clear'
+	});
 
 	if ($form.batches.length === 0) {
 		addLine();
@@ -234,3 +237,4 @@
 		color: green;
 	}
 </style>
+
