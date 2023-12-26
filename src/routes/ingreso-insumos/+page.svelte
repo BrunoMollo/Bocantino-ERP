@@ -69,7 +69,7 @@
 					<Autocomplete
 						name="supplierId"
 						bind:value={$form.supplierId}
-						className="input {$errors.supplierId ? 'input-error' : ''}"
+						className="input {$errors.supplierId ? 'error_border' : ''}"
 						{...optionsSuppliers}
 					/>
 				</label>
@@ -82,7 +82,7 @@
 						placeholder="Seleccionar..."
 						name="tipe_of_document"
 						bind:value={$form.idDocumentType}
-						className={`input ${$errors.idDocumentType ? 'input-error' : ''}`}
+						className={`input ${$errors.idDocumentType ? 'error_border' : ''}`}
 						{...optionsDocumentTypes}
 					/>
 				</label>
@@ -94,7 +94,7 @@
 						type="text"
 						bind:value={$form.invoiceNumber}
 						class="input"
-						class:input-error={$errors.invoiceNumber}
+						class:error_border={$errors.invoiceNumber}
 						aria-invalid={$errors.invoiceNumber ? 'true' : undefined}
 					/>
 				</label>
@@ -104,7 +104,7 @@
 				<label class="label">
 					<small class="my-auto mr-1 font-black text-lg"> Fecha factura</small>
 					<InputDate
-						className={`input ${$errors.issueDate ? 'input-error' : ''}`}
+						className={`input ${$errors.issueDate ? 'error_border' : ''}`}
 						bind:value={$form.issueDate}
 					/>
 				</label>
@@ -132,7 +132,7 @@
 								<label class="label w-52">
 									{#key $form.supplierId}
 										<Autocomplete
-											className={`input ${$batchesError(i, 'ingredientId') ? 'input-error' : ''}`}
+											className={`input ${$batchesError(i, 'ingredientId') ? 'error_border' : ''}`}
 											name={`ingredientId-${i}`}
 											bind:value={$form.batches[i].ingredientId}
 											{...$optionsIngredients}
@@ -144,7 +144,7 @@
 								<div class="relative inline-block w-24">
 									<input
 										class="input"
-										class:input-error={$batchesError(i, 'initialAmount')}
+										class:error_border={$batchesError(i, 'initialAmount')}
 										type="text"
 										bind:value={$form.batches[i].initialAmount}
 									/>
@@ -155,7 +155,7 @@
 								<div class="relative inline-block w-20">
 									<input
 										class="input"
-										class:input-error={$batchesError(i, 'numberOfBags')}
+										class:error_border={$batchesError(i, 'numberOfBags')}
 										type="text"
 										bind:value={$form.batches[i].numberOfBags}
 									/>
@@ -165,7 +165,7 @@
 								<div class="relative inline-block">
 									<InputDate
 										className={`input w-32 ${
-											$batchesError(i, 'productionDate') ? 'input-error' : ''
+											$batchesError(i, 'productionDate') ? 'error_border' : ''
 										}`}
 										bind:value={$form.batches[i].productionDate}
 									/>
@@ -175,7 +175,7 @@
 								<div class="relative inline-block">
 									<InputDate
 										className={`input w-32 ${
-											$batchesError(i, 'expirationDate') ? 'input-error' : ''
+											$batchesError(i, 'expirationDate') ? 'error_border' : ''
 										}`}
 										bind:value={$form.batches[i].expirationDate}
 									></InputDate>
@@ -186,7 +186,7 @@
 									<input
 										class="input w-24"
 										type="text"
-										class:input-error={$batchesError(i, 'cost')}
+										class:error_border={$batchesError(i, 'cost')}
 										bind:value={$form.batches[i].cost}
 									/>
 									<span class="suffix absolute right-3 top-1/4">$</span>
@@ -197,7 +197,7 @@
 									<input
 										type="text"
 										class="input"
-										class:input-error={$batchesError(i, 'batch_code')}
+										class:error_border={$batchesError(i, 'batch_code')}
 										bind:value={$form.batches[i].batch_code}
 									/>
 									<button type="button" class="variant-filled-surface">Autogenerar</button>
@@ -231,10 +231,3 @@
 		</div>
 	</form>
 </main>
-
-<style>
-	.input-error {
-		color: green;
-	}
-</style>
-

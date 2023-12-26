@@ -40,12 +40,10 @@ export async function add(
 			.then(getFirst);
 
 		if (derivedFrom) {
-			const { derivedId, amount } = derivedFrom;
 			await tx
 				.insert(tr_ingredient_ingredient)
-				.values({ sourceId: insertedIngredient.id, derivedId, amount });
+				.values({ derivedId: insertedIngredient.id, sourceId: derivedFrom.derivedId, amount: derivedFrom.amount });
 		}
-
 		return insertedIngredient;
 	});
 }

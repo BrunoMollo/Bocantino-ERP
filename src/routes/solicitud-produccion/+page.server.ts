@@ -24,6 +24,11 @@ const nuevaFila: Fila = {
 let filas: Fila[];
 
 export const load: PageServerLoad = async () => {
-    const ingredients = await db.select({ id: t_ingredient.id, name: t_ingredient.name, derivedId: tr_ingredient_ingredient.derivedId, amount: tr_ingredient_ingredient.amount }).from(tr_ingredient_ingredient).innerJoin(t_ingredient, eq(t_ingredient.id, tr_ingredient_ingredient.derivedId));
+    const ingredients = await db
+        .select({ id: t_ingredient.id, name: t_ingredient.name, derivedId: tr_ingredient_ingredient.derivedId, amount: tr_ingredient_ingredient.amount })
+        .from(tr_ingredient_ingredient)
+        .innerJoin(t_ingredient, eq(t_ingredient.id, tr_ingredient_ingredient.derivedId));
     return { ingredients }
 }
+
+

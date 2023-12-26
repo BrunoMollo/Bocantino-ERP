@@ -19,6 +19,22 @@
 				{ identificador: 'A807BC', cantidadDisponible: 700, cantidad: 320 },
 				{ identificador: 'A8AABC', cantidadDisponible: 200, cantidad: 120 }
 			]
+		},
+		{
+			materiaPrima: 'Materia prima 2',
+			faltante: 200,
+			lotes: [
+				{ identificador: 'A807BC', cantidadDisponible: 700, cantidad: 320 },
+				{ identificador: 'A8AABC', cantidadDisponible: 200, cantidad: 120 }
+			]
+		},
+		{
+			materiaPrima: 'Materia prima 2',
+			faltante: 200,
+			lotes: [
+				{ identificador: 'A807BC', cantidadDisponible: 700, cantidad: 320 },
+				{ identificador: 'A8AABC', cantidadDisponible: 200, cantidad: 120 }
+			]
 		}
 	];
 	const optionsIngredientsTypes = makeOptions(data.ingredients, { value: 'id', label: 'name' });
