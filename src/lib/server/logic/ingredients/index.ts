@@ -65,7 +65,9 @@ export function registerBoughtIngrediets(data: RegisterPurchaseDto) {
 			.returning({ documentId: t_entry_document.id })
 			.then(getFirst);
 
-		await tx.insert(t_ingridient_entry).values({ totalCost: null, documentId });
+		await tx
+			.insert(t_ingridient_entry)
+			.values({ totalCost: null, documentId, supplierId: data.supplierId });
 
 		const { supplierId } = data;
 		for (let batch of data.batches) {

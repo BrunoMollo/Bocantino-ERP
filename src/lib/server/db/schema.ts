@@ -159,10 +159,14 @@ export const t_ingridient_entry = sqliteTable('ingridient_entry', {
 		.$defaultFn(() => new Date()),
 	totalCost: integer('total_cost'), // is calulated later, so can be null
 	currency_alpha_code: text('currency_alpha_code', { length: 4 }).notNull().default('ARG'),
-	documentId: integer('document_id').references(() => t_entry_document.id)
+	documentId: integer('document_id').references(() => t_entry_document.id),
+	supplierId: integer('supplier_id')
+		.notNull()
+		.references(() => t_supplier.id)
 });
 export const rel_ingredient_entry = relations(t_ingridient_entry, ({ one }) => ({
-	doc: one(t_entry_document)
+	doc: one(t_entry_document),
+	supplier: one(t_supplier)
 }));
 export const t_entry_document = sqliteTable('entry_document', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
