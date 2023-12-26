@@ -6,7 +6,9 @@ export const routes = [
 		icon: 'bxs-grid-alt',
 		routes: [
 			{ name: 'Ingreso insumos', href: '/ingreso-insumos', icon: 'bx bxs-archive-in text-xl' },
-			{ name: 'Listado', href: '/insumos-ingresados', icon: 'bx bx-list-ul text-xl' }
+			{ name: 'Listado ingresos', href: '/insumos-ingresados', icon: 'bx bx-list-ul text-xl' },
+			{ name: 'Solicitud produccion', href: '/solicitud-produccion', icon: 'bx text-xl bx-file' },
+			{ name: 'Pendientes', href: '/solicitudes-pendientes', icon: 'bx bx-list-check' }
 		] satisfies Route[]
 	},
 
