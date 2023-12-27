@@ -10,13 +10,15 @@
 	} from '@skeletonlabs/skeleton';
 	import { initializeStores, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
 	import Navigation from './_components/Navigation.svelte';
-
 	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { page } from '$app/stores';
 	import { derived } from 'svelte/store';
 	import { routes } from './_components/routes';
+
+	export const ssr = false;
+
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	initializeStores();
