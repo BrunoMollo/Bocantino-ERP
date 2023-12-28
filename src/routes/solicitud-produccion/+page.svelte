@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import Autocomplete from '$lib/ui/Autocomplete.svelte';
 	import { makeOptions } from '$lib/utils';
+	import { trpcClient } from '$trpc/browserClients.js';
 	import { derived } from 'svelte/store';
 	import { fly } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
@@ -15,7 +15,7 @@
 		derived(form, ({ ingredeintId }) => ingredeintId),
 		(ingredeintId) => {
 			if (ingredeintId) {
-				return fetch($page.url + '/recipe/' + ingredeintId).then((x) => x.json());
+				return trpcClient.ingredient.recipe.query(ingredeintId);
 			}
 			return null;
 		}
@@ -31,7 +31,7 @@
 	<h2 class="uppercase text-2xl my-5">Fecha: {fecha}</h2>
 </div>
 
-<form action="" class="mx-auto w-11/12" use:enhance>
+<form action="" class="mx-auto w-11/12" use:enhance method="post">
 	<div class="flex gap-6 mb-4">
 		<Autocomplete
 			className="w-3/12"

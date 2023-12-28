@@ -1,15 +1,19 @@
 <script lang="ts">
-	import { page } from '$app/stores';
+	import { trpcClient } from '$trpc/browserClients';
 
 	export let data;
 
-	async function eliminar(id: number) {
+	async function deleteIngredient(id: number) {
 		try {
-			const response = await fetch($page.url + '/delete/' + id, { method: 'POST' });
-			if (response.status == 200) {
+			const msj = await trpcClient.ingredient.delete.mutate(id);
+			if (msj == 'OK') {
 				data.list = data.list.filter((_, i) => data.list[i].id !== id);
+			} else {
+				alert('Algo salio mal');
 			}
-		} catch (error) {}
+		} catch (error) {
+			alert('Algo salio mal');
+		}
 	}
 </script>
 
@@ -36,7 +40,7 @@
 						<i class="bx bx-edit place-self-center text-2xl"></i></a
 					>
 					<button
-						on:click={() => eliminar(ingredient.id)}
+						on:click={() => deleteIngredient(ingredient.id)}
 						class="my-2 btn-icon btn-icon-md variant-soft-secondary"
 					>
 						<i class="bx bxs-trash place-self-center text-2xl"></i></button
@@ -62,3 +66,4 @@
 		vertical-align: middle;
 	}
 </style>
+
