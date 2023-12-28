@@ -33,7 +33,7 @@
 	function filtrar() {
 		if (filtros.supplier != '') {
 			listafiltrada = data.entries.filter((entrada) => {
-				return entrada.supplier.toString() === filtros.supplier.toString();
+				return entrada.supplier.toString().includes(filtros.supplier.toString());
 			});
 		} else listafiltrada = data.entries;
 	}
