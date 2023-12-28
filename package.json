@@ -12,6 +12,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"db-push": "drizzle-kit push:sqlite",
+		"db-clean": "drizzle-kit push:sqlite --config=./clean_db.config.ts",
 		"db-migrate": "drizzle-kit generate:sqlite"
 	},
 	"devDependencies": {
