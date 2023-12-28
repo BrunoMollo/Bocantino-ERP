@@ -3,7 +3,7 @@
 	import Autocomplete from '$lib/ui/Autocomplete.svelte';
 	import { makeOptions } from '$lib/utils';
 	import { derived } from 'svelte/store';
-	import { fade, fly, slide } from 'svelte/transition';
+	import { fly } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 	export let data;
 	const { form, enhance, errors, delayed } = superForm(data.form, {
@@ -11,48 +11,15 @@
 		clearOnSubmit: 'none'
 	});
 
-	let filas = [
-		{
-			materiaPrima: 'Materia prima 1',
-			faltante: 200,
-			lotes: [
-				{ identificador: 'A807BC', cantidadDisponible: 700, cantidad: 320 },
-				{ identificador: 'A8AABC', cantidadDisponible: 200, cantidad: 120 }
-			]
-		},
-		{
-			materiaPrima: 'Materia prima 2',
-			faltante: 200,
-			lotes: [
-				{ identificador: 'A807BC', cantidadDisponible: 700, cantidad: 320 },
-				{ identificador: 'A8AABC', cantidadDisponible: 200, cantidad: 120 }
-			]
-		},
-		{
-			materiaPrima: 'Materia prima 2',
-			faltante: 200,
-			lotes: [
-				{ identificador: 'A807BC', cantidadDisponible: 700, cantidad: 320 },
-				{ identificador: 'A8AABC', cantidadDisponible: 200, cantidad: 120 }
-			]
-		},
-		{
-			materiaPrima: 'Materia prima 2',
-			faltante: 200,
-			lotes: [
-				{ identificador: 'A807BC', cantidadDisponible: 700, cantidad: 320 },
-				{ identificador: 'A8AABC', cantidadDisponible: 200, cantidad: 120 }
-			]
+	const recipePromise = derived(
+		derived(form, ({ ingredeintId }) => ingredeintId),
+		(ingredeintId) => {
+			if (ingredeintId) {
+				return fetch($page.url + '/recipe/' + ingredeintId).then((x) => x.json());
+			}
+			return null;
 		}
-	];
-
-	const recipePromise = derived(form, ({ ingredeintId, producedAmount }) => {
-		if (ingredeintId && producedAmount) {
-			return fetch($page.url + '/recipe/' + ingredeintId).then((x) => x.json());
-		}
-		return null;
-	});
-	$: console.log($recipePromise);
+	);
 
 	const optionsIngredientsTypes = makeOptions(data.ingredients, { value: 'id', label: 'name' });
 	let fecha = '19/11/2022';
@@ -64,7 +31,7 @@
 	<h2 class="uppercase text-2xl my-5">Fecha: {fecha}</h2>
 </div>
 
-<form action="" class="mx-auto w-11/12">
+<form action="" class="mx-auto w-11/12" use:enhance>
 	<div class="flex gap-6 mb-4">
 		<Autocomplete
 			className="w-3/12"
@@ -72,14 +39,16 @@
 			bind:value={$form.ingredeintId}
 			{...optionsIngredientsTypes}
 		/>
-		<div class="flex">
-			<h1 class="text-nowrap my-auto">Ingrese la cantidad a producir:</h1>
+		<div class="relative inline-block w-70">
 			<input
 				type="text"
 				placeholder="cantidad..."
 				bind:value={$form.producedAmount}
-				class="input w-1/3 rounded ml-3"
+				class="input w-full rounded ml-3"
 			/>
+			<span class="suffix absolute right-3 top-1/4"
+				>{data.ingredients.find((x) => x.id == $form.ingredeintId)?.unit ?? ''}</span
+			>
 		</div>
 	</div>
 	<table class="shadow-lg w-full rounded table">
@@ -107,13 +76,12 @@
 						<td class="text-center w-3/12">{recipe.source.name}</td>
 						<td class="text-center w-3/12">??? </td>
 						<td class="text-center w-2/12">??? </td>
-						<td class="text-center w-2/12"> </td>
-						<td class="text-center w-2/12">
-							{recipe.amount * $form.producedAmount}<button class="btn">Agregar Lote</button></td
-						>
+						<td class="text-center w-2/12"> {(recipe.amount * $form.producedAmount).toFixed(3)}</td>
+						<td class="text-center w-2/12"> <button class="btn">Agregar Lote</button></td>
 					</tr>
 				{/await}
 			{/if}
 		</tbody>
 	</table>
 </form>
+

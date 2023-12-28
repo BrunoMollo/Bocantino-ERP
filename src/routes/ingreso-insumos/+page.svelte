@@ -148,7 +148,8 @@
 										type="text"
 										bind:value={$form.batches[i].initialAmount}
 									/>
-									<span class="suffix absolute right-3 top-1/4">kg.</span>
+                  <!-- TODO:make dinamic -->
+									<span class="suffix absolute right-3 top-1/4">Kg</span>
 								</div>
 							</td>
 							<td>

@@ -34,6 +34,7 @@ export const load: PageServerLoad = async () => {
 		.select({
 			id: t_ingredient.id,
 			name: t_ingredient.name,
+			unit: t_ingredient.unit,
 			derivedId: tr_ingredient_ingredient.derivedId,
 			amount: tr_ingredient_ingredient.amount
 		})
@@ -41,3 +42,4 @@ export const load: PageServerLoad = async () => {
 		.innerJoin(t_ingredient, eq(t_ingredient.id, tr_ingredient_ingredient.derivedId));
 	return { form, ingredients };
 };
+
