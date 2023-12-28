@@ -22,7 +22,7 @@
 	);
 
 	const optionsIngredientsTypes = makeOptions(data.ingredients, { value: 'id', label: 'name' });
-	let fecha = '19/11/2022';
+	let fecha = new Date().toLocaleDateString('es');
 	let numero = 12;
 </script>
 
@@ -54,11 +54,10 @@
 	<table class="shadow-lg w-full rounded table">
 		<thead>
 			<tr class="h-10">
-				<th class="w-3/12 text-center">Materia prima</th>
-				<th class="w-3/12 text-center">Lote</th>
-				<th class="w-2/12 text-center">Cantidad disponible</th>
-				<th class="w-2/12 text-center">Cantidad</th>
-				<th class="w-2/12 text-center"></th>
+				<th class="w-2/12 text-center">Materia prima</th>
+				<th class="w-1/12 text-center">Cantidad</th>
+				<th class="w-1/12 text-center">Cantidad disponible</th>
+				<th class="w-4/12 text-center">Lote</th>
 			</tr>
 		</thead>
 		<tbody>
@@ -72,13 +71,38 @@
 						<td class="text-center w-3/12">Cargando...</td>
 					</tr>
 				{:then recipe}
-					<tr transition:fly={{ x: -100 }}>
-						<td class="text-center w-3/12">{recipe.source.name}</td>
-						<td class="text-center w-3/12">??? </td>
-						<td class="text-center w-2/12">??? </td>
-						<td class="text-center w-2/12"> {(recipe.amount * $form.producedAmount).toFixed(3)}</td>
-						<td class="text-center w-2/12"> <button class="btn">Agregar Lote</button></td>
-					</tr>
+					{#if recipe == 'ERROR' || !recipe}
+						<tr>
+							<td> ALGO SALIO MAL</td>
+						</tr>
+					{:else}
+						<tr transition:fly={{ x: -100 }}>
+							<td class="text-center w-2/12">{recipe.source.name}</td>
+							<td class="text-center w-1/12">
+								{(recipe.amount * $form.producedAmount).toFixed(3)}</td
+							>
+							<td class="text-center w-1/12">??? </td>
+							<td class="text-center w-4/12">
+								<select class="select">
+									{#await trpcClient.ingredient.batches.query(recipe.source.id)}
+										<option disabled>Cargando</option>
+									{:then batches}
+										{#if batches && batches.length > 0}
+											{#each batches as b}
+												<option value={b.id}
+													>{b.batch_code} ({new Date(b.expirationDate).toLocaleDateString(
+														'es'
+													)})</option
+												>
+											{/each}
+										{:else}
+											<option disabled>No se encontraron lotes</option>
+										{/if}
+									{/await}
+								</select>
+							</td>
+						</tr>
+					{/if}
 				{/await}
 			{/if}
 		</tbody>

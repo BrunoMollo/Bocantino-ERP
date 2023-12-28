@@ -126,3 +126,7 @@ export async function getRecipie(id: number) {
 		.then(getFirstIfPosible);
 }
 
+export async function getBatches(id: number) {
+	return await db.select().from(t_ingredient_batch).where(eq(t_ingredient_batch.ingredientId, id));
+}
+

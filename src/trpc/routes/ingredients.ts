@@ -17,6 +17,9 @@ export const ingredient = t.router({
 		} catch {
 			return 'ERROR' as const;
 		}
+	}),
+	batches: t.procedure.input(z.coerce.number().positive().int()).query(async ({ input }) => {
+		return await ingredients_service.getBatches(input);
 	})
 });
 
