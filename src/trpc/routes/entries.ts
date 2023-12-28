@@ -9,8 +9,8 @@ export const entries = t.router({
 		.input(
 			z.object({
 				supplierName: z.string().nullish(),
-				page: z.number().positive().int(),
-				pageSize: z.number().positive().int().max(20)
+				page: z.number().int(),
+				pageSize: z.number().int().max(20)
 			})
 		)
 		.query(async ({ input }) => {
@@ -25,9 +25,8 @@ export const entries = t.router({
 				.innerJoin(t_supplier, eq(t_ingridient_entry.supplierId, t_supplier.id))
 				.innerJoin(t_entry_document, eq(t_entry_document.id, t_ingridient_entry.documentId))
 				.where(like(t_supplier.name, `${input.supplierName ?? ''}%`))
-				.limit(input.pageSize + (input.page + 1) * input.pageSize)
-				.offset((input.page + 1) * input.pageSize); //TODO : fix
-
+				.limit(input.pageSize)
+				.offset(input.page * input.pageSize);
 			return entries;
 		})
 });

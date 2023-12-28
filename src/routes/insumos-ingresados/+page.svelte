@@ -25,7 +25,11 @@
 
 	async function filtrar() {
 		listafiltrada = await trpcClient.entries.get
-			.query({ supplierName: filtros.supplier, page: 1, pageSize: 1 })
+			.query({
+				supplierName: filtros.supplier,
+				page: paginationSettings.page,
+				pageSize: paginationSettings.limit
+			})
 			.then((x) => (x ? x : []))
 			.then((x) => x.map((b) => ({ ...b, date: new Date(b.date) })));
 	}
@@ -109,7 +113,8 @@
 	<Paginator
 		bind:settings={paginationSettings}
 		showFirstLastButtons={true}
+		on:page={filtrar}
+		on:amount={filtrar}
 		showPreviousNextButtons={true}
 	/>
 </div>
-
