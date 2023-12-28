@@ -41,4 +41,3 @@ export const load: PageServerLoad = async () => {
 		.innerJoin(t_ingredient, eq(t_ingredient.id, tr_ingredient_ingredient.derivedId));
 	return { form, ingredients };
 };
-

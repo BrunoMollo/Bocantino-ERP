@@ -8,4 +8,3 @@
 	<h2 class="h2">Alta Productos</h2>
 	<ProductForm {data} availableIngredients={data.ingredients}></ProductForm>
 </article>
-

@@ -9,4 +9,3 @@ export const GET: RequestHandler = async ({ params }) => {
 	}
 	return json({ msj: 'invalid request' }, { status: 400 });
 };
-

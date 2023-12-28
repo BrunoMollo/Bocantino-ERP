@@ -23,4 +23,3 @@ export const actions: Actions = {
 		throw redirect(302, '/materias-primas?toast=Materia prima agregada con exito');
 	}
 };
-

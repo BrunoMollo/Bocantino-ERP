@@ -1,6 +1,6 @@
 <script lang="ts">
 	import Spinner from '$lib/ui/Spinner.svelte';
-	import { crossfade, fade, fly } from 'svelte/transition';
+	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { VALID_UNITS, type IngredientSchema } from './shared';
 	export let ingredients: { id: number; name: string; unit: string }[];
@@ -18,8 +18,10 @@
 		}
 	}
 
-	//@ts-ignore
-	$form.reorderPoint = null;
+	if ($form.reorderPoint == 0) {
+		//@ts-ignore
+		$form.reorderPoint = null;
+	}
 	export let btnMsj = 'Agregar';
 </script>
 
@@ -79,7 +81,7 @@
 	/>
 
 	<label>
-		<input class="checkbox" type="checkbox" on:input={toggleIsDerived} />
+		<input class="checkbox" type="checkbox" checked={!!$form.source} on:input={toggleIsDerived} />
 		<span>Producto derivado</span>
 	</label>
 	{#if $form.source}
@@ -116,7 +118,6 @@
 			placeholder="cantidad necesaria"
 			class={`input ${$errors.source?.amount ? 'input-error' : ''} w-1/3`}
 			name="amount"
-			type="number"
 			id="amount"
 			bind:value={$form.source.amount}
 		/>
@@ -126,4 +127,3 @@
 		<Spinner showIf={$delayed} />
 	</button>
 </form>
-

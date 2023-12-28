@@ -41,4 +41,3 @@ export const actions: Actions = {
 		throw redirect(302, '/productos?toast=Producto agregado');
 	}
 };
-

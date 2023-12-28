@@ -61,4 +61,3 @@
 		if (Number.isNaN(num)) e.preventDefault();
 	}}
 />
-

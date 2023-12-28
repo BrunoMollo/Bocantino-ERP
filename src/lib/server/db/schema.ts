@@ -6,7 +6,8 @@ import { foreignKey, integer, primaryKey, real, sqliteTable, text } from 'drizzl
 export const t_ingredient = sqliteTable('ingredient', {
 	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
 	name: text('name').notNull(),
-	unit: text('unit').notNull()
+	unit: text('unit').notNull().$type<'Gramos' | 'Kilogramos'>(),
+	reorderPoint: integer('reorder_point').notNull()
 });
 export const rel_ingredient = relations(t_ingredient, ({ many }) => ({
 	r_ingredient_product: many(tr_ingredient_product),
@@ -185,4 +186,3 @@ export const t_document_type = sqliteTable('document_type', {
 });
 //-------------------------------------------------------------------------------------////
 //
-

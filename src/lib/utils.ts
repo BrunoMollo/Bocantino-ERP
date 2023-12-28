@@ -1,4 +1,5 @@
 export const getFirst = <T>(x: Array<T>) => x[0];
+export const getFirstIfPosible = <T>(x: Array<T>) => x[0] as T | undefined;
 
 type DateString = string & { __pattern: 'yyyy-mm-dd' };
 /**
@@ -82,4 +83,3 @@ export function makeOptions<T>(arr: T[], fields: { label: keyof T; value: keyof 
 		{ labels: [] as any[], values: [] as any[] }
 	);
 }
-

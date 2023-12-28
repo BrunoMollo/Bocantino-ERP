@@ -54,4 +54,3 @@ export const actions: Actions = {
 		throw redirect(302, `/insumos-ingresados?toast=Se registraron los ${batches.length} lotes`);
 	}
 };
-
