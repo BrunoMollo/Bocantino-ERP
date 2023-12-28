@@ -17,8 +17,6 @@
 	import { derived } from 'svelte/store';
 	import { routes } from './_components/routes';
 
-	export const ssr = false;
-
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
 	initializeStores();

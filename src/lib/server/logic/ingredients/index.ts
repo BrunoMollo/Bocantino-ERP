@@ -29,7 +29,7 @@ export async function getById(id: number) {
 
 export async function add(
 	ingredient: Omit<typeof t_ingredient.$inferInsert, 'id'>,
-	derivedFrom?: { derivedId: number; amount: number }
+	source?: { id: number; amount: number }
 ) {
 	return await db.transaction(async (tx) => {
 		const insertedIngredient = await tx
@@ -38,11 +38,11 @@ export async function add(
 			.returning({ id: t_ingredient.id })
 			.then(getFirst);
 
-		if (derivedFrom) {
+		if (source) {
 			await tx.insert(tr_ingredient_ingredient).values({
 				derivedId: insertedIngredient.id,
-				sourceId: derivedFrom.derivedId,
-				amount: derivedFrom.amount
+				sourceId: source.id,
+				amount: source.amount
 			});
 		}
 		return insertedIngredient;

@@ -17,12 +17,8 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return { form };
 		}
-		const { derivedId, amount } = form.data;
-		if (derivedId == null || amount == null) {
-			await ingredients_service.add(form.data);
-		} else {
-			await ingredients_service.add(form.data, { derivedId, amount });
-		}
+		const { source } = form.data;
+		await ingredients_service.add(form.data, source ?? undefined);
 
 		throw redirect(302, '/materias-primas?toast=Materia prima agregada con exito');
 	}

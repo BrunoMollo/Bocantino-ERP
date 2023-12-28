@@ -1,4 +1,4 @@
-import { describe, it, expect, vi, test, beforeEach, beforeAll } from 'vitest';
+import { describe, expect, vi, test, beforeEach, beforeAll } from 'vitest';
 import { INVOICE_TYPE, db } from '$lib/server/db/__mocks__';
 import {
 	t_document_type,
@@ -118,7 +118,7 @@ describe('ingredients crud', () => {
 			expect(ingredientPrev.length).toBe(1);
 			const inserted = await ingredients_service.add(
 				{ name: 'Higado desidratado', unit: 'Kg' },
-				{ derivedId: 100, amount: 50 }
+				{ id: 100, amount: 50 }
 			);
 			expect(inserted.id).toBeTruthy();
 
@@ -127,8 +127,8 @@ describe('ingredients crud', () => {
 			const derivedRelationsList = await db.select().from(tr_ingredient_ingredient);
 			expect(derivedRelationsList.length).toBe(1);
 			expect(derivedRelationsList[0].amount).toBe(50);
-			expect(derivedRelationsList[0].derivedId).toBe(100);
-			expect(derivedRelationsList[0].sourceId).toBe(inserted.id);
+			expect(derivedRelationsList[0].derivedId).toBe(inserted.id);
+			expect(derivedRelationsList[0].sourceId).toBe(100);
 		});
 	});
 });
