@@ -1,13 +1,6 @@
 <script lang="ts">
-	import {
-		popup,
-		type PaginationSettings,
-		type PopupSettings,
-		type TableSource,
-		tableMapperValues,
-		Table,
-		FileButton
-	} from '@skeletonlabs/skeleton';
+	import { trpcClient } from '$trpc/browserClients.js';
+	import { popup, type PaginationSettings, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { Paginator } from '@skeletonlabs/skeleton';
 	export let data;
 	let paginationSettings = {
@@ -30,12 +23,11 @@
 	};
 	let listafiltrada = data.entries;
 
-	function filtrar() {
-		if (filtros.supplier != '') {
-			listafiltrada = data.entries.filter((entrada) => {
-				return entrada.supplier.toString().includes(filtros.supplier.toString());
-			});
-		} else listafiltrada = data.entries;
+	async function filtrar() {
+		listafiltrada = await trpcClient.entries.get
+			.query({ supplierName: filtros.supplier, page: 1, pageSize: 1 })
+			.then((x) => (x ? x : []))
+			.then((x) => x.map((b) => ({ ...b, date: new Date(b.date) })));
 	}
 </script>
 
@@ -120,3 +112,4 @@
 		showPreviousNextButtons={true}
 	/>
 </div>
+
