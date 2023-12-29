@@ -5,7 +5,7 @@
 	import { superForm } from 'sveltekit-superforms/client';
 
 	export let data;
-	const { form, enhance, errors, delayed } = superForm(data.form, {
+	const { form, enhance } = superForm(data.form, {
 		dataType: 'json',
 		clearOnSubmit: 'none'
 	});
@@ -24,10 +24,35 @@
 	const batches = writable<Batches | 'WAITING'>(undefined);
 	recipe.subscribe(($recipe) => {
 		if ($recipe instanceof Object) {
+			batches.set('WAITING');
 			trpcClient.ingredient.batches.query($recipe.source.id).then(batches.set);
 		}
 	});
 
+	const selected_batch = derived(
+		[batches, derived(form, ({ selected_batch_id }) => selected_batch_id)],
+		([$batch, selected_batch_id]) => {
+			if ($batch instanceof Object) {
+				return $batch.find((x) => x.id === selected_batch_id);
+			}
+		}
+	);
+
+	const amount_needed = derived(
+		[recipe, derived(form, ({ producedAmount }) => producedAmount)],
+		([$recipe, $producedAmount]) => {
+			if ($recipe instanceof Object) {
+				return $recipe.amount * $producedAmount;
+			}
+		}
+	);
+
+	const surpass_amount = derived(
+		[amount_needed, selected_batch],
+		([$amount_needed, $selected_batch]) => {
+			return !!$selected_batch && $selected_batch.current_amount < ($amount_needed ?? 0);
+		}
+	);
 
 	const fecha = new Date().toLocaleDateString('es');
 	const numero = 12;
@@ -85,14 +110,17 @@
 				<tr in:fly={{ x: -100 }}>
 					<td class="text-center w-2/12">{$recipe.source.name}</td>
 					<td class="text-center w-1/12">
-						{($recipe.amount * $form.producedAmount).toFixed(3)}
+						{$amount_needed?.toFixed(3)}
 					</td>
-					<td class="text-center w-1/12"> ?? </td>
+					<td class="text-center w-1/12" class:text-error-400={$surpass_amount}>
+						{$selected_batch?.current_amount ?? '???'}
+					</td>
 					<td class="text-center w-4/12">
-						<select class="select">
+						<select class="select" bind:value={$form.selected_batch_id}>
 							{#if $batches == 'WAITING'}
 								<option disabled>Cargando</option>
 							{:else if $batches}
+								<option disabled selected>Seleccione un lote</option>
 								{#each $batches as { id, batch_code, expirationDate }}
 									<option value={id}>
 										{batch_code}
@@ -110,7 +138,11 @@
 	</table>
 
 	<div class="pt-4 w-full flex justify-end">
-		<button type="submit" class="btn rounded-lg variant-filled-secondary w-1/5">
+		<button
+			type="submit"
+			class="btn rounded-lg variant-filled-secondary w-1/5"
+			disabled={$surpass_amount || !$form.selected_batch_id}
+		>
 			Iniciar produccion
 		</button>
 	</div>
