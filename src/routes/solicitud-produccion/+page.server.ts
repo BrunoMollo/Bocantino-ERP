@@ -9,7 +9,8 @@ import type { Actions } from '@sveltejs/kit';
 const ingredinetProduction_schema = z.object({
 	ingredeintId: z.coerce.number().int().positive(),
 	producedAmount: z.coerce.number().positive(),
-	selected_batch_id: z.coerce.number().positive().int()
+	selected_batch_id: z.coerce.number().positive().int(),
+	second_selected_batch_id: z.coerce.number().positive().int().nullable()
 });
 
 export const load: PageServerLoad = async () => {
@@ -31,6 +32,7 @@ export const actions: Actions = {
 	default: async ({ request }) => {
 		const form = await superValidate(request, ingredinetProduction_schema);
 		if (!form.valid) {
+			console.log(form.errors);
 			return { form };
 		}
 

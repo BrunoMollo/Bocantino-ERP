@@ -1,14 +1,18 @@
 <script lang="ts">
 	import { trpcClient } from '$trpc/browserClients.js';
 	import { derived, writable } from 'svelte/store';
-	import { fly } from 'svelte/transition';
+	import { fade, fly } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
+	import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
 
 	export let data;
 	const { form, enhance } = superForm(data.form, {
 		dataType: 'json',
 		clearOnSubmit: 'none'
 	});
+
+	//@ts-ignore
+	$form.producedAmount = null;
 
 	derived(form, ({ ingredeintId }) => ingredeintId).subscribe((ingredeintId) => {
 		if (ingredeintId) {
@@ -38,6 +42,15 @@
 		}
 	);
 
+	const selected_batch_second = derived(
+		[batches, derived(form, ({ second_selected_batch_id }) => second_selected_batch_id)],
+		([$batch, second_selected_batch_id]) => {
+			if ($batch instanceof Object) {
+				return $batch.find((x) => x.id === second_selected_batch_id);
+			}
+		}
+	);
+
 	const amount_needed = derived(
 		[recipe, derived(form, ({ producedAmount }) => producedAmount)],
 		([$recipe, $producedAmount]) => {
@@ -47,12 +60,38 @@
 		}
 	);
 
-	const surpass_amount = derived(
-		[amount_needed, selected_batch],
-		([$amount_needed, $selected_batch]) => {
-			return !!$selected_batch && $selected_batch.current_amount < ($amount_needed ?? 0);
+	const available_amount = derived(
+		[
+			batches,
+			derived(form, ({ selected_batch_id, second_selected_batch_id }) => [
+				selected_batch_id,
+				second_selected_batch_id
+			])
+		],
+		([$batches, $ids]) => {
+			let total = 0;
+			if (!($batches instanceof Object)) return total;
+			for (let id of $ids) {
+				const batch = $batches.find((x) => x.id == id);
+				total += batch?.current_amount ?? 0;
+			}
+			return total;
 		}
 	);
+
+	const surpass_amount = derived(
+		[amount_needed, selected_batch, selected_batch_second],
+		([$amount_needed, $selected_batch, $selected_batch_second]) => {
+			if ($selected_batch) {
+				const total =
+					$selected_batch.current_amount + ($selected_batch_second?.current_amount ?? 0);
+				return total < ($amount_needed ?? 0);
+			}
+			return false;
+		}
+	);
+
+	let needs_two_batches = false;
 
 	const fecha = new Date().toLocaleDateString('es');
 	const numero = 12;
@@ -74,14 +113,14 @@
 		</select>
 		<div class="relative inline-block w-70">
 			<input
-				type="text"
+				type="number"
 				placeholder="cantidad..."
 				bind:value={$form.producedAmount}
 				class="input w-full rounded ml-3"
 			/>
-			<span class="suffix absolute right-3 top-1/4"
-				>{data.ingredients.find((x) => x.id == $form.ingredeintId)?.unit ?? ''}</span
-			>
+			<span class="suffix absolute right-3 top-1/4">
+				{data.ingredients.find((x) => x.id == $form.ingredeintId)?.unit ?? ''}
+			</span>
 		</div>
 	</div>
 	<table class="shadow-lg w-full rounded table">
@@ -91,6 +130,7 @@
 				<th class="w-1/12 text-center">Cantidad</th>
 				<th class="w-1/12 text-center">Cantidad disponible</th>
 				<th class="w-4/12 text-center">Lote</th>
+				<th class="w-1/12 text-center"></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -108,30 +148,82 @@
 				</tr>
 			{:else}
 				<tr in:fly={{ x: -100 }}>
-					<td class="text-center w-2/12">{$recipe.source.name}</td>
-					<td class="text-center w-1/12">
+					<td class="text-center">{$recipe.source.name}</td>
+					<td class="text-center">
 						{$amount_needed?.toFixed(3)}
 					</td>
-					<td class="text-center w-1/12" class:text-error-400={$surpass_amount}>
-						{$selected_batch?.current_amount ?? '???'}
+					<td class="text-center" class:text-error-400={$surpass_amount}>
+						{$available_amount}
 					</td>
-					<td class="text-center w-4/12">
+					<td class="text-center">
 						<select class="select" bind:value={$form.selected_batch_id}>
 							{#if $batches == 'WAITING'}
 								<option disabled>Cargando</option>
 							{:else if $batches}
 								<option disabled selected>Seleccione un lote</option>
 								{#each $batches as { id, batch_code, expirationDate }}
-									<option value={id}>
-										{batch_code}
-										({new Date(expirationDate).toLocaleDateString('es')})
-									</option>
+									{#if id != $form.second_selected_batch_id}
+										<option value={id}>
+											{batch_code}
+											({new Date(expirationDate).toLocaleDateString('es')})
+										</option>
+									{/if}
 								{/each}
 							{:else}
 								<option disabled>No se encontraron lotes</option>
 							{/if}
 						</select>
+
+						{#if needs_two_batches}
+							<select
+								transition:fade={{ duration: 200 }}
+								class="select mt-4"
+								bind:value={$form.second_selected_batch_id}
+							>
+								{#if $batches == 'WAITING'}
+									<option disabled>Cargando</option>
+								{:else if $batches}
+									<option disabled selected>Seleccione un lote</option>
+									{#each $batches as { id, batch_code, expirationDate }}
+										{#if id != $form.selected_batch_id}
+											<option value={id}>
+												{batch_code}
+												({new Date(expirationDate).toLocaleDateString('es')})
+											</option>
+										{/if}
+									{/each}
+								{:else}
+									<option disabled>No se encontraron lotes</option>
+								{/if}
+							</select>
+						{/if}
 					</td>
+					{#if $surpass_amount && !needs_two_batches}
+						<td>
+							<button
+								in:fade={{ delay: 0, duration: 200 }}
+								type="button"
+								class="btn mx-0 px-2 variant-filled-tertiary rounded-lg"
+								on:click={() => (needs_two_batches = true)}
+							>
+								Otro Lote
+							</button>
+						</td>
+					{:else if needs_two_batches}
+						<td>
+							<button
+								in:fade={{ delay: 0, duration: 200 }}
+								type="button"
+								class="btn mx-0 px-2 variant-filled-tertiary rounded-lg"
+								on:click={() => {
+									needs_two_batches = false;
+									$form.second_selected_batch_id = null;
+								}}
+							>
+								Quitar Lote
+							</button>
+						</td>
+					{/if}
 				</tr>
 			{/if}
 		</tbody>
@@ -147,4 +239,5 @@
 		</button>
 	</div>
 </form>
+<SuperDebug data={$form}></SuperDebug>
 
