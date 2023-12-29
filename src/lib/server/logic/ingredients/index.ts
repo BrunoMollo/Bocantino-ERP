@@ -7,7 +7,7 @@ import {
 	tr_ingredient_ingredient
 } from '$lib/server/db/schema';
 import { getFirst, getFirstIfPosible, type Prettify, type TableInsert } from '$lib/utils';
-import { eq } from 'drizzle-orm';
+import { eq, desc } from 'drizzle-orm';
 
 export function getAll() {
 	return db.select().from(t_ingredient);
@@ -127,6 +127,25 @@ export async function getRecipie(id: number) {
 }
 
 export async function getBatches(id: number) {
-	return await db.select().from(t_ingredient_batch).where(eq(t_ingredient_batch.ingredientId, id));
+	const list = await db
+		.select({
+			id: t_ingredient_batch.id,
+			batch_code: t_ingredient_batch.batch_code,
+			expirationDate: t_ingredient_batch.expirationDate,
+			initialAmount: t_ingredient_batch.initialAmount,
+			usedAmount: t_ingredient_batch.usedAmount,
+			loss: t_ingredient_batch.loss,
+			ingredient: t_ingredient
+		})
+		.from(t_ingredient_batch)
+		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
+		.where(eq(t_ingredient_batch.ingredientId, id))
+		.orderBy(desc(t_ingredient_batch.expirationDate));
+
+	return list.map((batch) => {
+		const { id, batch_code, expirationDate, ingredient } = batch;
+		const current_amount = batch.initialAmount - batch.usedAmount - (batch.loss ?? 0);
+		return { id, batch_code, expirationDate, ingredient, current_amount };
+	});
 }
 

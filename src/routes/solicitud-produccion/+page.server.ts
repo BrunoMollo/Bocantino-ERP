@@ -4,28 +4,12 @@ import { eq } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';
+import type { Actions } from '@sveltejs/kit';
 
-interface seleccionLote {
-	identificador: String;
-	cantidadDisponible: Number;
-	cantidad: Number;
-}
-
-interface Fila {
-	materiaPrima: string;
-	lotes: seleccionLote[];
-	faltante: number;
-}
-const nuevaFila: Fila = {
-	materiaPrima: '',
-	lotes: [],
-	faltante: 0
-};
-
-let filas: Fila[];
 const ingredinetProduction_schema = z.object({
 	ingredeintId: z.coerce.number().int().positive(),
-	producedAmount: z.coerce.number().positive()
+	producedAmount: z.coerce.number().positive(),
+	selected_batch_id: z.coerce.number().positive().int()
 });
 
 export const load: PageServerLoad = async () => {
@@ -41,5 +25,16 @@ export const load: PageServerLoad = async () => {
 		.from(tr_ingredient_ingredient)
 		.innerJoin(t_ingredient, eq(t_ingredient.id, tr_ingredient_ingredient.derivedId));
 	return { form, ingredients };
+};
+
+export const actions: Actions = {
+	default: async ({ request }) => {
+		const form = await superValidate(request, ingredinetProduction_schema);
+		if (!form.valid) {
+			return { form };
+		}
+
+		console.log(form.data);
+	}
 };
 

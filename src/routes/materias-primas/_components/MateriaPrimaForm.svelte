@@ -100,9 +100,9 @@
 		>
 			<option disabled selected={!$form.source.id}>---</option>
 			{#each ingredients as ingredient}
-				<option value={ingredient.id} selected={$form.source.id == ingredient.id}
-					>{ingredient.name} ({ingredient.unit})</option
-				>
+				<option value={ingredient.id} selected={$form.source.id == ingredient.id}>
+					{ingredient.name} ({ingredient.unit})
+				</option>
 			{/each}
 		</select>
 		<label for="unit" class="label" transition:fade>
@@ -127,3 +127,4 @@
 		<Spinner showIf={$delayed} />
 	</button>
 </form>
+
