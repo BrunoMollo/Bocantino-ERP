@@ -88,14 +88,16 @@ export async function edit(
 	});
 }
 
-type BoughtBatch = TableInsert<
-	typeof t_ingredient_batch.$inferInsert,
-	'id' | 'loss' | 'currency_alpha_code' | 'supplierId'
+type BoughtBatches = Prettify<
+	TableInsert<
+		typeof t_ingredient_batch.$inferInsert,
+		'id' | 'loss' | 'currency_alpha_code' | 'supplierId'
+	>[]
 >;
 export type RegisterPurchaseDto = Prettify<{
 	supplierId: number;
 	document: TableInsert<typeof t_entry_document.$inferInsert, 'id'>;
-	batches: BoughtBatch[];
+	batches: BoughtBatches;
 }>;
 export function registerBoughtIngrediets(data: RegisterPurchaseDto) {
 	return db.transaction(async (tx: any) => {
@@ -110,9 +112,16 @@ export function registerBoughtIngrediets(data: RegisterPurchaseDto) {
 			.values({ totalCost: null, documentId, supplierId: data.supplierId });
 
 		const { supplierId } = data;
+		const batchesId = [] as number[];
 		for (let batch of data.batches) {
-			await tx.insert(t_ingredient_batch).values({ ...batch, supplierId });
+			const inserted = await tx
+				.insert(t_ingredient_batch)
+				.values({ ...batch, supplierId })
+				.returning({ id: t_ingredient_batch.id })
+				.then(getFirst);
+			batchesId.push(inserted.id);
 		}
+		return batchesId;
 	});
 }
 
@@ -158,21 +167,27 @@ export async function startIngredientProduction(
 	const { ingedient_id, produced_amount } = ingredient;
 	const { selected_batch_id, second_selected_batch_id } = source;
 
-	const recipe = await getRecipie(ingedient_id);
+	if (selected_batch_id === second_selected_batch_id)
+		return logicError('No se puede usar dos veces el mismo lote');
 
-	const batch = await db.query.t_ingredient_batch.findFirst({
-		where: eq(t_ingredient_batch, selected_batch_id)
+	const recipe = await getRecipie(ingedient_id);
+	if (!recipe) return logicError('El ingrediente no es derivado');
+
+	const result = await db.transaction(async (tx) => {
+		const batch = await tx.query.t_ingredient_batch.findFirst({
+			where: eq(t_ingredient_batch.id, selected_batch_id)
+		});
+		if (!batch) return logicError(`El lote con id ${selected_batch_id} no existe`);
+
+		const second_batch = second_selected_batch_id
+			? await db.query.t_ingredient_batch.findFirst({
+					where: eq(t_ingredient_batch.id, second_selected_batch_id)
+			  })
+			: null;
+		if (second_selected_batch_id && !second_batch)
+			return logicError(`El segundo lote  con id ${second_selected_batch_id} no existe`);
 	});
 
-	const second_batch = second_selected_batch_id
-		? await db.query.t_ingredient_batch.findFirst({
-				where: eq(t_ingredient_batch, selected_batch_id)
-		  })
-		: null;
-
-	if (!recipe) return logicError('El ingrediente no es derivado');
-	if (!batch) return logicError(`El lote con id ${selected_batch_id} no existe`);
-	if (second_selected_batch_id && !second_batch)
-		return logicError(`El lote con id ${second_selected_batch_id} no existe`);
+	return result;
 }
 
