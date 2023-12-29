@@ -1,11 +1,11 @@
 import { db } from '$lib/server/db';
 import { t_entry_document, t_ingridient_entry, t_supplier } from '$lib/server/db/schema';
-import { t } from '$trpc/init';
 import { eq, like } from 'drizzle-orm';
 import { z } from 'zod';
+import { publicProcedure, router } from '../context';
 
-export const entries = t.router({
-	get: t.procedure
+export const entries = router({
+	get: publicProcedure
 		.input(
 			z.object({
 				supplierName: z.string().nullish(),

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { trpcClient } from '$trpc/browserClients.js';
+	import { trpc } from '$lib/trpc-client';
 	import { popup, type PaginationSettings, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { Paginator } from '@skeletonlabs/skeleton';
 	export let data;
@@ -24,7 +24,7 @@
 	let listafiltrada = data.entries;
 
 	async function filtrar() {
-		listafiltrada = await trpcClient.entries.get
+		listafiltrada = await trpc.entries.get
 			.query({
 				supplierName: filtros.supplier,
 				page: paginationSettings.page,
@@ -118,3 +118,4 @@
 		showPreviousNextButtons={true}
 	/>
 </div>
+

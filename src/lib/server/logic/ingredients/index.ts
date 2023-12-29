@@ -7,6 +7,8 @@ import {
 	tr_ingredient_ingredient
 } from '$lib/server/db/schema';
 import { getFirst, getFirstIfPosible, type Prettify, type TableInsert } from '$lib/utils';
+import { logicError } from '$logic';
+import { warn } from 'console';
 import { eq, desc } from 'drizzle-orm';
 
 export function getAll() {
@@ -147,5 +149,30 @@ export async function getBatches(id: number) {
 		const current_amount = batch.initialAmount - batch.usedAmount - (batch.loss ?? 0);
 		return { id, batch_code, expirationDate, ingredient, current_amount };
 	});
+}
+
+export async function startIngredientProduction(
+	ingredient: { ingedient_id: number; produced_amount: number },
+	source: { selected_batch_id: number; second_selected_batch_id?: number }
+) {
+	const { ingedient_id, produced_amount } = ingredient;
+	const { selected_batch_id, second_selected_batch_id } = source;
+
+	const recipe = await getRecipie(ingedient_id);
+
+	const batch = await db.query.t_ingredient_batch.findFirst({
+		where: eq(t_ingredient_batch, selected_batch_id)
+	});
+
+	const second_batch = second_selected_batch_id
+		? await db.query.t_ingredient_batch.findFirst({
+				where: eq(t_ingredient_batch, selected_batch_id)
+		  })
+		: null;
+
+	if (!recipe) return logicError('El ingrediente no es derivado');
+	if (!batch) return logicError(`El lote con id ${selected_batch_id} no existe`);
+	if (second_selected_batch_id && !second_batch)
+		return logicError(`El lote con id ${second_selected_batch_id} no existe`);
 }
 

@@ -1,9 +1,9 @@
 import { ingredients_service } from '$logic';
-import { t } from '$trpc/init';
 import { z } from 'zod';
+import { publicProcedure, router } from '../context';
 
-export const ingredient = t.router({
-	delete: t.procedure.input(z.number().positive().int()).mutation(async ({ input }) => {
+export const ingredient = router({
+	delete: publicProcedure.input(z.number().positive().int()).mutation(async ({ input }) => {
 		try {
 			await ingredients_service.deletebyID(input);
 			return 'OK' as const;
@@ -11,14 +11,14 @@ export const ingredient = t.router({
 			return 'ERROR' as const;
 		}
 	}),
-	recipe: t.procedure.input(z.coerce.number().positive().int()).query(async ({ input }) => {
+	recipe: publicProcedure.input(z.coerce.number().positive().int()).query(async ({ input }) => {
 		try {
 			return await ingredients_service.getRecipie(input);
 		} catch {
 			return 'ERROR' as const;
 		}
 	}),
-	batches: t.procedure.input(z.coerce.number().positive().int()).query(async ({ input }) => {
+	batches: publicProcedure.input(z.coerce.number().positive().int()).query(async ({ input }) => {
 		return await ingredients_service.getBatches(input);
 	})
 });

@@ -1,11 +1,11 @@
 <script lang="ts">
-	import { trpcClient } from '$trpc/browserClients';
+	import { trpc } from '$lib/trpc-client';
 
 	export let data;
 
 	async function deleteIngredient(id: number) {
 		try {
-			const msj = await trpcClient.ingredient.delete.mutate(id);
+			const msj = await trpc.ingredient.delete.mutate(id);
 			if (msj == 'OK') {
 				data.list = data.list.filter((_, i) => data.list[i].id !== id);
 			} else {

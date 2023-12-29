@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { trpcClient } from '$trpc/browserClients.js';
+	import { trpc } from '$lib/trpc-client';
 	import { derived, writable } from 'svelte/store';
 	import { fade, fly } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
@@ -17,19 +17,19 @@
 	derived(form, ({ ingredeintId }) => ingredeintId).subscribe((ingredeintId) => {
 		if (ingredeintId) {
 			recipe.set('WAITING');
-			trpcClient.ingredient.recipe.query(ingredeintId).then(recipe.set);
+			trpc.ingredient.recipe.query(ingredeintId).then(recipe.set);
 		}
 	});
 
-	type Recipe = Awaited<ReturnType<typeof trpcClient.ingredient.recipe.query>>;
+	type Recipe = Awaited<ReturnType<typeof trpc.ingredient.recipe.query>>;
 	const recipe = writable<Recipe | 'WAITING'>(undefined);
 
-	type Batches = Awaited<ReturnType<typeof trpcClient.ingredient.batches.query>>;
+	type Batches = Awaited<ReturnType<typeof trpc.ingredient.batches.query>>;
 	const batches = writable<Batches | 'WAITING'>(undefined);
 	recipe.subscribe(($recipe) => {
 		if ($recipe instanceof Object) {
 			batches.set('WAITING');
-			trpcClient.ingredient.batches.query($recipe.source.id).then(batches.set);
+			trpc.ingredient.batches.query($recipe.source.id).then(batches.set);
 		}
 	});
 
@@ -94,6 +94,7 @@
 	let needs_two_batches = false;
 
 	const fecha = new Date().toLocaleDateString('es');
+
 	const numero = 12;
 </script>
 
