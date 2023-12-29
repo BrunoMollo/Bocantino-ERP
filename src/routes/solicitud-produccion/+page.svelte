@@ -136,24 +136,38 @@
 		<tbody>
 			{#if !$recipe}
 				<tr>
-					<td class="text-center w-3/12">Elija un producto</td>
+					<td class="text-center w-3/12">
+						<p class="text-lg">Elija un producto</p>
+					</td>
 				</tr>
 			{:else if $recipe == 'WAITING'}
 				<tr>
-					<td class="text-center w-3/12">Cargando...</td>
+					<td class="text-center w-3/12">
+						<p class="text-lg">Cargando...</p>
+					</td>
 				</tr>
 			{:else if $recipe == 'ERROR' || !$recipe}
 				<tr>
-					<td> ALGO SALIO MAL</td>
+					<td>
+						<p class="text-lg">ALGO SALIO MAL</p>
+					</td>
 				</tr>
 			{:else}
 				<tr in:fly={{ x: -100 }}>
-					<td class="text-center">{$recipe.source.name}</td>
 					<td class="text-center">
-						{$amount_needed?.toFixed(3)}
+						<p class="text-xl">
+							{$recipe.source.name}
+						</p>
+					</td>
+					<td class="text-center">
+						<p class="text-base">
+							{$amount_needed?.toFixed(2)}
+						</p>
 					</td>
 					<td class="text-center" class:text-error-400={$surpass_amount}>
-						{$available_amount}
+						<p class="text-base">
+							{$available_amount.toFixed(2)}
+						</p>
 					</td>
 					<td class="text-center">
 						<select class="select" bind:value={$form.selected_batch_id}>
