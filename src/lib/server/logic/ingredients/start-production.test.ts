@@ -154,7 +154,7 @@ describe('start production of derived ingredient', async () => {
 	test('if it is not derived return logic error', async () => {
 		const res = await ingredients_service.startIngredientProduction(
 			{ ingedient_id: LIVER_ID, produced_amount: 10 },
-			{ selected_batch_id: LIVER_BATCH_ID }
+			[LIVER_BATCH_ID]
 		);
 		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
@@ -164,7 +164,7 @@ describe('start production of derived ingredient', async () => {
 	test('if batch does not exist return logic error', async () => {
 		const res = await ingredients_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
-			{ selected_batch_id: LIVER_BATCH_ID * 100 }
+			[LIVER_BATCH_ID * 100]
 		);
 		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
@@ -174,7 +174,7 @@ describe('start production of derived ingredient', async () => {
 	test('if batch does not exist return logic error', async () => {
 		const res = await ingredients_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
-			{ selected_batch_id: LIVER_BATCH_ID, second_selected_batch_id: SECOND_LIVER_BATCH_ID * 100 }
+			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID * 100]
 		);
 		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
@@ -184,7 +184,7 @@ describe('start production of derived ingredient', async () => {
 	test('if two batches are the same return logic error', async () => {
 		const res = await ingredients_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
-			{ selected_batch_id: LIVER_BATCH_ID, second_selected_batch_id: LIVER_BATCH_ID }
+			[LIVER_BATCH_ID, LIVER_BATCH_ID]
 		);
 		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
@@ -194,7 +194,7 @@ describe('start production of derived ingredient', async () => {
 	test('if first batch is not of the correct ingredient', async () => {
 		const res = await ingredients_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
-			{ selected_batch_id: BANANA_BATCH_ID }
+			[BANANA_BATCH_ID]
 		);
 		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
@@ -204,7 +204,7 @@ describe('start production of derived ingredient', async () => {
 	test('if second batch is not of the correct ingredient', async () => {
 		const res = await ingredients_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
-			{ selected_batch_id: LIVER_BATCH_ID, second_selected_batch_id: BANANA_BATCH_ID }
+			[LIVER_BATCH_ID, BANANA_BATCH_ID]
 		);
 		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
@@ -213,7 +213,7 @@ describe('start production of derived ingredient', async () => {
 	test('execedes avaliable source with one batch return logical error', async () => {
 		const res = await ingredients_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 1000 },
-			{ selected_batch_id: LIVER_BATCH_ID }
+			[LIVER_BATCH_ID]
 		);
 		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
@@ -222,7 +222,7 @@ describe('start production of derived ingredient', async () => {
 	test('execedes avaliable source with two batches return logical error', async () => {
 		const res = await ingredients_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 1000000 },
-			{ selected_batch_id: LIVER_BATCH_ID, second_selected_batch_id: SECOND_LIVER_BATCH_ID }
+			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
 		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
@@ -238,7 +238,7 @@ describe('start production of derived ingredient', async () => {
 
 		await ingredients_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
-			{ selected_batch_id: LIVER_BATCH_ID }
+			[LIVER_BATCH_ID]
 		);
 		const to_be_used_fist_batch = await db.query.t_ingredient_batch
 			.findFirst({
@@ -258,7 +258,7 @@ describe('start production of derived ingredient', async () => {
 
 		await ingredients_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
-			{ selected_batch_id: LIVER_BATCH_ID }
+			[LIVER_BATCH_ID]
 		);
 		const to_be_used_fist_batch = await db.query.t_ingredient_batch
 			.findFirst({
@@ -272,7 +272,7 @@ describe('start production of derived ingredient', async () => {
 	test('changes value of to_be_used_amount both batches whith to_be_used_amount=0', async () => {
 		const res = await ingredients_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 110 },
-			{ selected_batch_id: LIVER_BATCH_ID, second_selected_batch_id: SECOND_LIVER_BATCH_ID }
+			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
 		//@ts-ignore
 		expect(res.type).toBe(undefined);
@@ -300,7 +300,7 @@ describe('start production of derived ingredient', async () => {
 			.where(eq(t_ingredient_batch.id, LIVER_BATCH_ID));
 		const res = await ingredients_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 110 },
-			{ selected_batch_id: LIVER_BATCH_ID, second_selected_batch_id: SECOND_LIVER_BATCH_ID }
+			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
 		//@ts-ignore
 		expect(res.type).toBe(undefined);

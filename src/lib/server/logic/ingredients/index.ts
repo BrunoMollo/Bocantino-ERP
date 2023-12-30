@@ -207,16 +207,18 @@ async function _select_current_to_be_used_amount(id: number, tx: Tx) {
 
 export async function startIngredientProduction(
 	ingredient: { ingedient_id: number; produced_amount: number },
-	source: { selected_batch_id: number; second_selected_batch_id?: number }
+	batches_ids: number[]
 ) {
-	const { ingedient_id, produced_amount } = ingredient;
-	const { selected_batch_id, second_selected_batch_id } = source;
+	if (batches_ids.length < 1 || batches_ids.length > 2) {
+		return logicError('cantidad invalida de lotes');
+	}
 
-	if (selected_batch_id === second_selected_batch_id) {
+	if ([...new Set(batches_ids)].length != batches_ids.length) {
 		return logicError('No se puede usar dos veces el mismo lote');
 	}
 
-	// RETRIVES RECIPE
+	const { ingedient_id, produced_amount } = ingredient;
+
 	const recipe = await getRecipie(ingedient_id);
 	if (!recipe) {
 		return logicError('El ingrediente no es derivado');
@@ -224,71 +226,57 @@ export async function startIngredientProduction(
 	const needed_amount = produced_amount * recipe.amount;
 
 	const result = await db.transaction(async (tx) => {
-		//RETRIVES FIRST BATCH
-		const batch = await getBatchById(selected_batch_id, tx);
-		if (!batch) {
-			return logicError(`El lote con id ${selected_batch_id} no existe`);
-		}
-		if (recipe.source.id != batch.ingredient.id) {
-			return logicError(
-				`El ingrediente deriva de ${recipe.source.name} no de ${batch.ingredient.name}`
-			);
-		}
-		if (second_selected_batch_id && batch.current_amount >= needed_amount) {
-			return logicError('El segundo lote no es necesario');
-		}
+		const batches = [] as Exclude<Awaited<ReturnType<typeof getBatchById>>, undefined>[];
 
-		//RETRIVES SECOND BACHE IF NEEDED
-		let second_batch = null;
-		if (second_selected_batch_id) {
-			second_batch = await getBatchById(second_selected_batch_id, tx);
-			if (!second_batch) {
-				return logicError(`El segundo lote  con id ${second_selected_batch_id} no existe`);
+		for (let id of batches_ids) {
+			const batch = await getBatchById(id, tx);
+			if (!batch) {
+				return logicError(`El lote con id ${id} no existe`);
 			}
-			if (recipe.source.id != second_batch.ingredient.id) {
+
+			if (recipe.source.id != batch.ingredient.id) {
 				return logicError(
-					`El ingrediente deriva de ${recipe.source.name} no de ${second_batch.ingredient.name}`
+					`El ingrediente deriva de ${recipe.source.name} no de ${batch.ingredient.name}`
 				);
 			}
+
+			batches.push(batch);
 		}
 
-		// UPDATE FIRST BATCH TEMPORARY COLUMN
-		const total_source_available = batch.current_amount + (second_batch?.current_amount ?? 0);
-		if (total_source_available < needed_amount) {
+		const total_available_source = batches
+			.map((x) => x?.current_amount ?? 0)
+			.reduce((acc, prev) => acc + prev, 0);
+		if (total_available_source < needed_amount) {
 			return logicError(
-				`Needs ${needed_amount} ${recipe.source.unit} of ${recipe.source.name} but only have ${total_source_available}`
+				`Se requieren ${needed_amount}${batches[0]?.ingredient.unit} pero solo hay ${total_available_source}`
 			);
 		}
 
-		const used_in_first_batch = second_selected_batch_id ? batch.current_amount : needed_amount;
+		const total_available_source_minus_one = batches
+			.filter((_, i) => i != 0)
+			.map((x) => x?.current_amount ?? 0)
+			.reduce((acc, prev) => acc + prev, 0);
+		if (total_available_source_minus_one > needed_amount) {
+			return logicError('Se indicarion mas lotes de los necesarios');
+		}
 
-		const current_to_be_used_amount_fist_batch = await _select_current_to_be_used_amount(
-			selected_batch_id,
-			tx
-		);
-
-		await tx
-			.update(t_ingredient_batch)
-			.set({ to_be_used_amount: current_to_be_used_amount_fist_batch + used_in_first_batch })
-			.where(eq(t_ingredient_batch.id, selected_batch_id));
-
-		// UPDATE SECOND BATCH TEMPORARY COLUMN IF NEEDED
-		if (second_selected_batch_id) {
-			const current_to_be_used_amount_second_batch = await _select_current_to_be_used_amount(
-				second_selected_batch_id,
+		let asigned_amount = 0;
+		const still_needed_amount = () => needed_amount - asigned_amount;
+		for (let batch of batches) {
+			const current_to_be_used_amount_fist_batch = await _select_current_to_be_used_amount(
+				batch.id,
 				tx
 			);
-			const used_in_second_batch = needed_amount - used_in_first_batch;
+			const used_in_batch =
+				still_needed_amount() > batch.current_amount ? batch.current_amount : still_needed_amount();
+			asigned_amount += used_in_batch;
 			await tx
 				.update(t_ingredient_batch)
-				.set({ to_be_used_amount: used_in_second_batch + current_to_be_used_amount_second_batch })
-				.where(eq(t_ingredient_batch.id, second_selected_batch_id));
+				.set({ to_be_used_amount: current_to_be_used_amount_fist_batch + used_in_batch })
+				.where(eq(t_ingredient_batch.id, batch.id));
 		}
 	});
 
-	//CREATE BATCH TO PRODUCE
-	//TODO: CONTINUE
-	// NEEDS BOCANTINO AS A SUPPLIER
 	return result ?? {};
 }
 
