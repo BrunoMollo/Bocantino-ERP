@@ -120,11 +120,13 @@ export const t_ingredient_batch = sqliteTable(
 		batch_code: text('supplier_bag_code').notNull(), //may or may not be provided by the supplier
 		initialAmount: real('full_amount').notNull(),
 		usedAmount: real('used_amount').notNull().default(0),
+		to_be_used_amount: real('to_be_used_amount').notNull().default(0),
 		productionDate: integer('production_date', { mode: 'timestamp' }).notNull(),
 		expirationDate: integer('expiration_date', { mode: 'timestamp' }).notNull(),
 		supplierId: integer('supplier_id').notNull(), //may be Bocantino
 		ingredientId: integer('ingredient_id').notNull(),
 		numberOfBags: integer('amount_of_bags').notNull(),
+		state: text('state').notNull().$type<'IN_PRODUCTION' | 'AVAILABLE' | 'EMPTY'>(),
 		//external only
 		cost: integer('cost'),
 		currency_alpha_code: text('currency_alpha_code', { length: 4 }).notNull().default('ARG'),
@@ -186,3 +188,4 @@ export const t_document_type = sqliteTable('document_type', {
 });
 //-------------------------------------------------------------------------------------////
 //
+

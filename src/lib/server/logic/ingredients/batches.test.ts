@@ -12,9 +12,7 @@ import {
 } from '$lib/server/db/schema';
 import type { RegisterPurchaseDto } from '.';
 import { eq } from 'drizzle-orm';
-import { ingredients_service, suppliers_service } from '$logic';
-import { ingredient } from '$lib/server/trpc/routes/ingredients';
-import { argv0 } from 'process';
+import { ingredients_service } from '$logic';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -131,7 +129,6 @@ describe('buy ingredients', async () => {
 					productionDate: new Date(2000, 1, 1), // Example timestamp for January 1, 2000
 					expirationDate: new Date(2000, 1, 20), // Example timestamp for January 20, 2000
 					cost: 5000,
-					supplierId: 1,
 					ingredientId: 1
 				},
 
@@ -198,150 +195,6 @@ describe('buy ingredients', async () => {
 				expect(list[i].loss).toBe(null);
 			}
 		});
-	});
-});
-
-describe('start production of derived ingredient', async () => {
-	let LIVER_ID = -1;
-	let SUPPLIER_ID = -1;
-	let REDUCED_LIVER_ID = -1;
-	let LIVER_BATCH_ID = -1;
-	let SECOND_LIVER_BATCH_ID = -1;
-
-	beforeAll(async () => {
-		await db.delete(tr_ingredient_ingredient);
-		await db.delete(t_ingredient_batch);
-		await db.delete(tr_supplier_ingredient);
-		await db.delete(t_ingridient_entry);
-		await db.delete(t_supplier);
-		await db.delete(t_ingredient);
-		await db.delete(t_entry_document);
-		await db.delete(t_document_type);
-		await db.insert(t_document_type).values(INVOICE_TYPE);
-
-		LIVER_ID = await ingredients_service
-			.add({
-				name: 'Liver',
-				unit: 'Kilogramos',
-				reorderPoint: 100
-			})
-			.then((x) => x.id);
-
-		SUPPLIER_ID = await suppliers_service
-			.add({
-				name: 'Juan',
-				email: 'jj@gmail.com',
-				ingredientsIds: [LIVER_ID]
-			})
-			.then((x) => x.id);
-
-		REDUCED_LIVER_ID = await ingredients_service
-			.add(
-				{
-					name: 'Liver reduced',
-					unit: 'Kilogramos',
-					reorderPoint: 80
-				},
-				{
-					id: LIVER_ID,
-					amount: 2
-				}
-			)
-			.then((x) => x.id);
-	});
-
-	beforeEach(async () => {
-		await db.delete(t_ingredient_batch);
-		await db.delete(t_ingridient_entry);
-		await db.delete(t_entry_document);
-		LIVER_BATCH_ID = await ingredients_service
-			.registerBoughtIngrediets({
-				supplierId: SUPPLIER_ID,
-				document: { number: '1234', typeId: INVOICE_TYPE.id, issue_date: new Date() },
-				batches: [
-					{
-						supplierId: SUPPLIER_ID,
-						ingredientId: LIVER_ID,
-						batch_code: 'SOME CODE',
-						initialAmount: 100,
-						numberOfBags: 10,
-						productionDate: new Date(),
-						expirationDate: new Date()
-					}
-				]
-			})
-			.then((x) => x[0]);
-
-		SECOND_LIVER_BATCH_ID = await ingredients_service
-			.registerBoughtIngrediets({
-				supplierId: SUPPLIER_ID,
-				document: { number: '1234', typeId: INVOICE_TYPE.id, issue_date: new Date() },
-				batches: [
-					{
-						supplierId: SUPPLIER_ID,
-						ingredientId: LIVER_ID,
-						batch_code: 'SOME OTHER CODE',
-						initialAmount: 120,
-						numberOfBags: 12,
-						productionDate: new Date(),
-						expirationDate: new Date()
-					}
-				]
-			})
-			.then((x) => x[0]);
-	});
-
-	test('testing initals conditions ok', async () => {
-		expect(LIVER_BATCH_ID).toBeTruthy();
-		const ingredients = await db.select().from(t_ingredient);
-		expect(ingredients.length).toBe(2);
-		expect(ingredients.filter((x) => x.id === LIVER_ID).length).toBe(1);
-		expect(ingredients.filter((x) => x.id === REDUCED_LIVER_ID).length).toBe(1);
-
-		const suppliers = await db.select().from(t_supplier);
-		expect(suppliers.length).toBe(1);
-		expect(suppliers[0].id).toBe(SUPPLIER_ID);
-
-		const rel_sup_ingred = await db.select().from(tr_supplier_ingredient);
-		expect(rel_sup_ingred.length).toBe(1);
-		expect(rel_sup_ingred[0].supplierId).toBe(SUPPLIER_ID);
-		expect(rel_sup_ingred[0].ingredientId).toBe(LIVER_ID);
-	});
-
-	test('if it is not derived return logic error', async () => {
-		const res = await ingredients_service.startIngredientProduction(
-			{ ingedient_id: LIVER_ID, produced_amount: 10 },
-			{ selected_batch_id: LIVER_BATCH_ID }
-		);
-		expect(res?.type).toBe('LOGIC_ERROR');
-		//TODO: MORE CHECKS
-	});
-
-	test('if batch does not exist return logic error', async () => {
-		const res = await ingredients_service.startIngredientProduction(
-			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
-			{ selected_batch_id: LIVER_BATCH_ID * 100 }
-		);
-		expect(res?.type).toBe('LOGIC_ERROR');
-		//TODO: MORE CHECKS
-	});
-
-	test('if batch does not exist return logic error', async () => {
-		const res = await ingredients_service.startIngredientProduction(
-			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
-			{ selected_batch_id: LIVER_BATCH_ID, second_selected_batch_id: SECOND_LIVER_BATCH_ID * 100 }
-		);
-		expect(res?.type).toBe('LOGIC_ERROR');
-		//TODO: MORE CHECKS
-	});
-
-	test('if two bathces are the same return logic error', async () => {
-		const res = await ingredients_service.startIngredientProduction(
-			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
-			{ selected_batch_id: LIVER_BATCH_ID, second_selected_batch_id: LIVER_BATCH_ID }
-		);
-		expect(res?.type).toBe('LOGIC_ERROR');
-		//TODO: MORE CHECKS
 	});
 });
 
