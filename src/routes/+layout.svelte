@@ -13,9 +13,10 @@
 	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
-	import { page } from '$app/stores';
+	import { navigating, page } from '$app/stores';
 	import { derived } from 'svelte/store';
 	import { routes } from './_components/routes';
+	import Spinner from '$lib/ui/Spinner.svelte';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
@@ -98,6 +99,12 @@
 	</svelte:fragment>
 
 	<!-- Page Route Content -->
-	<slot />
+	{#if $navigating}
+		<div class="w-full h-full flex items-center justify-center">
+			<Spinner showIf={true} size={36} />
+		</div>
+	{:else}
+		<slot />
+	{/if}
 </AppShell>
 

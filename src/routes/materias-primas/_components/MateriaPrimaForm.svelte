@@ -125,7 +125,7 @@
 	{/if}
 	<button class="btn variant-filled-primary" type="submit">
 		<b>{btnMsj}</b>
-		<Spinner showIf={$delayed} />
+		<Spinner showIf={$delayed} size={4} />
 	</button>
 </form>
 
