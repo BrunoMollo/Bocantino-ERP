@@ -1,4 +1,4 @@
-import { describe, expect, vi, test, beforeEach, beforeAll } from 'vitest';
+import { describe, expect, vi, test, beforeEach, beforeAll, afterEach } from 'vitest';
 import { INVOICE_TYPE, db } from '$lib/server/db/__mocks__';
 import {
 	t_document_type,
@@ -76,6 +76,7 @@ describe('start production of derived ingredient', async () => {
 	});
 
 	beforeEach(async () => {
+		vi.useFakeTimers();
 		await db.delete(t_ingredient_batch);
 		await db.delete(t_ingridient_entry);
 		await db.delete(t_entry_document);
@@ -133,6 +134,9 @@ describe('start production of derived ingredient', async () => {
 			})
 			.then((x) => x[0]);
 	});
+	afterEach(() => {
+		vi.useRealTimers();
+	});
 
 	test('testing initals conditions ok', async () => {
 		expect(LIVER_BATCH_ID).toBeTruthy();
@@ -151,6 +155,24 @@ describe('start production of derived ingredient', async () => {
 		expect(rel_sup_ingred[0].ingredientId).toBe(LIVER_ID);
 	});
 
+	test('if produced_amount=0 return logic error', async () => {
+		const res = await ingredients_service.startIngredientProduction(
+			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 0 },
+			[LIVER_BATCH_ID]
+		);
+		//@ts-ignore
+		expect(res?.type).toBe('LOGIC_ERROR');
+	});
+
+	test('if produced_amount=-10 return logic error', async () => {
+		const res = await ingredients_service.startIngredientProduction(
+			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: -10 },
+			[LIVER_BATCH_ID]
+		);
+		//@ts-ignore
+		expect(res?.type).toBe('LOGIC_ERROR');
+	});
+
 	test('if it is not derived return logic error', async () => {
 		const res = await ingredients_service.startIngredientProduction(
 			{ ingedient_id: LIVER_ID, produced_amount: 10 },
@@ -158,7 +180,6 @@ describe('start production of derived ingredient', async () => {
 		);
 		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
-		//TODO: MORE CHECKS
 	});
 
 	test('if batch does not exist return logic error', async () => {
@@ -168,7 +189,6 @@ describe('start production of derived ingredient', async () => {
 		);
 		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
-		//TODO: MORE CHECKS
 	});
 
 	test('if batch does not exist return logic error', async () => {
@@ -178,7 +198,6 @@ describe('start production of derived ingredient', async () => {
 		);
 		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
-		//TODO: MORE CHECKS
 	});
 
 	test('if two batches are the same return logic error', async () => {
@@ -188,7 +207,6 @@ describe('start production of derived ingredient', async () => {
 		);
 		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
-		//TODO: MORE CHECKS
 	});
 
 	test('if first batch is not of the correct ingredient', async () => {
@@ -198,7 +216,6 @@ describe('start production of derived ingredient', async () => {
 		);
 		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
-		//TODO: MORE CHECKS
 	});
 
 	test('if second batch is not of the correct ingredient', async () => {
@@ -222,6 +239,15 @@ describe('start production of derived ingredient', async () => {
 	test('execedes avaliable source with two batches return logical error', async () => {
 		const res = await ingredients_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 1000000 },
+			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
+		);
+		//@ts-ignore
+		expect(res?.type).toBe('LOGIC_ERROR');
+	});
+
+	test('if more batches selected than necesary return logical error', async () => {
+		const res = await ingredients_service.startIngredientProduction(
+			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 50 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
 		//@ts-ignore
@@ -318,6 +344,39 @@ describe('start production of derived ingredient', async () => {
 			})
 			.then((x) => x?.to_be_used_amount);
 		expect(to_be_used_second_batch).toBe(140);
+	});
+
+	test('should add a ingredient batch', async () => {
+		const date = new Date(2000, 1, 1, 13);
+		vi.setSystemTime(date);
+		const res = await ingredients_service.startIngredientProduction(
+			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 110 },
+			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
+		);
+		//@ts-ignore
+		const { id, type } = res;
+		expect(type).toBe(undefined);
+		expect(id).toBeTruthy();
+		const inserted = await db
+			.select()
+			.from(t_ingredient_batch)
+			.where(eq(id, t_ingredient_batch.id))
+			.then(getFirst);
+		expect(inserted).toBeTruthy();
+		expect(inserted.id).toBe(id);
+		expect(inserted.batch_code).toBeTruthy();
+		expect(inserted.initialAmount).toBe(110);
+		expect(inserted.usedAmount).toBe(0);
+		expect(inserted.to_be_used_amount).toBe(0);
+		expect(inserted.productionDate).toEqual(date);
+		expect(inserted.expirationDate).toEqual(date); //TODO: define how is assigned
+		expect(inserted.ingredientId).toBe(REDUCED_LIVER_ID);
+		expect(inserted.numberOfBags).toBe(1);
+		expect(inserted.state).toBe('IN_PRODUCTION');
+		expect(inserted.supplierId).toBe(null);
+		expect(inserted.cost).toBe(null);
+		expect(inserted.currency_alpha_code).toBe('ARG');
+		expect(inserted.loss).toBe(null);
 	});
 });
 

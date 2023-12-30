@@ -123,11 +123,13 @@ export const t_ingredient_batch = sqliteTable(
 		to_be_used_amount: real('to_be_used_amount').notNull().default(0),
 		productionDate: integer('production_date', { mode: 'timestamp' }).notNull(),
 		expirationDate: integer('expiration_date', { mode: 'timestamp' }).notNull(),
-		supplierId: integer('supplier_id').notNull(), //may be Bocantino
-		ingredientId: integer('ingredient_id').notNull(),
+		ingredientId: integer('ingredient_id')
+			.notNull()
+			.references(() => t_ingredient.id),
 		numberOfBags: integer('amount_of_bags').notNull(),
 		state: text('state').notNull().$type<'IN_PRODUCTION' | 'AVAILABLE' | 'EMPTY'>(),
 		//external only
+		supplierId: integer('supplier_id'),
 		cost: integer('cost'),
 		currency_alpha_code: text('currency_alpha_code', { length: 4 }).notNull().default('ARG'),
 		//internal only

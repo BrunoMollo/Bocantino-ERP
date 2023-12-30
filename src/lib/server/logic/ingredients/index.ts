@@ -8,7 +8,7 @@ import {
 } from '$lib/server/db/schema';
 import { getFirst, getFirstIfPosible, type Prettify, type TableInsert } from '$lib/utils';
 import { logicError } from '$logic';
-import { eq, desc } from 'drizzle-orm';
+import { eq, desc, and } from 'drizzle-orm';
 
 export function getAll() {
 	return db.select().from(t_ingredient);
@@ -161,7 +161,7 @@ export async function getBatchesByIngredientId(id: number) {
 		})
 		.from(t_ingredient_batch)
 		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
-		.where(eq(t_ingredient_batch.ingredientId, id))
+		.where(and(eq(t_ingredient_batch.ingredientId, id), eq(t_ingredient_batch.state, 'AVAILABLE')))
 		.orderBy(desc(t_ingredient_batch.expirationDate));
 
 	return list.map((batch) => {
@@ -207,22 +207,25 @@ async function _select_current_to_be_used_amount(id: number, tx: Tx) {
 
 export async function startIngredientProduction(
 	ingredient: { ingedient_id: number; produced_amount: number },
-	batches_ids: number[]
+	batches_ids: [number] | [number, number]
 ) {
+	const { ingedient_id, produced_amount } = ingredient;
+
+	if (produced_amount <= 0) {
+		return logicError('cantidad a producit invalida');
+	}
 	if (batches_ids.length < 1 || batches_ids.length > 2) {
 		return logicError('cantidad invalida de lotes');
 	}
-
 	if ([...new Set(batches_ids)].length != batches_ids.length) {
 		return logicError('No se puede usar dos veces el mismo lote');
 	}
-
-	const { ingedient_id, produced_amount } = ingredient;
 
 	const recipe = await getRecipie(ingedient_id);
 	if (!recipe) {
 		return logicError('El ingrediente no es derivado');
 	}
+
 	const needed_amount = produced_amount * recipe.amount;
 
 	const result = await db.transaction(async (tx) => {
@@ -275,8 +278,22 @@ export async function startIngredientProduction(
 				.set({ to_be_used_amount: current_to_be_used_amount_fist_batch + used_in_batch })
 				.where(eq(t_ingredient_batch.id, batch.id));
 		}
+		const new_batch = await tx
+			.insert(t_ingredient_batch)
+			.values({
+				batch_code: 'BOCANTINO-' + (ingedient_id + Date.now()).toString(),
+				initialAmount: produced_amount,
+				productionDate: new Date(),
+				expirationDate: new Date(), //TODO: Define how is the expirationDate calualted
+				ingredientId: ingedient_id,
+				numberOfBags: 1,
+				state: 'IN_PRODUCTION'
+			})
+			.returning({ id: t_ingredient_batch.id })
+			.then(getFirst);
+		return new_batch;
 	});
 
-	return result ?? {};
+	return result;
 }
 
