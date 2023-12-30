@@ -12,7 +12,7 @@
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"db-push": "drizzle-kit push:sqlite",
-		"db-clean": "drizzle-kit push:sqlite --config=./clean_db.config.ts",
+		"db-clean": "bun run src/lib/server/db/seeder.ts",
 		"db-migrate": "drizzle-kit generate:sqlite"
 	},
 	"devDependencies": {
@@ -28,6 +28,7 @@
 		"@typescript-eslint/parser": "^6.0.0",
 		"autoprefixer": "10.4.16",
 		"better-sqlite3": "^9.2.2",
+		"dotenv": "^16.3.1",
 		"drizzle-kit": "^0.20.6",
 		"eslint": "^8.28.0",
 		"eslint-config-prettier": "^9.0.0",
@@ -53,7 +54,6 @@
 		"@trpc/client": "^10.45.0",
 		"@trpc/server": "^10.45.0",
 		"boxicons": "^2.1.4",
-		"dotenv": "^16.3.1",
 		"drizzle-orm": "^0.29.1"
 	}
 }
