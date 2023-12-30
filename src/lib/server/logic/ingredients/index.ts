@@ -8,7 +8,7 @@ import {
 } from '$lib/server/db/schema';
 import { getFirst, getFirstIfPosible, type Prettify, type TableInsert } from '$lib/utils';
 import { logicError } from '$logic';
-import { eq, desc, and } from 'drizzle-orm';
+import { eq, asc, and } from 'drizzle-orm';
 
 export function getAll() {
 	return db.select().from(t_ingredient);
@@ -162,7 +162,7 @@ export async function getBatchesByIngredientId(id: number) {
 		.from(t_ingredient_batch)
 		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
 		.where(and(eq(t_ingredient_batch.ingredientId, id), eq(t_ingredient_batch.state, 'AVAILABLE')))
-		.orderBy(desc(t_ingredient_batch.expirationDate));
+		.orderBy(asc(t_ingredient_batch.expirationDate));
 
 	return list.map((batch) => {
 		const { id, batch_code, expirationDate, ingredient } = batch;
