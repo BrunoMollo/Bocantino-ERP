@@ -7,6 +7,7 @@
 	export let data: { form: any };
 	const { form, enhance, errors, delayed } = superForm<ProductSchema>(data.form, {
 		dataType: 'json',
+		taintedMessage: null,
 		onError: ({ result }) => {
 			alert('algo salio mal, llamar a soporte \n msj: ' + result.error.message);
 		}
@@ -98,3 +99,4 @@
 		<Spinner showIf={$delayed} />
 	</button>
 </form>
+

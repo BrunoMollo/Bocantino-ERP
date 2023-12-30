@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition';
-	import { dateProxy, superForm } from 'sveltekit-superforms/client';
+	import { superForm } from 'sveltekit-superforms/client';
 	import InputDate from '$lib/ui/InputDate.svelte';
 	import Autocomplete from '$lib/ui/Autocomplete.svelte';
 	import { makeOptions } from '$lib/utils.js';
@@ -9,7 +9,8 @@
 	export let data;
 	const { form, enhance, errors } = superForm(data.form, {
 		dataType: 'json',
-		defaultValidator: 'clear'
+		defaultValidator: 'clear',
+		taintedMessage: null
 	});
 
 	if ($form.batches.length === 0) {
@@ -148,7 +149,7 @@
 										type="text"
 										bind:value={$form.batches[i].initialAmount}
 									/>
-                  <!-- TODO:make dinamic -->
+									<!-- TODO:make dinamic -->
 									<span class="suffix absolute right-3 top-1/4">Kg</span>
 								</div>
 							</td>
@@ -232,3 +233,4 @@
 		</div>
 	</form>
 </main>
+

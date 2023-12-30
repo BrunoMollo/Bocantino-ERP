@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { trpc } from '$lib/trpc-client';
+	import { startAsNull } from '$lib/utils.js';
 	import { derived, writable } from 'svelte/store';
 	import { fade, fly } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
@@ -11,8 +12,7 @@
 		clearOnSubmit: 'none'
 	});
 
-	//@ts-ignore
-	$form.producedAmount = null;
+	startAsNull(form, 'producedAmount');
 
 	derived(form, ({ ingredeintId }) => ingredeintId).subscribe((ingredeintId) => {
 		if (ingredeintId) {

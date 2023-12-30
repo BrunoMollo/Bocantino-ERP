@@ -83,3 +83,22 @@ export function makeOptions<T>(arr: T[], fields: { label: keyof T; value: keyof 
 		{ labels: [] as any[], values: [] as any[] }
 	);
 }
+
+import type { ZodValidation } from 'sveltekit-superforms';
+import type { SuperForm } from 'sveltekit-superforms/client';
+import type { AnyZodObject } from 'zod';
+type SuperFormData<T extends ZodValidation<AnyZodObject>> = SuperForm<T>['form'];
+export function startAsNull<T extends ZodValidation<AnyZodObject>>(
+	form: SuperFormData<T>,
+	key: keyof T['_type']
+) {
+	form.update(
+		($form) => {
+			//@ts-ignore
+			$form[key] = null;
+			return $form;
+		},
+		{ taint: false }
+	);
+}
+
