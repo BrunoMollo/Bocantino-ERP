@@ -14,6 +14,7 @@ import {
 } from './schema';
 import * as schema from './schema';
 import * as dotenv from 'dotenv';
+import { getFirst, type Prettify, type TableInsert } from '$lib/utils';
 
 dotenv.config();
 const { TURSO_URL, TURSO_TOKEN } = process.env;
@@ -48,9 +49,9 @@ async function ___DELETE_ALL___() {
 
 async function seed() {
 	await Promise.all([
-		db.insert(t_document_type).values({ desc: 'Factura' }),
-		db.insert(t_document_type).values({ desc: 'Remito' }),
-		db.insert(t_document_type).values({ desc: 'Orden de compra' })
+		db.insert(t_document_type).values({ id: 1, desc: 'Factura' }),
+		db.insert(t_document_type).values({ id: 2, desc: 'Remito' }),
+		db.insert(t_document_type).values({ id: 3, desc: 'Orden de compra' })
 	]);
 	await db
 		.insert(t_ingredient)
@@ -64,44 +65,45 @@ async function seed() {
 	await db.insert(t_supplier).values({ id: 1, name: 'julian', email: 'julian@hotmail.com' });
 	await db.insert(tr_supplier_ingredient).values({ supplierId: 1, ingredientId: 1 });
 
-	await db.insert(t_ingredient_batch).values({
-		id: 1,
-		batch_code: 'ABCEDE_1234',
-		initialAmount: 300,
-		productionDate: new Date(2023, 12, 12),
-		expirationDate: new Date(2023, 1, 30),
-		ingredientId: 1,
-		numberOfBags: 10,
-		state: 'AVAILABLE',
+	await registerBoughtIngrediets({
 		supplierId: 1,
-		cost: 4000
+		document: { number: 'F-11111', issue_date: new Date(), typeId: 1 },
+		batches: [
+			{
+				batch_code: 'ABCEDE_1234',
+				initialAmount: 300,
+				productionDate: new Date(2023, 12, 12),
+				expirationDate: new Date(2023, 1, 30),
+				ingredientId: 1,
+				numberOfBags: 10,
+				cost: 4000
+			},
+			{
+				batch_code: 'XYZP_1234',
+				initialAmount: 200,
+				productionDate: new Date(2023, 12, 30),
+				expirationDate: new Date(2023, 2, 30),
+				ingredientId: 1,
+				numberOfBags: 10,
+				cost: 4500
+			}
+		]
 	});
 
-	await db.insert(t_ingredient_batch).values({
-		id: 2,
-		batch_code: 'XYZP_1234',
-		initialAmount: 200,
-		productionDate: new Date(2023, 12, 30),
-		expirationDate: new Date(2023, 2, 30),
-		ingredientId: 1,
-		numberOfBags: 10,
-		state: 'AVAILABLE',
+	await registerBoughtIngrediets({
 		supplierId: 1,
-		cost: 4500
-	});
-
-	await db.insert(t_ingredient_batch).values({
-		id: 3,
-		batch_code: 'PPPP_1234',
-		initialAmount: 200,
-		usedAmount: 200,
-		productionDate: new Date(2023, 12, 30),
-		expirationDate: new Date(2023, 2, 30),
-		ingredientId: 1,
-		numberOfBags: 10,
-		state: 'EMPTY',
-		supplierId: 1,
-		cost: 2000
+		document: { number: 'R-22121', issue_date: new Date(2023, 12, 31), typeId: 2 },
+		batches: [
+			{
+				batch_code: 'PPPP_1234',
+				initialAmount: 200,
+				productionDate: new Date(2023, 12, 30),
+				expirationDate: new Date(2023, 2, 30),
+				ingredientId: 1,
+				numberOfBags: 10,
+				cost: 2000
+			}
+		]
 	});
 }
 
@@ -111,4 +113,45 @@ async function main() {
 	console.log('DATABASE SEEDED WITH TESTING DATA');
 }
 main();
+
+//--------
+
+type RegisterPurchaseDto = Prettify<{
+	supplierId: number;
+	document: TableInsert<typeof t_entry_document.$inferInsert, 'id'>;
+	batches: {
+		ingredientId: number;
+		batch_code: string;
+		initialAmount: number;
+		productionDate: Date;
+		expirationDate: Date;
+		numberOfBags: number;
+		cost: number;
+	}[];
+}>;
+function registerBoughtIngrediets(data: RegisterPurchaseDto) {
+	return db.transaction(async (tx) => {
+		const { documentId } = await tx
+			.insert(t_entry_document)
+			.values(data.document)
+			.returning({ documentId: t_entry_document.id })
+			.then(getFirst);
+
+		await tx
+			.insert(t_ingridient_entry)
+			.values({ totalCost: null, documentId, supplierId: data.supplierId });
+
+		const { supplierId } = data;
+		const batchesId = [] as number[];
+		for (let batch of data.batches) {
+			const inserted = await tx
+				.insert(t_ingredient_batch)
+				.values({ ...batch, supplierId, state: 'AVAILABLE' })
+				.returning({ id: t_ingredient_batch.id })
+				.then(getFirst);
+			batchesId.push(inserted.id);
+		}
+		return batchesId;
+	});
+}
 
