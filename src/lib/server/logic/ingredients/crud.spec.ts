@@ -14,7 +14,7 @@ import { getFirst } from '$lib/utils';
 
 vi.mock('$lib/server/db/index.ts');
 
-describe('ingredients crud', () => {
+describe.sequential('ingredients crud', () => {
 	beforeEach(async () => {
 		await db.delete(tr_ingredient_ingredient);
 		await db.delete(t_ingredient_batch);
@@ -23,7 +23,7 @@ describe('ingredients crud', () => {
 		await db.delete(t_supplier);
 		await db.delete(t_ingredient);
 	});
-	describe('getAll', () => {
+	describe.sequential('getAll', () => {
 		test('return empty when there are not ingredients', async () => {
 			const list = await ingredients_service.getAll();
 			expect(list.length).toBe(0);
@@ -50,7 +50,7 @@ describe('ingredients crud', () => {
 			expect(list[1].unit).toBe('Kilogramos');
 		});
 	});
-	describe('getByID', () => {
+	describe.sequential('getByID', () => {
 		test('return null when there are not ingredients', async () => {
 			const data = await ingredients_service.getById(1);
 			expect(data).toBe(null);
@@ -123,7 +123,7 @@ describe('ingredients crud', () => {
 		});
 	});
 
-	describe('add', () => {
+	describe.sequential('add', () => {
 		test('insert new ingredient', async () => {
 			const element = { name: 'Orange', unit: 'Kilogramos' as const, reorderPoint: 200 };
 			await ingredients_service.add(element);
@@ -158,12 +158,16 @@ describe('ingredients crud', () => {
 		});
 	});
 
-	describe('edit', () => {
+	describe.sequential('edit', () => {
 		let LIVER = { id: 0 };
 		let REDUCED_LIVER = { id: 0 };
 		let SYNTETIC_LIVER = { id: 0 };
 		beforeEach(async () => {
 			await db.delete(tr_ingredient_ingredient);
+			await db.delete(t_ingredient_batch);
+			await db.delete(tr_supplier_ingredient);
+			await db.delete(t_ingridient_entry);
+			await db.delete(t_supplier);
 			await db.delete(t_ingredient);
 			LIVER = await ingredients_service.add({
 				name: 'Higado',

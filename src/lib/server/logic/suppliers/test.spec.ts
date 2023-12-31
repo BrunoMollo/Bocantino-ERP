@@ -12,7 +12,7 @@ import { ingredients_service, suppliers_service } from '$logic';
 
 vi.mock('$lib/server/db/index.ts');
 
-describe('supplier crud', () => {
+describe.sequential('supplier crud', () => {
 	let CHICKEN_ID = 0;
 	let FLOUR_ID = 0;
 	let POTATOE_ID = 0;
@@ -101,3 +101,4 @@ describe('supplier crud', () => {
 		});
 	});
 });
+

@@ -16,7 +16,7 @@ import { ingredients_service } from '$logic';
 
 vi.mock('$lib/server/db/index.ts');
 
-describe('buy ingredients', async () => {
+describe.sequential('buy ingredients', async () => {
 	beforeAll(async () => {
 		await db.delete(tr_ingredient_ingredient);
 		await db.delete(t_ingredient_batch);

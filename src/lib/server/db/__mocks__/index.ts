@@ -1,11 +1,10 @@
-import Database from 'better-sqlite3';
-import { drizzle } from 'drizzle-orm/better-sqlite3';
 import * as schema from '../schema';
-import { migrate } from 'drizzle-orm/better-sqlite3/migrator';
+import { createClient } from '@libsql/client';
+import { drizzle } from 'drizzle-orm/libsql';
 
-export const mockDrizzleClient = new Database(':memory:');
+export const mockDrizzleClient = createClient({ url: 'http://127.0.0.1:8080' });
 
 export const db = drizzle(mockDrizzleClient, { schema });
-migrate(db, { migrationsFolder: 'migrations' });
 
 export const INVOICE_TYPE = { id: 1, desc: 'invoice' };
+

@@ -8,7 +8,7 @@
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test": "vitest",
+		"test": "drizzle-kit push:sqlite --config=./db_unit_test.config.ts && vitest --single-thread",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"db-push": "drizzle-kit push:sqlite",
@@ -57,3 +57,4 @@
 		"drizzle-orm": "^0.29.1"
 	}
 }
+

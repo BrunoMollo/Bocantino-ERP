@@ -16,7 +16,7 @@ import { getFirst } from '$lib/utils';
 
 vi.mock('$lib/server/db/index.ts');
 
-describe('start production of derived ingredient', async () => {
+describe.sequential('start production of derived ingredient', async () => {
 	let LIVER_ID = -1;
 	let BANANA_ID = -1;
 	let SUPPLIER_ID = -1;
@@ -153,6 +153,9 @@ describe('start production of derived ingredient', async () => {
 		expect(rel_sup_ingred.length).toBe(2);
 		expect(rel_sup_ingred[0].supplierId).toBe(SUPPLIER_ID);
 		expect(rel_sup_ingred[0].ingredientId).toBe(LIVER_ID);
+
+		const batches = await db.select().from(t_ingredient_batch);
+		expect(batches.length).toBe(3);
 	});
 
 	test('if produced_amount=0 return logic error', async () => {
@@ -162,6 +165,8 @@ describe('start production of derived ingredient', async () => {
 		);
 		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
+		const batches = await db.select().from(t_ingredient_batch);
+		expect(batches.length).toBe(3);
 	});
 
 	test('if produced_amount=-10 return logic error', async () => {

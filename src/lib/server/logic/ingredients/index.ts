@@ -82,7 +82,7 @@ export async function edit(
 				});
 			}
 		} else if (!source) {
-			await db.delete(tr_ingredient_ingredient).where(eq(tr_ingredient_ingredient.derivedId, id));
+			await tx.delete(tr_ingredient_ingredient).where(eq(tr_ingredient_ingredient.derivedId, id));
 		}
 	});
 }
