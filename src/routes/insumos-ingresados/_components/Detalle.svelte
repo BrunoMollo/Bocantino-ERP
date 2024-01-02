@@ -4,11 +4,12 @@
 
 	export let selected_entry: PageData['entries'][0] | undefined;
 
-	function borrar() {
+	function restart() {
 		selected_entry = undefined;
+		batches = undefined;
 	}
 
-	let batches: any = null;
+	let batches: Awaited<ReturnType<typeof trpc.entries.getBatches.query>> | undefined = undefined;
 	$: {
 		if (selected_entry) {
 			trpc.entries.getBatches.query(selected_entry.id).then((x) => (batches = x));
@@ -20,7 +21,7 @@
 	<div style="background-color:red;" class="absolute inset-24 rounded-md">
 		<div>
 			<button
-				on:click={borrar}
+				on:click={restart}
 				class="bg-black m-3 p-3 rounded-full h-12 w-12 align-middle shadow-md"
 				><i class="bx bx-arrow-back text-2xl"></i></button
 			>
