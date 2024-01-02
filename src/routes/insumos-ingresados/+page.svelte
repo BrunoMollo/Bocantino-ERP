@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { trpc } from '$lib/trpc-client';
+	import Detalle from './_components/Detalle.svelte';
 	import { popup, type PaginationSettings, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { Paginator } from '@skeletonlabs/skeleton';
 	export let data;
@@ -22,6 +23,18 @@
 		number: ''
 	};
 	let listafiltrada = data.entries;
+
+	const datosDetalles = {
+		idEntrada: ''
+	};
+
+	function expandirDetalle(idEntrada: string) {
+		if (idEntrada != null && idEntrada != undefined) {
+			datosDetalles.idEntrada = idEntrada;
+			console.log(datosDetalles.idEntrada);
+			return null;
+		}
+	}
 
 	async function filtrar() {
 		listafiltrada = await trpc.entries.get
@@ -103,8 +116,12 @@
 							entrada.date.getFullYear()}</td
 					>
 					<td style="vertical-align:middle" class="text-center w-2/12 my-auto">{entrada.number}</td>
-					<td style="vertical-align:middle" class="text-center w-2/12"
-						><button type="button" class="btn variant-filled-primary rounded">Detalles</button></td
+					<td style="vertical-align:middle" class="text-center w-2/12">
+						<button
+							type="button"
+							class="btn variant-filled-primary rounded"
+							on:click={expandirDetalle(entrada.id.toString())}>Detalles</button
+						></td
 					>
 				</tr>
 			{/each}
@@ -119,3 +136,4 @@
 	/>
 </div>
 
+<Detalle idEntrada={datosDetalles.idEntrada} />

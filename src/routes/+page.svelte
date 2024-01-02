@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
+	export let data;
 	let listaTipos = [
 		{
 			id: 1,
