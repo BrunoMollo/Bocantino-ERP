@@ -4,7 +4,6 @@
 	import { derived, writable } from 'svelte/store';
 	import { fade, fly } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
-	import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
 
 	export let data;
 	const { form, enhance } = superForm(data.form, {
@@ -252,10 +251,10 @@
 		<button
 			type="submit"
 			class="btn rounded-lg variant-filled-secondary w-1/5"
-			disabled={$surpass_amount || !$form.selected_batch_id}
+			disabled={$surpass_amount || !$form.selected_batch_id || $form.producedAmount <= 0}
 		>
 			Iniciar produccion
 		</button>
 	</div>
 </form>
-<SuperDebug data={$form}></SuperDebug>
+
