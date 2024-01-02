@@ -5,6 +5,7 @@ import type { PageServerLoad } from './$types';
 import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';
 import type { Actions } from '@sveltejs/kit';
+import { ingredients_service } from '$logic';
 
 const ingredinetProduction_schema = z.object({
 	ingredeintId: z.coerce.number().int().positive(),
@@ -35,8 +36,12 @@ export const actions: Actions = {
 			console.log(form.errors);
 			return { form };
 		}
-
-		console.log(form.data);
+		// const batches_ids = [form.data.selected_batch_id];
+		// ingredients_service.startIngredientProduction({
+		// 	ingedient_id: form.data.ingredeintId,
+		// 	produced_amount: form.data.producedAmount
+		//     2
+		// });
 	}
 };
 

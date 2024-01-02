@@ -172,7 +172,7 @@ describe.sequential('buy ingredients', async () => {
 		});
 
 		test('save the two batches', async () => {
-			await ingredients_service.registerBoughtIngrediets(valid_input);
+			const result = await ingredients_service.registerBoughtIngrediets(valid_input);
 			const list = await db.select().from(t_ingredient_batch);
 			expect(list.length).toBe(valid_input.batches.length);
 			for (let i of [0, 1]) {
@@ -190,9 +190,10 @@ describe.sequential('buy ingredients', async () => {
 				expect(list[i].productionDate.toISOString()).toBe(
 					valid_input.batches[i].productionDate.toISOString()
 				);
-
 				expect(list[i].usedAmount).toBe(0);
 				expect(list[i].loss).toBe(null);
+				expect(list[i].entry_id).toBeTruthy();
+				expect(list[i].entry_id).toBe(result.entry_id);
 			}
 		});
 	});

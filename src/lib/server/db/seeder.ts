@@ -129,7 +129,7 @@ type RegisterPurchaseDto = Prettify<{
 		cost: number;
 	}[];
 }>;
-function registerBoughtIngrediets(data: RegisterPurchaseDto) {
+export function registerBoughtIngrediets(data: RegisterPurchaseDto) {
 	return db.transaction(async (tx) => {
 		const { documentId } = await tx
 			.insert(t_entry_document)
@@ -137,21 +137,23 @@ function registerBoughtIngrediets(data: RegisterPurchaseDto) {
 			.returning({ documentId: t_entry_document.id })
 			.then(getFirst);
 
-		await tx
+		const { entry_id } = await tx
 			.insert(t_ingridient_entry)
-			.values({ totalCost: null, documentId, supplierId: data.supplierId });
+			.values({ totalCost: null, documentId, supplierId: data.supplierId })
+			.returning({ entry_id: t_ingridient_entry.id })
+			.then(getFirst);
 
 		const { supplierId } = data;
 		const batchesId = [] as number[];
 		for (let batch of data.batches) {
 			const inserted = await tx
 				.insert(t_ingredient_batch)
-				.values({ ...batch, supplierId, state: 'AVAILABLE' })
+				.values({ ...batch, supplierId, state: 'AVAILABLE', entry_id })
 				.returning({ id: t_ingredient_batch.id })
 				.then(getFirst);
 			batchesId.push(inserted.id);
 		}
-		return batchesId;
+		return { entry_id, batchesId };
 	});
 }
 

@@ -24,14 +24,11 @@
 	};
 	let listafiltrada = data.entries;
 
-	const datosDetalles = {
-		idEntrada: ''
-	};
+	let selected_entry: (typeof data.entries)[0] | undefined = undefined;
 
 	function expandirDetalle(idEntrada: string) {
-		if (idEntrada != null && idEntrada != undefined) {
-			datosDetalles.idEntrada = idEntrada;
-			console.log(datosDetalles.idEntrada);
+		if (idEntrada) {
+			selected_entry = data.entries.find((x) => x.id == Number(idEntrada));
 			return null;
 		}
 	}
@@ -44,7 +41,13 @@
 				pageSize: paginationSettings.limit
 			})
 			.then((x) => (x ? x : []))
-			.then((x) => x.map((b) => ({ ...b, date: new Date(b.date) })));
+			.then((x) =>
+				x.map((b) => ({
+					...b,
+					date: new Date(b.date),
+					document: { ...b.document, issue_date: new Date(b.document.issue_date) }
+				}))
+			);
 	}
 </script>
 
@@ -77,7 +80,7 @@
 		/>
 	</div>
 	<div class="">
-		<p>Factura:</p>
+		<p>Comprobante:</p>
 		<input
 			type="text"
 			class="input rounded"
@@ -99,7 +102,7 @@
 				<th class="text-center w-2/12">ID:</th>
 				<th class="text-center w2/12">Proveedor:</th>
 				<th class="text-center w-2/12">Fecha alta:</th>
-				<th class="text-center w-2/12">Codigo factura:</th>
+				<th class="text-center w-2/12">Comprobante:</th>
 				<th class="text-center w-2/12"></th>
 			</tr>
 		</thead>
@@ -115,7 +118,9 @@
 							'/' +
 							entrada.date.getFullYear()}</td
 					>
-					<td style="vertical-align:middle" class="text-center w-2/12 my-auto">{entrada.number}</td>
+					<td style="vertical-align:middle" class="text-center w-2/12 my-auto"
+						>{entrada.document.number} ({entrada.document.type})</td
+					>
 					<td style="vertical-align:middle" class="text-center w-2/12">
 						<button
 							type="button"
@@ -136,4 +141,5 @@
 	/>
 </div>
 
-<Detalle idEntrada={datosDetalles.idEntrada} />
+<Detalle {selected_entry} />
+

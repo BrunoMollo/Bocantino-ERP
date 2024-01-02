@@ -132,6 +132,7 @@ export const t_ingredient_batch = sqliteTable(
 		supplierId: integer('supplier_id'),
 		cost: integer('cost'),
 		currency_alpha_code: text('currency_alpha_code', { length: 4 }).notNull().default('ARG'),
+		entry_id: integer('entry_id').references(() => t_ingridient_entry.id),
 		//internal only
 		loss: real('loss')
 	},
@@ -143,6 +144,7 @@ export const t_ingredient_batch = sqliteTable(
 	})
 );
 export const rel_ingredient_batch = relations(t_ingredient_batch, ({ one }) => ({
+	entry: one(t_ingridient_entry),
 	supplier: one(t_supplier, {
 		fields: [t_ingredient_batch.supplierId],
 		references: [t_supplier.id]
