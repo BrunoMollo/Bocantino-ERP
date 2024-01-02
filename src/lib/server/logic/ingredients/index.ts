@@ -212,7 +212,7 @@ async function _select_current_to_be_used_amount(id: number, tx: Tx) {
 
 export async function startIngredientProduction(
 	ingredient: { ingedient_id: number; produced_amount: number },
-	batches_ids: [number] | [number, number]
+	batches_ids: number[]
 ) {
 	const { ingedient_id, produced_amount } = ingredient;
 

@@ -4,9 +4,10 @@
 	import { derived, writable } from 'svelte/store';
 	import { fade, fly } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
+	import Spinner from '$lib/ui/Spinner.svelte';
 
 	export let data;
-	const { form, enhance } = superForm(data.form, {
+	const { form, enhance, delayed } = superForm(data.form, {
 		dataType: 'json',
 		clearOnSubmit: 'none'
 	});
@@ -127,7 +128,7 @@
 		<thead>
 			<tr class="h-10">
 				<th class="w-2/12 text-center">Materia prima</th>
-				<th class="w-1/12 text-center">Cantidad</th>
+				<th class="w-1/12 text-center">Cantidad usada</th>
 				<th class="w-1/12 text-center">Cantidad disponible</th>
 				<th class="w-4/12 text-center">Lote</th>
 				<th class="w-1/12 text-center"></th>
@@ -253,7 +254,11 @@
 			class="btn rounded-lg variant-filled-secondary w-1/5"
 			disabled={$surpass_amount || !$form.selected_batch_id || $form.producedAmount <= 0}
 		>
-			Iniciar produccion
+			{#if $delayed}
+				<Spinner showIf={$delayed} size={20} />
+			{:else}
+				Iniciar produccion
+			{/if}
 		</button>
 	</div>
 </form>

@@ -4,7 +4,7 @@ import { eq } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';
-import type { Actions } from '@sveltejs/kit';
+import { redirect, type Actions } from '@sveltejs/kit';
 import { ingredients_service } from '$logic';
 
 const ingredinetProduction_schema = z.object({
@@ -33,15 +33,22 @@ export const actions: Actions = {
 	default: async ({ request }) => {
 		const form = await superValidate(request, ingredinetProduction_schema);
 		if (!form.valid) {
-			console.log(form.errors);
 			return { form };
 		}
-		// const batches_ids = [form.data.selected_batch_id];
-		// ingredients_service.startIngredientProduction({
-		// 	ingedient_id: form.data.ingredeintId,
-		// 	produced_amount: form.data.producedAmount
-		//     2
-		// });
+
+		const batches_ids = [form.data.selected_batch_id];
+		if (form.data.second_selected_batch_id) {
+			batches_ids.push(form.data.second_selected_batch_id);
+		}
+		await ingredients_service.startIngredientProduction(
+			{
+				ingedient_id: form.data.ingredeintId,
+				produced_amount: form.data.producedAmount
+			},
+			batches_ids
+		);
+
+		throw redirect(302, '/?toast=Produccion iniciada');
 	}
 };
 
