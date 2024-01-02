@@ -155,22 +155,26 @@
 				</tr>
 			{:else}
 				<tr in:fly={{ x: -100 }}>
-					<td class="text-center">
+					<td class="text-center" style="vertical-align:middle;">
 						<p class="text-xl">
 							{$recipe.source.name}
 						</p>
 					</td>
-					<td class="text-center">
+					<td class="text-center" style="vertical-align:middle;">
 						<p class="text-base">
 							{$amount_needed?.toFixed(2)}
 						</p>
 					</td>
-					<td class="text-center" class:text-error-400={$surpass_amount}>
+					<td
+						class="text-center"
+						style="vertical-align:middle;"
+						class:text-error-400={$surpass_amount}
+					>
 						<p class="text-base">
 							{$available_amount.toFixed(2)}
 						</p>
 					</td>
-					<td class="text-center">
+					<td class="text-center" style="vertical-align:middle;">
 						<select class="select" bind:value={$form.selected_batch_id}>
 							{#if $batches == 'WAITING'}
 								<option disabled>Cargando</option>
@@ -255,4 +259,3 @@
 	</div>
 </form>
 <SuperDebug data={$form}></SuperDebug>
-
