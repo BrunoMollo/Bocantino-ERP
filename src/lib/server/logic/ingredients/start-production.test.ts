@@ -96,7 +96,7 @@ describe.sequential('start production of derived ingredient', async () => {
 					}
 				]
 			})
-			.then((x) => x[0]);
+			.then((x) => x.batchesId[0]);
 
 		SECOND_LIVER_BATCH_ID = await ingredients_service
 			.registerBoughtIngrediets({
@@ -114,7 +114,7 @@ describe.sequential('start production of derived ingredient', async () => {
 					}
 				]
 			})
-			.then((x) => x[0]);
+			.then((x) => x.batchesId[0]);
 
 		BANANA_BATCH_ID = await ingredients_service
 			.registerBoughtIngrediets({
@@ -132,7 +132,7 @@ describe.sequential('start production of derived ingredient', async () => {
 					}
 				]
 			})
-			.then((x) => x[0]);
+			.then((x) => x.batchesId[0]);
 	});
 	afterEach(() => {
 		vi.useRealTimers();
