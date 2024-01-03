@@ -7,6 +7,7 @@ import {
 	t_ingredient_batch,
 	t_ingridient_entry,
 	t_supplier,
+	tr_ingredient_batch_ingredient_batch,
 	tr_ingredient_ingredient,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
@@ -31,6 +32,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	let BANANA_BATCH_ID = -1;
 
 	beforeAll(async () => {
+		await db.delete(tr_ingredient_batch_ingredient_batch);
 		await db.delete(tr_ingredient_ingredient);
 		await db.delete(t_ingredient_batch);
 		await db.delete(tr_supplier_ingredient);
@@ -82,6 +84,7 @@ describe.sequential('start production of derived ingredient', async () => {
 
 	beforeEach(async () => {
 		vi.useFakeTimers();
+		await db.delete(tr_ingredient_batch_ingredient_batch);
 		await db.delete(t_ingredient_batch);
 		await db.delete(t_ingridient_entry);
 		await db.delete(t_entry_document);
@@ -272,7 +275,7 @@ describe.sequential('start production of derived ingredient', async () => {
 			.then(getFirst)
 			.then((x) => x.to_be_used_amount);
 
-		await ingredient_production_service.startIngredientProduction(
+		const inserted = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID]
 		);
@@ -283,6 +286,12 @@ describe.sequential('start production of derived ingredient', async () => {
 			.then((x) => x?.to_be_used_amount);
 
 		expect(to_be_used_fist_batch).toBe(10 * 2 + old_to_be_used_amount);
+
+		const r_batches = await db.select().from(tr_ingredient_batch_ingredient_batch);
+		expect(r_batches.length).toBe(1);
+		expect(r_batches[0].used_batch_id).toBe(LIVER_BATCH_ID);
+		//@ts-ignore
+		expect(r_batches[0].produced_batch_id).toBe(inserted.id);
 	});
 
 	test('changes value of to_be_used_amount one batch whith to_be_used_amount=20', async () => {
@@ -292,7 +301,7 @@ describe.sequential('start production of derived ingredient', async () => {
 			.set({ to_be_used_amount: old_to_be_used_amount })
 			.where(eq(t_ingredient_batch.id, LIVER_BATCH_ID));
 
-		await ingredient_production_service.startIngredientProduction(
+		const inserted = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID]
 		);
@@ -303,6 +312,12 @@ describe.sequential('start production of derived ingredient', async () => {
 			.then((x) => x?.to_be_used_amount);
 
 		expect(to_be_used_fist_batch).toBe(10 * 2 + old_to_be_used_amount);
+
+		const r_batches = await db.select().from(tr_ingredient_batch_ingredient_batch);
+		expect(r_batches.length).toBe(1);
+		expect(r_batches[0].used_batch_id).toBe(LIVER_BATCH_ID);
+		//@ts-ignore
+		expect(r_batches[0].produced_batch_id).toBe(inserted.id);
 	});
 
 	test('changes value of to_be_used_amount both batches whith to_be_used_amount=0', async () => {
@@ -326,6 +341,15 @@ describe.sequential('start production of derived ingredient', async () => {
 			})
 			.then((x) => x?.to_be_used_amount);
 		expect(to_be_used_second_batch).toBe(120);
+
+		const r_batches = await db.select().from(tr_ingredient_batch_ingredient_batch);
+		expect(r_batches.length).toBe(2);
+		expect(r_batches[0].used_batch_id).toBe(LIVER_BATCH_ID);
+		//@ts-ignore
+		expect(r_batches[0].produced_batch_id).toBe(res.id);
+		expect(r_batches[1].used_batch_id).toBe(SECOND_LIVER_BATCH_ID);
+		//@ts-ignore
+		expect(r_batches[1].produced_batch_id).toBe(res.id);
 	});
 
 	test('changes value of to_be_used_amount both batches with to_be_used_amount=40 in first and =0 in second', async () => {
@@ -354,6 +378,15 @@ describe.sequential('start production of derived ingredient', async () => {
 			})
 			.then((x) => x?.to_be_used_amount);
 		expect(to_be_used_second_batch).toBe(140);
+
+		const r_batches = await db.select().from(tr_ingredient_batch_ingredient_batch);
+		expect(r_batches.length).toBe(2);
+		expect(r_batches[0].used_batch_id).toBe(LIVER_BATCH_ID);
+		//@ts-ignore
+		expect(r_batches[0].produced_batch_id).toBe(res.id);
+		expect(r_batches[1].used_batch_id).toBe(SECOND_LIVER_BATCH_ID);
+		//@ts-ignore
+		expect(r_batches[1].produced_batch_id).toBe(res.id);
 	});
 
 	test('should add a ingredient batch', async () => {
@@ -387,6 +420,15 @@ describe.sequential('start production of derived ingredient', async () => {
 		expect(inserted.cost).toBe(null);
 		expect(inserted.currency_alpha_code).toBe('ARG');
 		expect(inserted.loss).toBe(null);
+
+		const r_batches = await db.select().from(tr_ingredient_batch_ingredient_batch);
+		expect(r_batches.length).toBe(2);
+		expect(r_batches[0].used_batch_id).toBe(LIVER_BATCH_ID);
+		//@ts-ignore
+		expect(r_batches[0].produced_batch_id).toBe(res.id);
+		expect(r_batches[1].used_batch_id).toBe(SECOND_LIVER_BATCH_ID);
+		//@ts-ignore
+		expect(r_batches[1].produced_batch_id).toBe(res.id);
 	});
 });
 

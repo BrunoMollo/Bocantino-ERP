@@ -6,6 +6,7 @@ import {
 	t_ingredient_batch,
 	t_ingridient_entry,
 	t_supplier,
+	tr_ingredient_batch_ingredient_batch,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
 import { ingredients_service, suppliers_service } from '$logic';
@@ -33,6 +34,7 @@ describe.sequential('supplier crud', () => {
 	});
 	describe('add', () => {
 		beforeEach(async () => {
+			await db.delete(tr_ingredient_batch_ingredient_batch);
 			await db.delete(t_ingredient_batch);
 			await db.delete(t_ingridient_entry);
 			await db.delete(t_entry_document);

@@ -1,7 +1,12 @@
 import { db, type Tx } from '$lib/server/db';
-import { getFirst, getFirstIfPosible } from '$lib/utils';
+import { getFirst, getFirstIfPosible, type Prettify } from '$lib/utils';
 import { ingredients_service, logicError } from '$logic';
-import { t_ingredient, t_ingredient_batch } from '../db/schema';
+import { alias } from 'drizzle-orm/sqlite-core';
+import {
+	t_ingredient,
+	t_ingredient_batch,
+	tr_ingredient_batch_ingredient_batch
+} from '../db/schema';
 import { eq, and, asc } from 'drizzle-orm';
 
 export function _calculate_available_amount(data: {
@@ -131,19 +136,7 @@ export async function startIngredientProduction(
 
 		let asigned_amount = 0;
 		const still_needed_amount = () => needed_amount - asigned_amount;
-		for (let batch of batches) {
-			const current_to_be_used_amount_fist_batch = await _select_current_to_be_used_amount(
-				batch.id,
-				tx
-			);
-			const used_in_batch =
-				still_needed_amount() > batch.current_amount ? batch.current_amount : still_needed_amount();
-			asigned_amount += used_in_batch;
-			await tx
-				.update(t_ingredient_batch)
-				.set({ to_be_used_amount: current_to_be_used_amount_fist_batch + used_in_batch })
-				.where(eq(t_ingredient_batch.id, batch.id));
-		}
+
 		const new_batch = await tx
 			.insert(t_ingredient_batch)
 			.values({
@@ -157,9 +150,72 @@ export async function startIngredientProduction(
 			})
 			.returning({ id: t_ingredient_batch.id })
 			.then(getFirst);
+
+		for (let batch of batches) {
+			const current_to_be_used_amount_fist_batch = await _select_current_to_be_used_amount(
+				batch.id,
+				tx
+			);
+			const used_in_batch =
+				still_needed_amount() > batch.current_amount ? batch.current_amount : still_needed_amount();
+			asigned_amount += used_in_batch;
+			await tx
+				.update(t_ingredient_batch)
+				.set({ to_be_used_amount: current_to_be_used_amount_fist_batch + used_in_batch })
+				.where(eq(t_ingredient_batch.id, batch.id));
+
+			await tx
+				.insert(tr_ingredient_batch_ingredient_batch)
+				.values({ produced_batch_id: new_batch.id, used_batch_id: batch.id });
+		}
 		return new_batch;
 	});
 
 	return result;
+}
+
+export async function getBatchesInProduction() {
+	const ta_used_batch = alias(t_ingredient_batch, 'used_batch');
+	const ta_used_ingredient = alias(t_ingredient, 'used_ingredient');
+	const pending_productions_row = await db
+		.select({
+			id: t_ingredient_batch.id,
+			batch_code: t_ingredient_batch.batch_code,
+			producedAmount: t_ingredient_batch.initialAmount,
+			producedIngredient: t_ingredient,
+			ta_used_batch,
+			ta_used_ingredient
+		})
+		.from(t_ingredient_batch)
+		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
+		.innerJoin(
+			tr_ingredient_batch_ingredient_batch,
+			eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, t_ingredient_batch.id)
+		)
+		.innerJoin(
+			ta_used_batch,
+			eq(tr_ingredient_batch_ingredient_batch.used_batch_id, ta_used_batch.id)
+		)
+		.innerJoin(ta_used_ingredient, eq(ta_used_batch.ingredientId, ta_used_ingredient.id))
+		.where(eq(t_ingredient_batch.state, 'IN_PRODUCTION'));
+
+	const ids = [...new Set(pending_productions_row.map((x) => x.id))];
+
+	return ids.map((id) => {
+		const rows = pending_productions_row.filter((x) => x.id == id);
+		const used_batches = rows
+			.map((x) => ({ ...x.ta_used_batch, ingredient: x.ta_used_ingredient }))
+			.map((x) => ({
+				id: x.id,
+				batch_code: x.batch_code,
+				expirationDate: x.expirationDate,
+				ingredient: x.ingredient
+			}));
+		const first_row = rows[0] as Prettify<Omit<(typeof rows)[0], 'ta_used_batch'>>;
+		//@ts-ignore
+		delete first_row.ta_used_batch;
+
+		return { ...first_row, used_batches };
+	});
 }
 

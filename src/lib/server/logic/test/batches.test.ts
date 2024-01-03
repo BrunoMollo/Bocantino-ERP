@@ -7,6 +7,7 @@ import {
 	t_ingredient_batch,
 	t_ingridient_entry,
 	t_supplier,
+	tr_ingredient_batch_ingredient_batch,
 	tr_ingredient_ingredient,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
@@ -18,6 +19,7 @@ vi.mock('$lib/server/db/index.ts');
 
 describe.sequential('buy ingredients', async () => {
 	beforeAll(async () => {
+		await db.delete(tr_ingredient_batch_ingredient_batch);
 		await db.delete(tr_ingredient_ingredient);
 		await db.delete(t_ingredient_batch);
 		await db.delete(tr_supplier_ingredient);
