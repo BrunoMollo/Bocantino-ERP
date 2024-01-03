@@ -121,7 +121,7 @@ export const t_ingredient_batch = sqliteTable(
 		initialAmount: real('full_amount').notNull(),
 		usedAmount: real('used_amount').notNull().default(0),
 		to_be_used_amount: real('to_be_used_amount').notNull().default(0),
-		productionDate: integer('production_date', { mode: 'timestamp' }).notNull(),
+		productionDate: integer('production_date', { mode: 'timestamp' }), // is null when is IN_PRODUCTION
 		expirationDate: integer('expiration_date', { mode: 'timestamp' }).notNull(),
 		ingredientId: integer('ingredient_id')
 			.notNull()

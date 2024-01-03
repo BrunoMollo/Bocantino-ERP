@@ -373,7 +373,7 @@ describe.sequential('start production of derived ingredient', async () => {
 		expect(inserted.initialAmount).toBe(110);
 		expect(inserted.usedAmount).toBe(0);
 		expect(inserted.to_be_used_amount).toBe(0);
-		expect(inserted.productionDate).toEqual(date);
+		expect(inserted.productionDate).toEqual(null);
 		expect(inserted.expirationDate).toEqual(date); //TODO: define how is assigned
 		expect(inserted.ingredientId).toBe(REDUCED_LIVER_ID);
 		expect(inserted.numberOfBags).toBe(1);

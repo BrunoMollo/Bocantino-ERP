@@ -288,7 +288,7 @@ export async function startIngredientProduction(
 			.values({
 				batch_code: 'BOCANTINO-' + (ingedient_id + Date.now()).toString(),
 				initialAmount: produced_amount,
-				productionDate: new Date(),
+				productionDate: null, // is asigned when production ends
 				expirationDate: new Date(), //TODO: Define how is the expirationDate calualted
 				ingredientId: ingedient_id,
 				numberOfBags: 1,
