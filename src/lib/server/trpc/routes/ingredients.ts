@@ -1,4 +1,4 @@
-import { ingredients_service } from '$logic';
+import { ingredients_service, ingredient_production_service } from '$logic';
 import { z } from 'zod';
 import { publicProcedure, router } from '../context';
 
@@ -19,7 +19,7 @@ export const ingredient = router({
 		}
 	}),
 	batches: publicProcedure.input(z.coerce.number().positive().int()).query(async ({ input }) => {
-		return await ingredients_service.getBatchesByIngredientId(input);
+		return await ingredient_production_service.getBatchesByIngredientId(input);
 	})
 });
 

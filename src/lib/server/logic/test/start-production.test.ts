@@ -10,7 +10,12 @@ import {
 	tr_ingredient_ingredient,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
-import { ingredients_service, suppliers_service } from '$logic';
+import {
+	ingredients_service,
+	suppliers_service,
+	ingredient_production_service,
+	purchases_service
+} from '$logic';
 import { eq } from 'drizzle-orm';
 import { getFirst } from '$lib/utils';
 
@@ -80,7 +85,7 @@ describe.sequential('start production of derived ingredient', async () => {
 		await db.delete(t_ingredient_batch);
 		await db.delete(t_ingridient_entry);
 		await db.delete(t_entry_document);
-		LIVER_BATCH_ID = await ingredients_service
+		LIVER_BATCH_ID = await purchases_service
 			.registerBoughtIngrediets({
 				supplierId: SUPPLIER_ID,
 				document: { number: '1234', typeId: INVOICE_TYPE.id, issue_date: new Date() },
@@ -98,7 +103,7 @@ describe.sequential('start production of derived ingredient', async () => {
 			})
 			.then((x) => x.batchesId[0]);
 
-		SECOND_LIVER_BATCH_ID = await ingredients_service
+		SECOND_LIVER_BATCH_ID = await purchases_service
 			.registerBoughtIngrediets({
 				supplierId: SUPPLIER_ID,
 				document: { number: '1234', typeId: INVOICE_TYPE.id, issue_date: new Date() },
@@ -116,7 +121,7 @@ describe.sequential('start production of derived ingredient', async () => {
 			})
 			.then((x) => x.batchesId[0]);
 
-		BANANA_BATCH_ID = await ingredients_service
+		BANANA_BATCH_ID = await purchases_service
 			.registerBoughtIngrediets({
 				supplierId: SUPPLIER_ID,
 				document: { number: '1234', typeId: INVOICE_TYPE.id, issue_date: new Date() },
@@ -159,7 +164,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if produced_amount=0 return logic error', async () => {
-		const res = await ingredients_service.startIngredientProduction(
+		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 0 },
 			[LIVER_BATCH_ID]
 		);
@@ -170,7 +175,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if produced_amount=-10 return logic error', async () => {
-		const res = await ingredients_service.startIngredientProduction(
+		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: -10 },
 			[LIVER_BATCH_ID]
 		);
@@ -179,7 +184,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if it is not derived return logic error', async () => {
-		const res = await ingredients_service.startIngredientProduction(
+		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID]
 		);
@@ -188,7 +193,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if batch does not exist return logic error', async () => {
-		const res = await ingredients_service.startIngredientProduction(
+		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID * 100]
 		);
@@ -197,7 +202,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if batch does not exist return logic error', async () => {
-		const res = await ingredients_service.startIngredientProduction(
+		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID * 100]
 		);
@@ -206,7 +211,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if two batches are the same return logic error', async () => {
-		const res = await ingredients_service.startIngredientProduction(
+		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID, LIVER_BATCH_ID]
 		);
@@ -215,7 +220,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if first batch is not of the correct ingredient', async () => {
-		const res = await ingredients_service.startIngredientProduction(
+		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[BANANA_BATCH_ID]
 		);
@@ -224,7 +229,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if second batch is not of the correct ingredient', async () => {
-		const res = await ingredients_service.startIngredientProduction(
+		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID, BANANA_BATCH_ID]
 		);
@@ -233,7 +238,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('execedes avaliable source with one batch return logical error', async () => {
-		const res = await ingredients_service.startIngredientProduction(
+		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 1000 },
 			[LIVER_BATCH_ID]
 		);
@@ -242,7 +247,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('execedes avaliable source with two batches return logical error', async () => {
-		const res = await ingredients_service.startIngredientProduction(
+		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 1000000 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
@@ -251,7 +256,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if more batches selected than necesary return logical error', async () => {
-		const res = await ingredients_service.startIngredientProduction(
+		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 50 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
@@ -267,7 +272,7 @@ describe.sequential('start production of derived ingredient', async () => {
 			.then(getFirst)
 			.then((x) => x.to_be_used_amount);
 
-		await ingredients_service.startIngredientProduction(
+		await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID]
 		);
@@ -287,7 +292,7 @@ describe.sequential('start production of derived ingredient', async () => {
 			.set({ to_be_used_amount: old_to_be_used_amount })
 			.where(eq(t_ingredient_batch.id, LIVER_BATCH_ID));
 
-		await ingredients_service.startIngredientProduction(
+		await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID]
 		);
@@ -301,7 +306,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('changes value of to_be_used_amount both batches whith to_be_used_amount=0', async () => {
-		const res = await ingredients_service.startIngredientProduction(
+		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 110 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
@@ -329,7 +334,7 @@ describe.sequential('start production of derived ingredient', async () => {
 			.update(t_ingredient_batch)
 			.set({ to_be_used_amount: old_to_be_used_amount })
 			.where(eq(t_ingredient_batch.id, LIVER_BATCH_ID));
-		const res = await ingredients_service.startIngredientProduction(
+		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 110 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
@@ -354,7 +359,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	test('should add a ingredient batch', async () => {
 		const date = new Date(2000, 1, 1, 13);
 		vi.setSystemTime(date);
-		const res = await ingredients_service.startIngredientProduction(
+		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 110 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);

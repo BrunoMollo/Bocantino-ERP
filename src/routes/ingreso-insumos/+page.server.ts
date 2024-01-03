@@ -5,7 +5,7 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { db } from '$lib/server/db';
 import { t_document_type } from '$lib/server/db/schema';
 import { isValidDateBackend, parseStringToDate } from '$lib/utils';
-import { ingredients_service, suppliers_service } from '$logic';
+import { purchases_service, suppliers_service } from '$logic';
 
 const boughBatchSchema = z.object({
 	supplierId: z.coerce.number().int().min(1, 'Requerido'),
@@ -41,7 +41,7 @@ export const actions: Actions = {
 		}
 
 		const { batches, supplierId } = form.data;
-		await ingredients_service.registerBoughtIngrediets({
+		await purchases_service.registerBoughtIngrediets({
 			supplierId,
 			batches,
 			document: {
@@ -54,3 +54,4 @@ export const actions: Actions = {
 		throw redirect(302, `/insumos-ingresados?toast=Se registraron los ${batches.length} lotes`);
 	}
 };
+

@@ -1,9 +1,6 @@
 import { z } from 'zod';
 import { publicProcedure, router } from '../context';
-import { ingredients_service } from '$logic';
-import { db } from '$lib/server/db';
-import { t_ingredient, t_ingredient_batch, t_ingridient_entry } from '$lib/server/db/schema';
-import { eq } from 'drizzle-orm';
+import { purchases_service } from '$logic';
 
 export const entries = router({
 	get: publicProcedure
@@ -15,14 +12,14 @@ export const entries = router({
 			})
 		)
 		.query(async ({ input }) => {
-			return await ingredients_service.getEntries({
+			return await purchases_service.getEntries({
 				supplierName: input.supplierName ?? '',
 				page: input.page,
 				pageSize: input.pageSize
 			});
 		}),
 	getBatches: publicProcedure.input(z.number().int().positive()).query(async ({ input }) => {
-		return await ingredients_service.getBatchesByEntryId(input);
+		return await purchases_service.getBatchesByEntryId(input);
 	})
 });
 

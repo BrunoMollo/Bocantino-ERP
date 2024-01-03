@@ -10,9 +10,9 @@ import {
 	tr_ingredient_ingredient,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
-import type { RegisterPurchaseDto } from '.';
+import type { RegisterPurchaseDto } from '../purchases-logic';
 import { eq } from 'drizzle-orm';
-import { ingredients_service } from '$logic';
+import { purchases_service } from '$logic';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -62,7 +62,7 @@ describe.sequential('buy ingredients', async () => {
 			]
 		} satisfies RegisterPurchaseDto;
 		test('creates new document row', async () => {
-			await ingredients_service.registerBoughtIngrediets(valid_input);
+			await purchases_service.registerBoughtIngrediets(valid_input);
 			const listDocs = await db.select().from(t_entry_document);
 			expect(listDocs.length).toBe(1);
 			const newDoc = listDocs[0];
@@ -73,7 +73,7 @@ describe.sequential('buy ingredients', async () => {
 			expect(newDoc.issue_date.toISOString()).toBe(valid_input.document.issue_date.toISOString());
 		});
 		test('creates new entry row', async () => {
-			await ingredients_service.registerBoughtIngrediets(valid_input);
+			await purchases_service.registerBoughtIngrediets(valid_input);
 			const entryList = await db.select().from(t_ingridient_entry);
 			expect(entryList.length).toBe(1);
 			expect(entryList[0]).toBeTruthy();
@@ -90,7 +90,7 @@ describe.sequential('buy ingredients', async () => {
 		});
 
 		test('save the batch', async () => {
-			await ingredients_service.registerBoughtIngrediets(valid_input);
+			await purchases_service.registerBoughtIngrediets(valid_input);
 			const list = await db.select().from(t_ingredient_batch);
 			expect(list.length).toBe(valid_input.batches.length);
 			expect(list[0].id).toBeTruthy();
@@ -104,7 +104,7 @@ describe.sequential('buy ingredients', async () => {
 			expect(list[0].expirationDate.toISOString()).toBe(
 				valid_input.batches[0].expirationDate.toISOString()
 			);
-			expect(list[0].productionDate.toISOString()).toBe(
+			expect(list[0].productionDate?.toISOString()).toBe(
 				valid_input.batches[0].productionDate.toISOString()
 			);
 
@@ -144,7 +144,7 @@ describe.sequential('buy ingredients', async () => {
 			]
 		} satisfies RegisterPurchaseDto;
 		test('creates new document row', async () => {
-			await ingredients_service.registerBoughtIngrediets(valid_input);
+			await purchases_service.registerBoughtIngrediets(valid_input);
 			const listDocs = await db.select().from(t_entry_document);
 			expect(listDocs.length).toBe(1);
 			const newDoc = listDocs[0];
@@ -155,7 +155,7 @@ describe.sequential('buy ingredients', async () => {
 			expect(newDoc.issue_date.toISOString()).toBe(valid_input.document.issue_date.toISOString());
 		});
 		test('creates new entry row', async () => {
-			await ingredients_service.registerBoughtIngrediets(valid_input);
+			await purchases_service.registerBoughtIngrediets(valid_input);
 			const entryList = await db.select().from(t_ingridient_entry);
 			expect(entryList.length).toBe(1);
 			expect(entryList[0]).toBeTruthy();
@@ -172,7 +172,7 @@ describe.sequential('buy ingredients', async () => {
 		});
 
 		test('save the two batches', async () => {
-			const result = await ingredients_service.registerBoughtIngrediets(valid_input);
+			const result = await purchases_service.registerBoughtIngrediets(valid_input);
 			const list = await db.select().from(t_ingredient_batch);
 			expect(list.length).toBe(valid_input.batches.length);
 			for (let i of [0, 1]) {
@@ -187,7 +187,7 @@ describe.sequential('buy ingredients', async () => {
 				expect(list[i].expirationDate.toISOString()).toBe(
 					valid_input.batches[i].expirationDate.toISOString()
 				);
-				expect(list[i].productionDate.toISOString()).toBe(
+				expect(list[i].productionDate?.toISOString()).toBe(
 					valid_input.batches[i].productionDate.toISOString()
 				);
 				expect(list[i].usedAmount).toBe(0);
