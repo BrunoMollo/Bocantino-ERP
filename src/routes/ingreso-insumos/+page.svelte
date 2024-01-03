@@ -5,6 +5,7 @@
 	import Autocomplete from '$lib/ui/Autocomplete.svelte';
 	import { makeOptions } from '$lib/utils.js';
 	import { derived } from 'svelte/store';
+	import { trpc } from '$lib/trpc-client.js';
 
 	export let data;
 	const { form, enhance, errors } = superForm(data.form, {
@@ -58,6 +59,13 @@
 				}
 			}
 	);
+
+	async function genearteCode(i: number) {
+		form.update((f) => {
+			f.batches[i].batch_code = `G-${f.invoiceNumber}-${i}`;
+			return f;
+		});
+	}
 </script>
 
 <main class="container h-full mx-auto flex justify-center items-center">
@@ -202,7 +210,14 @@
 										class:error_border={$batchesError(i, 'batch_code')}
 										bind:value={$form.batches[i].batch_code}
 									/>
-									<button type="button" class="variant-filled-surface">Autogenerar</button>
+									<button
+										type="button"
+										class="group variant-filled-surface"
+										on:click={() => genearteCode(i)}
+									>
+										<span class=" group-hover:hidden">G</span>
+										<span class=" group-hover:inline hidden">Generar</span>
+									</button>
 								</div>
 							</td>
 							<td class="flex align-middle h-full mt-1 mr-1">
@@ -233,3 +248,4 @@
 		</div>
 	</form>
 </main>
+
