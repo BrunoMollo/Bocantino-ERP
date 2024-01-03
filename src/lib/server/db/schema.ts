@@ -165,7 +165,9 @@ export const t_ingridient_entry = sqliteTable('ingridient_entry', {
 		.notNull()
 		.$defaultFn(() => new Date()),
 	totalCost: integer('total_cost'), // is calulated later, so can be null
-	currency_alpha_code: text('currency_alpha_code', { length: 4 }).notNull().default('ARG'),
+	currency_alpha_code: text('currency_alpha_code', { length: 4 })
+		.notNull()
+		.$defaultFn(() => 'ARG'),
 	documentId: integer('document_id').references(() => t_entry_document.id),
 	supplierId: integer('supplier_id')
 		.notNull()
