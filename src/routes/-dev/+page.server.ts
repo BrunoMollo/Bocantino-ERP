@@ -8,11 +8,17 @@ import {
 	t_ingridient_entry,
 	t_product,
 	t_supplier,
+	tr_ingredient_batch_ingredient_batch,
 	tr_ingredient_ingredient,
 	tr_ingredient_product,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
-import { ingredients_service, purchases_service, suppliers_service } from '$logic';
+import {
+	ingredient_production_service,
+	ingredients_service,
+	purchases_service,
+	suppliers_service
+} from '$logic';
 import type { PageServerLoad } from './$types';
 import { redirect, type Actions } from '@sveltejs/kit';
 
@@ -46,24 +52,26 @@ async function ___DELETE_ALL___() {
 	}
 	db.transaction(async (tx) => {
 		// -> 1
-		await tx.delete(t_ingredient_batch);
+		await tx.delete(tr_ingredient_batch_ingredient_batch);
 		// -> 2
-		await tx.delete(t_ingridient_entry);
+		await tx.delete(t_ingredient_batch);
 		// -> 3
-		await tx.delete(t_entry_document);
+		await tx.delete(t_ingridient_entry);
 		// -> 4
-		await tx.delete(t_document_type);
+		await tx.delete(t_entry_document);
 		// -> 5
-		await tx.delete(tr_supplier_ingredient);
+		await tx.delete(t_document_type);
 		// -> 6
-		await tx.delete(t_supplier);
+		await tx.delete(tr_supplier_ingredient);
 		// -> 7
-		await tx.delete(tr_ingredient_product);
+		await tx.delete(t_supplier);
 		// -> 8
-		await tx.delete(t_product);
+		await tx.delete(tr_ingredient_product);
 		// -> 9
-		await tx.delete(tr_ingredient_ingredient);
+		await tx.delete(t_product);
 		// -> 10
+		await tx.delete(tr_ingredient_ingredient);
+		// -> 11
 		await tx.delete(t_ingredient);
 	});
 }
@@ -109,7 +117,23 @@ async function seed() {
 		ingredientsIds: [higado.id]
 	});
 
-	await purchases_service.registerBoughtIngrediets({
+	const first_entry = await purchases_service.registerBoughtIngrediets({
+		supplierId: julian.id,
+		document: { number: 'R-22121', issue_date: new Date(2023, 12, 31), typeId: remito.id },
+		batches: [
+			{
+				batch_code: 'PPPP_1234',
+				initialAmount: 200,
+				productionDate: new Date(2023, 12, 30),
+				expirationDate: new Date(2023, 1, 30),
+				ingredientId: higado.id,
+				numberOfBags: 10,
+				cost: 2000
+			}
+		]
+	});
+
+	const second_entry = await purchases_service.registerBoughtIngrediets({
 		supplierId: julian.id,
 		document: { number: 'F-11111', issue_date: new Date(), typeId: factura.id },
 		batches: [
@@ -117,7 +141,7 @@ async function seed() {
 				batch_code: 'ABCEDE_1234',
 				initialAmount: 300,
 				productionDate: new Date(2023, 12, 12),
-				expirationDate: new Date(2023, 1, 30),
+				expirationDate: new Date(2023, 2, 30),
 				ingredientId: higado.id,
 				numberOfBags: 10,
 				cost: 4000
@@ -133,21 +157,9 @@ async function seed() {
 			}
 		]
 	});
-
-	await purchases_service.registerBoughtIngrediets({
-		supplierId: julian.id,
-		document: { number: 'R-22121', issue_date: new Date(2023, 12, 31), typeId: remito.id },
-		batches: [
-			{
-				batch_code: 'PPPP_1234',
-				initialAmount: 200,
-				productionDate: new Date(2023, 12, 30),
-				expirationDate: new Date(2023, 2, 30),
-				ingredientId: higado.id,
-				numberOfBags: 10,
-				cost: 2000
-			}
-		]
-	});
+	await ingredient_production_service.startIngredientProduction(
+		{ ingedient_id: higado_desidatado.id, produced_amount: 50 },
+		first_entry.batchesId
+	);
 }
 

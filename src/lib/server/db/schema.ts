@@ -158,7 +158,7 @@ export const rel_ingredient_batch = relations(t_ingredient_batch, ({ one }) => (
 //
 
 ////-------------------------------------------------------------------------------------//
-// INGREDIENT BAG <--> INGREDIENT BAG
+// INGREDIENT BAG (derived)<--> INGREDIENT BAG (used)
 export const tr_ingredient_batch_ingredient_batch = sqliteTable(
 	'r_ingredient_batch_ingredient_batch',
 	{
@@ -167,8 +167,12 @@ export const tr_ingredient_batch_ingredient_batch = sqliteTable(
 			.references(() => t_ingredient_batch.id),
 		used_batch_id: integer('used_batch_id')
 			.notNull()
-			.references(() => t_ingredient_batch.id)
-	}
+			.references(() => t_ingredient_batch.id),
+		amountUsed: real('amount_used').notNull()
+	},
+	({ produced_batch_id, used_batch_id }) => ({
+		pk: primaryKey({ columns: [produced_batch_id, used_batch_id] })
+	})
 );
 //-------------------------------------------------------------------------------------////
 //

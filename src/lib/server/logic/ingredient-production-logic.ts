@@ -164,9 +164,11 @@ export async function startIngredientProduction(
 				.set({ to_be_used_amount: current_to_be_used_amount_fist_batch + used_in_batch })
 				.where(eq(t_ingredient_batch.id, batch.id));
 
-			await tx
-				.insert(tr_ingredient_batch_ingredient_batch)
-				.values({ produced_batch_id: new_batch.id, used_batch_id: batch.id });
+			await tx.insert(tr_ingredient_batch_ingredient_batch).values({
+				produced_batch_id: new_batch.id,
+				used_batch_id: batch.id,
+				amountUsed: used_in_batch
+			});
 		}
 		return new_batch;
 	});
@@ -184,6 +186,7 @@ export async function getBatchesInProduction() {
 			producedAmount: t_ingredient_batch.initialAmount,
 			producedIngredient: t_ingredient,
 			ta_used_batch,
+			amountUsed: tr_ingredient_batch_ingredient_batch.amountUsed,
 			ta_used_ingredient
 		})
 		.from(t_ingredient_batch)
@@ -204,17 +207,25 @@ export async function getBatchesInProduction() {
 	return ids.map((id) => {
 		const rows = pending_productions_row.filter((x) => x.id == id);
 		const used_batches = rows
-			.map((x) => ({ ...x.ta_used_batch, ingredient: x.ta_used_ingredient }))
+			.map((x) => ({
+				...x.ta_used_batch,
+				ingredient: x.ta_used_ingredient,
+				amountUsed: x.amountUsed
+			}))
 			.map((x) => ({
 				id: x.id,
 				batch_code: x.batch_code,
 				expirationDate: x.expirationDate,
-				ingredient: x.ingredient
+				ingredient: x.ingredient,
+				amountUsed: x.amountUsed
 			}));
 		const first_row = rows[0] as Prettify<Omit<(typeof rows)[0], 'ta_used_batch'>>;
 		//@ts-ignore
 		delete first_row.ta_used_batch;
-
+		//@ts-ignore
+		delete first_row.ta_used_ingredient;
+		//@ts-ignore
+		delete first_row.amountUsed;
 		return { ...first_row, used_batches };
 	});
 }
