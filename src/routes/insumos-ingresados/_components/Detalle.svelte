@@ -18,7 +18,7 @@
 </script>
 
 {#if selected_entry}
-	<div style="background-color:red;" class="absolute inset-24 rounded-md">
+	<div style="background-color:red;" class="absolute inset-24 rounded-md bg-slate-800 p-4">
 		<div>
 			<button
 				on:click={restart}
@@ -42,4 +42,3 @@
 
 <style>
 </style>
-
