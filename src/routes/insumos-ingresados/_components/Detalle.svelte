@@ -18,7 +18,7 @@
 </script>
 
 {#if selected_entry}
-	<div style="background-color:red;" class="absolute inset-24 rounded-md bg-slate-800 p-4">
+	<div class="absolute inset-24 rounded-md bg-slate-800 p-4">
 		<div>
 			<button
 				on:click={restart}
@@ -26,14 +26,50 @@
 				><i class="bx bx-arrow-back text-2xl"></i></button
 			>
 		</div>
-		<h1>id:{selected_entry.id}</h1>
-		<h2>provedor:{selected_entry.supplier}</h2>
-		<h2>fecha ingreso:{selected_entry.date}</h2>
-		<h2>Numero de {selected_entry.document.type}: {selected_entry.document.number}</h2>
-		<h2>Fecha de emision: {selected_entry.document.issue_date}</h2>
+		<div class="flex w-full justify-between text-2xl pt-4">
+			<h1>ID: {selected_entry.id}</h1>
+			<h2>PROVEEDOR: {selected_entry.supplier}</h2>
+			<h2>
+				FECHA INGRESO: {selected_entry.date.getDay()} / {selected_entry.date.getMonth() + 1} / {selected_entry.date.getFullYear()}
+			</h2>
+		</div>
+
+		<h2 class="text-xl py-2">
+			NUMERO DE {selected_entry.document.type.toUpperCase()}: {selected_entry.document.number}
+		</h2>
+		<h2>
+			FECHA DE EMISION: {selected_entry.document.issue_date.getDay()} / {selected_entry.document.issue_date.getMonth() +
+				1} / {selected_entry.document.issue_date.getFullYear()}
+		</h2>
 
 		{#if batches}
-			<p>{JSON.stringify(batches)}</p>
+			<!-- <p>{JSON.stringify(batches)}</p> -->
+			<table class="w-full mt-5 shadow-lg border border-collapse table">
+				<thead class="text-xl my-2">
+					<tr class="mt-1 mb-2">
+						<th>Ingrediente</th>
+						<th>Cantidad</th>
+						<th>Codigo</th>
+						<th>Fecha Produccion</th>
+						<th>Fecha Vencimiento</th>
+						<th>Costo</th>
+						<th>Cantidad de bolsas</th>
+					</tr>
+				</thead>
+				<tbody>
+					{#each batches as batch}
+						<tr>
+							<td>{batch.ingredient}</td>
+							<td>{batch.initialAmount}</td>
+							<td>{batch.code}</td>
+							<td>{batch.productionDate}</td>
+							<td>{batch.expirationDate}</td>
+							<td>{batch.cost}</td>
+							<td>{batch.bags}</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
 		{:else}
 			<p>cargando</p>
 		{/if}
