@@ -295,7 +295,7 @@ describe.sequential('start production of derived ingredient', async () => {
 		expect(r_batches[0].used_batch_id).toBe(LIVER_BATCH_ID);
 		//@ts-ignore
 		expect(r_batches[0].produced_batch_id).toBe(inserted.id);
-		expect(r_batches[0].amountUsed).toBe(20);
+		expect(r_batches[0].amount_used_to_produce_batch).toBe(20);
 	});
 
 	test('changes value of to_be_used_amount one batch whith to_be_used_amount=20', async () => {
@@ -320,7 +320,7 @@ describe.sequential('start production of derived ingredient', async () => {
 		const r_batches = await db.select().from(tr_ingredient_batch_ingredient_batch);
 		expect(r_batches.length).toBe(1);
 		expect(r_batches[0].used_batch_id).toBe(LIVER_BATCH_ID);
-		expect(r_batches[0].amountUsed).toBe(2 * 10);
+		expect(r_batches[0].amount_used_to_produce_batch).toBe(2 * 10);
 		//@ts-ignore
 		expect(r_batches[0].produced_batch_id).toBe(inserted.id);
 	});
@@ -352,12 +352,12 @@ describe.sequential('start production of derived ingredient', async () => {
 		expect(r_batches[0].used_batch_id).toBe(LIVER_BATCH_ID);
 		//@ts-ignore
 		expect(r_batches[0].produced_batch_id).toBe(res.id);
-		expect(r_batches[0].amountUsed).toBe(LIVER_BATCH_INTIAL_AMOUNT);
+		expect(r_batches[0].amount_used_to_produce_batch).toBe(LIVER_BATCH_INTIAL_AMOUNT);
 
 		expect(r_batches[1].used_batch_id).toBe(SECOND_LIVER_BATCH_ID);
 		//@ts-ignore
 		expect(r_batches[1].produced_batch_id).toBe(res.id);
-		expect(r_batches[1].amountUsed).toBe(110 * 2 - LIVER_BATCH_INTIAL_AMOUNT);
+		expect(r_batches[1].amount_used_to_produce_batch).toBe(110 * 2 - LIVER_BATCH_INTIAL_AMOUNT);
 	});
 
 	test('changes value of to_be_used_amount both batches with to_be_used_amount=40 in first and =0 in second', async () => {
@@ -390,13 +390,15 @@ describe.sequential('start production of derived ingredient', async () => {
 		const r_batches = await db.select().from(tr_ingredient_batch_ingredient_batch);
 		expect(r_batches.length).toBe(2);
 		expect(r_batches[0].used_batch_id).toBe(LIVER_BATCH_ID);
-		expect(r_batches[0].amountUsed).toBe(LIVER_BATCH_INTIAL_AMOUNT - 40);
+		expect(r_batches[0].amount_used_to_produce_batch).toBe(LIVER_BATCH_INTIAL_AMOUNT - 40);
 		//@ts-ignore
 		expect(r_batches[0].produced_batch_id).toBe(res.id);
 		expect(r_batches[1].used_batch_id).toBe(SECOND_LIVER_BATCH_ID);
 		//@ts-ignore
 		expect(r_batches[1].produced_batch_id).toBe(res.id);
-		expect(r_batches[1].amountUsed).toBe(2 * 110 - LIVER_BATCH_INTIAL_AMOUNT + 40);
+		expect(r_batches[1].amount_used_to_produce_batch).toBe(
+			2 * 110 - LIVER_BATCH_INTIAL_AMOUNT + 40
+		);
 	});
 
 	test('should add a ingredient batch', async () => {
@@ -436,11 +438,11 @@ describe.sequential('start production of derived ingredient', async () => {
 		expect(r_batches[0].used_batch_id).toBe(LIVER_BATCH_ID);
 		//@ts-ignore
 		expect(r_batches[0].produced_batch_id).toBe(res.id);
-		expect(r_batches[0].amountUsed).toBe(LIVER_BATCH_INTIAL_AMOUNT);
+		expect(r_batches[0].amount_used_to_produce_batch).toBe(LIVER_BATCH_INTIAL_AMOUNT);
 		expect(r_batches[1].used_batch_id).toBe(SECOND_LIVER_BATCH_ID);
 		//@ts-ignore
 		expect(r_batches[1].produced_batch_id).toBe(res.id);
-		expect(r_batches[1].amountUsed).toBe(2 * 110 - LIVER_BATCH_INTIAL_AMOUNT);
+		expect(r_batches[1].amount_used_to_produce_batch).toBe(2 * 110 - LIVER_BATCH_INTIAL_AMOUNT);
 	});
 });
 

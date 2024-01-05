@@ -168,7 +168,7 @@ export const tr_ingredient_batch_ingredient_batch = sqliteTable(
 		used_batch_id: integer('used_batch_id')
 			.notNull()
 			.references(() => t_ingredient_batch.id),
-		amountUsed: real('amount_used').notNull()
+		amount_used_to_produce_batch: real('amount_used').notNull()
 	},
 	({ produced_batch_id, used_batch_id }) => ({
 		pk: primaryKey({ columns: [produced_batch_id, used_batch_id] })
