@@ -1,6 +1,8 @@
 import { db } from '$lib/server/db';
-import { t_supplier, tr_supplier_ingredient } from '$lib/server/db/schema';
+import { t_ingredient, t_supplier, tr_supplier_ingredient } from '$lib/server/db/schema';
 import { getFirst, type TableInsert } from '$lib/utils';
+import { eq } from 'drizzle-orm';
+import { drizzle_map } from 'drizzle-tools';
 
 type NewSupplierDto = TableInsert<typeof t_supplier.$inferInsert, 'id'> & {
 	ingredientsIds: number[];
@@ -24,22 +26,11 @@ export async function add(data: NewSupplierDto) {
 }
 
 export async function getAll() {
-	const resultSet = await db.query.t_supplier.findMany({
-		with: {
-			r_supplier_ingredient: {
-				columns: {},
-				with: {
-					ingredient: true
-				}
-			}
-		}
-	});
-	const suppliers = resultSet.map(({ id, name, email, r_supplier_ingredient }) => ({
-		id,
-		name,
-		email,
-		ingredients: r_supplier_ingredient.map(({ ingredient }) => ingredient)
-	}));
-
-	return suppliers;
+	return await db
+		.select({ t_supplier, ingredients: t_ingredient })
+		.from(t_supplier)
+		.leftJoin(tr_supplier_ingredient, eq(tr_supplier_ingredient.supplierId, t_supplier.id))
+		.leftJoin(t_ingredient, eq(tr_supplier_ingredient.ingredientId, t_ingredient.id))
+		.then(drizzle_map({ one: 't_supplier', with_one: [], with_many: ['ingredients'] }));
 }
+
