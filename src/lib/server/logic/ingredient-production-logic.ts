@@ -8,7 +8,7 @@ import {
 	tr_ingredient_batch_ingredient_batch
 } from '../db/schema';
 import { eq, and, asc } from 'drizzle-orm';
-import { arrayify, copy_column, pick_columns } from '$lib/arrayify';
+import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
 
 export function _calculate_available_amount(data: {
 	initialAmount: number;
@@ -208,10 +208,10 @@ export async function getBatchesInProduction() {
 			})
 		)
 		.then(
-			arrayify({
-				one: { table: 't_ingredient_batch' },
-				with_one: [{ table: 'ingredient' }, { table: 'used_ingredient' }],
-				with_many: [{ table: 'used_batches' }]
+			drizzle_map({
+				one: 't_ingredient_batch',
+				with_one: ['ingredient', 'used_ingredient'],
+				with_many: ['used_batches']
 			})
 		);
 }

@@ -54,6 +54,8 @@
 		"@trpc/client": "^10.45.0",
 		"@trpc/server": "^10.45.0",
 		"boxicons": "^2.1.4",
-		"drizzle-orm": "^0.29.1"
+		"drizzle-orm": "^0.29.1",
+		"drizzle-tools": "^0.0.2"
 	}
 }
+
