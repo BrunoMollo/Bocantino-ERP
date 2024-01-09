@@ -12,6 +12,7 @@ import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
 
 const batches_in_production = alias(t_ingredient_batch, 'batches_in_production');
 export const sq_stock = db.$with('stock').as(
+	//TODO: substract used amount in production of final products
 	db
 		.select({
 			batch_id: t_ingredient_batch.id,
@@ -85,14 +86,6 @@ export async function getBatchById(id: number, tx?: Tx) {
 		)
 		.then(getFirstIfPosible);
 }
-async function _select_current_to_be_used_amount(id: number, tx: Tx) {
-	return await tx
-		.select({ current_to_be_used_amount: t_ingredient_batch.to_be_used_amount })
-		.from(t_ingredient_batch)
-		.where(eq(t_ingredient_batch.id, id))
-		.then(getFirst)
-		.then((x) => x.current_to_be_used_amount);
-}
 
 export async function startIngredientProduction(
 	ingredient: { ingedient_id: number; produced_amount: number },
@@ -152,9 +145,6 @@ export async function startIngredientProduction(
 			return logicError('Se indicarion mas lotes de los necesarios');
 		}
 
-		let asigned_amount = 0;
-		const still_needed_amount = () => needed_amount - asigned_amount;
-
 		const new_batch = await tx
 			.insert(t_ingredient_batch)
 			.values({
@@ -169,18 +159,12 @@ export async function startIngredientProduction(
 			.returning({ id: t_ingredient_batch.id })
 			.then(getFirst);
 
+		let asigned_amount = 0;
+		const still_needed_amount = () => needed_amount - asigned_amount;
 		for (let batch of batches) {
-			const current_to_be_used_amount_fist_batch = await _select_current_to_be_used_amount(
-				batch.id,
-				tx
-			);
 			const used_in_batch =
 				still_needed_amount() > batch.current_amount ? batch.current_amount : still_needed_amount();
 			asigned_amount += used_in_batch;
-			await tx
-				.update(t_ingredient_batch)
-				.set({ to_be_used_amount: current_to_be_used_amount_fist_batch + used_in_batch })
-				.where(eq(t_ingredient_batch.id, batch.id));
 
 			await tx.insert(tr_ingredient_batch_ingredient_batch).values({
 				produced_batch_id: new_batch.id,
