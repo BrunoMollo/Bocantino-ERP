@@ -88,14 +88,15 @@ import type { ZodValidation } from 'sveltekit-superforms';
 import type { SuperForm } from 'sveltekit-superforms/client';
 import type { AnyZodObject } from 'zod';
 type SuperFormData<T extends ZodValidation<AnyZodObject>> = SuperForm<T>['form'];
-export function startAsNull<T extends ZodValidation<AnyZodObject>>(
+export function startAs<T extends ZodValidation<AnyZodObject>>(
 	form: SuperFormData<T>,
-	key: keyof T['_type']
+	key: keyof T['_type'],
+	value: any
 ) {
 	form.update(
 		($form) => {
 			//@ts-ignore
-			$form[key] = null;
+			$form[key] = value;
 			return $form;
 		},
 		{ taint: false }

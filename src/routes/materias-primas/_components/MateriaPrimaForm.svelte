@@ -3,7 +3,7 @@
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { VALID_UNITS, type IngredientSchema } from './shared';
-	import { startAsNull } from '$lib/utils';
+	import { startAs } from '$lib/utils';
 	export let ingredients: { id: number; name: string; unit: string }[];
 
 	export let data: { form: any };
@@ -21,7 +21,7 @@
 	}
 
 	if ($form.reorderPoint == 0) {
-		startAsNull(form, 'reorderPoint');
+		startAs(form, 'reorderPoint', null);
 	}
 	export let btnMsj = 'Agregar';
 </script>
