@@ -38,7 +38,7 @@ export async function getBatchesByIngredientId(id: number) {
 		.with(sq_stock)
 		.select({
 			batch: pick_columns(t_ingredient_batch, ['id', 'batch_code', 'expirationDate']),
-			ingredient: t_ingredient,
+			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit']),
 			stock: {
 				current_amount: sq_stock.currently_available
 			}
