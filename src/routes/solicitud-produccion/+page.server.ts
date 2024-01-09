@@ -48,11 +48,11 @@ export const actions: Actions = {
 			},
 			batches_ids
 		);
+
 		if (res.type == 'LOGIC_ERROR') {
-			console.log('ey');
-			return error(400, res);
+			throw error(400, res.message);
 		} else {
-			throw redirect(302, '/?toast=Produccion iniciada');
+			throw redirect(302, '/solicitudes-pendientes?toast=Produccion iniciada');
 		}
 	}
 };

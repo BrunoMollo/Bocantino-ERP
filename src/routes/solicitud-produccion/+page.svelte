@@ -5,12 +5,12 @@
 	import { fade, fly } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 	import Spinner from '$lib/ui/Spinner.svelte';
-	import SuperDebug from 'sveltekit-superforms/client/SuperDebug.svelte';
 
 	export let data;
 	const { form, enhance, delayed } = superForm(data.form, {
 		dataType: 'json',
-		clearOnSubmit: 'none'
+		clearOnSubmit: 'none',
+		onError: ({ result }) => alert(`ERROR: ${result.error.message}`)
 	});
 
 	startAs(form, 'producedAmount', null);
@@ -99,7 +99,6 @@
 	const numero = 12;
 </script>
 
-<SuperDebug data={$form}></SuperDebug>
 <div class="flex justify-between w-11/12 mx-auto">
 	<h1 class="uppercase text-2xl my-5">Solicitud de produccion N:{numero}</h1>
 	<h2 class="uppercase text-2xl my-5">Fecha: {fecha}</h2>
