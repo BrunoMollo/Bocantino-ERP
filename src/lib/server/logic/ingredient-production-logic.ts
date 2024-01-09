@@ -9,6 +9,7 @@ import {
 } from '../db/schema';
 import { eq, and, asc } from 'drizzle-orm';
 import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
+import { expect } from 'vitest';
 
 export function _calculate_available_amount(data: {
 	initialAmount: number;
@@ -182,7 +183,13 @@ export async function getBatchesInProduction() {
 	const ta_used_ingredient = alias(t_ingredient, 'used_ingredient');
 	return await db
 		.select({
-			t_ingredient_batch: pick_columns(t_ingredient_batch, ['id', 'batch_code', 'initialAmount']),
+			t_ingredient_batch: pick_columns(t_ingredient_batch, [
+				'id',
+				'batch_code',
+				'initialAmount',
+				'productionDate',
+				'expirationDate'
+			]),
 			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit']),
 			used_ingredient: pick_columns(ta_used_ingredient, ['id', 'name', 'unit']),
 			used_batches: pick_columns(ta_used_batch, ['id', 'batch_code']),
@@ -214,5 +221,28 @@ export async function getBatchesInProduction() {
 				with_many: ['used_batches']
 			})
 		);
+}
+
+export async function closeProduction(obj: { batch_id: number; loss: number }) {
+	const { batch_id, loss } = obj;
+	return db.transaction(async (tx) => {
+		const batch = await tx
+			.select()
+			.from(t_ingredient_batch)
+			.where(
+				and(eq(t_ingredient_batch.id, batch_id), eq(t_ingredient_batch.state, 'IN_PRODUCTION'))
+			)
+			.then(getFirstIfPosible);
+		if (!batch) {
+			return logicError('batch not found');
+		}
+
+		await tx.update(t_ingredient_batch).set({
+			productionDate: new Date(),
+			state: 'AVAILABLE',
+			loss
+		});
+		return { success: true } as const;
+	});
 }
 
