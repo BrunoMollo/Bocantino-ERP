@@ -19,6 +19,8 @@ import {
 } from '$logic';
 import { eq } from 'drizzle-orm';
 import { getFirst } from '$lib/utils';
+import { sq_stock } from '$logic/ingredient-production-logic';
+import { getFips } from 'crypto';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -361,42 +363,48 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('changes value of to_be_used_amount both batches with to_be_used_amount=40 in first and =0 in second', async () => {
-		const old_to_be_used_amount = 40;
-		await db
-			.update(t_ingredient_batch)
-			.set({ to_be_used_amount: old_to_be_used_amount })
-			.where(eq(t_ingredient_batch.id, LIVER_BATCH_ID));
+		await db.insert(tr_ingredient_batch_ingredient_batch).values({
+			used_batch_id: LIVER_BATCH_ID,
+			produced_batch_id: LIVER_BATCH_ID, //using this id is inconsiten, but works
+			amount_used_to_produce_batch: 40
+		});
 		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 110 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
+
 		//@ts-ignore
 		expect(res.type).toBe(undefined);
-		const to_be_used_fist_batch = await db.query.t_ingredient_batch
-			.findFirst({
-				where: eq(t_ingredient_batch.id, LIVER_BATCH_ID)
-			})
-			.then((x) => x?.to_be_used_amount);
+		const liver_batch_stock = await db
+			.with(sq_stock)
+			.select()
+			.from(sq_stock)
+			.where(eq(sq_stock.batch_id, LIVER_BATCH_ID))
+			.then(getFirst);
 
-		expect(to_be_used_fist_batch).toBe(LIVER_BATCH_INTIAL_AMOUNT); // 100 (all)
+		expect(liver_batch_stock.currently_available).toBe(0); // uses all
 
-		const to_be_used_second_batch = await db.query.t_ingredient_batch
-			.findFirst({
-				where: eq(t_ingredient_batch.id, SECOND_LIVER_BATCH_ID)
-			})
-			.then((x) => x?.to_be_used_amount);
-		expect(to_be_used_second_batch).toBe(2 * 110 - LIVER_BATCH_INTIAL_AMOUNT + 40); // 160
+		const second_liver_batch_stock = await db
+			.with(sq_stock)
+			.select()
+			.from(sq_stock)
+			.where(eq(sq_stock.batch_id, SECOND_LIVER_BATCH_ID))
+			.then(getFirst)
+			.then((x) => x.currently_available);
+
+		const expected_use = 2 * 110 - LIVER_BATCH_INTIAL_AMOUNT + 40; //160
+		expect(second_liver_batch_stock).toEqual(SECOND_LIVER_BATCH_INITIAL_AMOUNT - expected_use); // 40
 
 		const r_batches = await db.select().from(tr_ingredient_batch_ingredient_batch);
-		expect(r_batches.length).toBe(2);
-		expect(r_batches[0].used_batch_id).toBe(LIVER_BATCH_ID);
-		expect(r_batches[0].amount_used_to_produce_batch).toBe(LIVER_BATCH_INTIAL_AMOUNT - 40);
-		//@ts-ignore
-		expect(r_batches[0].produced_batch_id).toBe(res.id);
-		expect(r_batches[1].used_batch_id).toBe(SECOND_LIVER_BATCH_ID);
+		expect(r_batches.length).toBe(3);
+		expect(r_batches[1].used_batch_id).toBe(LIVER_BATCH_ID);
+		expect(r_batches[1].amount_used_to_produce_batch).toBe(LIVER_BATCH_INTIAL_AMOUNT - 40);
 		//@ts-ignore
 		expect(r_batches[1].produced_batch_id).toBe(res.id);
-		expect(r_batches[1].amount_used_to_produce_batch).toBe(
+		expect(r_batches[2].used_batch_id).toBe(SECOND_LIVER_BATCH_ID);
+		//@ts-ignore
+		expect(r_batches[2].produced_batch_id).toBe(res.id);
+		expect(r_batches[2].amount_used_to_produce_batch).toBe(
 			2 * 110 - LIVER_BATCH_INTIAL_AMOUNT + 40
 		);
 	});

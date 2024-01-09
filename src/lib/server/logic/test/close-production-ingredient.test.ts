@@ -20,7 +20,6 @@ import {
 import { eq } from 'drizzle-orm';
 import { getFirst } from '$lib/utils';
 import { pick_columns } from 'drizzle-tools';
-import { getFips } from 'crypto';
 
 vi.mock('$lib/server/db/index.ts');
 

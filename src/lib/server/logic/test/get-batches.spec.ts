@@ -143,13 +143,13 @@ describe.sequential('start production of derived ingredient', async () => {
 		//@ts-ignore
 		BATCH_IN_PROD_ID = batch.id;
 
-		const finsihced_batch = await ingredient_production_service.startIngredientProduction(
+		const finished_batch = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID]
 		);
 
 		//@ts-ignore
-		await ingredient_production_service.closeProduction({ batch_id: finsihced_batch.id, loss: 2 });
+		await ingredient_production_service.closeProduction({ batch_id: finished_batch.id, loss: 2 });
 	});
 
 	test('testing initals conditions ok', async () => {
@@ -173,16 +173,13 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 	describe('getBatchById', () => {
 		test('get liver', async () => {
-			const exp = await ingredient_production_service.getBatchById_deprecated(LIVER_BATCH_ID);
 			const res = await ingredient_production_service.getBatchById(LIVER_BATCH_ID);
-			expect(res?.current_amount).toEqual(exp?.current_amount);
+			expect(res?.current_amount).toEqual(60);
 		});
 
 		test('get second liver', async () => {
-			const exp =
-				await ingredient_production_service.getBatchById_deprecated(SECOND_LIVER_BATCH_ID);
 			const res = await ingredient_production_service.getBatchById(SECOND_LIVER_BATCH_ID);
-			expect(res?.current_amount).toEqual(exp?.current_amount);
+			expect(res?.current_amount).toEqual(200);
 		});
 
 		test('get in prod bacth', async () => {
@@ -191,30 +188,24 @@ describe.sequential('start production of derived ingredient', async () => {
 		});
 
 		test('get Banana', async () => {
-			const exp = await ingredient_production_service.getBatchById_deprecated(BANANA_BATCH_ID);
 			const res = await ingredient_production_service.getBatchById(BANANA_BATCH_ID);
-			expect(res?.current_amount).toEqual(exp?.current_amount);
+			expect(res?.current_amount).toEqual(20);
 		});
 	});
 
 	describe('getBatchById', () => {
 		test('get Banana', async () => {
-			const exp =
-				await ingredient_production_service.getBatchesByIngredientId_deprecated(BANANA_ID);
 			const res = await ingredient_production_service.getBatchesByIngredientId(BANANA_ID);
-			expect(res).toEqual(exp);
+			expect(res[0]?.current_amount).toEqual(20);
 		});
 		test('get Liver', async () => {
-			const exp = await ingredient_production_service.getBatchesByIngredientId_deprecated(LIVER_ID);
 			const res = await ingredient_production_service.getBatchesByIngredientId(LIVER_ID);
-			expect(res).toEqual(exp);
+			expect(res[0]?.current_amount).toEqual(60);
 		});
 
 		test('get Reduced Liver', async () => {
-			const exp =
-				await ingredient_production_service.getBatchesByIngredientId_deprecated(REDUCED_LIVER_ID);
 			const res = await ingredient_production_service.getBatchesByIngredientId(REDUCED_LIVER_ID);
-			expect(res).toEqual(exp);
+			expect(res[0]?.current_amount).toEqual(8);
 		});
 	});
 });
