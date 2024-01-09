@@ -4,8 +4,8 @@ import { eq } from 'drizzle-orm';
 import type { PageServerLoad } from './$types';
 import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';
-import { redirect, type Actions } from '@sveltejs/kit';
-import { ingredient_production_service } from '$logic';
+import { redirect, type Actions, error } from '@sveltejs/kit';
+import { ingredient_production_service, logicError } from '$logic';
 
 const ingredinetProduction_schema = z.object({
 	ingredeintId: z.coerce.number().int().positive(),
@@ -36,19 +36,24 @@ export const actions: Actions = {
 			return { form };
 		}
 
-		const batches_ids = [form.data.selected_batch_id];
+		const batches_ids = [];
+		batches_ids.push(form.data.selected_batch_id);
 		if (form.data.second_selected_batch_id) {
 			batches_ids.push(form.data.second_selected_batch_id);
 		}
-		await ingredient_production_service.startIngredientProduction(
+		const res = await ingredient_production_service.startIngredientProduction(
 			{
 				ingedient_id: form.data.ingredeintId,
 				produced_amount: form.data.producedAmount
 			},
 			batches_ids
 		);
-
-		throw redirect(302, '/?toast=Produccion iniciada');
+		if (res.type == 'LOGIC_ERROR') {
+			console.log('ey');
+			return error(400, res);
+		} else {
+			throw redirect(302, '/?toast=Produccion iniciada');
+		}
 	}
 };
 

@@ -175,7 +175,6 @@ describe.sequential('start production of derived ingredient', async () => {
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 0 },
 			[LIVER_BATCH_ID]
 		);
-		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
 		const batches = await db.select().from(t_ingredient_batch);
 		expect(batches.length).toBe(3);
@@ -186,7 +185,6 @@ describe.sequential('start production of derived ingredient', async () => {
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: -10 },
 			[LIVER_BATCH_ID]
 		);
-		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
 	});
 
@@ -195,17 +193,15 @@ describe.sequential('start production of derived ingredient', async () => {
 			{ ingedient_id: LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID]
 		);
-		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
 	});
 
 	test('if batch does not exist return logic error', async () => {
 		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
-			[LIVER_BATCH_ID * 100]
+			[LIVER_BATCH_ID * 1000000]
 		);
-		//@ts-ignore
-		expect(res?.type).toBe('LOGIC_ERROR');
+		expect(res.type).toBe('LOGIC_ERROR');
 	});
 
 	test('if batch does not exist return logic error', async () => {
@@ -213,7 +209,6 @@ describe.sequential('start production of derived ingredient', async () => {
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID * 100]
 		);
-		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
 	});
 
@@ -222,7 +217,6 @@ describe.sequential('start production of derived ingredient', async () => {
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID, LIVER_BATCH_ID]
 		);
-		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
 	});
 
@@ -231,7 +225,6 @@ describe.sequential('start production of derived ingredient', async () => {
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[BANANA_BATCH_ID]
 		);
-		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
 	});
 
@@ -240,7 +233,6 @@ describe.sequential('start production of derived ingredient', async () => {
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID, BANANA_BATCH_ID]
 		);
-		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
 	});
 
@@ -249,7 +241,6 @@ describe.sequential('start production of derived ingredient', async () => {
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 1000 },
 			[LIVER_BATCH_ID]
 		);
-		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
 	});
 
@@ -258,16 +249,6 @@ describe.sequential('start production of derived ingredient', async () => {
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 1000000 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
-		//@ts-ignore
-		expect(res?.type).toBe('LOGIC_ERROR');
-	});
-
-	test('if more batches selected than necesary return logical error', async () => {
-		const res = await ingredient_production_service.startIngredientProduction(
-			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 50 },
-			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
-		);
-		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
 	});
 
@@ -313,7 +294,7 @@ describe.sequential('start production of derived ingredient', async () => {
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
 		//@ts-ignore
-		expect(res.type).toBe(undefined);
+		expect(res.type).toBe('SUCCESS');
 
 		const stock_first = await db
 			.with(sq_stock)
@@ -359,7 +340,7 @@ describe.sequential('start production of derived ingredient', async () => {
 		);
 
 		//@ts-ignore
-		expect(res.type).toBe(undefined);
+		expect(res.type).toBe('SUCCESS');
 		const liver_batch_stock = await db
 			.with(sq_stock)
 			.select()
@@ -403,7 +384,7 @@ describe.sequential('start production of derived ingredient', async () => {
 		);
 		//@ts-ignore
 		const { id, type } = res;
-		expect(type).toBe(undefined);
+		expect(type).toBe('SUCCESS');
 		expect(id).toBeTruthy();
 		const inserted = await db
 			.select()

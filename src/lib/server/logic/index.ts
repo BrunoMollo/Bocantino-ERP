@@ -12,6 +12,7 @@ export const ingredient_production_service = ingredient_production_logic;
 
 type LogicError = { type: 'LOGIC_ERROR'; message: string };
 export function logicError(message: string): LogicError {
+	console.error(message);
 	return {
 		type: 'LOGIC_ERROR' as const,
 		message

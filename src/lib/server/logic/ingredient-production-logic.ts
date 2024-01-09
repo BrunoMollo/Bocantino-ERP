@@ -46,7 +46,13 @@ export async function getBatchesByIngredientId(id: number) {
 		.from(t_ingredient_batch)
 		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
 		.leftJoin(sq_stock, eq(sq_stock.batch_id, t_ingredient_batch.id))
-		.where(and(eq(t_ingredient_batch.ingredientId, id), eq(t_ingredient_batch.state, 'AVAILABLE')))
+		.where(
+			and(
+				eq(t_ingredient_batch.ingredientId, id),
+				eq(t_ingredient_batch.state, 'AVAILABLE'),
+				ne(sq_stock.currently_available, 0)
+			)
+		)
 		.orderBy(asc(t_ingredient_batch.expirationDate))
 		.then(copy_column({ from: 'stock', field: 'current_amount', to: 'batch' }))
 		.then(
@@ -124,7 +130,6 @@ export async function startIngredientProduction(
 					`El ingrediente deriva de ${recipe.source.name} no de ${batch.ingredient.name}`
 				);
 			}
-
 			batches.push(batch);
 		}
 
@@ -135,14 +140,6 @@ export async function startIngredientProduction(
 			return logicError(
 				`Se requieren ${needed_amount}${batches[0]?.ingredient.unit} pero solo hay ${total_available_source}`
 			);
-		}
-
-		const total_available_source_minus_one = batches
-			.filter((_, i) => i != 0)
-			.map((x) => x?.current_amount ?? 0)
-			.reduce((acc, prev) => acc + prev, 0);
-		if (total_available_source_minus_one > needed_amount) {
-			return logicError('Se indicarion mas lotes de los necesarios');
 		}
 
 		const new_batch = await tx
@@ -166,13 +163,15 @@ export async function startIngredientProduction(
 				still_needed_amount() > batch.current_amount ? batch.current_amount : still_needed_amount();
 			asigned_amount += used_in_batch;
 
-			await tx.insert(tr_ingredient_batch_ingredient_batch).values({
-				produced_batch_id: new_batch.id,
-				used_batch_id: batch.id,
-				amount_used_to_produce_batch: used_in_batch
-			});
+			if (used_in_batch > 0) {
+				await tx.insert(tr_ingredient_batch_ingredient_batch).values({
+					produced_batch_id: new_batch.id,
+					used_batch_id: batch.id,
+					amount_used_to_produce_batch: used_in_batch
+				});
+			}
 		}
-		return new_batch;
+		return { ...new_batch, type: 'SUCCESS' as const };
 	});
 
 	return result;
