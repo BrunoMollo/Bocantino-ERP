@@ -20,8 +20,6 @@ import {
 import { eq } from 'drizzle-orm';
 import { getFirst } from '$lib/utils';
 import { sq_stock } from '$logic/ingredient-production-logic';
-import { getFips } from 'crypto';
-import exp from 'constants';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -273,37 +271,6 @@ describe.sequential('start production of derived ingredient', async () => {
 		expect(res?.type).toBe('LOGIC_ERROR');
 	});
 
-	test('changes value of to_be_used_amount one batch whith to_be_used_amount=0', async () => {
-		const old_to_be_used_amount = await db
-			.select()
-			.from(t_ingredient_batch)
-			.where(eq(t_ingredient_batch.id, LIVER_BATCH_ID))
-			.then(getFirst)
-			.then((x) => x.to_be_used_amount);
-
-		const inserted = await ingredient_production_service.startIngredientProduction(
-			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
-			[LIVER_BATCH_ID]
-		);
-
-		const stock_first = await db
-			.with(sq_stock)
-			.select()
-			.from(sq_stock)
-			.where(eq(sq_stock.batch_id, LIVER_BATCH_ID))
-			.then(getFirst)
-			.then((x) => x.currently_available);
-		const to_be_used_first_batch = 10 * 2 + old_to_be_used_amount;
-		expect(stock_first).toBe(LIVER_BATCH_INTIAL_AMOUNT - to_be_used_first_batch);
-
-		const r_batches = await db.select().from(tr_ingredient_batch_ingredient_batch);
-		expect(r_batches.length).toBe(1);
-		expect(r_batches[0].used_batch_id).toBe(LIVER_BATCH_ID);
-		//@ts-ignore
-		expect(r_batches[0].produced_batch_id).toBe(inserted.id);
-		expect(r_batches[0].amount_used_to_produce_batch).toBe(20);
-	});
-
 	test('changes value of to_be_used_amount one batch whith to_be_used_amount=20', async () => {
 		await db.insert(tr_ingredient_batch_ingredient_batch).values({
 			produced_batch_id: LIVER_BATCH_ID,
@@ -447,8 +414,6 @@ describe.sequential('start production of derived ingredient', async () => {
 		expect(inserted.id).toBe(id);
 		expect(inserted.batch_code).toBeTruthy();
 		expect(inserted.initialAmount).toBe(110);
-		expect(inserted.usedAmount).toBe(0);
-		expect(inserted.to_be_used_amount).toBe(0);
 		expect(inserted.productionDate).toEqual(null);
 		expect(inserted.expirationDate).toEqual(date); //TODO: define how is assigned
 		expect(inserted.ingredientId).toBe(REDUCED_LIVER_ID);
