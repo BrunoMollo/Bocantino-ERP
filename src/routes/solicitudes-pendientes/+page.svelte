@@ -1,4 +1,5 @@
 <script lang="ts">
+	import InputDate from '$lib/ui/InputDate.svelte';
 	import { startAs } from '$lib/utils.js';
 	import { superForm } from 'sveltekit-superforms/client';
 
@@ -48,38 +49,63 @@
 </table>
 
 <dialog bind:this={dialog} class="absolute h-screen w-screen bg-transparent text-primary-100">
-	<div class="card w-8/12 h-3/4 m-auto mt-14 p-4">
-		<h2 class="h2 text-primary-200">Solicitud pendiente {current.id}</h2>
-		<p>
-			Cantidad producida {current.initialAmount}
-			{current.ingredient.unit}
-		</p>
-		{#each current.used_batches as used_batch}
+	<div class="card w-2/4 m-auto mt-14 shadow-lg rounded-lg">
+		<button
+			class="bg-black m-3 p-3 rounded-full h-12 w-12 align-middle shadow-md"
+			on:click={() => dialog.close()}
+		>
+			<i class="bx bx-arrow-back text-2xl"></i>
+		</button>
+		<div class="px-10">
+			<h2 class="h2 text-primary-200">Solicitud pendiente {current.id}</h2>
 			<p>
-				Uso {used_batch.amount_used_to_produce_batch}
-				{current.used_ingredient.unit} del lote {used_batch.batch_code}
+				Cantidad producida: {current.initialAmount}
+				{current.ingredient.unit} de {current.ingredient.name}.
 			</p>
-		{/each}
+			{#each current.used_batches as used_batch}
+				<p>
+					Uso {used_batch.amount_used_to_produce_batch}
+					{current.used_ingredient.unit} del lote {used_batch.batch_code}
+				</p>
+			{/each}
 
-		<h3 class="h3 pt-4">Finalizar produccion</h3>
-		<form class="flex flex-col" method="post" use:enhance>
-			<label class="label" for="loss">Merma:</label>
-			<div class="py-4">
-				<input type="number" class="input w-40 mr-2" id="loss" bind:value={$form.loss} />
-				<span>{current.ingredient.unit}</span>
-			</div>
-			<button class="btn variant-filled-primary w-40" type="submit">
-				{#if $delayed}
-					Cerrando...
-				{:else}
-					Cerrar produccion
-				{/if}
-			</button>
-		</form>
+			<h3 class="h3 pt-4">Finalizar produccion</h3>
+			<form class="flex flex-col" method="post" use:enhance>
+				<div class="mb-4">
+					<label class="label" for="loss">Merma:</label>
+					<div>
+						<input type="number" class="input w-40 mr-2" id="loss" bind:value={$form.loss} />
+						<span>{current.ingredient.unit}</span>
+					</div>
+				</div>
+				<div class="mb-4">
+					<label class="label" for="loss">Fecha vencimiento:</label>
+					<div>
+						<InputDate bind:value={$form.expiration_date} className="input w-fit" />
+					</div>
+				</div>
+
+				<div class="flex pb-7 pt-3 w-full justify-between">
+					<button class="btn variant-filled-primary w-40" type="submit">
+						{#if $delayed}
+							Cerrando...
+						{:else}
+							Cerrar produccion
+						{/if}
+					</button>
+					<button class="btn variant-filled-error w-40">
+						{#if $delayed}
+							Eliminando...
+						{:else}
+							Eliminar solicitud
+						{/if}
+					</button>
+				</div>
+			</form>
+		</div>
 	</div>
 </dialog>
 
 <pre>
 {JSON.stringify(data.pending_productions[0], null, 2)}
 </pre>
-
