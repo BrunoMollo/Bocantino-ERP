@@ -10,7 +10,7 @@ import {
 import { eq, and, asc, sum, sql, ne } from 'drizzle-orm';
 import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
 
-export function _calculate_available_amount(data: {
+function _calculate_available_amount(data: {
 	initialAmount: number;
 	usedAmount: number;
 	loss: number | null;
@@ -19,7 +19,57 @@ export function _calculate_available_amount(data: {
 	return data.initialAmount - data.usedAmount - (data.loss ?? 0) - data.to_be_used_amount;
 }
 
+const batches_in_production = alias(t_ingredient_batch, 'batches_in_production');
+const sq_stock = db.$with('stock').as(
+	db
+		.select({
+			batch_id: t_ingredient_batch.id,
+			currently_available: sql<number>`
+          + ${t_ingredient_batch.initialAmount}
+          - COALESCE(${sum(tr_ingredient_batch_ingredient_batch.amount_used_to_produce_batch)} ,0) 
+          - COALESCE(${t_ingredient_batch.loss}, 0)`.as('currently_available')
+		})
+		.from(t_ingredient_batch)
+		.leftJoin(
+			tr_ingredient_batch_ingredient_batch,
+			eq(tr_ingredient_batch_ingredient_batch.used_batch_id, t_ingredient_batch.id)
+		)
+		.leftJoin(
+			batches_in_production,
+			eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, batches_in_production.id)
+		)
+		.groupBy(t_ingredient_batch.id)
+);
+
 export async function getBatchesByIngredientId(id: number) {
+	return await db
+		.with(sq_stock)
+		.select({
+			batch: pick_columns(t_ingredient_batch, ['id', 'batch_code', 'expirationDate']),
+			ingredient: t_ingredient,
+			stock: {
+				current_amount: sq_stock.currently_available
+			}
+		})
+		.from(t_ingredient_batch)
+		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
+		.leftJoin(sq_stock, eq(sq_stock.batch_id, t_ingredient_batch.id))
+		.where(and(eq(t_ingredient_batch.ingredientId, id), eq(t_ingredient_batch.state, 'AVAILABLE')))
+		.orderBy(asc(t_ingredient_batch.expirationDate))
+		.then(copy_column({ from: 'stock', field: 'current_amount', to: 'batch' }))
+		.then(
+			drizzle_map({
+				one: 'batch',
+				with_one: ['ingredient'],
+				with_many: []
+			})
+		);
+}
+
+/**
+ * @deprecated since version 2
+ * */
+export async function getBatchesByIngredientId_deprecated(id: number) {
 	const list = await db
 		.select({
 			id: t_ingredient_batch.id,
@@ -72,39 +122,21 @@ export async function getBatchById_deprecated(id: number, tx?: Tx) {
 }
 
 export async function getBatchById(id: number, tx?: Tx) {
-	const batches_in_production = alias(t_ingredient_batch, 'batches_in_production');
-	const stock = db.$with('stock').as(
-		db
-			.select({
-				batch_id: t_ingredient_batch.id,
-				currently_available: sql<number>`
-          + ${t_ingredient_batch.initialAmount}
-          - COALESCE(${sum(tr_ingredient_batch_ingredient_batch.amount_used_to_produce_batch)} ,0) 
-          - COALESCE(${t_ingredient_batch.loss}, 0)`.as('currently_available')
-			})
-			.from(t_ingredient_batch)
-			.leftJoin(
-				tr_ingredient_batch_ingredient_batch,
-				eq(tr_ingredient_batch_ingredient_batch.used_batch_id, t_ingredient_batch.id)
-			)
-			.leftJoin(
-				batches_in_production,
-				eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, batches_in_production.id)
-			)
-			.groupBy(t_ingredient_batch.id)
-	);
 	return await (tx ?? db)
-		.with(stock)
+		.with(sq_stock)
 		.select({
 			batch: pick_columns(t_ingredient_batch, ['id', 'batch_code', 'expirationDate']),
 			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit']),
-			stock: { current_amount: stock.currently_available }
+			stock: { current_amount: sq_stock.currently_available }
 		})
 		.from(t_ingredient_batch)
 		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
 		.leftJoin(
-			stock,
-			and(eq(t_ingredient_batch.id, stock.batch_id), ne(t_ingredient_batch.state, 'IN_PRODUCTION'))
+			sq_stock,
+			and(
+				eq(t_ingredient_batch.id, sq_stock.batch_id),
+				ne(t_ingredient_batch.state, 'IN_PRODUCTION')
+			)
 		)
 		.where(eq(t_ingredient_batch.id, id))
 		.then(copy_column({ from: 'stock', field: 'current_amount', to: 'batch' }))

@@ -171,27 +171,51 @@ describe.sequential('start production of derived ingredient', async () => {
 		const batches = await db.select().from(t_ingredient_batch);
 		expect(batches.length).toBe(5);
 	});
-	test('get liver', async () => {
-		const exp = await ingredient_production_service.getBatchById_deprecated(LIVER_BATCH_ID);
-		const res = await ingredient_production_service.getBatchById(LIVER_BATCH_ID);
-		expect(res?.current_amount).toEqual(exp?.current_amount);
+	describe('getBatchById', () => {
+		test('get liver', async () => {
+			const exp = await ingredient_production_service.getBatchById_deprecated(LIVER_BATCH_ID);
+			const res = await ingredient_production_service.getBatchById(LIVER_BATCH_ID);
+			expect(res?.current_amount).toEqual(exp?.current_amount);
+		});
+
+		test('get second liver', async () => {
+			const exp =
+				await ingredient_production_service.getBatchById_deprecated(SECOND_LIVER_BATCH_ID);
+			const res = await ingredient_production_service.getBatchById(SECOND_LIVER_BATCH_ID);
+			expect(res?.current_amount).toEqual(exp?.current_amount);
+		});
+
+		test('get in prod bacth', async () => {
+			const res = await ingredient_production_service.getBatchById(BATCH_IN_PROD_ID);
+			expect(res?.current_amount).toEqual(null);
+		});
+
+		test('get Banana', async () => {
+			const exp = await ingredient_production_service.getBatchById_deprecated(BANANA_BATCH_ID);
+			const res = await ingredient_production_service.getBatchById(BANANA_BATCH_ID);
+			expect(res?.current_amount).toEqual(exp?.current_amount);
+		});
 	});
 
-	test('get second liver', async () => {
-		const exp = await ingredient_production_service.getBatchById_deprecated(SECOND_LIVER_BATCH_ID);
-		const res = await ingredient_production_service.getBatchById(SECOND_LIVER_BATCH_ID);
-		expect(res?.current_amount).toEqual(exp?.current_amount);
-	});
+	describe('getBatchById', () => {
+		test('get Banana', async () => {
+			const exp =
+				await ingredient_production_service.getBatchesByIngredientId_deprecated(BANANA_ID);
+			const res = await ingredient_production_service.getBatchesByIngredientId(BANANA_ID);
+			expect(res).toEqual(exp);
+		});
+		test('get Liver', async () => {
+			const exp = await ingredient_production_service.getBatchesByIngredientId_deprecated(LIVER_ID);
+			const res = await ingredient_production_service.getBatchesByIngredientId(LIVER_ID);
+			expect(res).toEqual(exp);
+		});
 
-	test('get in prod bacth', async () => {
-		const res = await ingredient_production_service.getBatchById(BATCH_IN_PROD_ID);
-		expect(res?.current_amount).toEqual(null);
-	});
-
-	test('get Banana', async () => {
-		const exp = await ingredient_production_service.getBatchById_deprecated(BANANA_BATCH_ID);
-		const res = await ingredient_production_service.getBatchById(BANANA_BATCH_ID);
-		expect(res?.current_amount).toEqual(exp?.current_amount);
+		test('get Reduced Liver', async () => {
+			const exp =
+				await ingredient_production_service.getBatchesByIngredientId_deprecated(REDUCED_LIVER_ID);
+			const res = await ingredient_production_service.getBatchesByIngredientId(REDUCED_LIVER_ID);
+			expect(res).toEqual(exp);
+		});
 	});
 });
 
