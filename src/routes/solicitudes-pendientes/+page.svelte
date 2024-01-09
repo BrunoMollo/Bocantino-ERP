@@ -6,7 +6,10 @@
 
 	const { form, enhance, delayed } = superForm(data.form, {
 		dataType: 'json',
-		clearOnSubmit: 'none'
+		clearOnSubmit: 'none',
+		onSubmit: () => {
+			dialog.close();
+		}
 	});
 
 	let dialog: HTMLDialogElement;
@@ -18,6 +21,7 @@
 		dialog.showModal();
 	}
 	$: current = data.pending_productions[focused_index];
+	$: $form.batch_id = current.id;
 </script>
 
 <h1 class="text-center w-full uppercase text-2xl my-5">Solicitudes pendientes</h1>

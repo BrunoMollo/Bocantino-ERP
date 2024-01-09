@@ -4,6 +4,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms/client';
 
 const close_production_schema = z.object({
+	batch_id: z.coerce.number().int().positive(),
 	loss: z.coerce.number().min(0)
 });
 export const load: PageServerLoad = async () => {
