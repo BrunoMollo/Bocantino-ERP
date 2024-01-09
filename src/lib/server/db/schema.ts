@@ -119,8 +119,6 @@ export const t_ingredient_batch = sqliteTable(
 		id: integer('id').notNull().primaryKey({ autoIncrement: true }),
 		batch_code: text('supplier_bag_code').notNull(), //may or may not be provided by the supplier
 		initialAmount: real('full_amount').notNull(),
-		usedAmount: real('used_amount').notNull().default(0),
-		to_be_used_amount: real('to_be_used_amount').notNull().default(0),
 		productionDate: integer('production_date', { mode: 'timestamp' }), // is null when is IN_PRODUCTION
 		expirationDate: integer('expiration_date', { mode: 'timestamp' }).notNull(),
 		ingredientId: integer('ingredient_id')

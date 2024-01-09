@@ -9,7 +9,8 @@
 	export let data;
 	const { form, enhance, delayed } = superForm(data.form, {
 		dataType: 'json',
-		clearOnSubmit: 'none'
+		clearOnSubmit: 'none',
+		onError: ({ result }) => alert(`ERROR: ${result.error.message}`)
 	});
 
 	startAs(form, 'producedAmount', null);

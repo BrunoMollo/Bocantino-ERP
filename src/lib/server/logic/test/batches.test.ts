@@ -110,7 +110,6 @@ describe.sequential('buy ingredients', async () => {
 				valid_input.batches[0].productionDate.toISOString()
 			);
 
-			expect(list[0].usedAmount).toBe(0);
 			expect(list[0].loss).toBe(null);
 		});
 	});
@@ -192,7 +191,6 @@ describe.sequential('buy ingredients', async () => {
 				expect(list[i].productionDate?.toISOString()).toBe(
 					valid_input.batches[i].productionDate.toISOString()
 				);
-				expect(list[i].usedAmount).toBe(0);
 				expect(list[i].loss).toBe(null);
 				expect(list[i].entry_id).toBeTruthy();
 				expect(list[i].entry_id).toBe(result.entry_id);

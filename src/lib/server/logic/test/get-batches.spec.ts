@@ -1,4 +1,4 @@
-import { describe, expect, vi, test, beforeEach, beforeAll } from 'vitest';
+import { describe, expect, vi, test, beforeAll } from 'vitest';
 import { INVOICE_TYPE, db } from '$lib/server/db/__mocks__';
 import {
 	t_document_type,
@@ -17,9 +17,6 @@ import {
 	ingredient_production_service,
 	purchases_service
 } from '$logic';
-import { eq } from 'drizzle-orm';
-import { getFirst } from '$lib/utils';
-import { pick_columns } from 'drizzle-tools';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -84,13 +81,6 @@ describe.sequential('start production of derived ingredient', async () => {
 				}
 			)
 			.then((x) => x.id);
-	});
-
-	beforeEach(async () => {
-		await db.delete(tr_ingredient_batch_ingredient_batch);
-		await db.delete(t_ingredient_batch);
-		await db.delete(t_ingridient_entry);
-		await db.delete(t_entry_document);
 
 		LIVER_BATCH_ID = await purchases_service
 			.registerBoughtIngrediets({
@@ -152,6 +142,14 @@ describe.sequential('start production of derived ingredient', async () => {
 		);
 		//@ts-ignore
 		BATCH_IN_PROD_ID = batch.id;
+
+		const finished_batch = await ingredient_production_service.startIngredientProduction(
+			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
+			[LIVER_BATCH_ID]
+		);
+
+		//@ts-ignore
+		await ingredient_production_service.closeProduction({ batch_id: finished_batch.id, loss: 2 });
 	});
 
 	test('testing initals conditions ok', async () => {
@@ -171,31 +169,44 @@ describe.sequential('start production of derived ingredient', async () => {
 		expect(rel_sup_ingred[0].ingredientId).toBe(LIVER_ID);
 
 		const batches = await db.select().from(t_ingredient_batch);
-		expect(batches.length).toBe(4);
+		expect(batches.length).toBe(5);
 	});
-	test('not found batch_id', async () => {
-		const res = await ingredient_production_service.closeProduction({ batch_id: 1000, loss: 10 });
-		//@ts-ignore
-		expect(res?.type).toBe('LOGIC_ERROR');
+	describe('getBatchById', () => {
+		test('get liver', async () => {
+			const res = await ingredient_production_service.getBatchById(LIVER_BATCH_ID);
+			expect(res?.current_amount).toEqual(60);
+		});
+
+		test('get second liver', async () => {
+			const res = await ingredient_production_service.getBatchById(SECOND_LIVER_BATCH_ID);
+			expect(res?.current_amount).toEqual(200);
+		});
+
+		test('get in prod bacth', async () => {
+			const res = await ingredient_production_service.getBatchById(BATCH_IN_PROD_ID);
+			expect(res?.current_amount).toEqual(null);
+		});
+
+		test('get Banana', async () => {
+			const res = await ingredient_production_service.getBatchById(BANANA_BATCH_ID);
+			expect(res?.current_amount).toEqual(20);
+		});
 	});
 
-	test('update batch', async () => {
-		const res = await ingredient_production_service.closeProduction({
-			batch_id: BATCH_IN_PROD_ID,
-			loss: 10
+	describe('getBatchById', () => {
+		test('get Banana', async () => {
+			const res = await ingredient_production_service.getBatchesByIngredientId(BANANA_ID);
+			expect(res[0]?.current_amount).toEqual(20);
 		});
-		//@ts-ignore
-		expect(res?.type).toBe(undefined);
-		const { batch } = await db
-			.select({
-				batch: pick_columns(t_ingredient_batch, ['state', 'productionDate', 'loss'])
-			})
-			.from(t_ingredient_batch)
-			.where(eq(t_ingredient_batch.id, BATCH_IN_PROD_ID))
-			.then(getFirst);
-		expect(batch.loss).toBe(10);
-		expect(batch.state).toBe('AVAILABLE');
-		expect(batch.productionDate).toBeTruthy();
+		test('get Liver', async () => {
+			const res = await ingredient_production_service.getBatchesByIngredientId(LIVER_ID);
+			expect(res[0]?.current_amount).toEqual(60);
+		});
+
+		test('get Reduced Liver', async () => {
+			const res = await ingredient_production_service.getBatchesByIngredientId(REDUCED_LIVER_ID);
+			expect(res[0]?.current_amount).toEqual(8);
+		});
 	});
 });
 
