@@ -4,7 +4,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms/client';
 
 const close_production_schema = z.object({
-	expiration_date: z.coerce.date(),
+	expiration_date: z.string().refine(isValidDateBackend).transform(parseStringToDate),
 	batch_id: z.coerce.number().int().positive(),
 	loss: z.coerce.number().min(0)
 });
