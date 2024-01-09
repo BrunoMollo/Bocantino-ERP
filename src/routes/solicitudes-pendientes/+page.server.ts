@@ -2,6 +2,7 @@ import { ingredient_production_service } from '$logic';
 import { z } from 'zod';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms/client';
+import { isValidDateBackend, parseStringToDate } from '$lib/utils';
 
 const close_production_schema = z.object({
 	expiration_date: z.string().refine(isValidDateBackend).transform(parseStringToDate),
