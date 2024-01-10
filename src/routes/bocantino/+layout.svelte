@@ -1,5 +1,4 @@
 <script lang="ts">
-	import '../../app.postcss';
 	import {
 		AppShell,
 		AppBar,
@@ -107,4 +106,3 @@
 		<slot />
 	{/if}
 </AppShell>
-
