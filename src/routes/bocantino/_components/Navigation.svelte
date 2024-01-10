@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { getDrawerStore } from '@skeletonlabs/skeleton';
 	import { routes } from './routes';
+	import { dev } from '$app/environment';
 
 	const drawerStore = getDrawerStore();
 </script>
@@ -38,6 +39,16 @@
 			</li>
 		{/each}
 	</ul>
+
+	{#if dev}
+		<a
+			class=""
+			href="-dev"
+			on:click={() => {
+				drawerStore.close();
+			}}>dev (!)</a
+		>
+	{/if}
 </nav>
 
 <style>
