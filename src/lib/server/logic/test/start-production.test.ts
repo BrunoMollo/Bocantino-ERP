@@ -104,7 +104,7 @@ describe.sequential('start production of derived ingredient', async () => {
 						numberOfBags: 10,
 						cost: 1000,
 						productionDate: new Date(),
-						expirationDate: new Date()
+						expiration_date: new Date()
 					}
 				]
 			})
@@ -122,7 +122,7 @@ describe.sequential('start production of derived ingredient', async () => {
 						numberOfBags: 12,
 						cost: 1000,
 						productionDate: new Date(),
-						expirationDate: new Date()
+						expiration_date: new Date()
 					}
 				]
 			})
@@ -140,7 +140,7 @@ describe.sequential('start production of derived ingredient', async () => {
 						numberOfBags: 1,
 						cost: 1000,
 						productionDate: new Date(),
-						expirationDate: new Date()
+						expiration_date: new Date()
 					}
 				]
 			})
@@ -396,7 +396,7 @@ describe.sequential('start production of derived ingredient', async () => {
 		expect(inserted.batch_code).toBeTruthy();
 		expect(inserted.initialAmount).toBe(110);
 		expect(inserted.productionDate).toEqual(null);
-		expect(inserted.expirationDate).toEqual(date); //TODO: define how is assigned
+		expect(inserted.expiration_date).toEqual(date); //TODO: define how is assigned
 		expect(inserted.ingredientId).toBe(REDUCED_LIVER_ID);
 		expect(inserted.numberOfBags).toBe(1);
 		expect(inserted.state).toBe('IN_PRODUCTION');

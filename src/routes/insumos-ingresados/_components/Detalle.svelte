@@ -63,7 +63,7 @@
 							<td>{batch.initialAmount}</td>
 							<td>{batch.code}</td>
 							<td>{batch.productionDate}</td>
-							<td>{batch.expirationDate}</td>
+							<td>{batch.expiration_date}</td>
 							<td>{batch.cost}</td>
 							<td>{batch.bags}</td>
 						</tr>

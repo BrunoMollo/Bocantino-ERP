@@ -94,7 +94,7 @@ describe.sequential('start production of derived ingredient', async () => {
 						numberOfBags: 10,
 						cost: 1000,
 						productionDate: new Date(),
-						expirationDate: new Date()
+						expiration_date: new Date()
 					}
 				]
 			})
@@ -112,7 +112,7 @@ describe.sequential('start production of derived ingredient', async () => {
 						numberOfBags: 12,
 						cost: 1000,
 						productionDate: new Date(),
-						expirationDate: new Date()
+						expiration_date: new Date()
 					}
 				]
 			})
@@ -130,7 +130,7 @@ describe.sequential('start production of derived ingredient', async () => {
 						numberOfBags: 1,
 						cost: 1000,
 						productionDate: new Date(),
-						expirationDate: new Date()
+						expiration_date: new Date()
 					}
 				]
 			})

@@ -18,7 +18,7 @@ export type RegisterPurchaseDto = Prettify<{
 		batch_code: string;
 		initialAmount: number;
 		productionDate: Date;
-		expirationDate: Date;
+		expiration_date: Date;
 		numberOfBags: number;
 		cost: number;
 	}[];
@@ -81,7 +81,7 @@ export async function getBatchesByEntryId(entry_id: number) {
 			initialAmount: t_ingredient_batch.initialAmount,
 			bags: t_ingredient_batch.numberOfBags,
 			productionDate: t_ingredient_batch.productionDate,
-			expirationDate: t_ingredient_batch.expirationDate,
+			expiration_date: t_ingredient_batch.expiration_date,
 			cost: t_ingredient_batch.cost
 		})
 		.from(t_ingredient_batch)

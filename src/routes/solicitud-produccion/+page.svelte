@@ -181,11 +181,11 @@
 								<option disabled>Cargando</option>
 							{:else if $batches}
 								<option disabled selected>Seleccione un lote</option>
-								{#each $batches as { id, batch_code, expirationDate }}
+								{#each $batches as { id, batch_code, expiration_date }}
 									{#if id != $form.second_selected_batch_id}
 										<option value={id}>
 											{batch_code}
-											({new Date(expirationDate).toLocaleDateString('es')})
+											({new Date(expiration_date).toLocaleDateString('es')})
 										</option>
 									{/if}
 								{/each}
@@ -204,11 +204,11 @@
 									<option disabled>Cargando</option>
 								{:else if $batches}
 									<option disabled selected>Seleccione un lote</option>
-									{#each $batches as { id, batch_code, expirationDate }}
+									{#each $batches as { id, batch_code, expiration_date }}
 										{#if id != $form.selected_batch_id}
 											<option value={id}>
 												{batch_code}
-												({new Date(expirationDate).toLocaleDateString('es')})
+												({new Date(expiration_date).toLocaleDateString('es')})
 											</option>
 										{/if}
 									{/each}

@@ -185,9 +185,9 @@
 								<div class="relative inline-block">
 									<InputDate
 										className={`input w-32 ${
-											$batchesError(i, 'expirationDate') ? 'error_border' : ''
+											$batchesError(i, 'expiration_date') ? 'error_border' : ''
 										}`}
-										bind:value={$form.batches[i].expirationDate}
+										bind:value={$form.batches[i].expiration_date}
 									></InputDate>
 								</div>
 							</td>

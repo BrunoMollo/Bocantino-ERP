@@ -125,7 +125,7 @@ async function seed() {
 				batch_code: 'PPPP_1234',
 				initialAmount: 200,
 				productionDate: new Date(2023, 12, 30),
-				expirationDate: new Date(2023, 1, 30),
+				expiration_date: new Date(2023, 1, 30),
 				ingredientId: higado.id,
 				numberOfBags: 10,
 				cost: 2000
@@ -141,7 +141,7 @@ async function seed() {
 				batch_code: 'ABCEDE_1234',
 				initialAmount: 300,
 				productionDate: new Date(2023, 12, 12),
-				expirationDate: new Date(2023, 2, 30),
+				expiration_date: new Date(2023, 2, 30),
 				ingredientId: higado.id,
 				numberOfBags: 10,
 				cost: 4000
@@ -150,7 +150,7 @@ async function seed() {
 				batch_code: 'XYZP_1234',
 				initialAmount: 200,
 				productionDate: new Date(2023, 12, 30),
-				expirationDate: new Date(2023, 2, 30),
+				expiration_date: new Date(2023, 2, 30),
 				ingredientId: higado.id,
 				numberOfBags: 10,
 				cost: 4500

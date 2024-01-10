@@ -57,7 +57,7 @@ describe.sequential('buy ingredients', async () => {
 					numberOfBags: 100,
 					initialAmount: 500,
 					productionDate: new Date(2000, 1, 1), // Example timestamp for January 1, 2000
-					expirationDate: new Date(2000, 1, 20), // Example timestamp for January 20, 2000
+					expiration_date: new Date(2000, 1, 20), // Example timestamp for January 20, 2000
 					cost: 5000,
 					ingredientId: 1
 				}
@@ -103,8 +103,8 @@ describe.sequential('buy ingredients', async () => {
 			expect(list[0].batch_code).toBe(valid_input.batches[0].batch_code);
 			expect(list[0].numberOfBags).toBe(valid_input.batches[0].numberOfBags);
 			expect(list[0].initialAmount).toBe(valid_input.batches[0].initialAmount);
-			expect(list[0].expirationDate.toISOString()).toBe(
-				valid_input.batches[0].expirationDate.toISOString()
+			expect(list[0].expiration_date.toISOString()).toBe(
+				valid_input.batches[0].expiration_date.toISOString()
 			);
 			expect(list[0].productionDate?.toISOString()).toBe(
 				valid_input.batches[0].productionDate.toISOString()
@@ -128,7 +128,7 @@ describe.sequential('buy ingredients', async () => {
 					numberOfBags: 100,
 					initialAmount: 500,
 					productionDate: new Date(2000, 1, 1), // Example timestamp for January 1, 2000
-					expirationDate: new Date(2000, 1, 20), // Example timestamp for January 20, 2000
+					expiration_date: new Date(2000, 1, 20), // Example timestamp for January 20, 2000
 					cost: 5000,
 					ingredientId: 1
 				},
@@ -138,7 +138,7 @@ describe.sequential('buy ingredients', async () => {
 					numberOfBags: 200,
 					initialAmount: 530,
 					productionDate: new Date(2000, 1, 1), // Example timestamp for January 1, 2000
-					expirationDate: new Date(2000, 1, 20), // Example timestamp for January 20, 2000
+					expiration_date: new Date(2000, 1, 20), // Example timestamp for January 20, 2000
 					cost: 5000,
 					ingredientId: 1
 				}
@@ -185,8 +185,8 @@ describe.sequential('buy ingredients', async () => {
 				expect(list[i].batch_code).toBe(valid_input.batches[i].batch_code);
 				expect(list[i].numberOfBags).toBe(valid_input.batches[i].numberOfBags);
 				expect(list[i].initialAmount).toBe(valid_input.batches[i].initialAmount);
-				expect(list[i].expirationDate.toISOString()).toBe(
-					valid_input.batches[i].expirationDate.toISOString()
+				expect(list[i].expiration_date.toISOString()).toBe(
+					valid_input.batches[i].expiration_date.toISOString()
 				);
 				expect(list[i].productionDate?.toISOString()).toBe(
 					valid_input.batches[i].productionDate.toISOString()

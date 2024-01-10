@@ -37,7 +37,7 @@ export async function getBatchesByIngredientId(id: number) {
 	return await db
 		.with(sq_stock)
 		.select({
-			batch: pick_columns(t_ingredient_batch, ['id', 'batch_code', 'expirationDate']),
+			batch: pick_columns(t_ingredient_batch, ['id', 'batch_code', 'expiration_date']),
 			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit']),
 			stock: {
 				current_amount: sq_stock.currently_available
@@ -53,7 +53,7 @@ export async function getBatchesByIngredientId(id: number) {
 				ne(sq_stock.currently_available, 0)
 			)
 		)
-		.orderBy(asc(t_ingredient_batch.expirationDate))
+		.orderBy(asc(t_ingredient_batch.expiration_date))
 		.then(copy_column({ from: 'stock', field: 'current_amount', to: 'batch' }))
 		.then(
 			drizzle_map({
@@ -68,7 +68,7 @@ export async function getBatchById(id: number, tx?: Tx) {
 	return await (tx ?? db)
 		.with(sq_stock)
 		.select({
-			batch: pick_columns(t_ingredient_batch, ['id', 'batch_code', 'expirationDate']),
+			batch: pick_columns(t_ingredient_batch, ['id', 'batch_code', 'expiration_date']),
 			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit']),
 			stock: { current_amount: sq_stock.currently_available }
 		})
@@ -148,7 +148,7 @@ export async function startIngredientProduction(
 				batch_code: 'BOCANTINO-' + (ingedient_id + Date.now()).toString(),
 				initialAmount: produced_amount,
 				productionDate: null, // is asigned when production ends
-				expirationDate: new Date(), //TODO: Define how is the expirationDate calualted
+				expiration_date: new Date(), //TODO: Define how is the expiration_date calualted
 				ingredientId: ingedient_id,
 				numberOfBags: 1,
 				state: 'IN_PRODUCTION'
@@ -187,7 +187,7 @@ export async function getBatchesInProduction() {
 				'batch_code',
 				'initialAmount',
 				'productionDate',
-				'expirationDate'
+				'expiration_date'
 			]),
 			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit']),
 			used_ingredient: pick_columns(ta_used_ingredient, ['id', 'name', 'unit']),
@@ -222,8 +222,12 @@ export async function getBatchesInProduction() {
 		);
 }
 
-export async function closeProduction(obj: { batch_id: number; loss: number }) {
-	const { batch_id, loss } = obj;
+export async function closeProduction(obj: {
+	batch_id: number;
+	loss: number;
+	expiration_date: Date;
+}) {
+	const { batch_id, loss, expiration_date } = obj;
 	return db.transaction(async (tx) => {
 		const batch = await tx
 			.select()
@@ -241,10 +245,11 @@ export async function closeProduction(obj: { batch_id: number; loss: number }) {
 			.set({
 				productionDate: new Date(),
 				state: 'AVAILABLE',
-				loss
+				loss,
+				expiration_date
 			})
 			.where(eq(t_ingredient_batch.id, batch_id));
-		return { success: true } as const;
+		return { type: 'SUCCESS' } as const;
 	});
 }
 

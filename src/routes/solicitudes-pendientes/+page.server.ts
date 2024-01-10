@@ -3,6 +3,7 @@ import { z } from 'zod';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms/client';
 import { isValidDateBackend, parseStringToDate } from '$lib/utils';
+import { error } from '@sveltejs/kit';
 
 const close_production_schema = z.object({
 	expiration_date: z.string().refine(isValidDateBackend).transform(parseStringToDate),
@@ -20,6 +21,11 @@ export const actions: Actions = {
 		const form = await superValidate(request, close_production_schema);
 		if (!form.valid) {
 			return { form };
+		}
+		console.log(form.data);
+		const res = await ingredient_production_service.closeProduction(form.data);
+		if (res.type == 'LOGIC_ERROR') {
+			throw error(400, res.message);
 		}
 		return { form };
 	}

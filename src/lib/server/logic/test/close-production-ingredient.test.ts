@@ -104,7 +104,7 @@ describe.sequential('start production of derived ingredient', async () => {
 						numberOfBags: 10,
 						cost: 1000,
 						productionDate: new Date(),
-						expirationDate: new Date()
+						expiration_date: new Date()
 					}
 				]
 			})
@@ -122,7 +122,7 @@ describe.sequential('start production of derived ingredient', async () => {
 						numberOfBags: 12,
 						cost: 1000,
 						productionDate: new Date(),
-						expirationDate: new Date()
+						expiration_date: new Date()
 					}
 				]
 			})
@@ -140,7 +140,7 @@ describe.sequential('start production of derived ingredient', async () => {
 						numberOfBags: 1,
 						cost: 1000,
 						productionDate: new Date(),
-						expirationDate: new Date()
+						expiration_date: new Date()
 					}
 				]
 			})
@@ -174,7 +174,11 @@ describe.sequential('start production of derived ingredient', async () => {
 		expect(batches.length).toBe(4);
 	});
 	test('not found batch_id', async () => {
-		const res = await ingredient_production_service.closeProduction({ batch_id: 1000, loss: 10 });
+		const res = await ingredient_production_service.closeProduction({
+			batch_id: 1000,
+			loss: 10,
+			expiration_date: new Date()
+		});
 		//@ts-ignore
 		expect(res?.type).toBe('LOGIC_ERROR');
 	});
@@ -182,7 +186,8 @@ describe.sequential('start production of derived ingredient', async () => {
 	test('update batch', async () => {
 		const res = await ingredient_production_service.closeProduction({
 			batch_id: BATCH_IN_PROD_ID,
-			loss: 10
+			loss: 10,
+			expiration_date: new Date()
 		});
 		//@ts-ignore
 		expect(res?.type).toBe(undefined);

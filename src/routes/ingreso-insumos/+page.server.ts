@@ -17,7 +17,7 @@ const boughBatchSchema = z.object({
 			batch_code: z.string().min(2).max(256),
 			initialAmount: z.coerce.number().positive(),
 			productionDate: z.string().refine(isValidDateBackend).transform(parseStringToDate),
-			expirationDate: z.string().refine(isValidDateBackend).transform(parseStringToDate),
+			expiration_date: z.string().refine(isValidDateBackend).transform(parseStringToDate),
 			ingredientId: z.coerce.number().int().min(1),
 			cost: z.coerce.number().positive(),
 			numberOfBags: z.coerce.number().positive()

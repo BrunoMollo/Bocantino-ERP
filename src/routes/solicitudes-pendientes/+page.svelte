@@ -8,9 +8,10 @@
 	const { form, enhance, delayed } = superForm(data.form, {
 		dataType: 'json',
 		clearOnSubmit: 'none',
-		onSubmit: () => {
+		onResult: ({}) => {
 			dialog.close();
-		}
+		},
+		onError: ({ result }) => alert(`ERROR: ${result.error.message}`)
 	});
 
 	let dialog: HTMLDialogElement;
@@ -109,3 +110,4 @@
 <pre>
 {JSON.stringify(data.pending_productions[0], null, 2)}
 </pre>
+
