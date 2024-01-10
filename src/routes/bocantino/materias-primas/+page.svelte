@@ -35,7 +35,7 @@
 				<td class="w-2/12">
 					<a
 						class="my-2 btn-icon btn-icon-md variant-soft-secondary mr-5"
-						href="/materias-primas/edit/{ingredient.id}"
+						href="materias-primas/edit/{ingredient.id}"
 					>
 						<i class="bx bx-edit place-self-center text-2xl"></i></a
 					>
