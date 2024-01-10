@@ -1,7 +1,7 @@
 import { db } from '$lib/server/db';
 import { t_ingredient, t_ingredient_batch, tr_ingredient_ingredient } from '$lib/server/db/schema';
 import { getFirst, getFirstIfPosible } from '$lib/utils';
-import { and, eq, sql } from 'drizzle-orm';
+import { and, asc, eq, sql } from 'drizzle-orm';
 import { sq_stock } from './ingredient-stock';
 import { copy_column, drizzle_map, pick_columns } from 'drizzle-tools';
 
@@ -28,6 +28,7 @@ export async function getAllWithStock() {
 		)
 		.leftJoin(sq_stock, eq(sq_stock.batch_id, t_ingredient_batch.id))
 		.groupBy(t_ingredient.id)
+		.orderBy(asc(sql`${sq_stock.currently_available}-${t_ingredient.reorderPoint}`))
 		.then(copy_column({ from: 'stock', field: 'stock', to: 'ingredient' }))
 		.then(drizzle_map({ one: 'ingredient', with_one: [], with_many: [] }));
 }
