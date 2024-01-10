@@ -1,19 +1,35 @@
-import { db, type Tx } from '$lib/server/db';
-import {
-	t_document_type,
-	t_entry_document,
-	t_ingredient,
-	t_ingredient_batch,
-	t_ingridient_entry,
-	t_supplier,
-	tr_ingredient_ingredient
-} from '$lib/server/db/schema';
-import { getFirst, getFirstIfPosible, type Prettify, type TableInsert } from '$lib/utils';
-import { logicError } from '$logic';
-import { eq, asc, and, like } from 'drizzle-orm';
+import { db } from '$lib/server/db';
+import { t_ingredient, t_ingredient_batch, tr_ingredient_ingredient } from '$lib/server/db/schema';
+import { getFirst, getFirstIfPosible } from '$lib/utils';
+import { and, eq, sql } from 'drizzle-orm';
+import { sq_stock } from './ingredient-stock';
+import { copy_column, drizzle_map, pick_columns } from 'drizzle-tools';
 
 export function getAll() {
 	return db.select().from(t_ingredient);
+}
+
+export async function getAllWithStock() {
+	return await db
+		.with(sq_stock)
+		.select({
+			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit', 'reorderPoint']),
+			stock: {
+				stock: sql<number>`COALESCE(sum(${sq_stock.currently_available}), 0)`
+			}
+		})
+		.from(t_ingredient)
+		.leftJoin(
+			t_ingredient_batch,
+			and(
+				eq(t_ingredient_batch.ingredientId, t_ingredient.id),
+				eq(t_ingredient_batch.state, 'AVAILABLE')
+			)
+		)
+		.leftJoin(sq_stock, eq(sq_stock.batch_id, t_ingredient_batch.id))
+		.groupBy(t_ingredient.id)
+		.then(copy_column({ from: 'stock', field: 'stock', to: 'ingredient' }))
+		.then(drizzle_map({ one: 'ingredient', with_one: [], with_many: [] }));
 }
 
 export async function deletebyID(id: number) {
