@@ -7,11 +7,11 @@
 	export let data;
 
 	const { form, enhance, delayed, errors } = superForm(data.form, {
-		dataType: 'json',
-		clearOnSubmit: 'none',
+		dataType: 'json', // needed for date
+		defaultValidator: 'clear',
 		onError: ({ result }) => {
 			if (result.type == 'error') {
-				alert('dasdasd');
+				alert(result.error.message);
 			}
 			dialog.close();
 		},
