@@ -43,7 +43,6 @@
 		</h2>
 
 		{#if batches}
-			<!-- <p>{JSON.stringify(batches)}</p> -->
 			<table class="w-full mt-5 shadow-lg border border-collapse table">
 				<thead class="text-xl my-2">
 					<tr class="mt-1 mb-2">
@@ -78,3 +77,4 @@
 
 <style>
 </style>
+

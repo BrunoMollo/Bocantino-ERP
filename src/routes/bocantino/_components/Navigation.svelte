@@ -43,7 +43,7 @@
 	{#if dev}
 		<a
 			class=""
-			href="-dev"
+			href="/bocantino/-dev"
 			on:click={() => {
 				drawerStore.close();
 			}}>dev (!)</a
