@@ -19,7 +19,7 @@ import {
 } from '$logic';
 import { eq } from 'drizzle-orm';
 import { getFirst } from '$lib/utils';
-import { sq_stock } from '$logic/ingredient-production-logic';
+import { sq_stock } from '$lib/server/logic/ingredient-stock';
 
 vi.mock('$lib/server/db/index.ts');
 
