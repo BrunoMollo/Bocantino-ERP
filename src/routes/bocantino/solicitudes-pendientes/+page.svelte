@@ -22,6 +22,22 @@
 		}
 	});
 
+	const { form: cancel_form, enhance: cancel_enhance } = superForm(data.cancel_form, {
+		defaultValidator: 'clear',
+		dataType: 'json', // needed for id
+		onError: ({ result }) => {
+			if (result.type == 'error') {
+				alert(result.error.message);
+			}
+			dialog.close();
+		},
+		onUpdated: ({ form }) => {
+			if (form.valid) {
+				dialog.close();
+			}
+		}
+	});
+
 	let dialog: HTMLDialogElement;
 	let form_el: HTMLFormElement;
 
@@ -35,6 +51,7 @@
 	}
 	$: current = data.pending_productions[focused_index];
 	$: $form.batch_id = current?.id ?? -1;
+	$: $cancel_form.batch_id = current?.id ?? -1;
 </script>
 
 <h1 class="text-center w-full uppercase text-2xl my-5">Solicitudes pendientes</h1>
@@ -61,7 +78,7 @@
 </table>
 
 <dialog bind:this={dialog} class="absolute h-screen w-screen bg-transparent text-primary-100">
-	<div class="card w-2/4 m-auto mt-14 shadow-lg rounded-lg">
+	<div class="card w-9/12 md:w-2/4 m-auto mt-14 shadow-lg rounded-lg">
 		<button
 			class="bg-black m-3 p-3 rounded-full h-12 w-12 align-middle shadow-md"
 			on:click={() => dialog.close()}
@@ -82,7 +99,7 @@
 			{/each}
 
 			<h3 class="h3 pt-4">Finalizar produccion</h3>
-			<form bind:this={form_el} class="flex flex-col" method="post" use:enhance>
+			<form bind:this={form_el} class="flex flex-col" method="post" action="?/finish" use:enhance>
 				<div class="mb-4">
 					<label class="label" for="loss">Merma:</label>
 					<div>
@@ -114,13 +131,23 @@
 							Cerrar produccion
 						{/if}
 					</button>
-					<button class="btn variant-filled-error w-40">
-						{#if $delayed}
-							Eliminando...
-						{:else}
+
+					<form action="?/cancel" method="post" use:cancel_enhance>
+						<button
+							class="btn variant-filled-error w-40"
+							type="submit"
+							on:click={(event) => {
+								$cancel_form.batch_id = current.id; // other from reset this
+								const question =
+									'Estas seguro que quieres eliminar este lote?\nEsta accion no se puede deshacer';
+								if (!confirm(question)) {
+									event.preventDefault();
+								}
+							}}
+						>
 							Eliminar solicitud
-						{/if}
-					</button>
+						</button>
+					</form>
 				</div>
 			</form>
 		</div>

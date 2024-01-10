@@ -10,14 +10,20 @@ const close_production_schema = z.object({
 	batch_id: z.coerce.number().int().positive(),
 	loss: z.number().min(0)
 });
+
+const cancel_production_schema = z.object({
+	batch_id: z.coerce.number().int().positive()
+});
+
 export const load: PageServerLoad = async () => {
 	const form = superValidate(close_production_schema);
+	const cancel_form = superValidate(cancel_production_schema);
 	const pending_productions = await ingredient_production_service.getBatchesInProduction();
-	return { form, pending_productions };
+	return { form, cancel_form, pending_productions };
 };
 
 export const actions: Actions = {
-	default: async ({ request }) => {
+	finish: async ({ request }) => {
 		const form = await superValidate(request, close_production_schema);
 		if (!form.valid) {
 			return { form };
@@ -26,6 +32,17 @@ export const actions: Actions = {
 		if (res.type == 'LOGIC_ERROR') {
 			throw error(400, res.message);
 		}
+		return { form };
+	},
+	cancel: async ({ request }) => {
+		const form = await superValidate(request, cancel_production_schema);
+		console.log(':)');
+		if (!form.valid) {
+			console.error(form.errors);
+			return { form };
+		}
+		console.log('CANCELLLL');
+		console.log('CANCELLLL');
 		return { form };
 	}
 };
