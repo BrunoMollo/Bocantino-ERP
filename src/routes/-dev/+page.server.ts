@@ -24,14 +24,14 @@ import { redirect, type Actions } from '@sveltejs/kit';
 
 export const load: PageServerLoad = async () => {
 	if (!dev) {
-		throw redirect(302, '/');
+		throw redirect(302, '/bocantino/');
 	}
 };
 
 export const actions: Actions = {
 	default: async () => {
 		if (!dev) {
-			throw redirect(302, '/');
+			throw redirect(302, '/bocantino/');
 		}
 		await ___DELETE_ALL___();
 		await delay(300);

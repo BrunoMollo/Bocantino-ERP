@@ -20,6 +20,6 @@ export const actions: Actions = {
 		const { source } = form.data;
 		await ingredients_service.add(form.data, source ?? undefined);
 
-		throw redirect(302, '/materias-primas?toast=Materia prima agregada con exito');
+		throw redirect(302, '/bocantino/materias-primas?toast=Materia prima agregada con exito');
 	}
 };

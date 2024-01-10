@@ -52,7 +52,7 @@ export const actions: Actions = {
 		if (res.type == 'LOGIC_ERROR') {
 			throw error(400, res.message);
 		} else {
-			throw redirect(302, '/solicitudes-pendientes?toast=Produccion iniciada');
+			throw redirect(302, '/bocantino/solicitudes-pendientes?toast=Produccion iniciada');
 		}
 	}
 };

@@ -35,7 +35,7 @@ export const actions: Actions = {
 		}
 		await ingredients_service.edit(id, form.data, form.data.source);
 
-		throw redirect(302, '/materias-primas?toast=Editado con exito');
+		throw redirect(302, '/bocantino/materias-primas?toast=Editado con exito');
 	}
 };
 

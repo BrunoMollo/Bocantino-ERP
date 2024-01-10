@@ -1,5 +1,5 @@
 <script lang="ts">
-	import '../app.postcss';
+	import '../../app.postcss';
 	import {
 		AppShell,
 		AppBar,
@@ -91,7 +91,7 @@
 					<div><h1 class="text-xl uppercase">Notifications:</h1></div>
 					<div class="arrow bg-surface-100-800-token" />
 				</div>
-				<a href="/">
+				<a href="/bocantino">
 					<strong class="text-xl uppercase py-auto">Bocantino</strong>
 				</a>
 			</svelte:fragment>

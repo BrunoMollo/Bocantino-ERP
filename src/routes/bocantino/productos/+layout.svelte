@@ -4,10 +4,10 @@
 </script>
 
 <TabGroup active="variant-filled-primary" border="border-solid border-b border-primary-500">
-	<TabAnchor href="/materias-primas" selected={$page.url.pathname === '/materias-primas'}>
+	<TabAnchor href="/bocantino/productos" selected={$page.url.pathname === '/productos'}>
 		<span>Lista</span>
 	</TabAnchor>
-	<TabAnchor href="/materias-primas/add" selected={$page.url.pathname === '/materias-primas/add'}>
+	<TabAnchor href="/bocantino/productos/add" selected={$page.url.pathname === '/productos/add'}>
 		<span>Agregar</span>
 	</TabAnchor>
 </TabGroup>
