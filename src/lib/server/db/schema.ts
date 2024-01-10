@@ -125,6 +125,9 @@ export const t_ingredient_batch = sqliteTable(
 			.references(() => t_ingredient.id),
 		numberOfBags: integer('amount_of_bags').notNull(),
 		state: text('state').notNull().$type<'IN_PRODUCTION' | 'AVAILABLE' | 'EMPTY'>(),
+		registration_date: integer('registration_date', { mode: 'timestamp' }).$defaultFn(
+			() => new Date()
+		),
 		//external only
 		supplierId: integer('supplier_id'),
 		expiration_date: integer('expiration_date', { mode: 'timestamp' }),
