@@ -1,29 +1,40 @@
 <script lang="ts">
 	import InputDate from '$lib/ui/InputDate.svelte';
 	import { startAs } from '$lib/utils.js';
+	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 
 	export let data;
 
-	const { form, enhance, delayed } = superForm(data.form, {
+	const { form, enhance, delayed, errors } = superForm(data.form, {
 		dataType: 'json',
 		clearOnSubmit: 'none',
-		onResult: ({}) => {
+		onError: ({ result }) => {
+			if (result.type == 'error') {
+				alert('dasdasd');
+			}
 			dialog.close();
 		},
-		onError: ({ result }) => alert(`ERROR: ${result.error.message}`)
+		onUpdated: ({ form }) => {
+			if (form.valid) {
+				dialog.close();
+			}
+		}
 	});
 
 	let dialog: HTMLDialogElement;
+	let form_el: HTMLFormElement;
 
-	let focused_index = 0;
+	let focused_index = -1;
 	function show(index: number) {
+		$errors = {};
+		form_el.reset();
 		startAs(form, 'loss', null);
 		focused_index = index;
 		dialog.showModal();
 	}
 	$: current = data.pending_productions[focused_index];
-	$: $form.batch_id = current.id;
+	$: $form.batch_id = current?.id ?? -1;
 </script>
 
 <h1 class="text-center w-full uppercase text-2xl my-5">Solicitudes pendientes</h1>
@@ -39,7 +50,7 @@
 	</thead>
 	<tbody>
 		{#each data.pending_productions as item, i}
-			<tr>
+			<tr out:fade>
 				<td>{item.id}</td>
 				<td>{item.ingredient.name}</td>
 				<td>{item.initialAmount} {item.ingredient.unit}</td>
@@ -58,31 +69,40 @@
 			<i class="bx bx-arrow-back text-2xl"></i>
 		</button>
 		<div class="px-10">
-			<h2 class="h2 text-primary-200">Solicitud pendiente {current.id}</h2>
+			<h2 class="h2 text-primary-200">Solicitud pendiente {current?.id}</h2>
 			<p>
-				Cantidad producida: {current.initialAmount}
-				{current.ingredient.unit} de {current.ingredient.name}.
+				Cantidad producida: {current?.initialAmount}
+				{current?.ingredient?.unit} de {current?.ingredient.name}.
 			</p>
-			{#each current.used_batches as used_batch}
+			{#each current?.used_batches ?? [] as used_batch}
 				<p>
-					Uso {used_batch.amount_used_to_produce_batch}
-					{current.used_ingredient.unit} del lote {used_batch.batch_code}
+					Uso {used_batch?.amount_used_to_produce_batch}
+					{current?.used_ingredient.unit} del lote {used_batch?.batch_code}
 				</p>
 			{/each}
 
 			<h3 class="h3 pt-4">Finalizar produccion</h3>
-			<form class="flex flex-col" method="post" use:enhance>
+			<form bind:this={form_el} class="flex flex-col" method="post" use:enhance>
 				<div class="mb-4">
 					<label class="label" for="loss">Merma:</label>
 					<div>
-						<input type="number" class="input w-40 mr-2" id="loss" bind:value={$form.loss} />
-						<span>{current.ingredient.unit}</span>
+						<input
+							type="number"
+							class="input w-40 mr-2"
+							id="loss"
+							bind:value={$form.loss}
+							class:error_border={$errors.loss}
+						/>
+						<span>{current?.ingredient?.unit}</span>
 					</div>
 				</div>
 				<div class="mb-4">
 					<label class="label" for="loss">Fecha vencimiento:</label>
 					<div>
-						<InputDate bind:value={$form.expiration_date} className="input w-fit" />
+						<InputDate
+							bind:value={$form.expiration_date}
+							className={`input w-fit ${$errors.expiration_date ? 'error_border' : ''}`}
+						/>
 					</div>
 				</div>
 
@@ -106,8 +126,4 @@
 		</div>
 	</div>
 </dialog>
-
-<pre>
-{JSON.stringify(data.pending_productions[0], null, 2)}
-</pre>
 

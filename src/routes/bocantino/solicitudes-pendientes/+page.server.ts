@@ -8,7 +8,7 @@ import { error } from '@sveltejs/kit';
 const close_production_schema = z.object({
 	expiration_date: z.string().refine(isValidDateBackend).transform(parseStringToDate),
 	batch_id: z.coerce.number().int().positive(),
-	loss: z.coerce.number().min(0)
+	loss: z.number().min(0)
 });
 export const load: PageServerLoad = async () => {
 	const form = superValidate(close_production_schema);
@@ -22,7 +22,6 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return { form };
 		}
-		console.log(form.data);
 		const res = await ingredient_production_service.closeProduction(form.data);
 		if (res.type == 'LOGIC_ERROR') {
 			throw error(400, res.message);

@@ -16,6 +16,7 @@
 	import { derived } from 'svelte/store';
 	import { routes } from './_components/routes';
 	import Spinner from '$lib/ui/Spinner.svelte';
+	import { goto } from '$app/navigation';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
@@ -36,6 +37,7 @@
 		const message = url.searchParams.get('toast');
 		if (message) {
 			toastStore.trigger({ message, timeout: 1500, classes: 'end-0' });
+			goto(url.href.split('?')[0]); // to avoid multple triggers
 		}
 	});
 
