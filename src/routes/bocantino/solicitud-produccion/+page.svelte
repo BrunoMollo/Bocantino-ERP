@@ -185,7 +185,9 @@
 									{#if id != $form.second_selected_batch_id}
 										<option value={id}>
 											{batch_code}
-											({new Date(expiration_date).toLocaleDateString('es')})
+											{#if expiration_date}
+												({new Date(expiration_date).toLocaleDateString('es')})
+											{/if}
 										</option>
 									{/if}
 								{/each}
@@ -208,7 +210,9 @@
 										{#if id != $form.selected_batch_id}
 											<option value={id}>
 												{batch_code}
-												({new Date(expiration_date).toLocaleDateString('es')})
+												{#if expiration_date}
+													({new Date(expiration_date).toLocaleDateString('es')})
+												{/if}
 											</option>
 										{/if}
 									{/each}

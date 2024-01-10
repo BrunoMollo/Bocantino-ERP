@@ -176,21 +176,17 @@ describe.sequential('start production of derived ingredient', async () => {
 	test('not found batch_id', async () => {
 		const res = await ingredient_production_service.closeProduction({
 			batch_id: 1000,
-			loss: 10,
-			expiration_date: new Date()
+			loss: 10
 		});
-		//@ts-ignore
-		expect(res?.type).toBe('LOGIC_ERROR');
+		expect(res.type).toBe('LOGIC_ERROR');
 	});
 
 	test('update batch', async () => {
 		const res = await ingredient_production_service.closeProduction({
 			batch_id: BATCH_IN_PROD_ID,
-			loss: 10,
-			expiration_date: new Date()
+			loss: 10
 		});
-		//@ts-ignore
-		expect(res?.type).toBe(undefined);
+		expect(res.type).toBe('SUCCESS');
 		const { batch } = await db
 			.select({
 				batch: pick_columns(t_ingredient_batch, ['state', 'productionDate', 'loss'])

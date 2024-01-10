@@ -2,11 +2,9 @@ import { ingredient_production_service } from '$logic';
 import { z } from 'zod';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms/client';
-import { isValidDateBackend, parseStringToDate } from '$lib/utils';
 import { error } from '@sveltejs/kit';
 
 const close_production_schema = z.object({
-	expiration_date: z.string().refine(isValidDateBackend).transform(parseStringToDate),
 	batch_id: z.coerce.number().int().positive(),
 	loss: z.number().min(0)
 });

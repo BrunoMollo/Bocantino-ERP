@@ -1,5 +1,4 @@
 <script lang="ts">
-	import InputDate from '$lib/ui/InputDate.svelte';
 	import { startAs } from '$lib/utils.js';
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
@@ -7,7 +6,7 @@
 	export let data;
 
 	const { form, enhance, delayed, errors } = superForm(data.form, {
-		dataType: 'json', // needed for date
+		dataType: 'json', // needed for id
 		defaultValidator: 'clear',
 		onError: ({ result }) => {
 			if (result.type == 'error') {
@@ -111,15 +110,6 @@
 							class:error_border={$errors.loss}
 						/>
 						<span>{current?.ingredient?.unit}</span>
-					</div>
-				</div>
-				<div class="mb-4">
-					<label class="label" for="loss">Fecha vencimiento:</label>
-					<div>
-						<InputDate
-							bind:value={$form.expiration_date}
-							className={`input w-fit ${$errors.expiration_date ? 'error_border' : ''}`}
-						/>
 					</div>
 				</div>
 

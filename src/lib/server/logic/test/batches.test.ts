@@ -103,7 +103,7 @@ describe.sequential('buy ingredients', async () => {
 			expect(list[0].batch_code).toBe(valid_input.batches[0].batch_code);
 			expect(list[0].numberOfBags).toBe(valid_input.batches[0].numberOfBags);
 			expect(list[0].initialAmount).toBe(valid_input.batches[0].initialAmount);
-			expect(list[0].expiration_date.toISOString()).toBe(
+			expect(list[0].expiration_date?.toISOString()).toBe(
 				valid_input.batches[0].expiration_date.toISOString()
 			);
 			expect(list[0].productionDate?.toISOString()).toBe(
@@ -185,7 +185,7 @@ describe.sequential('buy ingredients', async () => {
 				expect(list[i].batch_code).toBe(valid_input.batches[i].batch_code);
 				expect(list[i].numberOfBags).toBe(valid_input.batches[i].numberOfBags);
 				expect(list[i].initialAmount).toBe(valid_input.batches[i].initialAmount);
-				expect(list[i].expiration_date.toISOString()).toBe(
+				expect(list[i].expiration_date?.toISOString()).toBe(
 					valid_input.batches[i].expiration_date.toISOString()
 				);
 				expect(list[i].productionDate?.toISOString()).toBe(

@@ -120,7 +120,6 @@ export const t_ingredient_batch = sqliteTable(
 		batch_code: text('supplier_bag_code').notNull(), //may or may not be provided by the supplier
 		initialAmount: real('full_amount').notNull(),
 		productionDate: integer('production_date', { mode: 'timestamp' }), // is null when is IN_PRODUCTION
-		expiration_date: integer('expiration_date', { mode: 'timestamp' }).notNull(),
 		ingredientId: integer('ingredient_id')
 			.notNull()
 			.references(() => t_ingredient.id),
@@ -128,6 +127,7 @@ export const t_ingredient_batch = sqliteTable(
 		state: text('state').notNull().$type<'IN_PRODUCTION' | 'AVAILABLE' | 'EMPTY'>(),
 		//external only
 		supplierId: integer('supplier_id'),
+		expiration_date: integer('expiration_date', { mode: 'timestamp' }),
 		cost: integer('cost'),
 		currency_alpha_code: text('currency_alpha_code', { length: 4 }).notNull().default('ARG'),
 		entry_id: integer('entry_id').references(() => t_ingridient_entry.id),

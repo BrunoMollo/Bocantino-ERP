@@ -223,12 +223,8 @@ export async function getBatchesInProduction() {
 		);
 }
 
-export async function closeProduction(obj: {
-	batch_id: number;
-	loss: number;
-	expiration_date: Date;
-}) {
-	const { batch_id, loss, expiration_date } = obj;
+export async function closeProduction(obj: { batch_id: number; loss: number }) {
+	const { batch_id, loss } = obj;
 	return db.transaction(async (tx) => {
 		const batch = await tx
 			.select()
@@ -246,8 +242,7 @@ export async function closeProduction(obj: {
 			.set({
 				productionDate: new Date(),
 				state: 'AVAILABLE',
-				loss,
-				expiration_date
+				loss
 			})
 			.where(eq(t_ingredient_batch.id, batch_id));
 		return { type: 'SUCCESS' } as const;
