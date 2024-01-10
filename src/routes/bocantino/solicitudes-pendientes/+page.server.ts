@@ -34,15 +34,19 @@ export const actions: Actions = {
 		}
 		return { form };
 	},
+
 	cancel: async ({ request }) => {
 		const form = await superValidate(request, cancel_production_schema);
-		console.log(':)');
 		if (!form.valid) {
-			console.error(form.errors);
 			return { form };
 		}
-		console.log('CANCELLLL');
-		console.log('CANCELLLL');
+		const { batch_id } = form.data;
+		const res = await ingredient_production_service.deleteBatchById(batch_id);
+
+		if (res.type == 'LOGIC_ERROR') {
+			throw error(400, res.message);
+		}
+
 		return { form };
 	}
 };

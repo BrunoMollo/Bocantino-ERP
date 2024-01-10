@@ -9,6 +9,7 @@ import {
 } from '../db/schema';
 import { eq, and, asc, sum, sql, ne } from 'drizzle-orm';
 import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
+import { number } from 'zod';
 
 const batches_in_production = alias(t_ingredient_batch, 'batches_in_production');
 export const sq_stock = db.$with('stock').as(
@@ -251,5 +252,25 @@ export async function closeProduction(obj: {
 			.where(eq(t_ingredient_batch.id, batch_id));
 		return { type: 'SUCCESS' } as const;
 	});
+}
+
+export async function deleteBatchById(id: number) {
+	const found = await db
+		.select()
+		.from(t_ingredient_batch)
+		.where(eq(t_ingredient_batch.id, id))
+		.then((x) => Boolean(x.length));
+
+	if (!found) {
+		return logicError('lote no encontrado');
+	}
+
+	await db
+		.delete(tr_ingredient_batch_ingredient_batch)
+		.where(eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, id));
+
+	await db.delete(t_ingredient_batch).where(eq(t_ingredient_batch.id, id));
+
+	return { type: 'SUCCESS' } as const;
 }
 
