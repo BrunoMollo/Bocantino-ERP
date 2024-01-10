@@ -112,7 +112,7 @@
 					<td style="vertical-align:middle" class="text-center w-2/12">{entrada.id}</td>
 					<td style="vertical-align:middle" class="text-center w-2/12">{entrada.supplier}</td>
 					<td style="vertical-align:middle" class="text-center w-2/12">
-						>{entrada.date.toLocaleDateString('es')}
+						{entrada.date.toLocaleDateString('es')}
 					</td>
 					<td style="vertical-align:middle" class="text-center w-2/12 my-auto"
 						>{entrada.document.number} ({entrada.document.type})</td
