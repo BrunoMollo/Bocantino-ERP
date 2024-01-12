@@ -10,6 +10,9 @@ export const purchases_service = purchases_logic;
 import * as ingredient_production_logic from './ingredient-production-logic';
 export const ingredient_production_service = ingredient_production_logic;
 
+import * as auth_logic from './auth';
+export const auth_service = auth_logic;
+
 type LogicError = { type: 'LOGIC_ERROR'; message: string };
 export function logicError(message: string): LogicError {
 	console.error(message);

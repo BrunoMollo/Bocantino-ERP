@@ -23,11 +23,13 @@
 		"@sveltejs/kit": "^1.27.4",
 		"@tailwindcss/forms": "^0.5.7",
 		"@tailwindcss/typography": "0.5.10",
+		"@types/bcrypt": "^5.0.2",
 		"@types/better-sqlite3": "^7.6.8",
 		"@types/node": "20.10.2",
 		"@typescript-eslint/eslint-plugin": "^6.0.0",
 		"@typescript-eslint/parser": "^6.0.0",
 		"autoprefixer": "10.4.16",
+		"bcrypt": "^5.1.1",
 		"better-sqlite3": "^9.2.2",
 		"dotenv": "^16.3.1",
 		"drizzle-kit": "^0.20.6",
@@ -55,7 +57,7 @@
 		"@trpc/server": "^10.45.0",
 		"boxicons": "^2.1.4",
 		"drizzle-orm": "^0.29.1",
-		"drizzle-tools": "^0.0.2"
+		"drizzle-tools": "^0.0.2",
+		"jose": "^5.2.0"
 	}
 }
-

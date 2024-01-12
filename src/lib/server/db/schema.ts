@@ -125,14 +125,16 @@ export const t_ingredient_batch = sqliteTable(
 			.references(() => t_ingredient.id),
 		numberOfBags: integer('amount_of_bags').notNull(),
 		state: text('state').notNull().$type<'IN_PRODUCTION' | 'AVAILABLE' | 'EMPTY'>(),
-		registration_date: integer('registration_date', { mode: 'timestamp' }).$defaultFn(
-			() => new Date()
-		),
+		registration_date: integer('registration_date', { mode: 'timestamp' })
+			.notNull()
+			.$defaultFn(() => new Date()),
 		//external only
 		supplierId: integer('supplier_id'),
 		expiration_date: integer('expiration_date', { mode: 'timestamp' }),
 		cost: integer('cost'),
-		currency_alpha_code: text('currency_alpha_code', { length: 4 }).notNull().default('ARG'),
+		currency_alpha_code: text('currency_alpha_code', { length: 4 })
+			.notNull()
+			.$defaultFn(() => 'ARG'),
 		entry_id: integer('entry_id').references(() => t_ingridient_entry.id),
 		//internal only
 		loss: real('loss')
@@ -212,6 +214,16 @@ export const rel_entry_docuement = relations(t_entry_document, ({ one }) => ({
 export const t_document_type = sqliteTable('document_type', {
 	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
 	desc: text('description').notNull()
+});
+//-------------------------------------------------------------------------------------////
+//
+
+////-------------------------------------------------------------------------------------//
+// USER
+export const t_user = sqliteTable('user', {
+	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+	username: text('username').notNull().unique(),
+	password_hash: text('password_hash').notNull()
 });
 //-------------------------------------------------------------------------------------////
 //

@@ -8,12 +8,14 @@ import {
 	t_ingridient_entry,
 	t_product,
 	t_supplier,
+	t_user,
 	tr_ingredient_batch_ingredient_batch,
 	tr_ingredient_ingredient,
 	tr_ingredient_product,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
 import {
+	auth_service,
 	ingredient_production_service,
 	ingredients_service,
 	purchases_service,
@@ -73,6 +75,8 @@ async function ___DELETE_ALL___() {
 		await tx.delete(tr_ingredient_ingredient);
 		// -> 11
 		await tx.delete(t_ingredient);
+		// -> 12
+		await tx.delete(t_user);
 	});
 }
 
@@ -80,6 +84,7 @@ async function seed() {
 	if (!dev) {
 		return;
 	}
+	auth_service.createUser({ username: 'admin', password: 'admin' });
 
 	const factura = { id: 1, desc: 'Factura' };
 	const remito = { id: 2, desc: 'Remito' };
