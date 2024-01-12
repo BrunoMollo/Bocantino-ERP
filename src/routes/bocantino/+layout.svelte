@@ -53,10 +53,6 @@
 	});
 </script>
 
-<svelte:head>
-	<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
-</svelte:head>
-
 <Drawer>
 	<div class="pt-4 w-80">
 		<strong class="p-4 text-xl uppercase">Bocantino</strong>
@@ -108,3 +104,4 @@
 		<slot />
 	{/if}
 </AppShell>
+
