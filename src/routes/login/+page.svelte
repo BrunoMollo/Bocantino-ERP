@@ -128,7 +128,7 @@
 			<div class="shape"></div>
 			<div class="shape"></div>
 		</div>
-		<form>
+		<form class="">
 			<h3>BOCANTINO LOGIN</h3>
 
 			<label for="username">Username</label>
