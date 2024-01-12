@@ -39,7 +39,7 @@
 					<td class="w-2/12">{batch.stock} {batch.ingredient.unit}</td>
 					<td>{batch.used_batches.map((x) => x.batch_code).join(', ') || '-'}</td>
 
-					<td class="w-1/12"><button class="btn">Ver</button></td>
+					<td class="w-1/12"><a class="btn" href={`lotes/${batch.id.toString()}`}>Ver</a></td>
 				</tr>
 			{/each}
 			<!-- this wierd reduce is because somtimes the backend returns less items because of how the limit works tihe the joins in the sql query-->
