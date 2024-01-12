@@ -20,7 +20,9 @@ export const routes = [
 				href: '/bocantino/solicitud-produccion',
 				icon: 'bx text-xl bx-file'
 			},
-			{ name: 'Pendientes', href: '/bocantino/solicitudes-pendientes', icon: 'bx bx-list-check' }
+			{ name: 'Pendientes', href: '/bocantino/solicitudes-pendientes', icon: 'bx bx-list-check' },
+
+			{ name: 'Lotes', href: '/bocantino/lotes', icon: 'bx bx-list-check' }
 		] satisfies Route[]
 	},
 

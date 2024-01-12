@@ -7,7 +7,7 @@ import {
 	t_ingredient_batch,
 	tr_ingredient_batch_ingredient_batch
 } from '../db/schema';
-import { eq, and, asc, ne } from 'drizzle-orm';
+import { eq, and, asc, desc, ne } from 'drizzle-orm';
 import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
 import { sq_stock } from './ingredient-stock';
 
@@ -153,6 +153,51 @@ export async function startIngredientProduction(
 	});
 
 	return result;
+}
+
+export async function getBatchesAvailable() {
+	const ta_used_batch = alias(t_ingredient_batch, 'used_batches');
+	return await db
+		.with(sq_stock)
+		.select({
+			t_ingredient_batch: pick_columns(t_ingredient_batch, [
+				'id',
+				'batch_code',
+				'productionDate',
+				'expiration_date'
+			]),
+			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit']),
+			used_batches: pick_columns(ta_used_batch, ['id', 'batch_code']),
+			tr_ingredient_batch_ingredient_batch,
+			stock: { stock: sq_stock.currently_available }
+		})
+		.from(t_ingredient_batch)
+		.innerJoin(sq_stock, eq(t_ingredient_batch.id, sq_stock.batch_id))
+		.where(and(eq(t_ingredient_batch.state, 'AVAILABLE'), ne(sq_stock.currently_available, 0)))
+		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
+		.leftJoin(
+			tr_ingredient_batch_ingredient_batch,
+			eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, t_ingredient_batch.id)
+		)
+		.leftJoin(
+			ta_used_batch,
+			eq(tr_ingredient_batch_ingredient_batch.used_batch_id, ta_used_batch.id)
+		)
+		.orderBy(desc(t_ingredient_batch.registration_date))
+		.then(
+			copy_column({
+				from: 'stock',
+				field: 'stock',
+				to: 't_ingredient_batch'
+			})
+		)
+		.then(
+			drizzle_map({
+				one: 't_ingredient_batch',
+				with_one: ['ingredient'],
+				with_many: ['used_batches']
+			})
+		);
 }
 
 export async function getBatchesInProduction() {
