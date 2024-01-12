@@ -1,8 +1,24 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { page } from '$app/stores';
+	import { Paginator, type PaginationSettings } from '@skeletonlabs/skeleton';
 	export let data;
+
+	const paginationSettings = {
+		page: Number($page.url.searchParams.get('page')) || 0,
+		limit: data.page_size,
+		size: data.count_batches,
+		amounts: []
+	} satisfies PaginationSettings;
+
+	function changePage({ detail }: { detail: number }) {
+		let query = new URLSearchParams($page.url.searchParams.toString());
+		query.set('page', detail.toString());
+		goto(`?${query.toString()}`);
+	}
 </script>
 
-<main class="container pt-6 pb-24 flex justify-center items-center">
+<main class="container pt-6 pb-24 flex flex-col justify-center items-center">
 	<table class="table table-hover shadow-lg rounded-lg w-11/12">
 		<thead>
 			<tr>
@@ -21,13 +37,14 @@
 					<td class="w-2/12">{batch.batch_code}</td>
 					<td class="w-1/12">{batch.ingredient.name}</td>
 					<td class="w-2/12">{batch.stock} {batch.ingredient.unit}</td>
-					<td>{batch.used_batches.map((x) => x.batch_code).join(', ')}</td>
+					<td>{batch.used_batches.map((x) => x.batch_code).join(', ') || '-'}</td>
 
 					<td class="w-1/12"><button class="btn">Ver</button></td>
 				</tr>
 			{/each}
-			{#if 10 - data.batches.length > 0}
-				{#each Array(10 - data.batches.length) as _}
+			<!-- this wierd reduce is because somtimes the backend returns less items because of how the limit works tihe the joins in the sql query-->
+			{#if data.batches.reduce((acc, item) => acc + item.used_batches.length, 0) < data.page_size}
+				{#each Array(data.page_size - data.batches.length) as _}
 					<tr>
 						<td><wbr /></td>
 						<td />
@@ -40,5 +57,17 @@
 			{/if}
 		</tbody>
 	</table>
+
+	<div class="pt-4">
+		<Paginator
+			buttonClasses="p-4 bg-surface-400"
+			settings={paginationSettings}
+			showFirstLastButtons={true}
+			showPreviousNextButtons={true}
+			showNumerals
+			maxNumerals={1}
+			on:page={changePage}
+		/>
+	</div>
 </main>
 

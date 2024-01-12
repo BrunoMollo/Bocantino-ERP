@@ -7,7 +7,7 @@ import {
 	t_ingredient_batch,
 	tr_ingredient_batch_ingredient_batch
 } from '../db/schema';
-import { eq, and, asc, desc, ne } from 'drizzle-orm';
+import { eq, and, asc, desc, ne, count } from 'drizzle-orm';
 import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
 import { sq_stock } from './ingredient-stock';
 
@@ -155,7 +155,20 @@ export async function startIngredientProduction(
 	return result;
 }
 
-export async function getBatchesAvailable() {
+export async function getCountOfAvailableBatches() {
+	return await db
+		.with(sq_stock)
+		.select({
+			value: count(t_ingredient_batch.id)
+		})
+		.from(t_ingredient_batch)
+		.innerJoin(sq_stock, eq(t_ingredient_batch.id, sq_stock.batch_id))
+		.where(and(eq(t_ingredient_batch.state, 'AVAILABLE'), ne(sq_stock.currently_available, 0)))
+		.then((x) => x[0]?.value);
+}
+
+export const PAGE_SIZE = 10;
+export async function getBatchesAvailable({ page }: { page: number }) {
 	const ta_used_batch = alias(t_ingredient_batch, 'used_batches');
 	return await db
 		.with(sq_stock)
@@ -184,6 +197,8 @@ export async function getBatchesAvailable() {
 			eq(tr_ingredient_batch_ingredient_batch.used_batch_id, ta_used_batch.id)
 		)
 		.orderBy(desc(t_ingredient_batch.registration_date))
+		.limit(PAGE_SIZE)
+		.offset(page * PAGE_SIZE)
 		.then(
 			copy_column({
 				from: 'stock',
