@@ -5,7 +5,6 @@
 	import Autocomplete from '$lib/ui/Autocomplete.svelte';
 	import { makeOptions } from '$lib/utils.js';
 	import { derived } from 'svelte/store';
-	import { trpc } from '$lib/trpc-client.js';
 
 	export let data;
 	const { form, enhance, errors } = superForm(data.form, {
