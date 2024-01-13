@@ -97,20 +97,20 @@ async function seed() {
 
 	const banana = await ingredients_service.add({
 		name: 'Banana',
-		unit: 'Kilogramos',
+		unit: 'Kg',
 		reorderPoint: 120
 	});
 
 	const higado = await ingredients_service.add({
 		name: 'Higado',
-		unit: 'Kilogramos',
+		unit: 'Kg',
 		reorderPoint: 100
 	});
 
 	const higado_desidatado = await ingredients_service.add(
 		{
 			name: 'higado desidatado',
-			unit: 'Kilogramos',
+			unit: 'Kg',
 			reorderPoint: 200
 		},
 		{ id: higado.id, amount: 2 }

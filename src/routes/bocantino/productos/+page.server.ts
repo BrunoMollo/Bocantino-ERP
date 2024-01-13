@@ -16,7 +16,6 @@ export const load: PageServerLoad = async () => {
 		.leftJoin(t_ingredient, eq(tr_ingredient_product.ingredientId, t_ingredient.id))
 		.then(copy_column({ from: 'r_ingredient_product', field: 'amount', to: 'ingredients' }))
 		.then(drizzle_map({ one: 'product', with_one: [], with_many: ['ingredients'] }));
-	console.log(products);
 
 	return { products };
 };

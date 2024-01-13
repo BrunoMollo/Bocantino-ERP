@@ -33,23 +33,23 @@ describe.sequential('ingredients crud', () => {
 		test('return one element', async () => {
 			await db
 				.insert(t_ingredient)
-				.values({ name: 'Banana', unit: 'Kilogramos', reorderPoint: 10 });
+				.values({ name: 'Banana', unit: 'Kg', reorderPoint: 10 });
 			const list = await ingredients_service.getAll();
 			expect(list.length).toBe(1);
 			expect(list[0].name).toBe('Banana');
-			expect(list[0].unit).toBe('Kilogramos');
+			expect(list[0].unit).toBe('Kg');
 		});
 		test('return two element', async () => {
 			await db
 				.insert(t_ingredient)
-				.values({ name: 'Banana', unit: 'Kilogramos', reorderPoint: 10 });
-			await db.insert(t_ingredient).values({ name: 'Egg', unit: 'Kilogramos', reorderPoint: 100 });
+				.values({ name: 'Banana', unit: 'Kg', reorderPoint: 10 });
+			await db.insert(t_ingredient).values({ name: 'Egg', unit: 'Kg', reorderPoint: 100 });
 			const list = await ingredients_service.getAll();
 			expect(list.length).toBe(2);
 			expect(list[0].name).toBe('Banana');
-			expect(list[0].unit).toBe('Kilogramos');
+			expect(list[0].unit).toBe('Kg');
 			expect(list[1].name).toBe('Egg');
-			expect(list[1].unit).toBe('Kilogramos');
+			expect(list[1].unit).toBe('Kg');
 		});
 	});
 	describe.sequential('getByID', () => {
@@ -60,37 +60,37 @@ describe.sequential('ingredients crud', () => {
 		test('return element 1 when it exist', async () => {
 			await db
 				.insert(t_ingredient)
-				.values({ id: 1, name: 'Banana', unit: 'Kilogramos', reorderPoint: 100 });
+				.values({ id: 1, name: 'Banana', unit: 'Kg', reorderPoint: 100 });
 			await db
 				.insert(t_ingredient)
-				.values({ id: 2, name: 'Egg', unit: 'Kilogramos', reorderPoint: 100 });
+				.values({ id: 2, name: 'Egg', unit: 'Kg', reorderPoint: 100 });
 			const data = await ingredients_service.getById(1);
 
 			expect(data?.id).toBe(1);
 			expect(data?.name).toBe('Banana');
-			expect(data?.unit).toBe('Kilogramos');
+			expect(data?.unit).toBe('Kg');
 		});
 		test('return element 2 when it exist', async () => {
-			await db.insert(t_ingredient).values({ name: 'Egg', unit: 'Kilogramos', reorderPoint: 300 });
+			await db.insert(t_ingredient).values({ name: 'Egg', unit: 'Kg', reorderPoint: 300 });
 			const banana = await db
 				.insert(t_ingredient)
-				.values({ name: 'Banana', unit: 'Kilogramos', reorderPoint: 200 })
+				.values({ name: 'Banana', unit: 'Kg', reorderPoint: 200 })
 				.returning({ id: t_ingredient.id })
 				.then(getFirst);
 			const data = await ingredients_service.getById(banana.id);
 
 			expect(data?.id).toBe(banana.id);
 			expect(data?.name).toBe('Banana');
-			expect(data?.unit).toBe('Kilogramos');
+			expect(data?.unit).toBe('Kg');
 		});
 
 		test('return null when element 2 does not exist', async () => {
 			await db
 				.insert(t_ingredient)
-				.values({ id: 1, name: 'Banana', unit: 'Kilogramos', reorderPoint: 100 });
+				.values({ id: 1, name: 'Banana', unit: 'Kg', reorderPoint: 100 });
 			await db
 				.insert(t_ingredient)
-				.values({ id: 3, name: 'Water', unit: 'Kilogramos', reorderPoint: 100 });
+				.values({ id: 3, name: 'Water', unit: 'Kg', reorderPoint: 100 });
 			const data = await ingredients_service.getById(2);
 
 			expect(data).toBe(null);
@@ -99,10 +99,10 @@ describe.sequential('ingredients crud', () => {
 			const spy_select = vi.spyOn(db, 'select');
 			await db
 				.insert(t_ingredient)
-				.values({ id: 1, name: 'Banana', unit: 'Kilogramos', reorderPoint: 100 });
+				.values({ id: 1, name: 'Banana', unit: 'Kg', reorderPoint: 100 });
 			await db
 				.insert(t_ingredient)
-				.values({ id: 3, name: 'Water', unit: 'Kilogramos', reorderPoint: 200 });
+				.values({ id: 3, name: 'Water', unit: 'Kg', reorderPoint: 200 });
 			const data = await ingredients_service.getById(-1);
 
 			expect(spy_select).not.toHaveBeenCalled();
@@ -114,10 +114,10 @@ describe.sequential('ingredients crud', () => {
 			await db.delete(t_ingredient);
 			await db
 				.insert(t_ingredient)
-				.values({ id: 1, name: 'Banana', unit: 'Kilogramos', reorderPoint: 200 });
+				.values({ id: 1, name: 'Banana', unit: 'Kg', reorderPoint: 200 });
 			await db
 				.insert(t_ingredient)
-				.values({ id: 3, name: 'Water', unit: 'Kilogramos', reorderPoint: 200 });
+				.values({ id: 3, name: 'Water', unit: 'Kg', reorderPoint: 200 });
 			const data = await ingredients_service.getById(0);
 
 			expect(spy_select).not.toHaveBeenCalled();
@@ -127,7 +127,7 @@ describe.sequential('ingredients crud', () => {
 
 	describe.sequential('add', () => {
 		test('insert new ingredient', async () => {
-			const element = { name: 'Orange', unit: 'Kilogramos' as const, reorderPoint: 200 };
+			const element = { name: 'Orange', unit: 'Kg' as const, reorderPoint: 200 };
 			await ingredients_service.add(element);
 			const list = await db.select().from(t_ingredient);
 			expect(list.length).toBe(1);
@@ -141,11 +141,11 @@ describe.sequential('ingredients crud', () => {
 		test('insert new derived ingredient', async () => {
 			await db
 				.insert(t_ingredient)
-				.values({ id: 100, name: 'Higado', unit: 'Kilogramos', reorderPoint: 100 });
+				.values({ id: 100, name: 'Higado', unit: 'Kg', reorderPoint: 100 });
 			const ingredientPrev = await db.select().from(t_ingredient);
 			expect(ingredientPrev.length).toBe(1);
 			const inserted = await ingredients_service.add(
-				{ name: 'Higado desidratado', unit: 'Kilogramos', reorderPoint: 100 },
+				{ name: 'Higado desidratado', unit: 'Kg', reorderPoint: 100 },
 				{ id: 100, amount: 50 }
 			);
 			expect(inserted.id).toBeTruthy();
@@ -173,20 +173,20 @@ describe.sequential('ingredients crud', () => {
 			await db.delete(t_ingredient);
 			LIVER = await ingredients_service.add({
 				name: 'Higado',
-				unit: 'Kilogramos',
+				unit: 'Kg',
 				reorderPoint: 200
 			});
 			REDUCED_LIVER = await ingredients_service.add(
 				{
 					name: 'Higado desidratado',
-					unit: 'Kilogramos',
+					unit: 'Kg',
 					reorderPoint: 100
 				},
 				{ id: LIVER.id, amount: 0.5 }
 			);
 			SYNTETIC_LIVER = await ingredients_service.add({
 				name: 'Higado sintetico',
-				unit: 'Kilogramos',
+				unit: 'Kg',
 				reorderPoint: 20
 			});
 		});
@@ -194,7 +194,7 @@ describe.sequential('ingredients crud', () => {
 		test('change non derived ingredietn', async () => {
 			await ingredients_service.edit(LIVER.id, {
 				name: 'Higado editado',
-				unit: 'Gramos',
+				unit: 'gr',
 				reorderPoint: 10
 			});
 			const edited = await db.query.t_ingredient.findFirst({
@@ -202,7 +202,7 @@ describe.sequential('ingredients crud', () => {
 			});
 			expect(edited).toBeTruthy();
 			expect(edited?.name).toBe('Higado editado');
-			expect(edited?.unit).toBe('Gramos');
+			expect(edited?.unit).toBe('gr');
 			expect(edited?.reorderPoint).toBe(10);
 		});
 
@@ -211,7 +211,7 @@ describe.sequential('ingredients crud', () => {
 				REDUCED_LIVER.id,
 				{
 					name: 'Higado desidratado',
-					unit: 'Kilogramos',
+					unit: 'Kg',
 					reorderPoint: 10
 				},
 				{ id: SYNTETIC_LIVER.id, amount: 0.2 }
@@ -221,7 +221,7 @@ describe.sequential('ingredients crud', () => {
 			});
 			expect(edited).toBeTruthy();
 			expect(edited?.name).toBe('Higado desidratado');
-			expect(edited?.unit).toBe('Kilogramos');
+			expect(edited?.unit).toBe('Kg');
 			expect(edited?.reorderPoint).toBe(10);
 			const relations = await db.select().from(tr_ingredient_ingredient);
 			expect(relations.length).toBe(1);
@@ -237,7 +237,7 @@ describe.sequential('ingredients crud', () => {
 				SYNTETIC_LIVER.id,
 				{
 					name: 'Higado syntetico',
-					unit: 'Kilogramos',
+					unit: 'Kg',
 					reorderPoint: 10
 				},
 				{ id: LIVER.id, amount: 0.1 }
@@ -247,7 +247,7 @@ describe.sequential('ingredients crud', () => {
 			});
 			expect(edited).toBeTruthy();
 			expect(edited?.name).toBe('Higado syntetico');
-			expect(edited?.unit).toBe('Kilogramos');
+			expect(edited?.unit).toBe('Kg');
 			expect(edited?.reorderPoint).toBe(10);
 			const relations = await db.select().from(tr_ingredient_ingredient);
 			expect(relations.length).toBe(2);
@@ -267,7 +267,7 @@ describe.sequential('ingredients crud', () => {
 			await ingredients_service.add(
 				{
 					name: 'Really Higado desidratado',
-					unit: 'Kilogramos',
+					unit: 'Kg',
 					reorderPoint: 120
 				},
 				{ id: LIVER.id, amount: 0.9 }
@@ -276,7 +276,7 @@ describe.sequential('ingredients crud', () => {
 			expect(relations_prev.length).toBe(2);
 			await ingredients_service.edit(REDUCED_LIVER.id, {
 				name: 'Higado reducido',
-				unit: 'Kilogramos',
+				unit: 'Kg',
 				reorderPoint: 10
 			});
 			const edited = await db.query.t_ingredient.findFirst({
@@ -284,7 +284,7 @@ describe.sequential('ingredients crud', () => {
 			});
 			expect(edited).toBeTruthy();
 			expect(edited?.name).toBe('Higado reducido');
-			expect(edited?.unit).toBe('Kilogramos');
+			expect(edited?.unit).toBe('Kg');
 			expect(edited?.reorderPoint).toBe(10);
 			const relations = await db.select().from(tr_ingredient_ingredient);
 			expect(relations.length).toBe(1);

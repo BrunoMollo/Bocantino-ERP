@@ -1,7 +1,7 @@
 import { superValidate } from 'sveltekit-superforms/server';
 import { z } from 'zod';
 
-export const VALID_UNITS = ['Gramos', 'Kilogramos'] as const;
+export const VALID_UNITS = ['gr', 'Kg'] as const;
 
 export const ingredient_schema = z.object({
 	name: z.string().min(2, 'demasiado corto').max(255, 'demaiado largo'),

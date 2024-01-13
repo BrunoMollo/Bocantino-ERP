@@ -66,6 +66,20 @@
 			return f;
 		});
 	}
+
+	const unit = derived(
+		[derived(form, (f) => f.supplierId), derived(form, (f) => f.batches)],
+		([$supplier_id, $batches]) => {
+			return (index: number) => {
+				const supplier = data.suppliers.find((x) => x.id == $supplier_id); // dont use ===
+				if (!supplier) return '' as const;
+				const ingredient_id = $batches[index].ingredientId;
+				const ingredient = supplier.ingredients.find((x) => x.id == ingredient_id); // dont use ===
+				if (!ingredient) return '' as const;
+				return ingredient.unit;
+			};
+		}
+	);
 </script>
 
 <main class="container h-full mx-auto flex justify-center items-center">
@@ -158,7 +172,7 @@
 										bind:value={$form.batches[i].initialAmount}
 									/>
 									<!-- TODO:make dinamic -->
-									<span class="suffix absolute right-3 top-1/4">Kg</span>
+									<span class="suffix absolute right-3 top-1/4">{$unit(i)}</span>
 								</div>
 							</td>
 							<td>

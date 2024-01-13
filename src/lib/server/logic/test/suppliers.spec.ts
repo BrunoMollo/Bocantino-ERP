@@ -21,15 +21,15 @@ describe.sequential('supplier crud', () => {
 		CHICKEN_ID = await ingredients_service
 			.add({
 				name: 'Chicken',
-				unit: 'Kilogramos',
+				unit: 'Kg',
 				reorderPoint: 200
 			})
 			.then((x) => x.id);
 		FLOUR_ID = await ingredients_service
-			.add({ name: 'flour', unit: 'Kilogramos', reorderPoint: 200 })
+			.add({ name: 'flour', unit: 'Kg', reorderPoint: 200 })
 			.then((x) => x.id);
 		POTATOE_ID = await ingredients_service
-			.add({ name: 'Potato', unit: 'Kilogramos', reorderPoint: 300 })
+			.add({ name: 'Potato', unit: 'Kg', reorderPoint: 300 })
 			.then((x) => x.id);
 	});
 	describe('add', () => {

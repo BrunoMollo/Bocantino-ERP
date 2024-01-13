@@ -49,7 +49,7 @@ describe.sequential('start production of derived ingredient', async () => {
 		LIVER_ID = await ingredients_service
 			.add({
 				name: 'Liver',
-				unit: 'Kilogramos',
+				unit: 'Kg',
 				reorderPoint: 100
 			})
 			.then((x) => x.id);
@@ -57,7 +57,7 @@ describe.sequential('start production of derived ingredient', async () => {
 		BANANA_ID = await ingredients_service
 			.add({
 				name: 'Banana',
-				unit: 'Kilogramos',
+				unit: 'Kg',
 				reorderPoint: 120
 			})
 			.then((x) => x.id);
@@ -74,7 +74,7 @@ describe.sequential('start production of derived ingredient', async () => {
 			.add(
 				{
 					name: 'Liver reduced',
-					unit: 'Kilogramos',
+					unit: 'Kg',
 					reorderPoint: 80
 				},
 				{

@@ -5,7 +5,7 @@ import { foreignKey, integer, primaryKey, real, sqliteTable, text } from 'drizzl
 export const t_ingredient = sqliteTable('ingredient', {
 	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
 	name: text('name').notNull(),
-	unit: text('unit').notNull().$type<'Gramos' | 'Kilogramos'>(),
+	unit: text('unit').notNull().$type<'gr' | 'Kg'>(),
 	reorderPoint: integer('reorder_point').notNull()
 });
 export const tr_ingredient_ingredient = sqliteTable('r_ingredient_ingredient', {

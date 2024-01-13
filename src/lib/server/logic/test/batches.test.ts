@@ -32,7 +32,7 @@ describe.sequential('buy ingredients', async () => {
 
 		await db
 			.insert(t_ingredient)
-			.values({ id: 1, name: 'Banana', unit: 'Kilogramos', reorderPoint: 20 });
+			.values({ id: 1, name: 'Banana', unit: 'Kg', reorderPoint: 20 });
 		await db.insert(t_supplier).values({ id: 1, name: 'Juan Porvide', email: 'prov@prov.com' });
 		await db.insert(tr_supplier_ingredient).values({ ingredientId: 1, supplierId: 1 });
 	});
