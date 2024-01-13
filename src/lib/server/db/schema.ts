@@ -1,4 +1,3 @@
-import { relations } from 'drizzle-orm';
 import { foreignKey, integer, primaryKey, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 ////-------------------------------------------------------------------------------------//
@@ -9,11 +8,6 @@ export const t_ingredient = sqliteTable('ingredient', {
 	unit: text('unit').notNull().$type<'Gramos' | 'Kilogramos'>(),
 	reorderPoint: integer('reorder_point').notNull()
 });
-export const rel_ingredient = relations(t_ingredient, ({ many }) => ({
-	r_ingredient_product: many(tr_ingredient_product),
-	r_supplier_ingredient: many(tr_supplier_ingredient),
-	r_ingredient_ingredient: many(tr_ingredient_ingredient)
-}));
 export const tr_ingredient_ingredient = sqliteTable('r_ingredient_ingredient', {
 	amount: real('amount').notNull(),
 	derivedId: integer('derived_id')
@@ -32,9 +26,6 @@ export const t_product = sqliteTable('product', {
 	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
 	desc: text('desc').notNull()
 });
-export const rel_product = relations(t_product, ({ many }) => ({
-	r_ingredient_product: many(tr_ingredient_product)
-}));
 //-------------------------------------------------------------------------------------////
 //
 
@@ -55,16 +46,6 @@ export const tr_ingredient_product = sqliteTable(
 		pk: primaryKey({ columns: [ingredientId, productId] })
 	})
 );
-export const rel_ingredient_product = relations(tr_ingredient_product, ({ one }) => ({
-	ingredient: one(t_ingredient, {
-		fields: [tr_ingredient_product.ingredientId],
-		references: [t_ingredient.id]
-	}),
-	product: one(t_product, {
-		fields: [tr_ingredient_product.productId],
-		references: [t_product.id]
-	})
-}));
 //-------------------------------------------------------------------------------------////
 //
 
@@ -75,9 +56,6 @@ export const t_supplier = sqliteTable('supplier', {
 	name: text('name').notNull(),
 	email: text('email').notNull()
 });
-export const rel_supplier = relations(t_supplier, ({ many }) => ({
-	r_supplier_ingredient: many(tr_supplier_ingredient)
-}));
 //-------------------------------------------------------------------------------------////
 //
 
@@ -97,16 +75,6 @@ export const tr_supplier_ingredient = sqliteTable(
 		pk: primaryKey({ columns: [supplierId, ingredientId] })
 	})
 );
-export const rel_supplier_ingredient = relations(tr_supplier_ingredient, ({ one }) => ({
-	ingredient: one(t_ingredient, {
-		fields: [tr_supplier_ingredient.ingredientId],
-		references: [t_ingredient.id]
-	}),
-	supplier: one(t_supplier, {
-		fields: [tr_supplier_ingredient.supplierId],
-		references: [t_supplier.id]
-	})
-}));
 //-------------------------------------------------------------------------------------////
 //
 //
@@ -146,17 +114,6 @@ export const t_ingredient_batch = sqliteTable(
 		})
 	})
 );
-export const rel_ingredient_batch = relations(t_ingredient_batch, ({ one }) => ({
-	entry: one(t_ingridient_entry),
-	supplier: one(t_supplier, {
-		fields: [t_ingredient_batch.supplierId],
-		references: [t_supplier.id]
-	}),
-	ingredient: one(t_ingredient, {
-		fields: [t_ingredient_batch.ingredientId],
-		references: [t_ingredient.id]
-	})
-}));
 //-------------------------------------------------------------------------------------////
 //
 
@@ -196,10 +153,6 @@ export const t_ingridient_entry = sqliteTable('ingridient_entry', {
 		.notNull()
 		.references(() => t_supplier.id)
 });
-export const rel_ingredient_entry = relations(t_ingridient_entry, ({ one }) => ({
-	doc: one(t_entry_document),
-	supplier: one(t_supplier)
-}));
 export const t_entry_document = sqliteTable('entry_document', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	number: text('document_identifier').notNull(),
@@ -208,9 +161,11 @@ export const t_entry_document = sqliteTable('entry_document', {
 		.notNull()
 		.references(() => t_document_type.id)
 });
-export const rel_entry_docuement = relations(t_entry_document, ({ one }) => ({
-	type: one(t_document_type)
-}));
+//-------------------------------------------------------------------------------------////
+//
+
+////-------------------------------------------------------------------------------------//
+// DOCUMENT TYPE
 export const t_document_type = sqliteTable('document_type', {
 	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
 	desc: text('description').notNull()
