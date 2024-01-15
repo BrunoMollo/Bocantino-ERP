@@ -43,7 +43,7 @@
 		</h2>
 
 		{#if batches}
-			<table class="w-full mt-5 shadow-lg border border-collapse table">
+			<table class="w-full mt-5 shadow-lg border-collapse table">
 				<thead class="text-xl my-2">
 					<tr class="mt-1 mb-2">
 						<th>Ingrediente</th>
@@ -77,4 +77,3 @@
 
 <style>
 </style>
-

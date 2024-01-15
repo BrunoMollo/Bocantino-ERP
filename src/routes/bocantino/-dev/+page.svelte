@@ -24,4 +24,3 @@
 		<span>Se reinico la base de datos</span>
 	{/if}
 </main>
-

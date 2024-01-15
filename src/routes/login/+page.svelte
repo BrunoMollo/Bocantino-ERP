@@ -30,10 +30,10 @@
 					bind:value={$form.username}
 				/>
 			</div>
-			<div class="w-2/3 mx-auto mt-5">
+			<div class="w-2/3 mx-auto mt-5 relative">
 				<p>Password:</p>
 				<input
-					type="text"
+					type="password"
 					class="input w-full"
 					class:error_border={$errors.password}
 					name="password"
@@ -52,4 +52,3 @@
 		</form>
 	</div>
 </div>
-

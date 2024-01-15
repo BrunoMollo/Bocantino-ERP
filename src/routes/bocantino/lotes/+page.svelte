@@ -18,8 +18,8 @@
 	}
 </script>
 
-<main class="container pt-6 pb-24 flex flex-col justify-center items-center">
-	<table class="table table-hover shadow-lg rounded-lg w-11/12">
+<main class="container flex flex-col mx-auto pt-10 mb-10">
+	<table class="table table-hover shadow-lg rounded-lg w-11/12 mx-auto">
 		<thead>
 			<tr>
 				<th>ID</th>
@@ -39,7 +39,7 @@
 					<td class="w-2/12">{batch.stock} {batch.ingredient.unit}</td>
 					<td>{batch.used_batches.map((x) => x.batch_code).join(', ') || '-'}</td>
 
-					<td class="w-1/12"><a class="btn" href={`lotes/${batch.id.toString()}`}>Ver</a></td>
+					<td class="w-1/12"><a class="btn p-0" href={`lotes/${batch.id.toString()}`}>Ver</a></td>
 				</tr>
 			{/each}
 			<!-- this wierd reduce is because somtimes the backend returns less items because of how the limit works tihe the joins in the sql query-->
@@ -57,8 +57,7 @@
 			{/if}
 		</tbody>
 	</table>
-
-	<div class="pt-4">
+	<div class="pt-4 mx-auto">
 		<Paginator
 			buttonClasses="p-4 bg-surface-400"
 			settings={paginationSettings}
@@ -70,4 +69,3 @@
 		/>
 	</div>
 </main>
-

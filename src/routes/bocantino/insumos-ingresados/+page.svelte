@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { trpc } from '$lib/trpc-client';
+	import { date } from 'drizzle-orm/pg-core';
 	import Detalle from './_components/Detalle.svelte';
 	import { popup, type PaginationSettings, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { Paginator } from '@skeletonlabs/skeleton';
@@ -19,7 +20,8 @@
 
 	const filtros = {
 		supplier: '',
-		date: '',
+		dateInitial: null,
+		dateFinal: null,
 		number: ''
 	};
 	let listafiltrada = data.entries;
@@ -36,7 +38,10 @@
 	async function filtrar() {
 		listafiltrada = await trpc.entries.get
 			.query({
+				dateFinal: filtros.dateFinal,
+				dateInitial: filtros.dateInitial,
 				supplierName: filtros.supplier,
+				documentNumber: filtros.number,
 				page: paginationSettings.page,
 				pageSize: paginationSettings.limit
 			})
@@ -59,7 +64,7 @@
 	<i class="bx bx-search-alt text-white text-xl"></i>
 </div>
 
-<div class="card p-4 variant-filled-secondary w-64 rounded" data-popup="popupClick">
+<div class="card p-4 variant-filled-secondary w-80 rounded" data-popup="popupClick">
 	<h1 class="text-center w-full">Filtros</h1>
 	<div class="">
 		<p>Proveedor:</p>
@@ -71,13 +76,16 @@
 		/>
 	</div>
 	<div class="">
-		<p>Fecha:</p>
-		<input
-			type="text"
-			class="input rounded"
-			placeholder="Ingrese la fecha..."
-			bind:value={filtros.date}
-		/>
+		<p>Fechas:</p>
+		<div class="flex gap-1">
+			<input
+				type="date"
+				class="input rounded"
+				placeholder="Inicio"
+				bind:value={filtros.dateInitial}
+			/>
+			<input type="date" class="input rounded" placeholder="Fin" bind:value={filtros.dateFinal} />
+		</div>
 	</div>
 	<div class="">
 		<p>Comprobante:</p>
@@ -88,10 +96,8 @@
 			bind:value={filtros.number}
 		/>
 	</div>
-	<button
-		type="button"
-		class="btn rounded variant-filled-primary mt-5 float-right"
-		on:click={filtrar}>Filtrar</button
+	<button type="button" class="btn rounded variant-filled mt-5 float-right" on:click={filtrar}
+		>Filtrar</button
 	>
 	<div class="arrow variant-filled-secondary" />
 </div>
@@ -138,4 +144,3 @@
 </div>
 
 <Detalle {selected_entry} />
-
