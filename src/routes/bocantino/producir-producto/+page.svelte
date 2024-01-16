@@ -26,6 +26,10 @@
 	let dialog: HTMLDialogElement;
 </script>
 
+<pre>
+  {JSON.stringify($form, null, 2)}
+</pre>
+
 <div class="flex justify-between w-11/12 mx-auto">
 	<h1 class="uppercase text-2xl my-5">Orden de produccion de prodcuto final</h1>
 </div>
@@ -47,7 +51,6 @@
 				class="input w-full rounded ml-3"
 			/>
 
-			<!-- TODO: validate with client-->
 			<span class="suffix absolute right-3 top-1/4"> Kg </span>
 		</div>
 	</div>
@@ -81,8 +84,13 @@
 					</td>
 				</tr>
 			{:else}
-				{#each $recipe as line}
-					<IngredientLine {...line} {ingredients_all} />
+				{#each $recipe as line, i}
+					<IngredientLine
+						{...line}
+						{ingredients_all}
+						produced_amount={$form.produced_amount}
+						bind:value={$form.batches[i]}
+					/>
 				{/each}
 			{/if}
 		</tbody>

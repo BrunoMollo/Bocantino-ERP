@@ -6,7 +6,8 @@ import { ingredients_service } from '$logic';
 
 const production_product_schema = z.object({
 	product_id: z.coerce.number().int().positive(),
-	produced_amount: z.coerce.number().positive()
+	produced_amount: z.coerce.number().positive(),
+	batches: z.coerce.number().positive().array().nonempty().array().nonempty()
 });
 
 export const load: PageServerLoad = async () => {
