@@ -244,8 +244,10 @@ export async function getBatchesInProduction() {
 			]),
 			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit']),
 			used_ingredient: pick_columns(ta_used_ingredient, ['id', 'name', 'unit']),
-			used_batches: pick_columns(ta_used_batch, ['id', 'batch_code']),
-			tr_ingredient_batch_ingredient_batch
+			used_batches: pick_merge()
+				.table(ta_used_batch, 'id', 'batch_code')
+				.table(tr_ingredient_batch_ingredient_batch, 'amount_used_to_produce_batch')
+				.build()
 		})
 		.from(t_ingredient_batch)
 		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
@@ -259,13 +261,6 @@ export async function getBatchesInProduction() {
 		)
 		.innerJoin(ta_used_ingredient, eq(ta_used_batch.ingredientId, ta_used_ingredient.id))
 		.where(eq(t_ingredient_batch.state, 'IN_PRODUCTION'))
-		.then(
-			copy_column({
-				from: 'tr_ingredient_batch_ingredient_batch',
-				field: 'amount_used_to_produce_batch',
-				to: 'used_batches'
-			})
-		)
 		.then(
 			drizzle_map({
 				one: 't_ingredient_batch',
