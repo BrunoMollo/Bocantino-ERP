@@ -45,12 +45,12 @@ export async function login(recived_user: { username: string; password: string }
 		.then(getFirstIfPosible);
 
 	if (!db_user) {
-		return logicError('credenciales incorrectas');
+		return logicError('Uusario no encontrado');
 	}
 
 	const hash_match = await bcrypt.compare(recived_user.password, db_user.password_hash);
 	if (!hash_match) {
-		return logicError('credenciales incorrectas');
+		return logicError('constraseña incorrecta');
 	}
 
 	const token = await signJWT({ id: db_user.id }, { exp: `${JWT_EXPIRES_IN}m` }); //TODO: invesigate

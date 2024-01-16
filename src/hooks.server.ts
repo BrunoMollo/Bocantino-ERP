@@ -1,4 +1,4 @@
-/* import { auth_service } from '$logic';
+import { auth_service } from '$logic';
 import type { Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
