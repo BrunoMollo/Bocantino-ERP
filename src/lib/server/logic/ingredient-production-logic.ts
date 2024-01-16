@@ -10,6 +10,7 @@ import {
 import { eq, and, asc, desc, ne, count } from 'drizzle-orm';
 import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
 import { sq_stock } from './ingredient-stock';
+import { pick_merge } from 'drizzle-tools/src/pick-columns';
 
 export async function getBatchesByIngredientId(id: number) {
 	return await db
@@ -172,15 +173,20 @@ export async function getBatchesAvailable({ page }: { page: number }) {
 	const limited_ingredient_batch = db.$with('limited_ingredient_batch').as(
 		db
 			.with(sq_stock)
-			.select({
-				id: t_ingredient_batch.id,
-				batch_code: t_ingredient_batch.batch_code,
-				productionDate: t_ingredient_batch.productionDate,
-				expiration_date: t_ingredient_batch.expiration_date,
-				ingredientId: t_ingredient_batch.ingredientId,
-				registration_date: t_ingredient_batch.registration_date,
-				stock: sq_stock.currently_available
-			})
+			.select(
+				pick_merge()
+					.table(
+						t_ingredient_batch,
+						'id',
+						'batch_code',
+						'productionDate',
+						'expiration_date',
+						'registration_date',
+						'ingredientId'
+					)
+					.aliased(sq_stock, 'currently_available', 'stock')
+					.build()
+			)
 			.from(t_ingredient_batch)
 			.innerJoin(sq_stock, eq(t_ingredient_batch.id, sq_stock.batch_id))
 			.where(and(eq(t_ingredient_batch.state, 'AVAILABLE'), ne(sq_stock.currently_available, 0)))
