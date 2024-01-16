@@ -9,6 +9,8 @@ import type { ExtractTablesWithRelations } from 'drizzle-orm';
 const client = createClient({ url: TURSO_URL, authToken: TURSO_TOKEN });
 export const db = drizzle(client, { schema, logger: dev });
 
+export type Db = typeof db;
+
 export type Tx = SQLiteTransaction<
 	'async',
 	ResultSet,

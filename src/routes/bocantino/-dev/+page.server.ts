@@ -21,6 +21,7 @@ import {
 	purchases_service,
 	suppliers_service
 } from '$logic';
+import { product_service } from '$logic/product-logic';
 import type { PageServerLoad } from './$types';
 import { redirect, type Actions } from '@sveltejs/kit';
 
@@ -165,6 +166,14 @@ async function seed() {
 		{ ingedient_id: higado_desidatado.id, produced_amount: 50 },
 		first_entry.batchesId
 	);
+
+	await product_service.add({
+		desc: 'Alimento para perros',
+		ingredients: [
+			{ id: banana.id, amount: 10 },
+			{ id: higado.id, amount: 20 }
+		]
+	});
 
 	// leave it last, cache might bring up an error
 	await auth_service.createUser({ username: 'admin', password: 'admin' });
