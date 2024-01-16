@@ -16,11 +16,21 @@ export const routes = [
 				icon: 'bx bx-list-ul text-xl'
 			},
 			{
-				name: 'Solicitud produccion',
-				href: '/bocantino/solicitud-produccion',
+				name: 'Producir ingrediente',
+				href: '/bocantino/producir-ingrediente',
 				icon: 'bx text-xl bx-file'
 			},
-			{ name: 'Pendientes', href: '/bocantino/solicitudes-pendientes', icon: 'bx bx-list-check' },
+
+			{
+				name: 'Producir producto',
+				href: '/bocantino/producir-producto',
+				icon: 'bx text-xl bx-file'
+			},
+			{
+				name: 'Producciones pendientes',
+				href: '/bocantino/solicitudes-pendientes',
+				icon: 'bx bx-list-check'
+			},
 
 			{ name: 'Lotes', href: '/bocantino/lotes', icon: 'bx bx-list-check' }
 		] satisfies Route[]

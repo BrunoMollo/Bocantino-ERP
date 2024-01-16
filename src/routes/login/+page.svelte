@@ -2,7 +2,9 @@
 	import { superForm } from 'sveltekit-superforms/client';
 
 	export let data;
-	const { form, enhance, errors, delayed, message } = superForm(data.form);
+	const { form, enhance, errors, delayed, message } = superForm(data.form, {
+		taintedMessage: null
+	});
 </script>
 
 <div class="w-full h-full flex items-center">
@@ -52,3 +54,4 @@
 		</form>
 	</div>
 </div>
+

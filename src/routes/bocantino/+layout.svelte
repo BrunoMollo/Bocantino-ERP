@@ -54,7 +54,7 @@
 </script>
 
 <Drawer>
-	<div class="pt-4 w-80">
+	<div class="pt-4 w-96">
 		<strong class="p-4 text-xl uppercase">Bocantino</strong>
 		<Navigation />
 	</div>

@@ -6,6 +6,7 @@
 	export let data;
 
 	const { form, enhance, delayed, errors } = superForm(data.form, {
+		taintedMessage: null,
 		dataType: 'json', // needed for id
 		defaultValidator: 'clear',
 		onError: ({ result }) => {
@@ -22,6 +23,7 @@
 	});
 
 	const { form: cancel_form, enhance: cancel_enhance } = superForm(data.cancel_form, {
+		taintedMessage: null,
 		defaultValidator: 'clear',
 		dataType: 'json', // needed for id
 		onError: ({ result }) => {

@@ -84,6 +84,7 @@ export function makeOptions<T>(arr: T[], fields: { label: keyof T; value: keyof 
 	);
 }
 
+import { writable, type Readable, readonly } from 'svelte/store';
 import type { ZodValidation } from 'sveltekit-superforms';
 import type { SuperForm } from 'sveltekit-superforms/client';
 import type { AnyZodObject } from 'zod';
@@ -101,5 +102,14 @@ export function startAs<T extends ZodValidation<AnyZodObject>>(
 		},
 		{ taint: false }
 	);
+}
+
+export function derivedAsync<T, R>(store: Readable<T>, func: (x: T) => Promise<R>) {
+	const deriv = writable<R | 'WAITING'>(undefined);
+	store.subscribe(($value) => {
+		deriv.set('WAITING');
+		func($value).then(deriv.set);
+	});
+	return deriv;
 }
 
