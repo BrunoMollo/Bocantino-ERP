@@ -141,8 +141,8 @@
 						<th class="text-center">Bolsas</th>
 						<th class="text-center w-32">Fecha produccion</th>
 						<th class="text-center w-32">Fecha vencimiento</th>
-						<th class="text-center w-24">Monto</th>
-						<th class="text-center">Codigo</th>
+						<th class="text-center w-24">Importe</th>
+						<th class="text-center">Lote</th>
 						<th class="text-center"></th>
 					</tr>
 				</thead>

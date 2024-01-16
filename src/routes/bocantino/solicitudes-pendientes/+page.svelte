@@ -55,7 +55,7 @@
 	$: $cancel_form.batch_id = current?.id ?? -1;
 </script>
 
-<h1 class="text-center w-full uppercase text-2xl my-5">Solicitudes pendientes</h1>
+<h1 class="text-center w-full uppercase text-2xl my-5">Ordenes de producción en proceso</h1>
 
 <table class="table w-11/12 mx-auto p-2 rounded-md shadow-lg">
 	<thead>

@@ -93,15 +93,10 @@
 	);
 
 	let needs_two_batches = false;
-
-	const fecha = new Date().toLocaleDateString('es');
-
-	const numero = 12;
 </script>
 
 <div class="flex justify-between w-11/12 mx-auto">
-	<h1 class="uppercase text-2xl my-5">Solicitud de produccion N:{numero}</h1>
-	<h2 class="uppercase text-2xl my-5">Fecha: {fecha}</h2>
+	<h1 class="uppercase text-2xl my-5">Orden de produccion</h1>
 </div>
 
 <form action="" class="mx-auto w-11/12" use:enhance method="post">
