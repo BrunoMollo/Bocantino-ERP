@@ -170,7 +170,6 @@
 										type="text"
 										bind:value={$form.batches[i].initialAmount}
 									/>
-									<!-- TODO:make dinamic -->
 									<span class="suffix absolute right-3 top-1/4">{$unit(i)}</span>
 								</div>
 							</td>
