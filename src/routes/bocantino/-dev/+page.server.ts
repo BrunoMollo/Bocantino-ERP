@@ -84,7 +84,6 @@ async function seed() {
 	if (!dev) {
 		return;
 	}
-	auth_service.createUser({ username: 'admin', password: 'admin' });
 
 	const factura = { id: 1, desc: 'Factura' };
 	const remito = { id: 2, desc: 'Remito' };
@@ -166,5 +165,8 @@ async function seed() {
 		{ ingedient_id: higado_desidatado.id, produced_amount: 50 },
 		first_entry.batchesId
 	);
+
+	// leave it last, cache might bring up an error
+	await auth_service.createUser({ username: 'admin', password: 'admin' });
 }
 
