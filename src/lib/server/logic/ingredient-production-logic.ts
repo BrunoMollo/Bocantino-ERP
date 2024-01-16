@@ -169,46 +169,55 @@ export async function getCountOfAvailableBatches() {
 
 export const PAGE_SIZE = 10;
 export async function getBatchesAvailable({ page }: { page: number }) {
+	const limited_ingredient_batch = db.$with('limited_ingredient_batch').as(
+		db
+			.with(sq_stock)
+			.select({
+				id: t_ingredient_batch.id,
+				batch_code: t_ingredient_batch.batch_code,
+				productionDate: t_ingredient_batch.productionDate,
+				expiration_date: t_ingredient_batch.expiration_date,
+				ingredientId: t_ingredient_batch.ingredientId,
+				registration_date: t_ingredient_batch.registration_date,
+				stock: sq_stock.currently_available
+			})
+			.from(t_ingredient_batch)
+			.innerJoin(sq_stock, eq(t_ingredient_batch.id, sq_stock.batch_id))
+			.where(and(eq(t_ingredient_batch.state, 'AVAILABLE'), ne(sq_stock.currently_available, 0)))
+			.limit(PAGE_SIZE)
+			.offset(page * PAGE_SIZE)
+	);
+	limited_ingredient_batch;
+
 	const ta_used_batch = alias(t_ingredient_batch, 'used_batches');
 	return await db
-		.with(sq_stock)
+		.with(limited_ingredient_batch)
 		.select({
-			t_ingredient_batch: pick_columns(t_ingredient_batch, [
+			ingredient_batch: pick_columns(limited_ingredient_batch, [
 				'id',
 				'batch_code',
 				'productionDate',
-				'expiration_date'
+				'expiration_date',
+				'stock'
 			]),
 			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit']),
 			used_batches: pick_columns(ta_used_batch, ['id', 'batch_code']),
-			tr_ingredient_batch_ingredient_batch,
-			stock: { stock: sq_stock.currently_available }
+			tr_ingredient_batch_ingredient_batch
 		})
-		.from(t_ingredient_batch)
-		.innerJoin(sq_stock, eq(t_ingredient_batch.id, sq_stock.batch_id))
-		.where(and(eq(t_ingredient_batch.state, 'AVAILABLE'), ne(sq_stock.currently_available, 0)))
-		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
+		.from(limited_ingredient_batch)
+		.innerJoin(t_ingredient, eq(t_ingredient.id, limited_ingredient_batch.ingredientId))
 		.leftJoin(
 			tr_ingredient_batch_ingredient_batch,
-			eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, t_ingredient_batch.id)
+			eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, limited_ingredient_batch.id)
 		)
 		.leftJoin(
 			ta_used_batch,
 			eq(tr_ingredient_batch_ingredient_batch.used_batch_id, ta_used_batch.id)
 		)
-		.orderBy(desc(t_ingredient_batch.registration_date))
-		.limit(PAGE_SIZE)
-		.offset(page * PAGE_SIZE)
-		.then(
-			copy_column({
-				from: 'stock',
-				field: 'stock',
-				to: 't_ingredient_batch'
-			})
-		)
+		.orderBy(desc(limited_ingredient_batch.registration_date))
 		.then(
 			drizzle_map({
-				one: 't_ingredient_batch',
+				one: 'ingredient_batch',
 				with_one: ['ingredient'],
 				with_many: ['used_batches']
 			})
