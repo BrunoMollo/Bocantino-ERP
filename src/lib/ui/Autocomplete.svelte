@@ -7,6 +7,7 @@
 	} from '@skeletonlabs/skeleton';
 	import { writable } from 'svelte/store';
 
+	export let id = '';
 	export let value;
 	export let name: string;
 	export let className = '';
@@ -45,6 +46,7 @@
 </script>
 
 <input
+	{id}
 	class={`input autocomplete mb-0 ${className}`}
 	type="search"
 	bind:value={$label}

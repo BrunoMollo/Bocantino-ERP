@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm';
 import { foreignKey, integer, primaryKey, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 ////-------------------------------------------------------------------------------------//
@@ -157,6 +158,7 @@ export const t_entry_document = sqliteTable('entry_document', {
 	id: integer('id').primaryKey({ autoIncrement: true }),
 	number: text('document_identifier').notNull(),
 	issue_date: integer('issue_date', { mode: 'timestamp' }).notNull(),
+	due_date: integer('due_date', { mode: 'timestamp' }).notNull(),
 	typeId: integer('type_id')
 		.notNull()
 		.references(() => t_document_type.id)

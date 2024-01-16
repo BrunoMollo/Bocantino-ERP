@@ -12,6 +12,7 @@ const boughBatchSchema = z.object({
 	idDocumentType: z.coerce.number().int().min(1, ''),
 	invoiceNumber: z.string().min(4, 'Requerido').max(255),
 	issueDate: z.string().refine(isValidDateBackend).transform(parseStringToDate),
+	due_date: z.string().refine(isValidDateBackend).transform(parseStringToDate),
 	batches: z
 		.object({
 			batch_code: z.string().min(2).max(256),
@@ -45,13 +46,17 @@ export const actions: Actions = {
 			supplierId,
 			batches,
 			document: {
-				issue_date: form.data.issueDate,
 				number: form.data.invoiceNumber,
-				typeId: form.data.idDocumentType
+				typeId: form.data.idDocumentType,
+				issue_date: form.data.issueDate,
+				due_date: form.data.due_date
 			}
 		});
 
-		throw redirect(302, `/bocantino/insumos-ingresados?toast=Se registraron los ${batches.length} lotes`);
+		throw redirect(
+			302,
+			`/bocantino/insumos-ingresados?toast=Se registraron los ${batches.length} lotes`
+		);
 	}
 };
 

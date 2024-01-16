@@ -8,9 +8,9 @@ import {
 	t_supplier
 } from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
-import { and, between, eq, like } from 'drizzle-orm';
+import { and, eq, like } from 'drizzle-orm';
 
-export type RegisterPurchaseDto = Prettify<{
+export function registerBoughtIngrediets(data: {
 	supplierId: number;
 	document: TableInsert<typeof t_entry_document.$inferInsert, 'id'>;
 	batches: {
@@ -22,8 +22,7 @@ export type RegisterPurchaseDto = Prettify<{
 		numberOfBags: number;
 		cost: number;
 	}[];
-}>;
-export function registerBoughtIngrediets(data: RegisterPurchaseDto) {
+}) {
 	return db.transaction(async (tx) => {
 		const { documentId } = await tx
 			.insert(t_entry_document)
@@ -51,7 +50,14 @@ export function registerBoughtIngrediets(data: RegisterPurchaseDto) {
 	});
 }
 
-export async function getEntries(input: { supplierName?: string; pageSize: number; page: number; documentNumber?: string; dateInitial?: Date; dateFinal?: Date }) {
+export async function getEntries(input: {
+	supplierName?: string;
+	pageSize: number;
+	page: number;
+	documentNumber?: string;
+	dateInitial?: Date;
+	dateFinal?: Date;
+}) {
 	const entries = await db
 		.select({
 			id: t_ingridient_entry.id,
@@ -67,7 +73,12 @@ export async function getEntries(input: { supplierName?: string; pageSize: numbe
 		.innerJoin(t_supplier, eq(t_ingridient_entry.supplierId, t_supplier.id))
 		.innerJoin(t_entry_document, eq(t_entry_document.id, t_ingridient_entry.documentId))
 		.innerJoin(t_document_type, eq(t_entry_document.typeId, t_document_type.id))
-		.where(and(like(t_supplier.name, `${input.supplierName ?? ''}%`), like(t_entry_document.number, `${input.documentNumber ?? ''}%`)))
+		.where(
+			and(
+				like(t_supplier.name, `${input.supplierName ?? ''}%`),
+				like(t_entry_document.number, `${input.documentNumber ?? ''}%`)
+			)
+		)
 		.limit(input.pageSize)
 		.offset(input.page * input.pageSize);
 	return entries;

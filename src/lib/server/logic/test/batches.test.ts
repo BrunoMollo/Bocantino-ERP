@@ -11,7 +11,6 @@ import {
 	tr_ingredient_ingredient,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
-import type { RegisterPurchaseDto } from '../purchases-logic';
 import { eq } from 'drizzle-orm';
 import { purchases_service } from '$logic';
 
@@ -30,9 +29,7 @@ describe.sequential('buy ingredients', async () => {
 		await db.delete(t_document_type);
 		await db.insert(t_document_type).values(INVOICE_TYPE);
 
-		await db
-			.insert(t_ingredient)
-			.values({ id: 1, name: 'Banana', unit: 'Kg', reorderPoint: 20 });
+		await db.insert(t_ingredient).values({ id: 1, name: 'Banana', unit: 'Kg', reorderPoint: 20 });
 		await db.insert(t_supplier).values({ id: 1, name: 'Juan Porvide', email: 'prov@prov.com' });
 		await db.insert(tr_supplier_ingredient).values({ ingredientId: 1, supplierId: 1 });
 	});
@@ -47,9 +44,10 @@ describe.sequential('buy ingredients', async () => {
 		const valid_input = {
 			supplierId: 1,
 			document: {
+				typeId: INVOICE_TYPE.id,
 				number: 'FACTURA-12345',
 				issue_date: new Date(2023, 1, 1),
-				typeId: INVOICE_TYPE.id
+				due_date: new Date(2023, 2, 2)
 			},
 			batches: [
 				{
@@ -62,7 +60,7 @@ describe.sequential('buy ingredients', async () => {
 					ingredientId: 1
 				}
 			]
-		} satisfies RegisterPurchaseDto;
+		} satisfies Parameters<typeof purchases_service.registerBoughtIngrediets>[0];
 		test('creates new document row', async () => {
 			await purchases_service.registerBoughtIngrediets(valid_input);
 			const listDocs = await db.select().from(t_entry_document);
@@ -73,6 +71,7 @@ describe.sequential('buy ingredients', async () => {
 			expect(newDoc.typeId).toBe(INVOICE_TYPE.id);
 			expect(newDoc.number).toBe(valid_input.document.number);
 			expect(newDoc.issue_date.toISOString()).toBe(valid_input.document.issue_date.toISOString());
+			expect(newDoc.due_date.toISOString()).toBe(valid_input.document.due_date.toISOString());
 		});
 		test('creates new entry row', async () => {
 			await purchases_service.registerBoughtIngrediets(valid_input);
@@ -118,9 +117,10 @@ describe.sequential('buy ingredients', async () => {
 		const valid_input = {
 			supplierId: 1,
 			document: {
+				typeId: INVOICE_TYPE.id,
 				number: 'FACTURA-12345',
 				issue_date: new Date(2023, 1, 1),
-				typeId: INVOICE_TYPE.id
+				due_date: new Date(2023, 2, 2)
 			},
 			batches: [
 				{
@@ -143,7 +143,7 @@ describe.sequential('buy ingredients', async () => {
 					ingredientId: 1
 				}
 			]
-		} satisfies RegisterPurchaseDto;
+		} satisfies Parameters<typeof purchases_service.registerBoughtIngrediets>[0];
 		test('creates new document row', async () => {
 			await purchases_service.registerBoughtIngrediets(valid_input);
 			const listDocs = await db.select().from(t_entry_document);
@@ -154,6 +154,7 @@ describe.sequential('buy ingredients', async () => {
 			expect(newDoc.typeId).toBe(INVOICE_TYPE.id);
 			expect(newDoc.number).toBe(valid_input.document.number);
 			expect(newDoc.issue_date.toISOString()).toBe(valid_input.document.issue_date.toISOString());
+			expect(newDoc.due_date.toISOString()).toBe(valid_input.document.due_date.toISOString());
 		});
 		test('creates new entry row', async () => {
 			await purchases_service.registerBoughtIngrediets(valid_input);
@@ -185,6 +186,9 @@ describe.sequential('buy ingredients', async () => {
 				expect(list[i].batch_code).toBe(valid_input.batches[i].batch_code);
 				expect(list[i].numberOfBags).toBe(valid_input.batches[i].numberOfBags);
 				expect(list[i].initialAmount).toBe(valid_input.batches[i].initialAmount);
+				expect(list[i].expiration_date?.toISOString()).toBe(
+					valid_input.batches[i].expiration_date.toISOString()
+				);
 				expect(list[i].expiration_date?.toISOString()).toBe(
 					valid_input.batches[i].expiration_date.toISOString()
 				);

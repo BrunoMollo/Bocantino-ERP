@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { writable } from 'svelte/store';
 
+	export let id = '';
 	export let delimiter = '-';
 	export let className = '';
 	export let value = '' as any;
@@ -49,6 +50,7 @@
 </script>
 
 <input
+	{id}
 	class={className}
 	type="text"
 	pattern={`\\d{2}${delimiter}\\d{2}${delimiter}\\d{4}`}
@@ -61,3 +63,4 @@
 		if (Number.isNaN(num)) e.preventDefault();
 	}}
 />
+

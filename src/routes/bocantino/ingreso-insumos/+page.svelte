@@ -36,16 +36,15 @@
 		});
 	}
 
-	const optionsDocumentTypes = makeOptions(data.documentTypes, { value: 'id', label: 'desc' });
-
 	const optionsSuppliers = makeOptions(data.suppliers, { value: 'id', label: 'name' });
 
-	const optionsIngredients = derived(form, ({ supplierId }) => {
+	const supplier_id = derived(form, (x) => x.supplierId);
+	const optionsIngredients = derived(supplier_id, (supplierId) => {
 		const selectedSupplier = data.suppliers.find((x) => x.id == Number(supplierId));
 		if (!selectedSupplier) {
-			return { labels: [], values: [] };
+			return [];
 		}
-		return makeOptions(selectedSupplier.ingredients, { value: 'id', label: 'name' });
+		return selectedSupplier.ingredients;
 	});
 
 	// This shit could be removed with Svelte 5 support of ts in markdown
@@ -71,10 +70,10 @@
 		([$supplier_id, $batches]) => {
 			return (index: number) => {
 				const supplier = data.suppliers.find((x) => x.id == $supplier_id); // dont use ===
-				if (!supplier) return '' as const;
+				if (!supplier) return '-' as const;
 				const ingredient_id = $batches[index].ingredientId;
 				const ingredient = supplier.ingredients.find((x) => x.id == ingredient_id); // dont use ===
-				if (!ingredient) return '' as const;
+				if (!ingredient) return '-' as const;
 				return ingredient.unit;
 			};
 		}
@@ -83,53 +82,68 @@
 
 <main class="container h-full mx-auto flex justify-center items-center">
 	<form action="" method="post" use:enhance>
-		<div class="grid grid-cols-4 gap-3 w-11/12 mx-auto">
+		<div class="grid grid-cols-5 gap-3 w-11/12 mx-auto">
 			<div>
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">
+				<label class="label" for="supplier_id">
 					<small class="my-auto mr-1 font-black text-lg">Proveedor</small>
-					<Autocomplete
-						name="supplierId"
-						bind:value={$form.supplierId}
-						className="input {$errors.supplierId ? 'error_border' : ''}"
-						{...optionsSuppliers}
-					/>
 				</label>
+				<Autocomplete
+					id="supplier_id"
+					name="supplierId"
+					bind:value={$form.supplierId}
+					className="input {$errors.supplierId ? 'error_border' : ''}"
+					{...optionsSuppliers}
+				/>
 			</div>
 			<div>
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">
+				<label class="label" for="document_type">
 					<small class="my-auto mr-1 font-black text-lg">Tipo de documento</small>
-					<Autocomplete
-						placeholder="Seleccionar..."
-						name="tipe_of_document"
-						bind:value={$form.idDocumentType}
-						className={`input ${$errors.idDocumentType ? 'error_border' : ''}`}
-						{...optionsDocumentTypes}
-					/>
 				</label>
+				<select
+					id="document_type"
+					bind:value={$form.idDocumentType}
+					class="select"
+					class:error_border={$errors.idDocumentType}
+				>
+					{#each data.documentTypes as { id, desc }}
+						<option value={id}>{desc}</option>
+					{/each}
+				</select>
 			</div>
 			<div>
-				<label class="label ml-auto">
+				<label class="label ml-auto" for="invoice_number">
 					<small class="my-auto mr-1 font-black text-lg">Numero de factura</small>
-					<input
-						type="text"
-						bind:value={$form.invoiceNumber}
-						class="input"
-						class:error_border={$errors.invoiceNumber}
-						aria-invalid={$errors.invoiceNumber ? 'true' : undefined}
-					/>
 				</label>
+				<input
+					id="invoice_number"
+					placeholder="Numero"
+					type="text"
+					bind:value={$form.invoiceNumber}
+					class="input"
+					class:error_border={$errors.invoiceNumber}
+					aria-invalid={$errors.invoiceNumber ? 'true' : undefined}
+				/>
 			</div>
 			<div>
-				<!-- svelte-ignore a11y-label-has-associated-control -->
-				<label class="label">
+				<label class="label" for="issue_date">
 					<small class="my-auto mr-1 font-black text-lg"> Fecha factura</small>
-					<InputDate
-						className={`input ${$errors.issueDate ? 'error_border' : ''}`}
-						bind:value={$form.issueDate}
-					/>
 				</label>
+				<InputDate
+					id="issue_date"
+					className={`input ${$errors.issueDate ? 'error_border' : ''}`}
+					bind:value={$form.issueDate}
+				/>
+			</div>
+
+			<div>
+				<label class="label" for="due_date">
+					<small class="my-auto mr-1 font-black text-lg">Vencimiento factura</small>
+				</label>
+				<InputDate
+					id="due_date"
+					className={`input ${$errors.due_date ? 'error_border' : ''}`}
+					bind:value={$form.due_date}
+				/>
 			</div>
 		</div>
 		<div class="table-container w-11/12 mx-auto my-5 shadow-lg rounded-lg" style="">
@@ -146,21 +160,23 @@
 						<th class="text-center"></th>
 					</tr>
 				</thead>
-				<tbody>
+				<tbody class="w-11/12">
 					{#each $form.batches as _, i}
 						<tr transition:fly={{ x: -350 }}>
 							<td>
-								<!-- svelte-ignore a11y-label-has-associated-control -->
-								<label class="label w-52">
-									{#key $form.supplierId}
-										<Autocomplete
-											className={`input ${$batchesError(i, 'ingredientId') ? 'error_border' : ''}`}
-											name={`ingredientId-${i}`}
-											bind:value={$form.batches[i].ingredientId}
-											{...$optionsIngredients}
-										/>
-									{/key}
-								</label>
+								<select
+									class="select w-56"
+									bind:value={$form.batches[i].ingredientId}
+									class:error_border={$batchesError(i, 'ingredientId')}
+									class:text-gray-500={$optionsIngredients.length == 0}
+								>
+									{#if $optionsIngredients.length == 0}
+										<option disabled selected>Elija un proveedor</option>
+									{/if}
+									{#each $optionsIngredients as { id, name }}
+										<option value={id}>{name}</option>
+									{/each}
+								</select>
 							</td>
 							<td>
 								<div class="relative inline-block w-24">

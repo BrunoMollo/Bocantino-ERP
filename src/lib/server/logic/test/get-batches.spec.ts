@@ -85,7 +85,12 @@ describe.sequential('start production of derived ingredient', async () => {
 		LIVER_BATCH_ID = await purchases_service
 			.registerBoughtIngrediets({
 				supplierId: SUPPLIER_ID,
-				document: { number: '1234', typeId: INVOICE_TYPE.id, issue_date: new Date() },
+				document: {
+					number: '1234',
+					typeId: INVOICE_TYPE.id,
+					issue_date: new Date(),
+					due_date: new Date()
+				},
 				batches: [
 					{
 						ingredientId: LIVER_ID,
@@ -103,7 +108,12 @@ describe.sequential('start production of derived ingredient', async () => {
 		SECOND_LIVER_BATCH_ID = await purchases_service
 			.registerBoughtIngrediets({
 				supplierId: SUPPLIER_ID,
-				document: { number: '1234', typeId: INVOICE_TYPE.id, issue_date: new Date() },
+				document: {
+					number: '1234',
+					typeId: INVOICE_TYPE.id,
+					issue_date: new Date(),
+					due_date: new Date()
+				},
 				batches: [
 					{
 						ingredientId: LIVER_ID,
@@ -121,7 +131,12 @@ describe.sequential('start production of derived ingredient', async () => {
 		BANANA_BATCH_ID = await purchases_service
 			.registerBoughtIngrediets({
 				supplierId: SUPPLIER_ID,
-				document: { number: '1234', typeId: INVOICE_TYPE.id, issue_date: new Date() },
+				document: {
+					number: '1234',
+					typeId: INVOICE_TYPE.id,
+					issue_date: new Date(),
+					due_date: new Date()
+				},
 				batches: [
 					{
 						ingredientId: BANANA_ID,

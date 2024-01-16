@@ -124,7 +124,12 @@ async function seed() {
 
 	const first_entry = await purchases_service.registerBoughtIngrediets({
 		supplierId: julian.id,
-		document: { number: 'R-22121', issue_date: new Date(2023, 12, 31), typeId: remito.id },
+		document: {
+			number: 'R-22121',
+			issue_date: new Date(2023, 12, 31),
+			due_date: new Date(2023, 4, 1),
+			typeId: remito.id
+		},
 		batches: [
 			{
 				batch_code: 'PPPP_1234',
@@ -140,7 +145,12 @@ async function seed() {
 
 	const second_entry = await purchases_service.registerBoughtIngrediets({
 		supplierId: julian.id,
-		document: { number: 'F-11111', issue_date: new Date(), typeId: factura.id },
+		document: {
+			number: 'F-11111',
+			issue_date: new Date(),
+			due_date: new Date(2023, 5, 2),
+			typeId: factura.id
+		},
 		batches: [
 			{
 				batch_code: 'ABCEDE_1234',
