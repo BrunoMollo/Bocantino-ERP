@@ -1,45 +1,24 @@
 <script lang="ts">
-	import {
-		AppShell,
-		AppBar,
-		Toast,
-		getToastStore,
-		type PopupSettings,
-		popup
-	} from '@skeletonlabs/skeleton';
-	import { initializeStores, Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
-	import Navigation from './_components/Navigation.svelte';
+	import { AppShell, AppBar, Toast, type PopupSettings, popup } from '@skeletonlabs/skeleton';
+	import { Drawer, getDrawerStore } from '@skeletonlabs/skeleton';
 	// Floating UI for Popups
 	import { computePosition, autoUpdate, flip, shift, offset, arrow } from '@floating-ui/dom';
 	import { storePopup } from '@skeletonlabs/skeleton';
 	import { navigating, page } from '$app/stores';
 	import { derived } from 'svelte/store';
 	import { routes } from './_components/routes';
+	import Navigation from './_components/Navigation.svelte';
 	import Spinner from '$lib/ui/Spinner.svelte';
-	import { goto } from '$app/navigation';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
-	initializeStores();
 	const drawerStore = getDrawerStore();
 
 	const popupFeatured: PopupSettings = {
-		// Represents the type of event that opens/closed the popup
 		event: 'click',
-		// Matches the data-popup value on your popup element
 		target: 'popupFeatured',
-		// Defines which side of your trigger the popup will appear
 		placement: 'bottom'
 	};
-
-	const toastStore = getToastStore();
-	page.subscribe(({ url }) => {
-		const message = url.searchParams.get('toast');
-		if (message) {
-			toastStore.trigger({ message, timeout: 1500, classes: 'end-0' });
-			goto(url.href.split('?')[0]); // to avoid multple triggers
-		}
-	});
 
 	const title = derived(page, ({ url }) => {
 		for (let group of routes) {
