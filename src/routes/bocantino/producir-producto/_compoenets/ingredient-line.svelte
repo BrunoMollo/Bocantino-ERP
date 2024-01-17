@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { trpc } from '$lib/trpc-client';
 	import { modeCurrent } from '@skeletonlabs/skeleton';
-	import { fly } from 'svelte/transition';
+	import { fade, fly } from 'svelte/transition';
 
 	export let value = [] as number[];
 	export let ingredients_all: { id: number; name: string; unit: string }[];
@@ -43,12 +43,12 @@
 		</p>
 	</td>
 	<td class="text-center" style="vertical-align:middle;">
-		{#each Array(number_of_barches) as _, i}
-			<select class="select my-1" bind:value={value[i]}>
+		{#each Array(number_of_barches) as _, index}
+			<select class="select my-1" bind:value={value[index]}>
 				{#if batches == 'WAITING'}
 					<option disabled>Cargando</option>
 				{:else if batches}
-					<option disabled selected>Seleccione un lote</option>
+					<option disabled selected value="-1">Seleccione un lote</option>
 					{#each batches as { id, batch_code, expiration_date }}
 						<option value={id}>
 							{batch_code}
@@ -63,31 +63,33 @@
 			</select>
 		{/each}
 	</td>
-	<!-- {#if $surpass_amount && !needs_two_batches} -->
-	<!-- 	<td> -->
-	<!-- 		<button -->
-	<!-- 			in:fade={{ delay: 0, duration: 200 }} -->
-	<!-- 			type="button" -->
-	<!-- 			class="btn mx-0 px-2 variant-filled-tertiary rounded-lg" -->
-	<!-- 			on:click={() => (needs_two_batches = true)} -->
-	<!-- 		> -->
-	<!-- 			Otro Lote -->
-	<!-- 		</button> -->
-	<!-- 	</td> -->
-	<!-- {:else if needs_two_batches} -->
-	<!-- 	<td> -->
-	<!-- 		<button -->
-	<!-- 			in:fade={{ delay: 0, duration: 200 }} -->
-	<!-- 			type="button" -->
-	<!-- 			class="btn mx-0 px-2 variant-filled-tertiary rounded-lg" -->
-	<!-- 			on:click={() => { -->
-	<!-- 				needs_two_batches = false; -->
-	<!-- 				$form.second_selected_batch_id = null; -->
-	<!-- 			}} -->
-	<!-- 		> -->
-	<!-- 			Quitar Lote -->
-	<!-- 		</button> -->
-	<!-- 	</td> -->
-	<!-- {/if} -->
+	{#if insuffiecient}
+		<td>
+			<button
+				in:fade={{ delay: 0, duration: 200 }}
+				type="button"
+				class="btn mx-0 px-2 variant-filled-tertiary rounded-lg"
+				on:click={() => number_of_barches++}
+			>
+				Otro Lote
+			</button>
+		</td>
+	{:else if number_of_barches != 1}
+		<td>
+			<button
+				in:fade={{ delay: 0, duration: 200 }}
+				type="button"
+				class="btn mx-0 px-2 variant-filled-tertiary rounded-lg"
+				on:click={() => {
+					if (number_of_barches > 1) {
+						number_of_barches--;
+						value.pop();
+					}
+				}}
+			>
+				Quitar Lote
+			</button>
+		</td>
+	{/if}
 </tr>
 
