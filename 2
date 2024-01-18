@@ -9,8 +9,7 @@
 	export let data;
 	const { ingredients_all } = data;
 	const { form, enhance, errors, delayed, message } = superForm(data.form, {
-		taintedMessage: null,
-		dataType: 'json'
+		taintedMessage: null
 	});
 	startAs(form, 'produced_amount', null);
 
@@ -94,7 +93,10 @@
 		</tbody>
 	</table>
 
-	<div class="pt-4 w-full flex justify-end">
+	<div class="pt-4 w-fulljustify-end">
+		{#if $recipe instanceof Object}
+			<button on:click={() => dialog.showModal()}>Cambiar Receta</button>
+		{/if}
 		<button type="submit" class="btn rounded-lg variant-filled-secondary w-1/5">
 			{#if $delayed}
 				<Spinner showIf={$delayed} size={20} />
@@ -104,9 +106,10 @@
 		</button>
 	</div>
 </form>
-<div class="pt-4 pl-10 w-full flex justify-start">
+
+<div class="pt-4 w-full justify-start">
 	{#if $recipe instanceof Object}
-		<button type="button" class="btn" on:click={() => dialog.showModal()}>Cambiar Receta</button>
+		<button type="button" on:click={() => dialog.showModal()}>Cambiar Receta</button>
 	{/if}
 </div>
 

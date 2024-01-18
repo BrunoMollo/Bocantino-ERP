@@ -1,5 +1,5 @@
 import { z } from 'zod';
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms/client';
 import { product_service } from '$logic/product-logic';
 import { ingredients_service } from '$logic';
@@ -15,5 +15,16 @@ export const load: PageServerLoad = async () => {
 	const products = await product_service.getAll();
 	const ingredients_all = await ingredients_service.getAll();
 	return { form, products, ingredients_all };
+};
+
+export const actions: Actions = {
+	default: async ({ request }) => {
+		const form = await superValidate(request, production_product_schema);
+		if (!form.valid) {
+			return { form };
+		}
+		console.log('ok', form.data);
+		return { form };
+	}
 };
 
