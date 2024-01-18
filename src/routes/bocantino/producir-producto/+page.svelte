@@ -21,6 +21,8 @@
 		}
 	});
 
+	$: $form.recipie = $recipe as Exclude<typeof $recipe, string | undefined>;
+
 	function ingredient<T extends keyof (typeof ingredients_all)[0]>(id: number, key: T) {
 		return data.ingredients_all.find((x) => x.id == id)?.[key];
 	}
@@ -119,8 +121,8 @@
 			<i class="bx bx-arrow-back text-2xl"></i>
 		</button>
 		{#if $recipe && $recipe != 'WAITING' && $recipe != 'ERROR'}
-			{#each $recipe as { id }, i}
-				<select class="select" bind:value={$recipe[i].ingredient_id}>
+			{#each $recipe as {ingredient_id}, i}
+				<select class="select" bind:value={ingredient_id}>
 					{#each data.ingredients_all as { id, name }}
 						<option value={id}>{name} </option>
 					{/each}

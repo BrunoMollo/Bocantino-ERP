@@ -13,8 +13,7 @@ export const ingredient_production_service = ingredient_production_logic;
 import * as auth_logic from './auth';
 export const auth_service = auth_logic;
 
-type LogicError = { type: 'LOGIC_ERROR'; message: string };
-export function logicError(message: string): LogicError {
+export function logicError(message: string) {
 	console.error(message);
 	return {
 		type: 'LOGIC_ERROR' as const,

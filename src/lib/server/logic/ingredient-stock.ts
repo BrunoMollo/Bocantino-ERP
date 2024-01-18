@@ -12,7 +12,7 @@ export const sq_stock = db.$with('stock').as(
 			currently_available: sql<number>`
           + ${t_ingredient_batch.initialAmount}
           - COALESCE(${sum(tr_ingredient_batch_ingredient_batch.amount_used_to_produce_batch)} ,0) 
-          - COALESCE(${t_ingredient_batch.loss}, 0)`.as('currently_available')
+          + COALESCE(${t_ingredient_batch.adjustment}, 0)`.as('currently_available')
 		})
 		.from(t_ingredient_batch)
 		.leftJoin(

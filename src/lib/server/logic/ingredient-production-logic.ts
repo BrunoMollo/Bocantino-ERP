@@ -7,7 +7,7 @@ import {
 	t_ingredient_batch,
 	tr_ingredient_batch_ingredient_batch
 } from '../db/schema';
-import { eq, and, asc, desc, ne, count } from 'drizzle-orm';
+import { eq, and, asc, desc, ne, count, inArray } from 'drizzle-orm';
 import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
 import { sq_stock } from './ingredient-stock';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
@@ -70,6 +70,35 @@ export async function getBatchById(id: number, tx?: Tx) {
 			})
 		)
 		.then(getFirstIfPosible);
+}
+
+export async function getBatchesByIds(ids: number[], tx?: Tx) {
+	return await (tx ?? db)
+		.with(sq_stock)
+		.select({
+			batch: pick_merge()
+				.table(t_ingredient_batch, 'id', 'batch_code', 'expiration_date')
+				.aliased(sq_stock, 'currently_available', 'stock')
+				.build(),
+			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit'])
+		})
+		.from(t_ingredient_batch)
+		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
+		.leftJoin(
+			sq_stock,
+			and(
+				eq(t_ingredient_batch.id, sq_stock.batch_id),
+				ne(t_ingredient_batch.state, 'IN_PRODUCTION')
+			)
+		)
+		.where(inArray(t_ingredient_batch.id, ids))
+		.then(
+			drizzle_map({
+				one: 'batch',
+				with_many: [],
+				with_one: ['ingredient']
+			})
+		);
 }
 
 export async function startIngredientProduction(
@@ -269,8 +298,8 @@ export async function getBatchesInProduction() {
 		);
 }
 
-export async function closeProduction(obj: { batch_id: number; loss: number }) {
-	const { batch_id, loss } = obj;
+export async function closeProduction(obj: { batch_id: number; adjustment: number }) {
+	const { batch_id, adjustment } = obj;
 	return db.transaction(async (tx) => {
 		const batch = await tx
 			.select()
@@ -288,7 +317,7 @@ export async function closeProduction(obj: { batch_id: number; loss: number }) {
 			.set({
 				productionDate: new Date(),
 				state: 'AVAILABLE',
-				loss
+				adjustment
 			})
 			.where(eq(t_ingredient_batch.id, batch_id));
 		return { type: 'SUCCESS' } as const;

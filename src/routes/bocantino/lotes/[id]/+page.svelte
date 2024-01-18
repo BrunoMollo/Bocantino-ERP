@@ -28,15 +28,15 @@
 			<h1 class="text-xl mb-10">Cantidad actual: {data.batch.current_amount}</h1>
 
 			<form action="" method="post" use:enhance class="flex flex-col">
-				<label class="label" for="loss">Cantidad Perdida</label>
+				<label class="label" for="adjustment">Cantidad Perdida</label>
 				<div>
 					<input
 						class="input mb-4 w-20"
-						class:error_border={$errors.loss}
-						name="loss"
+						class:error_border={$errors.adjustment}
+						name="adjustment"
 						type="number"
-						id="loss"
-						bind:value={$form.loss}
+						id="adjustment"
+						bind:value={$form.adjustment}
 					/>
 					<span>{data.batch.ingredient.unit}</span>
 				</div>

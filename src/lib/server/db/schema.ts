@@ -106,7 +106,7 @@ export const t_ingredient_batch = sqliteTable(
 			.$defaultFn(() => 'ARG'),
 		entry_id: integer('entry_id').references(() => t_ingridient_entry.id),
 		//internal only
-		loss: real('loss')
+		adjustment: real('adjustment')
 	},
 	({ supplierId, ingredientId }) => ({
 		unq: foreignKey({

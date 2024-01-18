@@ -191,7 +191,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	test('not found batch_id', async () => {
 		const res = await ingredient_production_service.closeProduction({
 			batch_id: 1000,
-			loss: 10
+			adjustment: 10
 		});
 		expect(res.type).toBe('LOGIC_ERROR');
 	});
@@ -199,17 +199,17 @@ describe.sequential('start production of derived ingredient', async () => {
 	test('update batch', async () => {
 		const res = await ingredient_production_service.closeProduction({
 			batch_id: BATCH_IN_PROD_ID,
-			loss: 10
+			adjustment: 10
 		});
 		expect(res.type).toBe('SUCCESS');
 		const { batch } = await db
 			.select({
-				batch: pick_columns(t_ingredient_batch, ['state', 'productionDate', 'loss'])
+				batch: pick_columns(t_ingredient_batch, ['state', 'productionDate', 'adjustment'])
 			})
 			.from(t_ingredient_batch)
 			.where(eq(t_ingredient_batch.id, BATCH_IN_PROD_ID))
 			.then(getFirst);
-		expect(batch.loss).toBe(10);
+		expect(batch.adjustment).toBe(10);
 		expect(batch.state).toBe('AVAILABLE');
 		expect(batch.productionDate).toBeTruthy();
 	});

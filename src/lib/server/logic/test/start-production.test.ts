@@ -418,7 +418,7 @@ describe.sequential('start production of derived ingredient', async () => {
 		expect(inserted.supplierId).toBe(null);
 		expect(inserted.cost).toBe(null);
 		expect(inserted.currency_alpha_code).toBe('ARG');
-		expect(inserted.loss).toBe(null);
+		expect(inserted.adjustment).toBe(null);
 
 		const r_batches = await db.select().from(tr_ingredient_batch_ingredient_batch);
 		expect(r_batches.length).toBe(2);

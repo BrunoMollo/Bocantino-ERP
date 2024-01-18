@@ -164,7 +164,7 @@ describe.sequential('start production of derived ingredient', async () => {
 		);
 
 		//@ts-ignore
-		await ingredient_production_service.closeProduction({ batch_id: finished_batch.id, loss: 2 });
+		await ingredient_production_service.closeProduction({ batch_id: finished_batch.id, adjustment: 2 });
 	});
 
 	test('testing initals conditions ok', async () => {

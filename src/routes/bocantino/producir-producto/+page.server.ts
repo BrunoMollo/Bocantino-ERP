@@ -7,6 +7,12 @@ import { ingredients_service } from '$logic';
 const production_product_schema = z.object({
 	product_id: z.coerce.number().int().positive(),
 	produced_amount: z.coerce.number().positive(),
+	recipie: z.array(
+		z.object({
+			amount: z.number().positive(),
+			ingredient_id: z.number().int().positive()
+		})
+	),
 	batches: z.coerce.number().positive().array().nonempty().array().nonempty()
 });
 
