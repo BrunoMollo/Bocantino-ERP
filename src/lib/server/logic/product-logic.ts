@@ -99,22 +99,27 @@ class ProductService {
 
 				const available_amount = batches.map((x) => x.stock).reduce((x, y) => x + y, 0);
 				const needed_amount = recipe
-					.filter((x) => (x.ingredient_id = batches[0].ingredient.id))
+					.filter((x) => x.ingredient_id === batches[0].ingredient.id)
 					.map((x) => x.amount * produced_amount)[0];
 
 				if (available_amount < needed_amount) {
-					return logicError('stock inseficiente de ingrediente ' + batches[0].ingredient.name);
+					return logicError(
+						'stock insuficiente de ingrediente ' +
+							batches[0].ingredient.name +
+							JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
+					);
 				}
 
 				const stock_without_last = batches
-					.slice(0, length - 1)
+					.slice(0, batches.length - 1)
 					.map((x) => x.stock)
 					.reduce((x, y) => x + y, 0);
 
 				if (needed_amount < stock_without_last) {
 					return logicError(
 						'se indicaron mas batches de los necesarios, ids' +
-							JSON.stringify(batches_ids_with_same_ingredient)
+							JSON.stringify(batches_ids_with_same_ingredient) +
+							JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
 					);
 				}
 			}

@@ -14,7 +14,6 @@ import * as auth_logic from './auth';
 export const auth_service = auth_logic;
 
 export function logicError(message: string) {
-	console.error(message);
 	return {
 		type: 'LOGIC_ERROR' as const,
 		message

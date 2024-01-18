@@ -3,20 +3,19 @@ import { INVOICE_TYPE, db } from '$lib/server/db/__mocks__';
 import {
 	t_document_type,
 	t_entry_document,
-	t_ingredient,
 	t_ingredient_batch,
 	t_ingridient_entry,
-	t_product,
-	t_supplier,
-	tr_ingredient_batch_ingredient_batch,
-	tr_ingredient_ingredient,
-	tr_ingredient_product,
-	tr_supplier_ingredient
+	tr_ingredient_batch_ingredient_batch
 } from '$lib/server/db/schema';
-import { ingredients_service, suppliers_service, purchases_service } from '$logic';
+import {
+	ingredients_service,
+	suppliers_service,
+	purchases_service,
+	ingredient_production_service
+} from '$logic';
 import { product_service } from '$logic/product-logic';
-import { BADSTR } from 'dns';
 import { __DELETE_ALL_DATABASE } from './utils';
+import { eq } from 'drizzle-orm';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -220,6 +219,32 @@ describe.sequential('start production of derived ingredient', async () => {
 			produced_amount: 2,
 			recipe: [{ amount: 400, ingredient_id: LIVER_ID }],
 			batches_ids: [[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]]
+		});
+		expect(res.type).toBe('LOGIC_ERROR');
+	});
+
+	test('error when insuficient stock, one batch one ingredient an two batches another, insuficient one', async () => {
+		const res = await product_service.startProduction({
+			product_id: FINAL_PRODUCT_ID,
+			produced_amount: 3,
+			recipe: [
+				{ amount: 100, ingredient_id: LIVER_ID },
+				{ amount: 100, ingredient_id: BANANA_ID }
+			],
+			batches_ids: [[BANANA_BATCH_ID], [LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]]
+		});
+		expect(res.type).toBe('LOGIC_ERROR');
+	});
+
+	test('error when insuficient stock, one batch one ingredient an two batches another, insuficient one', async () => {
+		const res = await product_service.startProduction({
+			product_id: FINAL_PRODUCT_ID,
+			produced_amount: 2,
+			recipe: [
+				{ amount: 200, ingredient_id: LIVER_ID },
+				{ amount: 10, ingredient_id: BANANA_ID }
+			],
+			batches_ids: [[BANANA_BATCH_ID], [LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]]
 		});
 		expect(res.type).toBe('LOGIC_ERROR');
 	});

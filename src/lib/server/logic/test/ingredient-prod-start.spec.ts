@@ -8,7 +8,6 @@ import {
 	t_ingridient_entry,
 	t_supplier,
 	tr_ingredient_batch_ingredient_batch,
-	tr_ingredient_ingredient,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
 import {
