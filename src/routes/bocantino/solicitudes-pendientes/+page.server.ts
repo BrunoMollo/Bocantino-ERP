@@ -6,7 +6,7 @@ import { error } from '@sveltejs/kit';
 
 const close_production_schema = z.object({
 	batch_id: z.coerce.number().int().positive(),
-	loss: z.number().min(0)
+	loss: z.number()
 });
 
 const cancel_production_schema = z.object({
