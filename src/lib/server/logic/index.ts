@@ -22,3 +22,10 @@ export function logicError(message: string): LogicError {
 	};
 }
 
+export function is_ok<T>(data: T) {
+	return {
+		type: 'SUCCESS' as const,
+		data
+	};
+}
+
