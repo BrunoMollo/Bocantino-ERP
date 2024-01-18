@@ -20,6 +20,7 @@ import {
 import { eq } from 'drizzle-orm';
 import { getFirst } from '$lib/utils';
 import { sq_stock } from '$lib/server/logic/ingredient-stock';
+import { __DELETE_ALL_DATABASE } from './utils';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -35,15 +36,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	const LIVER_BATCH_INTIAL_AMOUNT = 100 as const;
 	const SECOND_LIVER_BATCH_INITIAL_AMOUNT = 200 as const;
 	beforeAll(async () => {
-		await db.delete(tr_ingredient_batch_ingredient_batch);
-		await db.delete(tr_ingredient_ingredient);
-		await db.delete(t_ingredient_batch);
-		await db.delete(tr_supplier_ingredient);
-		await db.delete(t_ingridient_entry);
-		await db.delete(t_supplier);
-		await db.delete(t_ingredient);
-		await db.delete(t_entry_document);
-		await db.delete(t_document_type);
+		await __DELETE_ALL_DATABASE();
 		await db.insert(t_document_type).values(INVOICE_TYPE);
 
 		LIVER_ID = await ingredients_service

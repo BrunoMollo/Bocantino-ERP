@@ -22,6 +22,7 @@ import {
 	suppliers_service
 } from '$logic';
 import { product_service } from '$logic/product-logic';
+import { __DELETE_ALL_DATABASE } from '$logic/test/utils';
 import type { PageServerLoad } from './$types';
 import { redirect, type Actions } from '@sveltejs/kit';
 
@@ -36,7 +37,7 @@ export const actions: Actions = {
 		if (!dev) {
 			throw redirect(302, '/bocantino/');
 		}
-		await ___DELETE_ALL___();
+		await __DELETE_ALL_DATABASE();
 		await delay(300);
 		await seed();
 		return { done: true };
@@ -46,38 +47,6 @@ export const actions: Actions = {
 function delay(milliseconds: number) {
 	return new Promise((resolve) => {
 		setTimeout(resolve, milliseconds);
-	});
-}
-
-async function ___DELETE_ALL___() {
-	if (!dev) {
-		return;
-	}
-	db.transaction(async (tx) => {
-		// -> 1
-		await tx.delete(tr_ingredient_batch_ingredient_batch);
-		// -> 2
-		await tx.delete(t_ingredient_batch);
-		// -> 3
-		await tx.delete(t_ingridient_entry);
-		// -> 4
-		await tx.delete(t_entry_document);
-		// -> 5
-		await tx.delete(t_document_type);
-		// -> 6
-		await tx.delete(tr_supplier_ingredient);
-		// -> 7
-		await tx.delete(t_supplier);
-		// -> 8
-		await tx.delete(tr_ingredient_product);
-		// -> 9
-		await tx.delete(t_product);
-		// -> 10
-		await tx.delete(tr_ingredient_ingredient);
-		// -> 11
-		await tx.delete(t_ingredient);
-		// -> 12
-		await tx.delete(t_user);
 	});
 }
 

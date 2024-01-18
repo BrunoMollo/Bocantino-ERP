@@ -5,25 +5,19 @@ import {
 	t_ingredient_batch,
 	t_ingridient_entry,
 	t_supplier,
-	tr_ingredient_batch_ingredient_batch,
 	tr_ingredient_ingredient,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { ingredients_service } from '$logic';
 import { getFirst } from '$lib/utils';
+import { __DELETE_ALL_DATABASE } from './utils';
 
 vi.mock('$lib/server/db/index.ts');
 
 describe.sequential('ingredients crud', () => {
 	beforeEach(async () => {
-		await db.delete(tr_ingredient_batch_ingredient_batch);
-		await db.delete(tr_ingredient_ingredient);
-		await db.delete(t_ingredient_batch);
-		await db.delete(tr_supplier_ingredient);
-		await db.delete(t_ingridient_entry);
-		await db.delete(t_supplier);
-		await db.delete(t_ingredient);
+		await __DELETE_ALL_DATABASE();
 	});
 	describe.sequential('getAll', () => {
 		test('return empty when there are not ingredients', async () => {
@@ -31,18 +25,14 @@ describe.sequential('ingredients crud', () => {
 			expect(list.length).toBe(0);
 		});
 		test('return one element', async () => {
-			await db
-				.insert(t_ingredient)
-				.values({ name: 'Banana', unit: 'Kg', reorderPoint: 10 });
+			await db.insert(t_ingredient).values({ name: 'Banana', unit: 'Kg', reorderPoint: 10 });
 			const list = await ingredients_service.getAll();
 			expect(list.length).toBe(1);
 			expect(list[0].name).toBe('Banana');
 			expect(list[0].unit).toBe('Kg');
 		});
 		test('return two element', async () => {
-			await db
-				.insert(t_ingredient)
-				.values({ name: 'Banana', unit: 'Kg', reorderPoint: 10 });
+			await db.insert(t_ingredient).values({ name: 'Banana', unit: 'Kg', reorderPoint: 10 });
 			await db.insert(t_ingredient).values({ name: 'Egg', unit: 'Kg', reorderPoint: 100 });
 			const list = await ingredients_service.getAll();
 			expect(list.length).toBe(2);
@@ -61,9 +51,7 @@ describe.sequential('ingredients crud', () => {
 			await db
 				.insert(t_ingredient)
 				.values({ id: 1, name: 'Banana', unit: 'Kg', reorderPoint: 100 });
-			await db
-				.insert(t_ingredient)
-				.values({ id: 2, name: 'Egg', unit: 'Kg', reorderPoint: 100 });
+			await db.insert(t_ingredient).values({ id: 2, name: 'Egg', unit: 'Kg', reorderPoint: 100 });
 			const data = await ingredients_service.getById(1);
 
 			expect(data?.id).toBe(1);
@@ -88,9 +76,7 @@ describe.sequential('ingredients crud', () => {
 			await db
 				.insert(t_ingredient)
 				.values({ id: 1, name: 'Banana', unit: 'Kg', reorderPoint: 100 });
-			await db
-				.insert(t_ingredient)
-				.values({ id: 3, name: 'Water', unit: 'Kg', reorderPoint: 100 });
+			await db.insert(t_ingredient).values({ id: 3, name: 'Water', unit: 'Kg', reorderPoint: 100 });
 			const data = await ingredients_service.getById(2);
 
 			expect(data).toBe(null);
@@ -100,9 +86,7 @@ describe.sequential('ingredients crud', () => {
 			await db
 				.insert(t_ingredient)
 				.values({ id: 1, name: 'Banana', unit: 'Kg', reorderPoint: 100 });
-			await db
-				.insert(t_ingredient)
-				.values({ id: 3, name: 'Water', unit: 'Kg', reorderPoint: 200 });
+			await db.insert(t_ingredient).values({ id: 3, name: 'Water', unit: 'Kg', reorderPoint: 200 });
 			const data = await ingredients_service.getById(-1);
 
 			expect(spy_select).not.toHaveBeenCalled();
@@ -115,9 +99,7 @@ describe.sequential('ingredients crud', () => {
 			await db
 				.insert(t_ingredient)
 				.values({ id: 1, name: 'Banana', unit: 'Kg', reorderPoint: 200 });
-			await db
-				.insert(t_ingredient)
-				.values({ id: 3, name: 'Water', unit: 'Kg', reorderPoint: 200 });
+			await db.insert(t_ingredient).values({ id: 3, name: 'Water', unit: 'Kg', reorderPoint: 200 });
 			const data = await ingredients_service.getById(0);
 
 			expect(spy_select).not.toHaveBeenCalled();

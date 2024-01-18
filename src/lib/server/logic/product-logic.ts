@@ -3,7 +3,7 @@ import { eq } from 'drizzle-orm';
 import { db, type Db } from '../db';
 import { t_ingredient, t_product, tr_ingredient_product } from '../db/schema';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
-import { is_ok, logicError } from '$logic';
+import { ingredient_production_service, is_ok, logicError } from '$logic';
 
 class ProductService {
 	constructor(private db: Db) {}
@@ -41,7 +41,6 @@ class ProductService {
 		return await this.db
 			.select(
 				pick_merge()
-					.table(t_ingredient, 'id', 'name', 'unit')
 					.aliased(t_ingredient, 'id', 'ingredient_id')
 					.aliased(t_ingredient, 'name', 'ingredient_name')
 					.aliased(t_ingredient, 'unit', 'ingredient_unit')
@@ -55,10 +54,14 @@ class ProductService {
 
 	async startProduction(obj: {
 		product_id: number;
+		recipe: {
+			amount: number;
+			ingredient_id: number;
+		}[];
 		produced_amount: number;
-		batches_ids: number[];
+		batches_ids: number[][];
 	}) {
-		const { product_id, produced_amount, batches_ids } = obj;
+		const { product_id, produced_amount, recipe, batches_ids } = obj;
 
 		const product_exists = await this.db
 			.select()
@@ -71,11 +74,53 @@ class ProductService {
 			return logicError('producto no existe');
 		}
 
-		await this.db.transaction(async (tx) => {
-			return 12;
-		});
+		return await this.db.transaction(async (tx) => {
+			for (let batches_ids_with_same_ingredient of batches_ids) {
+				if (batches_ids.length === 0) {
+					return logicError('agrupacion de lotes vacia');
+				}
 
-		return is_ok(null);
+				const batches = await ingredient_production_service.getBatchesByIds(
+					batches_ids_with_same_ingredient,
+					tx
+				);
+
+				if (batches.length !== batches_ids_with_same_ingredient.length) {
+					return logicError(
+						'no se encontro alguon de los siguientes lotes por id ' +
+							JSON.stringify(batches_ids_with_same_ingredient)
+					);
+				}
+
+				const are_same_ingredient = [...new Set(batches.map((x) => x.ingredient.id))].length === 1;
+				if (!are_same_ingredient) {
+					return logicError('los lotes agrupados no son del mismo ingrediente');
+				}
+
+				const available_amount = batches.map((x) => x.stock).reduce((x, y) => x + y, 0);
+				const needed_amount = recipe
+					.filter((x) => (x.ingredient_id = batches[0].ingredient.id))
+					.map((x) => x.amount * produced_amount)[0];
+
+				if (available_amount < needed_amount) {
+					return logicError('stock inseficiente de ingrediente ' + batches[0].ingredient.name);
+				}
+
+				const stock_without_last = batches
+					.slice(0, length - 1)
+					.map((x) => x.stock)
+					.reduce((x, y) => x + y, 0);
+
+				if (needed_amount < stock_without_last) {
+					return logicError(
+						'se indicaron mas batches de los necesarios, ids' +
+							JSON.stringify(batches_ids_with_same_ingredient)
+					);
+				}
+			}
+
+			return is_ok(null);
+		});
 	}
 }
 

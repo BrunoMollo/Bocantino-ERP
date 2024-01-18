@@ -17,6 +17,7 @@ import {
 	ingredient_production_service,
 	purchases_service
 } from '$logic';
+import { __DELETE_ALL_DATABASE } from './utils';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -33,15 +34,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	const LIVER_BATCH_INTIAL_AMOUNT = 100 as const;
 	const SECOND_LIVER_BATCH_INITIAL_AMOUNT = 200 as const;
 	beforeAll(async () => {
-		await db.delete(tr_ingredient_batch_ingredient_batch);
-		await db.delete(tr_ingredient_ingredient);
-		await db.delete(t_ingredient_batch);
-		await db.delete(tr_supplier_ingredient);
-		await db.delete(t_ingridient_entry);
-		await db.delete(t_supplier);
-		await db.delete(t_ingredient);
-		await db.delete(t_entry_document);
-		await db.delete(t_document_type);
+		await __DELETE_ALL_DATABASE();
 		await db.insert(t_document_type).values(INVOICE_TYPE);
 
 		LIVER_ID = await ingredients_service
@@ -164,7 +157,11 @@ describe.sequential('start production of derived ingredient', async () => {
 		);
 
 		//@ts-ignore
-		await ingredient_production_service.closeProduction({ batch_id: finished_batch.id, adjustment: 2 });
+		const batch_id: number = finished_batch.id;
+		await ingredient_production_service.closeProduction({
+			batch_id,
+			adjustment: -2
+		});
 	});
 
 	test('testing initals conditions ok', async () => {

@@ -10,6 +10,7 @@ import {
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
 import { ingredients_service, suppliers_service } from '$logic';
+import { __DELETE_ALL_DATABASE } from './utils';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -18,6 +19,7 @@ describe.sequential('supplier crud', () => {
 	let FLOUR_ID = 0;
 	let POTATOE_ID = 0;
 	beforeAll(async () => {
+		await __DELETE_ALL_DATABASE();
 		CHICKEN_ID = await ingredients_service
 			.add({
 				name: 'Chicken',
