@@ -5,6 +5,7 @@ import {
 	t_entry_document,
 	t_ingredient_batch,
 	t_ingridient_entry,
+	t_product_batch,
 	tr_ingredient_batch_ingredient_batch
 } from '$lib/server/db/schema';
 import {
@@ -16,6 +17,7 @@ import {
 import { product_service } from '$logic/product-logic';
 import { __DELETE_ALL_DATABASE } from './utils';
 import { eq } from 'drizzle-orm';
+import { getFirst } from '$lib/utils';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -247,6 +249,33 @@ describe.sequential('start production of derived ingredient', async () => {
 			batches_ids: [[BANANA_BATCH_ID], [LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]]
 		});
 		expect(res.type).toBe('LOGIC_ERROR');
+	});
+
+	test('start production with one ingredient and one bathch', async () => {
+		const res = await product_service.startProduction({
+			product_id: FINAL_PRODUCT_ID,
+			produced_amount: 2,
+			recipe: [{ amount: 10, ingredient_id: BANANA_ID }],
+			batches_ids: [[BANANA_BATCH_ID]]
+		});
+		expect(res.type).toBe('SUCCESS');
+		if (res.type == 'SUCCESS') {
+			const new_batch = await db
+				.select()
+				.from(t_product_batch)
+				.where(eq(t_product_batch.id, res.data.id))
+				.then(getFirst);
+			expect(new_batch.batch_code).toBeTruthy();
+			expect(new_batch.product_id).toBe(FINAL_PRODUCT_ID);
+			expect(new_batch.expiration_date).toBeTruthy(); //TODO: IMPROVE
+			expect(new_batch.production_date).toBe(null);
+			expect(new_batch.state).toBe('IN_PRODUCTION');
+			expect(new_batch.adjustment).toBe(null);
+			expect(new_batch.initial_amount).toBe(2);
+			expect(new_batch.registration_date).toBeTruthy(); //TODO: improve
+
+			// TODO: test realation too
+		}
 	});
 });
 

@@ -1,9 +1,16 @@
 import { getFirst, getFirstIfPosible } from '$lib/utils';
 import { eq } from 'drizzle-orm';
 import { db, type Db } from '../db';
-import { t_ingredient, t_product, tr_ingredient_product } from '../db/schema';
+import {
+	t_ingredient,
+	t_product,
+	t_product_batch,
+	tr_ingredient_product,
+	tr_product_batch_ingredient_batch
+} from '../db/schema';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
 import { ingredient_production_service, is_ok, logicError } from '$logic';
+import moment from 'moment';
 
 class ProductService {
 	constructor(private db: Db) {}
@@ -75,15 +82,21 @@ class ProductService {
 		}
 
 		return await this.db.transaction(async (tx) => {
-			for (let batches_ids_with_same_ingredient of batches_ids) {
-				if (batches_ids.length === 0) {
-					return logicError('agrupacion de lotes vacia');
-				}
+			const get_needed_amount = (ingredient_id: number) =>
+				recipe
+					.filter((x) => x.ingredient_id === ingredient_id)
+					.map((x) => x.amount * produced_amount)[0];
 
+			const all_batches = [] as Awaited<
+				ReturnType<typeof ingredient_production_service.getBatchesByIds>
+			>[];
+
+			for (let batches_ids_with_same_ingredient of batches_ids) {
 				const batches = await ingredient_production_service.getBatchesByIds(
 					batches_ids_with_same_ingredient,
 					tx
 				);
+				all_batches.push(batches);
 
 				if (batches.length !== batches_ids_with_same_ingredient.length) {
 					return logicError(
@@ -98,9 +111,7 @@ class ProductService {
 				}
 
 				const available_amount = batches.map((x) => x.stock).reduce((x, y) => x + y, 0);
-				const needed_amount = recipe
-					.filter((x) => x.ingredient_id === batches[0].ingredient.id)
-					.map((x) => x.amount * produced_amount)[0];
+				const needed_amount = get_needed_amount(batches[0].ingredient.id);
 
 				if (available_amount < needed_amount) {
 					return logicError(
@@ -123,8 +134,39 @@ class ProductService {
 					);
 				}
 			}
+			const get_expiration_date = () => {
+				const today = moment();
+				return moment(today).add(6, 'month').toDate();
+			};
 
-			return is_ok(null);
+			const inserted = await tx
+				.insert(t_product_batch)
+				.values({
+					batch_code: 'DEFINE WITH CLIENT', //TODO: ask client when this is asigned
+					initial_amount: produced_amount,
+					expiration_date: get_expiration_date(),
+					production_date: null,
+					product_id,
+					state: 'IN_PRODUCTION'
+				})
+				.returning({ id: t_product_batch.id })
+				.then(getFirst);
+
+			for (let batch_group of all_batches) {
+				let asigned_amount = 0;
+				const missing = () => get_needed_amount(batch_group[0].ingredient.id) - asigned_amount;
+				for (let { id: ingredient_batch_id, stock } of batch_group) {
+					const amount_used_to_produce_batch = missing() > stock ? stock : missing();
+					asigned_amount += amount_used_to_produce_batch;
+
+					await tx.insert(tr_product_batch_ingredient_batch).values({
+						produced_batch_id: inserted.id,
+						ingredient_batch_id,
+						amount_used_to_produce_batch
+					});
+				}
+			}
+			return is_ok(inserted);
 		});
 	}
 }

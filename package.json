@@ -60,6 +60,7 @@
 		"drizzle-tools": "0.0.4",
 		"jose": "^5.2.0",
 		"jspdf": "^2.5.1",
-		"jspdf-autotable": "^3.8.1"
+		"jspdf-autotable": "^3.8.1",
+		"moment": "^2.30.1"
 	}
 }

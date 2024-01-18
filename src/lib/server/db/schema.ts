@@ -1,4 +1,3 @@
-import { sql } from 'drizzle-orm';
 import { foreignKey, integer, primaryKey, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 ////-------------------------------------------------------------------------------------//
@@ -81,7 +80,7 @@ export const tr_supplier_ingredient = sqliteTable(
 //
 
 ////-------------------------------------------------------------------------------------//
-// INGREDIENT BAG
+// INGREDIENT BATCH
 export const t_ingredient_batch = sqliteTable(
 	'ingredient_batch',
 	{
@@ -119,7 +118,7 @@ export const t_ingredient_batch = sqliteTable(
 //
 
 ////-------------------------------------------------------------------------------------//
-// INGREDIENT BAG (derived)<--> INGREDIENT BAG (used)
+// INGREDIENT BATCH (derived)<--> INGREDIENT BATCH (used)
 export const tr_ingredient_batch_ingredient_batch = sqliteTable(
 	'r_ingredient_batch_ingredient_batch',
 	{
@@ -182,6 +181,46 @@ export const t_user = sqliteTable('user', {
 	username: text('username').notNull().unique(),
 	password_hash: text('password_hash').notNull()
 });
+//-------------------------------------------------------------------------------------////
+//
+
+////-------------------------------------------------------------------------------------//
+// PRODUCT BATCH
+export const t_product_batch = sqliteTable('product_batch', {
+	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+	batch_code: text('supplier_bag_code').notNull(),
+	initial_amount: real('full_amount').notNull(),
+	expiration_date: integer('expiration_date', { mode: 'timestamp' }).notNull(),
+	production_date: integer('production_date', { mode: 'timestamp' }), // is null when is IN_PRODUCTION
+	product_id: integer('ingredient_id')
+		.notNull()
+		.references(() => t_product.id),
+	state: text('state').notNull().$type<'IN_PRODUCTION' | 'AVAILABLE' | 'EMPTY'>(),
+	registration_date: integer('registration_date', { mode: 'timestamp' })
+		.notNull()
+		.$defaultFn(() => new Date()),
+	adjustment: real('adjustment')
+});
+//-------------------------------------------------------------------------------------////
+//
+
+////-------------------------------------------------------------------------------------//
+// PRODUCT BATCH <--> INGREDIENT BATCH
+export const tr_product_batch_ingredient_batch = sqliteTable(
+	'r_product_batch_ingredient_batch',
+	{
+		produced_batch_id: integer('product_batch_id')
+			.notNull()
+			.references(() => t_product_batch.id),
+		ingredient_batch_id: integer('ingredient_batch_id')
+			.notNull()
+			.references(() => t_ingredient_batch.id),
+		amount_used_to_produce_batch: real('amount_used').notNull()
+	},
+	({ produced_batch_id, ingredient_batch_id }) => ({
+		pk: primaryKey({ columns: [produced_batch_id, ingredient_batch_id] })
+	})
+);
 //-------------------------------------------------------------------------------------////
 //
 
