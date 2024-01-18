@@ -85,7 +85,7 @@ class ProductService {
 			const get_needed_amount = (ingredient_id: number) =>
 				recipe
 					.filter((x) => x.ingredient_id === ingredient_id)
-					.map((x) => x.amount * produced_amount)[0];
+					.map((x) => x.amount * produced_amount)[0] ?? 0;
 
 			const all_batches = [] as Awaited<
 				ReturnType<typeof ingredient_production_service.getBatchesByIds>
