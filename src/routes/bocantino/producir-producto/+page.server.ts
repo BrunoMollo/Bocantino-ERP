@@ -3,17 +3,19 @@ import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms/client';
 import { product_service } from '$logic/product-logic';
 import { ingredients_service } from '$logic';
+import { should_not_reach } from '$lib/utils';
+import { error, redirect } from '@sveltejs/kit';
 
 const production_product_schema = z.object({
 	product_id: z.coerce.number().int().positive(),
 	produced_amount: z.coerce.number().positive(),
-	recipie: z.array(
+	recipe: z.array(
 		z.object({
 			amount: z.number().positive(),
 			ingredient_id: z.number().int().positive()
 		})
 	),
-	batches: z.coerce.number().positive().array().nonempty().array().nonempty()
+	batches_ids: z.coerce.number().positive().array().nonempty().array().nonempty()
 });
 
 export const load: PageServerLoad = async () => {
@@ -29,8 +31,17 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return { form };
 		}
-		console.log('ok', form.data);
-		return { form };
+
+		const res = await product_service.startProduction(form.data);
+
+		switch (res.type) {
+			case 'LOGIC_ERROR':
+				throw error(400, res.message);
+			case 'SUCCESS':
+				throw redirect(302, '/bocantino/solicitudes-pendientes?toast=Produccion iniciada');
+			default:
+				should_not_reach(res);
+		}
 	}
 };
 

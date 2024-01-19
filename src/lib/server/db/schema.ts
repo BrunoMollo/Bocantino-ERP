@@ -192,7 +192,7 @@ export const t_product_batch = sqliteTable('product_batch', {
 	initial_amount: real('full_amount').notNull(),
 	expiration_date: integer('expiration_date', { mode: 'timestamp' }).notNull(),
 	production_date: integer('production_date', { mode: 'timestamp' }), // is null when is IN_PRODUCTION
-	product_id: integer('ingredient_id')
+	product_id: integer('product_id')
 		.notNull()
 		.references(() => t_product.id),
 	state: text('state').notNull().$type<'IN_PRODUCTION' | 'AVAILABLE' | 'EMPTY'>(),

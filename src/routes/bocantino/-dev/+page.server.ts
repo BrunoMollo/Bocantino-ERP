@@ -88,7 +88,7 @@ async function seed() {
 	const julian = await suppliers_service.add({
 		name: 'julian',
 		email: 'julian@hotmail.com',
-		ingredientsIds: [higado.id]
+		ingredientsIds: [higado.id, banana.id]
 	});
 
 	const first_entry = await purchases_service.registerBoughtIngrediets({
@@ -105,7 +105,7 @@ async function seed() {
 				initialAmount: 200,
 				productionDate: new Date(2023, 12, 30),
 				expiration_date: new Date(2023, 1, 30),
-				ingredientId: higado.id,
+				ingredientId: banana.id,
 				numberOfBags: 10,
 				cost: 2000
 			}

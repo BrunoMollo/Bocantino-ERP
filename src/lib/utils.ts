@@ -113,3 +113,8 @@ export function derivedAsync<T, R>(store: Readable<T>, func: (x: T) => Promise<R
 	return deriv;
 }
 
+/**
+ * This function is a helper to implement the exaustive shiwtch pattern
+ **/
+export function should_not_reach(para: never) {}
+

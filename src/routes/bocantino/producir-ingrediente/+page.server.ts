@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';
 import { redirect, type Actions, error } from '@sveltejs/kit';
 import { ingredient_production_service } from '$logic';
+import { should_not_reach } from '$lib/utils';
 
 const ingredinetProduction_schema = z.object({
 	ingredeintId: z.coerce.number().int().positive(),
@@ -49,10 +50,13 @@ export const actions: Actions = {
 			batches_ids
 		);
 
-		if (res.type == 'LOGIC_ERROR') {
-			throw error(400, res.message);
-		} else {
-			throw redirect(302, '/bocantino/solicitudes-pendientes?toast=Produccion iniciada');
+		switch (res.type) {
+			case 'LOGIC_ERROR':
+				throw error(400, res.message);
+			case 'SUCCESS':
+				throw redirect(302, '/bocantino/solicitudes-pendientes?toast=Produccion iniciada');
+			default:
+				should_not_reach(res);
 		}
 	}
 };
