@@ -1,0 +1,31 @@
+# Use root/example as user/password credentials
+version: '3.1'
+
+services:
+  sveltekit:
+    build: . # Build the image from the current directory
+    ports:
+      - 5173:5173
+    depends_on:
+      - mysql # Ensure MySQL starts before SvelteKit
+    environment:
+      MYSQL_HOST: mysql # Set the MySQL host for the SvelteKit app
+      MYSQL_USER: your_username # Provide your MySQL username
+      MYSQL_PASSWORD: your_password # Provide your MySQL password
+      MYSQL_DATABASE: your_database # Provide your MySQL database name
+
+  mysql:
+    image: mysql
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    command: --default-authentication-plugin=mysql_native_password
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+
