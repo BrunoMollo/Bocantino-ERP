@@ -1,17 +1,21 @@
-import { t_ingredient_batch, tr_ingredient_batch_ingredient_batch } from '../db/schema';
+import {
+	t_ingredient_batch,
+	tr_ingredient_batch_ingredient_batch,
+	tr_product_batch_ingredient_batch
+} from '../db/schema';
 import { db } from '../db';
 import { eq, sql, sum } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/sqlite-core';
 
 const batches_in_production = alias(t_ingredient_batch, 'batches_in_production');
 export const sq_stock = db.$with('stock').as(
-	//TODO: substract used amount in production of final products
 	db
 		.select({
 			batch_id: t_ingredient_batch.id,
 			currently_available: sql<number>`
           + ${t_ingredient_batch.initialAmount}
           - COALESCE(${sum(tr_ingredient_batch_ingredient_batch.amount_used_to_produce_batch)} ,0) 
+          - COALESCE(${sum(tr_product_batch_ingredient_batch.amount_used_to_produce_batch)} ,0) 
           + COALESCE(${t_ingredient_batch.adjustment}, 0)`.as('currently_available')
 		})
 		.from(t_ingredient_batch)
@@ -22,6 +26,10 @@ export const sq_stock = db.$with('stock').as(
 		.leftJoin(
 			batches_in_production,
 			eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, batches_in_production.id)
+		)
+		.leftJoin(
+			tr_product_batch_ingredient_batch,
+			eq(tr_product_batch_ingredient_batch.ingredient_batch_id, t_ingredient_batch.id)
 		)
 		.groupBy(t_ingredient_batch.id)
 );
