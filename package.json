@@ -3,7 +3,7 @@
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "vite dev --host",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
@@ -11,9 +11,9 @@
 		"test": "drizzle-kit push:sqlite --config=./db_unit_test.config.ts && vitest --single-thread",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
-		"db-push": "drizzle-kit push:sqlite",
+		"db-push": "drizzle-kit push:pg",
 		"db-clean": "bun run src/lib/server/db/seeder.ts",
-		"db-migrate": "drizzle-kit generate:sqlite"
+		"db-migrate": "drizzle-kit generate:pg"
 	},
 	"devDependencies": {
 		"@floating-ui/dom": "^1.5.3",
@@ -53,10 +53,11 @@
 	"type": "module",
 	"dependencies": {
 		"@libsql/client": "^0.4.0-pre.5",
+		"@neondatabase/serverless": "^0.7.2",
 		"@trpc/client": "^10.45.0",
 		"@trpc/server": "^10.45.0",
 		"boxicons": "^2.1.4",
-		"drizzle-orm": "^0.29.1",
+		"drizzle-orm": "^0.29.3",
 		"drizzle-tools": "0.0.4",
 		"jose": "^5.2.0",
 		"jspdf": "^2.5.1",
@@ -64,3 +65,4 @@
 		"moment": "^2.30.1"
 	}
 }
+

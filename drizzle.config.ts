@@ -2,17 +2,18 @@ import type { Config } from 'drizzle-kit';
 import * as dotenv from 'dotenv';
 
 dotenv.config();
-const { TURSO_URL, TURSO_TOKEN } = process.env;
-if (!TURSO_URL || !TURSO_TOKEN) {
-	throw new Error('Define TURSO_URL and TURSO_TOKEN in .env file');
+
+const { NEON_DATABASE_URL } = process.env;
+if (!NEON_DATABASE_URL) {
+	throw new Error('Define NEON_DATABASE_URL in .env file');
 }
 
 export default {
 	schema: 'src/lib/server/db/schema.ts',
 	out: 'migrations',
-	driver: 'turso',
+	driver: 'pg',
 	dbCredentials: {
-		url: TURSO_URL,
-		authToken: TURSO_TOKEN
+		connectionString: NEON_DATABASE_URL
 	}
 } satisfies Config;
+
