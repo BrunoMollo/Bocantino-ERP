@@ -1,7 +1,6 @@
 import { db, type Tx } from '$lib/server/db';
 import { getFirst, getFirstIfPosible } from '$lib/utils';
 import { ingredients_service, logicError } from '$logic';
-import { alias } from 'drizzle-orm/sqlite-core';
 import {
 	t_ingredient,
 	t_ingredient_batch,
@@ -11,6 +10,7 @@ import { eq, and, asc, desc, ne, count, inArray } from 'drizzle-orm';
 import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
 import { sq_stock } from './ingredient-stock';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
+import { alias } from 'drizzle-orm/pg-core';
 
 export async function getBatchesByIngredientId(id: number) {
 	return await db

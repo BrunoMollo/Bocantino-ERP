@@ -2,7 +2,6 @@ import {
 	date,
 	foreignKey,
 	integer,
-	pgSchema,
 	pgTable,
 	primaryKey,
 	real,
@@ -99,18 +98,18 @@ export const t_ingredient_batch = pgTable(
 		id: serial('id').primaryKey(),
 		batch_code: text('supplier_bag_code').notNull(), //may or may not be provided by the supplier
 		initialAmount: real('full_amount').notNull(),
-		productionDate: date('production_date'), // is null when is IN_PRODUCTION
+		productionDate: date('production_date', { mode: 'date' }), // is null when is IN_PRODUCTION
 		ingredientId: integer('ingredient_id')
 			.notNull()
 			.references(() => t_ingredient.id),
 		numberOfBags: integer('amount_of_bags').notNull(),
 		state: text('state').notNull().$type<'IN_PRODUCTION' | 'AVAILABLE' | 'EMPTY'>(),
-		registration_date: timestamp('registration_date')
+		registration_date: timestamp('registration_date', { mode: 'date' })
 			.notNull()
 			.$defaultFn(() => new Date()),
 		//external only
 		supplierId: integer('supplier_id'),
-		expiration_date: date('expiration_date'),
+		expiration_date: date('expiration_date', { mode: 'date' }),
 		cost: integer('cost'),
 		currency_alpha_code: varchar('currency_alpha_code', { length: 4 })
 			.notNull()
@@ -153,7 +152,7 @@ export const tr_ingredient_batch_ingredient_batch = pgTable(
 // INGRIDEINT ENTRY
 export const t_ingridient_entry = pgTable('ingridient_entry', {
 	id: serial('id').primaryKey(),
-	creation_date: timestamp('creation_date')
+	creation_date: timestamp('creation_date', { mode: 'date' })
 		.notNull()
 		.$defaultFn(() => new Date()),
 	totalCost: integer('total_cost'), // is calulated later, so can be null
@@ -168,8 +167,8 @@ export const t_ingridient_entry = pgTable('ingridient_entry', {
 export const t_entry_document = pgTable('entry_document', {
 	id: serial('id').primaryKey(),
 	number: text('document_identifier').notNull(),
-	issue_date: date('issue_date').notNull(),
-	due_date: date('due_date').notNull(),
+	issue_date: date('issue_date', { mode: 'date' }).notNull(),
+	due_date: date('due_date', { mode: 'date' }).notNull(),
 	typeId: integer('type_id')
 		.notNull()
 		.references(() => t_document_type.id)
@@ -202,13 +201,13 @@ export const t_product_batch = pgTable('product_batch', {
 	id: serial('id').primaryKey(),
 	batch_code: text('supplier_bag_code').notNull(),
 	initial_amount: real('full_amount').notNull(),
-	expiration_date: date('expiration_date').notNull(),
-	production_date: date('production_date'), // is null when is IN_PRODUCTION
+	expiration_date: date('expiration_date', { mode: 'date' }).notNull(),
+	production_date: date('production_date', { mode: 'date' }), // is null when is IN_PRODUCTION
 	product_id: integer('product_id')
 		.notNull()
 		.references(() => t_product.id),
 	state: text('state').notNull().$type<'IN_PRODUCTION' | 'AVAILABLE' | 'EMPTY'>(),
-	registration_date: timestamp('registration_date')
+	registration_date: timestamp('registration_date', { mode: 'date' })
 		.notNull()
 		.$defaultFn(() => new Date()),
 	adjustment: real('adjustment')
