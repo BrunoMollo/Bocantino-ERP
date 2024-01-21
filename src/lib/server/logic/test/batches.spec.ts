@@ -70,8 +70,12 @@ describe.sequential('buy ingredients', async () => {
 			expect(newDoc.id).toBeTruthy();
 			expect(newDoc.typeId).toBe(INVOICE_TYPE.id);
 			expect(newDoc.number).toBe(valid_input.document.number);
-			expect(newDoc.issue_date.toISOString()).toBe(valid_input.document.issue_date.toISOString());
-			expect(newDoc.due_date.toISOString()).toBe(valid_input.document.due_date.toISOString());
+			expect(newDoc.issue_date.toISOString().split('T')[0]).toBe(
+				valid_input.document.issue_date.toISOString().split('T')[0]
+			);
+			expect(newDoc.due_date.toISOString().split('T')[0]).toBe(
+				valid_input.document.due_date.toISOString().split('T')[0]
+			);
 		});
 		test('creates new entry row', async () => {
 			await purchases_service.registerBoughtIngrediets(valid_input);
@@ -102,11 +106,11 @@ describe.sequential('buy ingredients', async () => {
 			expect(list[0].batch_code).toBe(valid_input.batches[0].batch_code);
 			expect(list[0].numberOfBags).toBe(valid_input.batches[0].numberOfBags);
 			expect(list[0].initialAmount).toBe(valid_input.batches[0].initialAmount);
-			expect(list[0].expiration_date?.toISOString()).toBe(
-				valid_input.batches[0].expiration_date.toISOString()
+			expect(list[0].expiration_date?.toISOString().split('T')[0]).toBe(
+				valid_input.batches[0].expiration_date.toISOString().split('T')[0]
 			);
-			expect(list[0].productionDate?.toISOString()).toBe(
-				valid_input.batches[0].productionDate.toISOString()
+			expect(list[0].productionDate?.toISOString().split('T')[0]).toBe(
+				valid_input.batches[0].productionDate.toISOString().split('T')[0]
 			);
 
 			expect(list[0].adjustment).toBe(null);
@@ -153,8 +157,12 @@ describe.sequential('buy ingredients', async () => {
 			expect(newDoc.id).toBeTruthy();
 			expect(newDoc.typeId).toBe(INVOICE_TYPE.id);
 			expect(newDoc.number).toBe(valid_input.document.number);
-			expect(newDoc.issue_date.toISOString()).toBe(valid_input.document.issue_date.toISOString());
-			expect(newDoc.due_date.toISOString()).toBe(valid_input.document.due_date.toISOString());
+			expect(newDoc.issue_date.toISOString().split('T')[0]).toBe(
+				valid_input.document.issue_date.toISOString().split('T')[0]
+			);
+			expect(newDoc.due_date.toISOString().split('T')[0]).toBe(
+				valid_input.document.due_date.toISOString().split('T')[0]
+			);
 		});
 		test('creates new entry row', async () => {
 			await purchases_service.registerBoughtIngrediets(valid_input);
@@ -186,14 +194,14 @@ describe.sequential('buy ingredients', async () => {
 				expect(list[i].batch_code).toBe(valid_input.batches[i].batch_code);
 				expect(list[i].numberOfBags).toBe(valid_input.batches[i].numberOfBags);
 				expect(list[i].initialAmount).toBe(valid_input.batches[i].initialAmount);
-				expect(list[i].expiration_date?.toISOString()).toBe(
-					valid_input.batches[i].expiration_date.toISOString()
+				expect(list[i].expiration_date?.toISOString().split('T')[0]).toBe(
+					valid_input.batches[i].expiration_date.toISOString().split('T')[0]
 				);
-				expect(list[i].expiration_date?.toISOString()).toBe(
-					valid_input.batches[i].expiration_date.toISOString()
+				expect(list[i].expiration_date?.toISOString().split('T')[0]).toBe(
+					valid_input.batches[i].expiration_date.toISOString().split('T')[0]
 				);
-				expect(list[i].productionDate?.toISOString()).toBe(
-					valid_input.batches[i].productionDate.toISOString()
+				expect(list[i].productionDate?.toISOString().split('T')[0]).toBe(
+					valid_input.batches[i].productionDate.toISOString().split('T')[0]
 				);
 				expect(list[i].adjustment).toBe(null);
 				expect(list[i].entry_id).toBeTruthy();

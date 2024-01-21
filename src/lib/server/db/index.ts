@@ -1,8 +1,6 @@
-import { NEON_DATABASE_URL, TURSO_TOKEN, TURSO_URL } from '$env/static/private';
-import type * as schema from './schema';
+import { NEON_DATABASE_URL } from '$env/static/private';
 import { dev } from '$app/environment';
-import { Pool, neon, neonConfig } from '@neondatabase/serverless';
-import type { NeonTransaction } from 'drizzle-orm/neon-http';
+import { Pool, neonConfig } from '@neondatabase/serverless';
 import { drizzle, type NeonQueryResultHKT } from 'drizzle-orm/neon-serverless';
 import ws from 'ws';
 import type { PgTransaction } from 'drizzle-orm/pg-core';

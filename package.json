@@ -8,7 +8,7 @@
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test": "drizzle-kit push:sqlite --config=./db_unit_test.config.ts && vitest --single-thread",
+		"test": "docker compose up -d && drizzle-kit push:pg --config=./db_unit_test.config.ts && vitest --single-thread && docker compose down",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"db-push": "drizzle-kit push:pg",
@@ -37,6 +37,7 @@
 		"eslint-config-prettier": "^9.0.0",
 		"eslint-plugin-svelte": "^2.30.0",
 		"postcss": "8.4.32",
+		"postgres": "^3.4.3",
 		"prettier": "^3.0.0",
 		"prettier-plugin-svelte": "^3.0.0",
 		"svelte": "^4.0.5",
@@ -66,3 +67,4 @@
 		"ws": "^8.16.0"
 	}
 }
+
