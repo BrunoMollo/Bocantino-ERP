@@ -1,163 +1,39 @@
-import { describe, expect, vi, test, beforeEach, beforeAll, afterEach } from 'vitest';
+import { describe, vi, test, expect } from 'vitest';
 import { INVOICE_TYPE, db } from '$lib/server/db/__mocks__';
 import {
 	t_document_type,
-	t_entry_document,
 	t_ingredient,
 	t_ingredient_batch,
-	t_ingridient_entry,
 	t_supplier,
 	tr_ingredient_batch_ingredient_batch,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
 import {
-	ingredients_service,
-	suppliers_service,
 	ingredient_production_service,
-	purchases_service
+	ingredients_service,
+	purchases_service,
+	suppliers_service
 } from '$logic';
+import { __DELETE_ALL_DATABASE } from './utils';
+import { sq_stock } from '$logic/ingredient-stock';
 import { eq } from 'drizzle-orm';
 import { getFirst } from '$lib/utils';
-import { sq_stock } from '$lib/server/logic/ingredient-stock';
-import { __DELETE_ALL_DATABASE } from './utils';
 
 vi.mock('$lib/server/db/index.ts');
 
-describe.sequential('start production of derived ingredient', async () => {
-	let LIVER_ID = -1;
-	let BANANA_ID = -1;
-	let SUPPLIER_ID = -1;
-	let REDUCED_LIVER_ID = -1;
-	let LIVER_BATCH_ID = -1;
-	let SECOND_LIVER_BATCH_ID = -1;
-	let BANANA_BATCH_ID = -1;
+let LIVER_ID = -1;
+let BANANA_ID = -1;
+let SUPPLIER_ID = -1;
+let REDUCED_LIVER_ID = -1;
+let LIVER_BATCH_ID = -1;
+let SECOND_LIVER_BATCH_ID = -1;
+let BANANA_BATCH_ID = -1;
 
-	const LIVER_BATCH_INTIAL_AMOUNT = 100 as const;
-	const SECOND_LIVER_BATCH_INITIAL_AMOUNT = 200 as const;
-	beforeAll(async () => {
-		await __DELETE_ALL_DATABASE();
-		await db.insert(t_document_type).values(INVOICE_TYPE);
-
-		LIVER_ID = await ingredients_service
-			.add({
-				name: 'Liver',
-				unit: 'Kg',
-				reorderPoint: 100
-			})
-			.then((x) => x.id);
-
-		BANANA_ID = await ingredients_service
-			.add({
-				name: 'Banana',
-				unit: 'Kg',
-				reorderPoint: 120
-			})
-			.then((x) => x.id);
-
-		SUPPLIER_ID = await suppliers_service
-			.add({
-				name: 'Juan',
-				email: 'jj@gmail.com',
-				ingredientsIds: [LIVER_ID, BANANA_ID]
-			})
-			.then((x) => x.id);
-
-		REDUCED_LIVER_ID = await ingredients_service
-			.add(
-				{
-					name: 'Liver reduced',
-					unit: 'Kg',
-					reorderPoint: 80
-				},
-				{
-					id: LIVER_ID,
-					amount: 2
-				}
-			)
-			.then((x) => x.id);
-	});
-
-	beforeEach(async () => {
-		vi.useFakeTimers();
-		await db.delete(tr_ingredient_batch_ingredient_batch);
-		await db.delete(t_ingredient_batch);
-		await db.delete(t_ingridient_entry);
-		await db.delete(t_entry_document);
-
-		LIVER_BATCH_ID = await purchases_service
-			.registerBoughtIngrediets({
-				supplierId: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredientId: LIVER_ID,
-						batch_code: 'SOME CODE',
-						initialAmount: LIVER_BATCH_INTIAL_AMOUNT,
-						numberOfBags: 10,
-						cost: 1000,
-						productionDate: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId[0]);
-
-		SECOND_LIVER_BATCH_ID = await purchases_service
-			.registerBoughtIngrediets({
-				supplierId: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredientId: LIVER_ID,
-						batch_code: 'SOME OTHER CODE',
-						initialAmount: SECOND_LIVER_BATCH_INITIAL_AMOUNT,
-						numberOfBags: 12,
-						cost: 1000,
-						productionDate: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId[0]);
-
-		BANANA_BATCH_ID = await purchases_service
-			.registerBoughtIngrediets({
-				supplierId: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredientId: BANANA_ID,
-						batch_code: 'SOME OTHER CODE FOR BANANA',
-						initialAmount: 20,
-						numberOfBags: 1,
-						cost: 1000,
-						productionDate: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId[0]);
-	});
-	afterEach(() => {
-		vi.useRealTimers();
-	});
-
+const LIVER_BATCH_INTIAL_AMOUNT = 100 as const;
+const SECOND_LIVER_BATCH_INITIAL_AMOUNT = 200 as const;
+describe.sequential('ingredient produciton start', () => {
 	test('testing initals conditions ok', async () => {
+		await restart();
 		expect(LIVER_BATCH_ID).toBeTruthy();
 		const ingredients = await db.select().from(t_ingredient);
 		expect(ingredients.length).toBe(3);
@@ -178,6 +54,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if produced_amount=0 return logic error', async () => {
+		await restart();
 		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 0 },
 			[LIVER_BATCH_ID]
@@ -188,6 +65,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if produced_amount=-10 return logic error', async () => {
+		await restart();
 		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: -10 },
 			[LIVER_BATCH_ID]
@@ -196,6 +74,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if it is not derived return logic error', async () => {
+		await restart();
 		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID]
@@ -204,6 +83,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if batch does not exist return logic error', async () => {
+		await restart();
 		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID * 1000000]
@@ -212,6 +92,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if batch does not exist return logic error', async () => {
+		await restart();
 		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID * 100]
@@ -220,6 +101,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if two batches are the same return logic error', async () => {
+		await restart();
 		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID, LIVER_BATCH_ID]
@@ -228,6 +110,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if first batch is not of the correct ingredient', async () => {
+		await restart();
 		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[BANANA_BATCH_ID]
@@ -236,6 +119,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('if second batch is not of the correct ingredient', async () => {
+		await restart();
 		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 			[LIVER_BATCH_ID, BANANA_BATCH_ID]
@@ -244,6 +128,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('execedes avaliable source with one batch return logical error', async () => {
+		await restart();
 		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 1000 },
 			[LIVER_BATCH_ID]
@@ -252,6 +137,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('execedes avaliable source with two batches return logical error', async () => {
+		await restart();
 		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 1000000 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
@@ -260,6 +146,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('changes value of to_be_used_amount one batch whith to_be_used_amount=20', async () => {
+		await restart();
 		await db.insert(tr_ingredient_batch_ingredient_batch).values({
 			produced_batch_id: LIVER_BATCH_ID,
 			used_batch_id: LIVER_BATCH_ID,
@@ -296,6 +183,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('changes value of to_be_used_amount both batches whith to_be_used_amount=0', async () => {
+		await restart();
 		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 110 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
@@ -336,6 +224,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('changes value of to_be_used_amount both batches with to_be_used_amount=40 in first and =0 in second', async () => {
+		await restart();
 		await db.insert(tr_ingredient_batch_ingredient_batch).values({
 			used_batch_id: LIVER_BATCH_ID,
 			produced_batch_id: LIVER_BATCH_ID, //using this id is inconsiten, but works
@@ -383,6 +272,7 @@ describe.sequential('start production of derived ingredient', async () => {
 	});
 
 	test('should add a ingredient batch', async () => {
+		await restart();
 		const date = new Date(2000, 1, 1, 13);
 		vi.setSystemTime(date);
 		const res = await ingredient_production_service.startIngredientProduction(
@@ -424,4 +314,116 @@ describe.sequential('start production of derived ingredient', async () => {
 		expect(r_batches[1].amount_used_to_produce_batch).toBe(2 * 110 - LIVER_BATCH_INTIAL_AMOUNT);
 	});
 });
+
+async function restart() {
+	await __DELETE_ALL_DATABASE();
+	await db.insert(t_document_type).values(INVOICE_TYPE);
+
+	LIVER_ID = await ingredients_service
+		.add({
+			name: 'Liver',
+			unit: 'Kg',
+			reorderPoint: 100
+		})
+		.then((x) => x.id);
+
+	BANANA_ID = await ingredients_service
+		.add({
+			name: 'Banana',
+			unit: 'Kg',
+			reorderPoint: 120
+		})
+		.then((x) => x.id);
+
+	SUPPLIER_ID = await suppliers_service
+		.add({
+			name: 'Juan',
+			email: 'jj@gmail.com',
+			ingredientsIds: [LIVER_ID, BANANA_ID]
+		})
+		.then((x) => x.id);
+
+	REDUCED_LIVER_ID = await ingredients_service
+		.add(
+			{
+				name: 'Liver reduced',
+				unit: 'Kg',
+				reorderPoint: 80
+			},
+			{
+				id: LIVER_ID,
+				amount: 2
+			}
+		)
+		.then((x) => x.id);
+
+	LIVER_BATCH_ID = await purchases_service
+		.registerBoughtIngrediets({
+			supplierId: SUPPLIER_ID,
+			document: {
+				number: '1234',
+				typeId: INVOICE_TYPE.id,
+				issue_date: new Date(),
+				due_date: new Date()
+			},
+			batches: [
+				{
+					ingredientId: LIVER_ID,
+					batch_code: 'SOME CODE',
+					initialAmount: LIVER_BATCH_INTIAL_AMOUNT,
+					numberOfBags: 10,
+					cost: 1000,
+					productionDate: new Date(),
+					expiration_date: new Date()
+				}
+			]
+		})
+		.then((x) => x.batchesId[0]);
+
+	SECOND_LIVER_BATCH_ID = await purchases_service
+		.registerBoughtIngrediets({
+			supplierId: SUPPLIER_ID,
+			document: {
+				number: '1234',
+				typeId: INVOICE_TYPE.id,
+				issue_date: new Date(),
+				due_date: new Date()
+			},
+			batches: [
+				{
+					ingredientId: LIVER_ID,
+					batch_code: 'SOME OTHER CODE',
+					initialAmount: SECOND_LIVER_BATCH_INITIAL_AMOUNT,
+					numberOfBags: 12,
+					cost: 1000,
+					productionDate: new Date(),
+					expiration_date: new Date()
+				}
+			]
+		})
+		.then((x) => x.batchesId[0]);
+
+	BANANA_BATCH_ID = await purchases_service
+		.registerBoughtIngrediets({
+			supplierId: SUPPLIER_ID,
+			document: {
+				number: '1234',
+				typeId: INVOICE_TYPE.id,
+				issue_date: new Date(),
+				due_date: new Date()
+			},
+			batches: [
+				{
+					ingredientId: BANANA_ID,
+					batch_code: 'SOME OTHER CODE FOR BANANA',
+					initialAmount: 20,
+					numberOfBags: 1,
+					cost: 1000,
+					productionDate: new Date(),
+					expiration_date: new Date()
+				}
+			]
+		})
+		.then((x) => x.batchesId[0]);
+}
 
