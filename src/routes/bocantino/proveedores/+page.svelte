@@ -11,6 +11,8 @@
 			<tr>
 				<th>ID</th>
 				<th>Proveedor</th>
+				<th>Cuit</th>
+				<th>Direccion</th>
 				<th>Email</th>
 				<th>Materias primas</th>
 			</tr>
@@ -20,6 +22,10 @@
 				<tr class="align-middle">
 					<td class="align-middle">{id}</td>
 					<td>{name}</td>
+					<td>Cuit del proveedor</td>
+					<!--Modificar cuando esten los datos en el back-->
+					<td>Direccion del proveedor</td>
+					<!--Modificar cuando esten los datos en el back-->
 					<td>{email}</td>
 					<TreeView>
 						<TreeViewItem>

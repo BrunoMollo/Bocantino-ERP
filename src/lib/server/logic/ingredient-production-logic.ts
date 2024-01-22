@@ -7,7 +7,7 @@ import {
 	t_ingredient_batch,
 	tr_ingredient_batch_ingredient_batch
 } from '../db/schema';
-import { eq, and, asc, desc, ne, count, inArray } from 'drizzle-orm';
+import { eq, and, asc, desc, ne, count, inArray, sql } from 'drizzle-orm';
 import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
 import { sq_stock } from './ingredient-stock';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
@@ -32,7 +32,7 @@ export async function getBatchesByIngredientId(id: number) {
 				ne(sq_stock.currently_available, 0)
 			)
 		)
-		.orderBy(asc(t_ingredient_batch.expiration_date))
+		.orderBy(desc(sql`${t_ingredient_batch.initialAmount} - ${sq_stock.currently_available}`), asc(t_ingredient_batch.expiration_date)) //A probar si anda esto che
 		.then(copy_column({ from: 'stock', field: 'current_amount', to: 'batch' }))
 		.then(
 			drizzle_map({

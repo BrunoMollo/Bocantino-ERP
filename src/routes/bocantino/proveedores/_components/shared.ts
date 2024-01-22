@@ -4,6 +4,9 @@ import { z } from 'zod';
 export const supplier_schema = z.object({
 	name: z.string().min(3, 'muy corto').max(255),
 	email: z.string().email('email invalido'),
+	cuit: z.string().min(9, 'Cuit invalido'),
+	telefono: z.string(),
+	direccion: z.string(),
 	ingredientsIds: z.coerce.number().positive().array().default([])
 });
 
