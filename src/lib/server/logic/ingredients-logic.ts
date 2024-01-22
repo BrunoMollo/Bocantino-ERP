@@ -2,7 +2,7 @@ import { db } from '$lib/server/db';
 import { t_ingredient, t_ingredient_batch, tr_ingredient_ingredient } from '$lib/server/db/schema';
 import { getFirst, getFirstIfPosible } from '$lib/utils';
 import { and, asc, eq, sql } from 'drizzle-orm';
-import { sq_stock } from './ingredient-stock';
+import { sq_stock } from './_ingredient-stock';
 import { copy_column, drizzle_map, pick_columns } from 'drizzle-tools';
 
 export function getAll() {

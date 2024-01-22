@@ -8,7 +8,7 @@ import {
 } from '../db/schema';
 import { eq, and, asc, desc, ne, count, inArray, sql } from 'drizzle-orm';
 import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
-import { sq_stock } from './ingredient-stock';
+import { sq_stock } from './_ingredient-stock';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
 import { alias } from 'drizzle-orm/pg-core';
 

@@ -5,7 +5,7 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { db } from '$lib/server/db';
 import { t_document_type } from '$lib/server/db/schema';
 import { isValidDateBackend, parseStringToDate } from '$lib/utils';
-import { purchases_service } from '$logic';
+import { purchases_service } from '$logic/ingredient-purchase-service';
 import { suppliers_service } from '$logic/suppliers-service';
 
 const boughBatchSchema = z.object({

@@ -7,9 +7,10 @@ import {
 	t_ingridient_entry
 } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
-import { ingredients_service, purchases_service } from '$logic';
+import { ingredients_service } from '$logic';
 import { __DELETE_ALL_DATABASE } from '../utils';
 import { suppliers_service } from '$logic/suppliers-service';
+import { purchases_service } from '$logic/ingredient-purchase-service';
 
 vi.mock('$lib/server/db/index.ts');
 

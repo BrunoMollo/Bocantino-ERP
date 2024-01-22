@@ -1,4 +1,4 @@
-import { purchases_service } from '$logic';
+import { purchases_service } from '$logic/ingredient-purchase-service';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
