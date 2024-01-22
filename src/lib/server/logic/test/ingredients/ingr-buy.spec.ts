@@ -8,7 +8,7 @@ import {
 } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { ingredients_service, purchases_service } from '$logic';
-import { __DELETE_ALL_DATABASE } from './utils';
+import { __DELETE_ALL_DATABASE } from '../utils';
 import { suppliers_service } from '$logic/suppliers-service';
 
 vi.mock('$lib/server/db/index.ts');
@@ -38,6 +38,8 @@ describe.sequential('buy ingredients', async () => {
 	beforeAll(() => {
 		VAILD_INPUT_1B = {
 			supplierId: JUAN.id,
+			perceptions_tax: 10,
+			iva_tax: 21,
 			document: {
 				typeId: INVOICE_TYPE.id,
 				number: 'FACTURA-12345',
@@ -110,6 +112,8 @@ describe.sequential('buy ingredients', async () => {
 				VAILD_INPUT_1B.batches[0].productionDate.toISOString().split('T')[0]
 			);
 
+			expect(list[0].iva_tax).toBe(21);
+			expect(list[0].perceptions_tax).toBe(10);
 			expect(list[0].adjustment).toBe(null);
 		});
 	});
@@ -119,6 +123,8 @@ describe.sequential('buy ingredients', async () => {
 
 		beforeAll(() => {
 			VALID_INPUT_2B = {
+				perceptions_tax: 10,
+				iva_tax: 21,
 				supplierId: JUAN.id,
 				document: {
 					typeId: INVOICE_TYPE.id,

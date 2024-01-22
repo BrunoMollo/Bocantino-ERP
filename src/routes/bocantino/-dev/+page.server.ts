@@ -75,6 +75,8 @@ async function seed() {
 	});
 
 	const first_entry = await purchases_service.registerBoughtIngrediets({
+		perceptions_tax: 10,
+		iva_tax: 21,
 		supplierId: julian.id,
 		document: {
 			number: 'R-22121',
@@ -96,6 +98,8 @@ async function seed() {
 	});
 
 	const second_entry = await purchases_service.registerBoughtIngrediets({
+		perceptions_tax: 10,
+		iva_tax: 21,
 		supplierId: julian.id,
 		document: {
 			number: 'F-11111',

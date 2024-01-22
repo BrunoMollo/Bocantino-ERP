@@ -44,6 +44,8 @@ export const actions: Actions = {
 
 		const { batches, supplierId } = form.data;
 		await purchases_service.registerBoughtIngrediets({
+			perceptions_tax: 10, //TODO: Change
+			iva_tax: 21, //TODO: Change
 			supplierId,
 			batches,
 			document: {

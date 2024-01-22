@@ -11,7 +11,7 @@ import {
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
 import { ingredient_production_service, ingredients_service, purchases_service } from '$logic';
-import { __DELETE_ALL_DATABASE } from './utils';
+import { __DELETE_ALL_DATABASE } from '../utils';
 import { sq_stock } from '$logic/ingredient-stock';
 import { eq } from 'drizzle-orm';
 import { getFirst } from '$lib/utils';
@@ -79,6 +79,8 @@ beforeEach(async () => {
 	await db.delete(t_entry_document);
 	LIVER_BATCH_ID = await purchases_service
 		.registerBoughtIngrediets({
+			perceptions_tax: 10,
+			iva_tax: 21,
 			supplierId: SUPPLIER_ID,
 			document: {
 				number: '1234',
@@ -102,6 +104,8 @@ beforeEach(async () => {
 
 	SECOND_LIVER_BATCH_ID = await purchases_service
 		.registerBoughtIngrediets({
+			perceptions_tax: 10,
+			iva_tax: 21,
 			supplierId: SUPPLIER_ID,
 			document: {
 				number: '1234',
@@ -125,6 +129,8 @@ beforeEach(async () => {
 
 	BANANA_BATCH_ID = await purchases_service
 		.registerBoughtIngrediets({
+			perceptions_tax: 10,
+			iva_tax: 21,
 			supplierId: SUPPLIER_ID,
 			document: {
 				number: '1234',

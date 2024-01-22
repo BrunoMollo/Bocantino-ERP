@@ -11,7 +11,7 @@ import {
 import { eq } from 'drizzle-orm';
 import { ingredients_service } from '$logic';
 import { getFirst } from '$lib/utils';
-import { __DELETE_ALL_DATABASE } from './utils';
+import { __DELETE_ALL_DATABASE } from '../utils';
 
 vi.mock('$lib/server/db/index.ts');
 
