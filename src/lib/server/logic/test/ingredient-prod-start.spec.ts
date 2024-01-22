@@ -201,7 +201,7 @@ describe.sequential('ingredient produciton start', () => {
 	test('if batch does not exist return logic error', async () => {
 		const res = await ingredient_production_service.startIngredientProduction(
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
-			[LIVER_BATCH_ID * 1000000]
+			[LIVER_BATCH_ID * 1000]
 		);
 		expect(res.type).toBe('LOGIC_ERROR');
 	});
