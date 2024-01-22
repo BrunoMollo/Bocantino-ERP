@@ -1,6 +1,6 @@
 import { z } from 'zod';
 import { publicProcedure, router } from '../context';
-import { product_service } from '$logic/product-logic';
+import { product_service } from '$logic/product-service';
 
 export const products = router({
 	recipe: publicProcedure.input(z.coerce.number().positive().int()).query(async ({ input }) => {

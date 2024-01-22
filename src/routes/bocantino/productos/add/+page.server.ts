@@ -3,7 +3,7 @@ import type { PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms/server';
 import { product_schema } from '../_shared/zodSchema';
 import { ingredients_service } from '$logic';
-import { product_service } from '$logic/product-logic';
+import { product_service } from '$logic/product-service';
 
 export const load: PageServerLoad = async () => {
 	const form = superValidate(product_schema);

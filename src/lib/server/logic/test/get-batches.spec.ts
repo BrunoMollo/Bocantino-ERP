@@ -7,13 +7,9 @@ import {
 	t_supplier,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
-import {
-	ingredients_service,
-	suppliers_service,
-	ingredient_production_service,
-	purchases_service
-} from '$logic';
+import { ingredients_service, ingredient_production_service, purchases_service } from '$logic';
 import { __DELETE_ALL_DATABASE } from './utils';
+import { suppliers_service } from '$logic/suppliers-service';
 
 vi.mock('$lib/server/db/index.ts');
 

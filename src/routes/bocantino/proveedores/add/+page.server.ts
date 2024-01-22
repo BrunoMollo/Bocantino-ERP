@@ -2,7 +2,8 @@ import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from '../$types';
 import { createForm, supplier_schema } from '../_components/shared';
 import { superValidate } from 'sveltekit-superforms/server';
-import { ingredients_service, suppliers_service } from '$logic';
+import { ingredients_service } from '$logic';
+import { suppliers_service } from '$logic/suppliers-service';
 
 export const load: PageServerLoad = async () => {
 	const ingredients = await ingredients_service.getAll();
@@ -22,3 +23,4 @@ export const actions: Actions = {
 		throw redirect(302, '/bocantino/proveedores?toast=Proveedor registrado');
 	}
 };
+

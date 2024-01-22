@@ -5,10 +5,10 @@ import {
 	auth_service,
 	ingredient_production_service,
 	ingredients_service,
-	purchases_service,
-	suppliers_service
+	purchases_service
 } from '$logic';
-import { product_service } from '$logic/product-logic';
+import { product_service } from '$logic/product-service';
+import { suppliers_service } from '$logic/suppliers-service';
 import { __DELETE_ALL_DATABASE } from '$logic/test/utils';
 import type { PageServerLoad } from './$types';
 import { redirect, type Actions } from '@sveltejs/kit';

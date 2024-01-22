@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms/client';
-import { product_service } from '$logic/product-logic';
+import { product_service } from '$logic/product-service';
 import { ingredients_service } from '$logic';
 import { should_not_reach } from '$lib/utils';
 import { error, redirect } from '@sveltejs/kit';

@@ -32,7 +32,10 @@ export async function getBatchesByIngredientId(id: number) {
 				ne(sq_stock.currently_available, 0)
 			)
 		)
-		.orderBy(desc(sql`${t_ingredient_batch.initialAmount} - ${sq_stock.currently_available}`), asc(t_ingredient_batch.expiration_date)) //A probar si anda esto che
+		.orderBy(
+			desc(sql`${t_ingredient_batch.initialAmount} - ${sq_stock.currently_available}`),
+			asc(t_ingredient_batch.expiration_date)
+		) //A probar si anda esto che
 		.then(copy_column({ from: 'stock', field: 'current_amount', to: 'batch' }))
 		.then(
 			drizzle_map({
