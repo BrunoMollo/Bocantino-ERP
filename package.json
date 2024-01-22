@@ -55,7 +55,6 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@libsql/client": "^0.4.0-pre.5",
 		"@neondatabase/serverless": "^0.7.2",
 		"@trpc/client": "^10.45.0",
 		"@trpc/server": "^10.45.0",
@@ -69,4 +68,3 @@
 		"ws": "^8.16.0"
 	}
 }
-
