@@ -6,9 +6,10 @@ import {
 	t_ingredient,
 	t_ingredient_batch,
 	t_ingridient_entry,
+	t_product_batch,
 	t_supplier,
 	tr_ingredient_batch_ingredient_batch,
-	tr_ingredient_ingredient,
+	tr_product_batch_ingredient_batch,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
 import {
@@ -80,6 +81,8 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
+	await db.delete(tr_product_batch_ingredient_batch);
+	await db.delete(t_product_batch);
 	await db.delete(tr_ingredient_batch_ingredient_batch);
 	await db.delete(t_ingredient_batch);
 	await db.delete(t_ingridient_entry);

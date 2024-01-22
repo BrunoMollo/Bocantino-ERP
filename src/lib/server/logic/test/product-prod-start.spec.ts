@@ -73,11 +73,6 @@ beforeAll(async () => {
 			ingredients: [{ id: LIVER_ID, amount: 10 }]
 		})
 		.then((x) => x.id);
-});
-
-beforeEach(async () => {
-	await db.delete(tr_product_batch_ingredient_batch);
-	await db.delete(t_product_batch);
 
 	LIVER_BATCH_ID = await purchases_service
 		.registerBoughtIngrediets({
@@ -149,7 +144,12 @@ beforeEach(async () => {
 		.then((x) => x.batchesId[0]);
 });
 
-describe.sequential('start production of derived ingredient_', async () => {
+beforeEach(async () => {
+	await db.delete(tr_product_batch_ingredient_batch);
+	await db.delete(t_product_batch);
+});
+
+describe.sequential('start production of product', async () => {
 	test('error if product does not exist', async () => {
 		const non_existing_id = FINAL_PRODUCT_ID * 100;
 		const res = await product_service.startProduction({
@@ -312,10 +312,18 @@ describe.sequential('start production of derived ingredient_', async () => {
 				.from(tr_product_batch_ingredient_batch)
 				.where(eq(tr_product_batch_ingredient_batch.produced_batch_id, new_batch.id));
 			expect(relation.length).toBe(2);
-			expect(relation[0].ingredient_batch_id).toBe(LIVER_BATCH_ID);
-			expect(relation[0].amount_used_to_produce_batch).toBe(LIVER_BATCH_INTIAL_AMOUNT);
-			expect(relation[1].ingredient_batch_id).toBe(SECOND_LIVER_BATCH_ID);
-			expect(relation[1].amount_used_to_produce_batch).toBe(SECOND_LIVER_BATCH_INITIAL_AMOUNT / 2);
+			{
+				const rel = relation.find((x) => x.ingredient_batch_id === LIVER_BATCH_ID);
+				expect(rel).toBeTruthy();
+				expect(rel?.produced_batch_id).toBe(new_batch.id);
+				expect(rel?.amount_used_to_produce_batch).toBe(LIVER_BATCH_INTIAL_AMOUNT);
+			}
+			{
+				const rel = relation.find((x) => x.ingredient_batch_id === SECOND_LIVER_BATCH_ID);
+				expect(rel).toBeTruthy();
+				expect(rel?.produced_batch_id).toBe(new_batch.id);
+				expect(rel?.amount_used_to_produce_batch).toBe(SECOND_LIVER_BATCH_INITIAL_AMOUNT / 2);
+			}
 		}
 	});
 
@@ -355,13 +363,28 @@ describe.sequential('start production of derived ingredient_', async () => {
 				.select()
 				.from(tr_product_batch_ingredient_batch)
 				.where(eq(tr_product_batch_ingredient_batch.produced_batch_id, new_batch.id));
+
 			expect(relation.length).toBe(3);
-			expect(relation[0].ingredient_batch_id).toBe(LIVER_BATCH_ID);
-			expect(relation[0].amount_used_to_produce_batch).toBe(LIVER_BATCH_INTIAL_AMOUNT);
-			expect(relation[1].ingredient_batch_id).toBe(SECOND_LIVER_BATCH_ID);
-			expect(relation[1].amount_used_to_produce_batch).toBe(20 * 12 - LIVER_BATCH_INTIAL_AMOUNT);
-			expect(relation[2].ingredient_batch_id).toBe(BANANA_BATCH_ID);
-			expect(relation[2].amount_used_to_produce_batch).toBe(1 * 12);
+			{
+				const rel = relation.find((x) => x.ingredient_batch_id === LIVER_BATCH_ID);
+				expect(rel).toBeTruthy();
+				expect(rel?.produced_batch_id).toBe(new_batch.id);
+				expect(rel?.amount_used_to_produce_batch).toBe(LIVER_BATCH_INTIAL_AMOUNT);
+			}
+
+			{
+				const rel = relation.find((x) => x.ingredient_batch_id === SECOND_LIVER_BATCH_ID);
+				expect(rel).toBeTruthy();
+				expect(rel?.produced_batch_id).toBe(new_batch.id);
+				expect(rel?.amount_used_to_produce_batch).toBe(20 * 12 - LIVER_BATCH_INTIAL_AMOUNT);
+			}
+
+			{
+				const rel = relation.find((x) => x.ingredient_batch_id === BANANA_BATCH_ID);
+				expect(rel).toBeTruthy();
+				expect(rel?.produced_batch_id).toBe(new_batch.id);
+				expect(rel?.amount_used_to_produce_batch).toBe(1 * 12);
+			}
 		}
 	});
 });
