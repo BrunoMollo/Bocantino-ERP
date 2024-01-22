@@ -1,20 +1,25 @@
-import { drizzle } from 'drizzle-orm/libsql';
-import { createClient, type ResultSet } from '@libsql/client';
-import { TURSO_TOKEN, TURSO_URL } from '$env/static/private';
-import * as schema from './schema';
+import { NEON_DATABASE_URL } from '$env/static/private';
 import { dev } from '$app/environment';
-import type { SQLiteTransaction } from 'drizzle-orm/sqlite-core';
+import { Pool, neonConfig } from '@neondatabase/serverless';
+import { drizzle, type NeonQueryResultHKT } from 'drizzle-orm/neon-serverless';
+import ws from 'ws';
+import type { PgTransaction } from 'drizzle-orm/pg-core';
 import type { ExtractTablesWithRelations } from 'drizzle-orm';
 
-const client = createClient({ url: TURSO_URL, authToken: TURSO_TOKEN });
-export const db = drizzle(client, { schema, logger: dev });
+neonConfig.webSocketConstructor = ws; // <-- this is the key bit
+
+const pool = new Pool({ connectionString: NEON_DATABASE_URL });
+pool.on('error', (err) => console.error(err)); // deal with e.g. re-connect
+
+const client = await pool.connect();
+
+export const db = drizzle(client, { logger: dev });
 
 export type Db = typeof db;
 
-export type Tx = SQLiteTransaction<
-	'async',
-	ResultSet,
-	typeof schema,
-	ExtractTablesWithRelations<typeof schema>
+export type Tx = PgTransaction<
+	NeonQueryResultHKT,
+	Record<string, never>,
+	ExtractTablesWithRelations<Record<string, never>>
 >;
 

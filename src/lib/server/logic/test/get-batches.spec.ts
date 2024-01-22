@@ -2,13 +2,9 @@ import { describe, expect, vi, test, beforeAll } from 'vitest';
 import { INVOICE_TYPE, db } from '$lib/server/db/__mocks__';
 import {
 	t_document_type,
-	t_entry_document,
 	t_ingredient,
 	t_ingredient_batch,
-	t_ingridient_entry,
 	t_supplier,
-	tr_ingredient_batch_ingredient_batch,
-	tr_ingredient_ingredient,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
 import {
@@ -21,149 +17,149 @@ import { __DELETE_ALL_DATABASE } from './utils';
 
 vi.mock('$lib/server/db/index.ts');
 
-describe.sequential('start production of derived ingredient', async () => {
-	let LIVER_ID = -1;
-	let BANANA_ID = -1;
-	let SUPPLIER_ID = -1;
-	let REDUCED_LIVER_ID = -1;
-	let LIVER_BATCH_ID = -1;
-	let SECOND_LIVER_BATCH_ID = -1;
-	let BANANA_BATCH_ID = -1;
-	let BATCH_IN_PROD_ID = -1;
+let LIVER_ID = -1;
+let BANANA_ID = -1;
+let SUPPLIER_ID = -1;
+let REDUCED_LIVER_ID = -1;
+let LIVER_BATCH_ID = -1;
+let SECOND_LIVER_BATCH_ID = -1;
+let BANANA_BATCH_ID = -1;
+let BATCH_IN_PROD_ID = -1;
 
-	const LIVER_BATCH_INTIAL_AMOUNT = 100 as const;
-	const SECOND_LIVER_BATCH_INITIAL_AMOUNT = 200 as const;
-	beforeAll(async () => {
-		await __DELETE_ALL_DATABASE();
-		await db.insert(t_document_type).values(INVOICE_TYPE);
+const LIVER_BATCH_INTIAL_AMOUNT = 100 as const;
+const SECOND_LIVER_BATCH_INITIAL_AMOUNT = 200 as const;
+beforeAll(async () => {
+	await __DELETE_ALL_DATABASE();
+	await db.insert(t_document_type).values(INVOICE_TYPE);
 
-		LIVER_ID = await ingredients_service
-			.add({
-				name: 'Liver',
+	LIVER_ID = await ingredients_service
+		.add({
+			name: 'Liver',
+			unit: 'Kg',
+			reorderPoint: 100
+		})
+		.then((x) => x.id);
+
+	BANANA_ID = await ingredients_service
+		.add({
+			name: 'Banana',
+			unit: 'Kg',
+			reorderPoint: 120
+		})
+		.then((x) => x.id);
+
+	SUPPLIER_ID = await suppliers_service
+		.add({
+			name: 'Juan',
+			email: 'jj@gmail.com',
+			ingredientsIds: [LIVER_ID, BANANA_ID]
+		})
+		.then((x) => x.id);
+
+	REDUCED_LIVER_ID = await ingredients_service
+		.add(
+			{
+				name: 'Liver reduced',
 				unit: 'Kg',
-				reorderPoint: 100
-			})
-			.then((x) => x.id);
+				reorderPoint: 80
+			},
+			{
+				id: LIVER_ID,
+				amount: 2
+			}
+		)
+		.then((x) => x.id);
 
-		BANANA_ID = await ingredients_service
-			.add({
-				name: 'Banana',
-				unit: 'Kg',
-				reorderPoint: 120
-			})
-			.then((x) => x.id);
-
-		SUPPLIER_ID = await suppliers_service
-			.add({
-				name: 'Juan',
-				email: 'jj@gmail.com',
-				ingredientsIds: [LIVER_ID, BANANA_ID]
-			})
-			.then((x) => x.id);
-
-		REDUCED_LIVER_ID = await ingredients_service
-			.add(
+	LIVER_BATCH_ID = await purchases_service
+		.registerBoughtIngrediets({
+			supplierId: SUPPLIER_ID,
+			document: {
+				number: '1234',
+				typeId: INVOICE_TYPE.id,
+				issue_date: new Date(),
+				due_date: new Date()
+			},
+			batches: [
 				{
-					name: 'Liver reduced',
-					unit: 'Kg',
-					reorderPoint: 80
-				},
-				{
-					id: LIVER_ID,
-					amount: 2
+					ingredientId: LIVER_ID,
+					batch_code: 'SOME CODE',
+					initialAmount: LIVER_BATCH_INTIAL_AMOUNT,
+					numberOfBags: 10,
+					cost: 1000,
+					productionDate: new Date(),
+					expiration_date: new Date()
 				}
-			)
-			.then((x) => x.id);
+			]
+		})
+		.then((x) => x.batchesId[0]);
 
-		LIVER_BATCH_ID = await purchases_service
-			.registerBoughtIngrediets({
-				supplierId: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredientId: LIVER_ID,
-						batch_code: 'SOME CODE',
-						initialAmount: LIVER_BATCH_INTIAL_AMOUNT,
-						numberOfBags: 10,
-						cost: 1000,
-						productionDate: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId[0]);
+	SECOND_LIVER_BATCH_ID = await purchases_service
+		.registerBoughtIngrediets({
+			supplierId: SUPPLIER_ID,
+			document: {
+				number: '1234',
+				typeId: INVOICE_TYPE.id,
+				issue_date: new Date(),
+				due_date: new Date()
+			},
+			batches: [
+				{
+					ingredientId: LIVER_ID,
+					batch_code: 'SOME OTHER CODE',
+					initialAmount: SECOND_LIVER_BATCH_INITIAL_AMOUNT,
+					numberOfBags: 12,
+					cost: 1000,
+					productionDate: new Date(),
+					expiration_date: new Date()
+				}
+			]
+		})
+		.then((x) => x.batchesId[0]);
 
-		SECOND_LIVER_BATCH_ID = await purchases_service
-			.registerBoughtIngrediets({
-				supplierId: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredientId: LIVER_ID,
-						batch_code: 'SOME OTHER CODE',
-						initialAmount: SECOND_LIVER_BATCH_INITIAL_AMOUNT,
-						numberOfBags: 12,
-						cost: 1000,
-						productionDate: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId[0]);
+	BANANA_BATCH_ID = await purchases_service
+		.registerBoughtIngrediets({
+			supplierId: SUPPLIER_ID,
+			document: {
+				number: '1234',
+				typeId: INVOICE_TYPE.id,
+				issue_date: new Date(),
+				due_date: new Date()
+			},
+			batches: [
+				{
+					ingredientId: BANANA_ID,
+					batch_code: 'SOME OTHER CODE FOR BANANA',
+					initialAmount: 20,
+					numberOfBags: 1,
+					cost: 1000,
+					productionDate: new Date(),
+					expiration_date: new Date()
+				}
+			]
+		})
+		.then((x) => x.batchesId[0]);
 
-		BANANA_BATCH_ID = await purchases_service
-			.registerBoughtIngrediets({
-				supplierId: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredientId: BANANA_ID,
-						batch_code: 'SOME OTHER CODE FOR BANANA',
-						initialAmount: 20,
-						numberOfBags: 1,
-						cost: 1000,
-						productionDate: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId[0]);
+	const batch = await ingredient_production_service.startIngredientProduction(
+		{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
+		[LIVER_BATCH_ID]
+	);
+	//@ts-ignore
+	BATCH_IN_PROD_ID = batch.id;
 
-		const batch = await ingredient_production_service.startIngredientProduction(
-			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
-			[LIVER_BATCH_ID]
-		);
-		//@ts-ignore
-		BATCH_IN_PROD_ID = batch.id;
+	const finished_batch = await ingredient_production_service.startIngredientProduction(
+		{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
+		[LIVER_BATCH_ID]
+	);
 
-		const finished_batch = await ingredient_production_service.startIngredientProduction(
-			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
-			[LIVER_BATCH_ID]
-		);
-
-		//@ts-ignore
-		const batch_id: number = finished_batch.id;
-		await ingredient_production_service.closeProduction({
-			batch_id,
-			adjustment: -2
-		});
+	//@ts-ignore
+	const batch_id: number = finished_batch.id;
+	await ingredient_production_service.closeProduction({
+		batch_id,
+		adjustment: -2
 	});
+});
 
+describe.sequential('start production of derived ingredient', async () => {
 	test('testing initals conditions ok', async () => {
 		expect(LIVER_BATCH_ID).toBeTruthy();
 		const ingredients = await db.select().from(t_ingredient);
@@ -183,7 +179,7 @@ describe.sequential('start production of derived ingredient', async () => {
 		const batches = await db.select().from(t_ingredient_batch);
 		expect(batches.length).toBe(5);
 	});
-	describe('getBatchById', () => {
+	describe.sequential('getBatchById', () => {
 		test('get liver', async () => {
 			const res = await ingredient_production_service.getBatchById(LIVER_BATCH_ID);
 			expect(res?.current_amount).toEqual(60);
@@ -205,18 +201,30 @@ describe.sequential('start production of derived ingredient', async () => {
 		});
 	});
 
-	describe('getBatchById', () => {
-		test('get Banana', async () => {
+	describe.sequential('getBatchesIngredientById', () => {
+		test('get Banana batches', async () => {
 			const res = await ingredient_production_service.getBatchesByIngredientId(BANANA_ID);
+			expect(res.length).toBe(1);
 			expect(res[0]?.current_amount).toEqual(20);
 		});
-		test('get Liver', async () => {
+
+		test('get Liver batches', async () => {
 			const res = await ingredient_production_service.getBatchesByIngredientId(LIVER_ID);
-			expect(res[0]?.current_amount).toEqual(60);
+			expect(res.length).toBe(2);
+			{
+				const batch = res.find((x) => x.id === LIVER_BATCH_ID);
+				expect(batch?.current_amount).toEqual(60);
+			}
+
+			{
+				const batch = res.find((x) => x.id === SECOND_LIVER_BATCH_ID);
+				expect(batch?.current_amount).toEqual(200);
+			}
 		});
 
-		test('get Reduced Liver', async () => {
+		test('get Reduced Liver batches', async () => {
 			const res = await ingredient_production_service.getBatchesByIngredientId(REDUCED_LIVER_ID);
+			expect(res.length).toBe(1);
 			expect(res[0]?.current_amount).toEqual(8);
 		});
 	});

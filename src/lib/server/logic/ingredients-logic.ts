@@ -27,7 +27,7 @@ export async function getAllWithStock() {
 			)
 		)
 		.leftJoin(sq_stock, eq(sq_stock.batch_id, t_ingredient_batch.id))
-		.groupBy(t_ingredient.id)
+		.groupBy(t_ingredient.id, sq_stock.currently_available)
 		.orderBy(asc(sql`${sq_stock.currently_available}-${t_ingredient.reorderPoint}`))
 		.then(copy_column({ from: 'stock', field: 'stock', to: 'ingredient' }))
 		.then(drizzle_map({ one: 'ingredient', with_one: [], with_many: [] }));

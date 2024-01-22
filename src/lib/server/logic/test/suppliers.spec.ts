@@ -34,7 +34,7 @@ describe.sequential('supplier crud', () => {
 			.add({ name: 'Potato', unit: 'Kg', reorderPoint: 300 })
 			.then((x) => x.id);
 	});
-	describe('add', () => {
+	describe.sequential('add', () => {
 		beforeEach(async () => {
 			await db.delete(tr_ingredient_batch_ingredient_batch);
 			await db.delete(t_ingredient_batch);

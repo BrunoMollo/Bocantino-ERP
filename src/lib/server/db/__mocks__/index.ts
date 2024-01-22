@@ -1,10 +1,10 @@
-import * as schema from '../schema';
-import { createClient } from '@libsql/client';
-import { drizzle } from 'drizzle-orm/libsql';
+import { drizzle } from 'drizzle-orm/postgres-js';
+import postgres from 'postgres';
 
-export const mockDrizzleClient = createClient({ url: 'http://127.0.0.1:8080' });
+const uri = 'postgresql://postgres:postgres@localhost:5432/mydatabase';
 
-export const db = drizzle(mockDrizzleClient, { schema });
+const queryClient = postgres(uri);
+export const db = drizzle(queryClient);
 
 export const INVOICE_TYPE = { id: 1, desc: 'invoice' };
 

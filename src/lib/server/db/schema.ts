@@ -1,14 +1,25 @@
-import { foreignKey, integer, primaryKey, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import {
+	date,
+	foreignKey,
+	integer,
+	pgTable,
+	primaryKey,
+	real,
+	serial,
+	text,
+	timestamp,
+	varchar
+} from 'drizzle-orm/pg-core';
 
 ////-------------------------------------------------------------------------------------//
 // INGREDIENTS
-export const t_ingredient = sqliteTable('ingredient', {
-	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+export const t_ingredient = pgTable('ingredient', {
+	id: serial('id').primaryKey(),
 	name: text('name').notNull(),
 	unit: text('unit').notNull().$type<'gr' | 'Kg'>(),
-	reorderPoint: integer('reorder_point').notNull()
+	reorderPoint: real('reorder_point').notNull()
 });
-export const tr_ingredient_ingredient = sqliteTable('r_ingredient_ingredient', {
+export const tr_ingredient_ingredient = pgTable('r_ingredient_ingredient', {
 	amount: real('amount').notNull(),
 	derivedId: integer('derived_id')
 		.notNull()
@@ -22,8 +33,8 @@ export const tr_ingredient_ingredient = sqliteTable('r_ingredient_ingredient', {
 
 ////-------------------------------------------------------------------------------------//
 // PRODUCTS
-export const t_product = sqliteTable('product', {
-	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+export const t_product = pgTable('product', {
+	id: serial('id').primaryKey(),
 	desc: text('desc').notNull()
 });
 //-------------------------------------------------------------------------------------////
@@ -31,7 +42,7 @@ export const t_product = sqliteTable('product', {
 
 ////-------------------------------------------------------------------------------------//
 // INGREDIENTS <-> PRODUCTS
-export const tr_ingredient_product = sqliteTable(
+export const tr_ingredient_product = pgTable(
 	'r_ingredient_product',
 	{
 		ingredientId: integer('ingredient_id')
@@ -51,8 +62,8 @@ export const tr_ingredient_product = sqliteTable(
 
 ////-------------------------------------------------------------------------------------//
 // SUPPLIER
-export const t_supplier = sqliteTable('supplier', {
-	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+export const t_supplier = pgTable('supplier', {
+	id: serial('id').primaryKey(),
 	name: text('name').notNull(),
 	email: text('email').notNull()
 });
@@ -61,7 +72,7 @@ export const t_supplier = sqliteTable('supplier', {
 
 ////-------------------------------------------------------------------------------------//
 // SUPPLIER <-> INGREDIENTS
-export const tr_supplier_ingredient = sqliteTable(
+export const tr_supplier_ingredient = pgTable(
 	'r_supplier_ingredient',
 	{
 		supplierId: integer('supplier_id')
@@ -81,26 +92,26 @@ export const tr_supplier_ingredient = sqliteTable(
 
 ////-------------------------------------------------------------------------------------//
 // INGREDIENT BATCH
-export const t_ingredient_batch = sqliteTable(
+export const t_ingredient_batch = pgTable(
 	'ingredient_batch',
 	{
-		id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+		id: serial('id').primaryKey(),
 		batch_code: text('supplier_bag_code').notNull(), //may or may not be provided by the supplier
 		initialAmount: real('full_amount').notNull(),
-		productionDate: integer('production_date', { mode: 'timestamp' }), // is null when is IN_PRODUCTION
+		productionDate: date('production_date', { mode: 'date' }), // is null when is IN_PRODUCTION
 		ingredientId: integer('ingredient_id')
 			.notNull()
 			.references(() => t_ingredient.id),
 		numberOfBags: integer('amount_of_bags').notNull(),
 		state: text('state').notNull().$type<'IN_PRODUCTION' | 'AVAILABLE' | 'EMPTY'>(),
-		registration_date: integer('registration_date', { mode: 'timestamp' })
+		registration_date: timestamp('registration_date', { mode: 'date' })
 			.notNull()
 			.$defaultFn(() => new Date()),
 		//external only
 		supplierId: integer('supplier_id'),
-		expiration_date: integer('expiration_date', { mode: 'timestamp' }),
+		expiration_date: date('expiration_date', { mode: 'date' }),
 		cost: integer('cost'),
-		currency_alpha_code: text('currency_alpha_code', { length: 4 })
+		currency_alpha_code: varchar('currency_alpha_code', { length: 4 })
 			.notNull()
 			.$defaultFn(() => 'ARG'),
 		entry_id: integer('entry_id').references(() => t_ingridient_entry.id),
@@ -119,7 +130,7 @@ export const t_ingredient_batch = sqliteTable(
 
 ////-------------------------------------------------------------------------------------//
 // INGREDIENT BATCH (derived)<--> INGREDIENT BATCH (used)
-export const tr_ingredient_batch_ingredient_batch = sqliteTable(
+export const tr_ingredient_batch_ingredient_batch = pgTable(
 	'r_ingredient_batch_ingredient_batch',
 	{
 		produced_batch_id: integer('produced_batch_id')
@@ -139,13 +150,13 @@ export const tr_ingredient_batch_ingredient_batch = sqliteTable(
 
 ////-------------------------------------------------------------------------------------//
 // INGRIDEINT ENTRY
-export const t_ingridient_entry = sqliteTable('ingridient_entry', {
-	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
-	creation_date: integer('creation_date', { mode: 'timestamp' })
+export const t_ingridient_entry = pgTable('ingridient_entry', {
+	id: serial('id').primaryKey(),
+	creation_date: timestamp('creation_date', { mode: 'date' })
 		.notNull()
 		.$defaultFn(() => new Date()),
 	totalCost: integer('total_cost'), // is calulated later, so can be null
-	currency_alpha_code: text('currency_alpha_code', { length: 4 })
+	currency_alpha_code: varchar('currency_alpha_code', { length: 4 })
 		.notNull()
 		.$defaultFn(() => 'ARG'),
 	documentId: integer('document_id').references(() => t_entry_document.id),
@@ -153,11 +164,11 @@ export const t_ingridient_entry = sqliteTable('ingridient_entry', {
 		.notNull()
 		.references(() => t_supplier.id)
 });
-export const t_entry_document = sqliteTable('entry_document', {
-	id: integer('id').primaryKey({ autoIncrement: true }),
+export const t_entry_document = pgTable('entry_document', {
+	id: serial('id').primaryKey(),
 	number: text('document_identifier').notNull(),
-	issue_date: integer('issue_date', { mode: 'timestamp' }).notNull(),
-	due_date: integer('due_date', { mode: 'timestamp' }).notNull(),
+	issue_date: date('issue_date', { mode: 'date' }).notNull(),
+	due_date: date('due_date', { mode: 'date' }).notNull(),
 	typeId: integer('type_id')
 		.notNull()
 		.references(() => t_document_type.id)
@@ -167,8 +178,8 @@ export const t_entry_document = sqliteTable('entry_document', {
 
 ////-------------------------------------------------------------------------------------//
 // DOCUMENT TYPE
-export const t_document_type = sqliteTable('document_type', {
-	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+export const t_document_type = pgTable('document_type', {
+	id: serial('id').primaryKey(),
 	desc: text('description').notNull()
 });
 //-------------------------------------------------------------------------------------////
@@ -176,8 +187,8 @@ export const t_document_type = sqliteTable('document_type', {
 
 ////-------------------------------------------------------------------------------------//
 // USER
-export const t_user = sqliteTable('user', {
-	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+export const t_user = pgTable('user', {
+	id: serial('id').primaryKey(),
 	username: text('username').notNull().unique(),
 	password_hash: text('password_hash').notNull()
 });
@@ -186,17 +197,17 @@ export const t_user = sqliteTable('user', {
 
 ////-------------------------------------------------------------------------------------//
 // PRODUCT BATCH
-export const t_product_batch = sqliteTable('product_batch', {
-	id: integer('id').notNull().primaryKey({ autoIncrement: true }),
+export const t_product_batch = pgTable('product_batch', {
+	id: serial('id').primaryKey(),
 	batch_code: text('supplier_bag_code').notNull(),
 	initial_amount: real('full_amount').notNull(),
-	expiration_date: integer('expiration_date', { mode: 'timestamp' }).notNull(),
-	production_date: integer('production_date', { mode: 'timestamp' }), // is null when is IN_PRODUCTION
+	expiration_date: date('expiration_date', { mode: 'date' }).notNull(),
+	production_date: date('production_date', { mode: 'date' }), // is null when is IN_PRODUCTION
 	product_id: integer('product_id')
 		.notNull()
 		.references(() => t_product.id),
 	state: text('state').notNull().$type<'IN_PRODUCTION' | 'AVAILABLE' | 'EMPTY'>(),
-	registration_date: integer('registration_date', { mode: 'timestamp' })
+	registration_date: timestamp('registration_date', { mode: 'date' })
 		.notNull()
 		.$defaultFn(() => new Date()),
 	adjustment: real('adjustment')
@@ -206,7 +217,7 @@ export const t_product_batch = sqliteTable('product_batch', {
 
 ////-------------------------------------------------------------------------------------//
 // PRODUCT BATCH <--> INGREDIENT BATCH
-export const tr_product_batch_ingredient_batch = sqliteTable(
+export const tr_product_batch_ingredient_batch = pgTable(
 	'r_product_batch_ingredient_batch',
 	{
 		produced_batch_id: integer('product_batch_id')

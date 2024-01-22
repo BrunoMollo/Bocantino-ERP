@@ -2,9 +2,9 @@ import type { Config } from 'drizzle-kit';
 
 export default {
 	schema: 'src/lib/server/db/schema.ts',
-	driver: 'turso',
+	driver: 'pg',
 	dbCredentials: {
-		url: 'http://127.0.0.1:8080'
+		connectionString: 'postgresql://postgres:postgres@localhost:5432/mydatabase'
 	}
 } satisfies Config;
 

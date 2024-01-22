@@ -1,7 +1,6 @@
 import { db, type Tx } from '$lib/server/db';
 import { getFirst, getFirstIfPosible } from '$lib/utils';
-import { ingredients_service, logicError } from '$logic';
-import { alias } from 'drizzle-orm/sqlite-core';
+import { ingredients_service, is_ok, logicError } from '$logic';
 import {
 	t_ingredient,
 	t_ingredient_batch,
@@ -11,6 +10,7 @@ import { eq, and, asc, desc, ne, count, inArray, sql } from 'drizzle-orm';
 import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
 import { sq_stock } from './ingredient-stock';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
+import { alias } from 'drizzle-orm/pg-core';
 
 export async function getBatchesByIngredientId(id: number) {
 	return await db
@@ -342,5 +342,22 @@ export async function deleteBatchById(id: number) {
 	await db.delete(t_ingredient_batch).where(eq(t_ingredient_batch.id, id));
 
 	return { type: 'SUCCESS' } as const;
+}
+
+export async function deleteIngredientProduction(id: number) {
+	const list = await db
+		.select()
+		.from(t_ingredient_batch)
+		.where(and(eq(t_ingredient_batch.id, id), eq(t_ingredient_batch.state, 'IN_PRODUCTION')));
+	if (list.length !== 1) {
+		return logicError('batch is not in porduction');
+	}
+	return db.transaction(async (tx) => {
+		await tx
+			.delete(tr_ingredient_batch_ingredient_batch)
+			.where(eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, id));
+		await tx.delete(t_ingredient_batch).where(eq(t_ingredient_batch.id, id));
+		return is_ok(null);
+	});
 }
 

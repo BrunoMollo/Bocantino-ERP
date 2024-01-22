@@ -179,9 +179,11 @@ describe.sequential('ingredients crud', () => {
 				unit: 'gr',
 				reorderPoint: 10
 			});
-			const edited = await db.query.t_ingredient.findFirst({
-				where: eq(t_ingredient.id, LIVER.id)
-			});
+			const edited = await db
+				.select()
+				.from(t_ingredient)
+				.where(eq(t_ingredient.id, LIVER.id))
+				.then(getFirst);
 			expect(edited).toBeTruthy();
 			expect(edited?.name).toBe('Higado editado');
 			expect(edited?.unit).toBe('gr');
@@ -198,9 +200,11 @@ describe.sequential('ingredients crud', () => {
 				},
 				{ id: SYNTETIC_LIVER.id, amount: 0.2 }
 			);
-			const edited = await db.query.t_ingredient.findFirst({
-				where: eq(t_ingredient.id, REDUCED_LIVER.id)
-			});
+			const edited = await db
+				.select()
+				.from(t_ingredient)
+				.where(eq(t_ingredient.id, REDUCED_LIVER.id))
+				.then(getFirst);
 			expect(edited).toBeTruthy();
 			expect(edited?.name).toBe('Higado desidratado');
 			expect(edited?.unit).toBe('Kg');
@@ -224,9 +228,11 @@ describe.sequential('ingredients crud', () => {
 				},
 				{ id: LIVER.id, amount: 0.1 }
 			);
-			const edited = await db.query.t_ingredient.findFirst({
-				where: eq(t_ingredient.id, SYNTETIC_LIVER.id)
-			});
+			const edited = await db
+				.select()
+				.from(t_ingredient)
+				.where(eq(t_ingredient.id, SYNTETIC_LIVER.id))
+				.then(getFirst);
 			expect(edited).toBeTruthy();
 			expect(edited?.name).toBe('Higado syntetico');
 			expect(edited?.unit).toBe('Kg');
@@ -261,9 +267,11 @@ describe.sequential('ingredients crud', () => {
 				unit: 'Kg',
 				reorderPoint: 10
 			});
-			const edited = await db.query.t_ingredient.findFirst({
-				where: eq(t_ingredient.id, REDUCED_LIVER.id)
-			});
+			const edited = await db
+				.select()
+				.from(t_ingredient)
+				.where(eq(t_ingredient.id, REDUCED_LIVER.id))
+				.then(getFirst);
 			expect(edited).toBeTruthy();
 			expect(edited?.name).toBe('Higado reducido');
 			expect(edited?.unit).toBe('Kg');

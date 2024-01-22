@@ -1,19 +1,21 @@
 {
-	"name": "my-skeleton-app",
+	"name": "bocantino-erp",
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev",
+		"dev": "vite dev ",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test": "drizzle-kit push:sqlite --config=./db_unit_test.config.ts && vitest --single-thread",
+		"test:compose-up": "docker compose up -d && sleep 1 && drizzle-kit push:pg --config=./db_unit_test.config.ts",
+		"test:vitest": "vitest --single-thread ",
+		"test:compose-down": "docker compose down",
+		"test": "npm run test:compose-up && npm run test:vitest && npm run test:compose-down",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
-		"db-push": "drizzle-kit push:sqlite",
-		"db-clean": "bun run src/lib/server/db/seeder.ts",
-		"db-migrate": "drizzle-kit generate:sqlite"
+		"db-push": "drizzle-kit push:pg",
+		"db-migrate": "drizzle-kit generate:pg"
 	},
 	"devDependencies": {
 		"@floating-ui/dom": "^1.5.3",
@@ -37,6 +39,7 @@
 		"eslint-config-prettier": "^9.0.0",
 		"eslint-plugin-svelte": "^2.30.0",
 		"postcss": "8.4.32",
+		"postgres": "^3.4.3",
 		"prettier": "^3.0.0",
 		"prettier-plugin-svelte": "^3.0.0",
 		"svelte": "^4.0.5",
@@ -52,15 +55,16 @@
 	},
 	"type": "module",
 	"dependencies": {
-		"@libsql/client": "^0.4.0-pre.5",
+		"@neondatabase/serverless": "^0.7.2",
 		"@trpc/client": "^10.45.0",
 		"@trpc/server": "^10.45.0",
 		"boxicons": "^2.1.4",
-		"drizzle-orm": "^0.29.1",
+		"drizzle-orm": "^0.29.3",
 		"drizzle-tools": "0.0.4",
 		"jose": "^5.2.0",
 		"jspdf": "^2.5.1",
 		"jspdf-autotable": "^3.8.1",
-		"moment": "^2.30.1"
+		"moment": "^2.30.1",
+		"ws": "^8.16.0"
 	}
 }
