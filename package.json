@@ -1,18 +1,20 @@
 {
-	"name": "my-skeleton-app",
+	"name": "bocantino-erp",
 	"version": "0.0.1",
 	"private": true,
 	"scripts": {
-		"dev": "vite dev --host",
+		"dev": "vite dev ",
 		"build": "vite build",
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test": "docker compose up -d && drizzle-kit push:pg --config=./db_unit_test.config.ts && vitest --single-thread && docker compose down",
+		"test:compose-up": "docker compose up -d && sleep 1 && drizzle-kit push:pg --config=./db_unit_test.config.ts",
+		"test:vitest": "vitest --single-thread ",
+		"test:compose-down": "docker compose down",
+		"test": "npm run test:compose-up && npm run test:vitest && npm run test:compose-down",
 		"lint": "prettier --check . && eslint .",
 		"format": "prettier --write .",
 		"db-push": "drizzle-kit push:pg",
-		"db-clean": "bun run src/lib/server/db/seeder.ts",
 		"db-migrate": "drizzle-kit generate:pg"
 	},
 	"devDependencies": {
