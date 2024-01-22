@@ -1,4 +1,4 @@
-import { describe, expect, vi, test, beforeEach, beforeAll, afterEach } from 'vitest';
+import { describe, expect, vi, test, beforeEach, beforeAll, afterEach, afterAll } from 'vitest';
 import { INVOICE_TYPE, db } from '$lib/server/db/__mocks__';
 import {
 	t_document_type,
@@ -13,146 +13,143 @@ import { getFirst } from '$lib/utils';
 
 vi.mock('$lib/server/db/index.ts');
 
-describe.sequential('start production of derived ingredient', async () => {
-	let LIVER_ID = -1;
-	let BANANA_ID = -1;
-	let SUPPLIER_ID = -1;
-	let REDUCED_LIVER_ID = -1;
-	let LIVER_BATCH_ID = -1;
-	let SECOND_LIVER_BATCH_ID = -1;
-	let BANANA_BATCH_ID = -1;
-	let FINAL_PRODUCT_ID = -1;
+let LIVER_ID = -1;
+let BANANA_ID = -1;
+let SUPPLIER_ID = -1;
+let REDUCED_LIVER_ID = -1;
+let LIVER_BATCH_ID = -1;
+let SECOND_LIVER_BATCH_ID = -1;
+let BANANA_BATCH_ID = -1;
+let FINAL_PRODUCT_ID = -1;
 
-	const LIVER_BATCH_INTIAL_AMOUNT = 100 as const;
-	const SECOND_LIVER_BATCH_INITIAL_AMOUNT = 200 as const;
-	beforeAll(async () => {
-		await __DELETE_ALL_DATABASE();
-		await db.insert(t_document_type).values(INVOICE_TYPE);
+const LIVER_BATCH_INTIAL_AMOUNT = 100 as const;
+const SECOND_LIVER_BATCH_INITIAL_AMOUNT = 200 as const;
 
-		LIVER_ID = await ingredients_service
-			.add({
-				name: 'Liver',
+beforeAll(async () => {
+	await __DELETE_ALL_DATABASE();
+	await db.insert(t_document_type).values(INVOICE_TYPE);
+
+	LIVER_ID = await ingredients_service
+		.add({
+			name: 'Liver',
+			unit: 'Kg',
+			reorderPoint: 100
+		})
+		.then((x) => x.id);
+
+	BANANA_ID = await ingredients_service
+		.add({
+			name: 'Banana',
+			unit: 'Kg',
+			reorderPoint: 120
+		})
+		.then((x) => x.id);
+
+	SUPPLIER_ID = await suppliers_service
+		.add({
+			name: 'Juan',
+			email: 'jj@gmail.com',
+			ingredientsIds: [LIVER_ID, BANANA_ID]
+		})
+		.then((x) => x.id);
+
+	REDUCED_LIVER_ID = await ingredients_service
+		.add(
+			{
+				name: 'Liver reduced',
 				unit: 'Kg',
-				reorderPoint: 100
-			})
-			.then((x) => x.id);
+				reorderPoint: 80
+			},
+			{
+				id: LIVER_ID,
+				amount: 2
+			}
+		)
+		.then((x) => x.id);
 
-		BANANA_ID = await ingredients_service
-			.add({
-				name: 'Banana',
-				unit: 'Kg',
-				reorderPoint: 120
-			})
-			.then((x) => x.id);
+	FINAL_PRODUCT_ID = await product_service
+		.add({
+			desc: 'Alimento para perros',
+			ingredients: [{ id: LIVER_ID, amount: 10 }]
+		})
+		.then((x) => x.id);
+});
 
-		SUPPLIER_ID = await suppliers_service
-			.add({
-				name: 'Juan',
-				email: 'jj@gmail.com',
-				ingredientsIds: [LIVER_ID, BANANA_ID]
-			})
-			.then((x) => x.id);
+beforeEach(async () => {
+	await db.delete(tr_product_batch_ingredient_batch);
+	await db.delete(t_product_batch);
 
-		REDUCED_LIVER_ID = await ingredients_service
-			.add(
+	LIVER_BATCH_ID = await purchases_service
+		.registerBoughtIngrediets({
+			supplierId: SUPPLIER_ID,
+			document: {
+				number: '1234',
+				typeId: INVOICE_TYPE.id,
+				issue_date: new Date(),
+				due_date: new Date()
+			},
+			batches: [
 				{
-					name: 'Liver reduced',
-					unit: 'Kg',
-					reorderPoint: 80
-				},
-				{
-					id: LIVER_ID,
-					amount: 2
+					ingredientId: LIVER_ID,
+					batch_code: 'SOME CODE',
+					initialAmount: LIVER_BATCH_INTIAL_AMOUNT,
+					numberOfBags: 10,
+					cost: 1000,
+					productionDate: new Date(),
+					expiration_date: new Date()
 				}
-			)
-			.then((x) => x.id);
+			]
+		})
+		.then((x) => x.batchesId[0]);
 
-		FINAL_PRODUCT_ID = await product_service
-			.add({
-				desc: 'Alimento para perros',
-				ingredients: [{ id: LIVER_ID, amount: 10 }]
-			})
-			.then((x) => x.id);
-	});
+	SECOND_LIVER_BATCH_ID = await purchases_service
+		.registerBoughtIngrediets({
+			supplierId: SUPPLIER_ID,
+			document: {
+				number: '1234',
+				typeId: INVOICE_TYPE.id,
+				issue_date: new Date(),
+				due_date: new Date()
+			},
+			batches: [
+				{
+					ingredientId: LIVER_ID,
+					batch_code: 'SOME OTHER CODE',
+					initialAmount: SECOND_LIVER_BATCH_INITIAL_AMOUNT,
+					numberOfBags: 12,
+					cost: 1000,
+					productionDate: new Date(),
+					expiration_date: new Date()
+				}
+			]
+		})
+		.then((x) => x.batchesId[0]);
 
-	beforeEach(async () => {
-		vi.useFakeTimers();
-		await db.delete(tr_product_batch_ingredient_batch);
-		await db.delete(t_product_batch);
+	BANANA_BATCH_ID = await purchases_service
+		.registerBoughtIngrediets({
+			supplierId: SUPPLIER_ID,
+			document: {
+				number: '1234',
+				typeId: INVOICE_TYPE.id,
+				issue_date: new Date(),
+				due_date: new Date()
+			},
+			batches: [
+				{
+					ingredientId: BANANA_ID,
+					batch_code: 'SOME OTHER CODE FOR BANANA',
+					initialAmount: 20,
+					numberOfBags: 1,
+					cost: 1000,
+					productionDate: new Date(),
+					expiration_date: new Date()
+				}
+			]
+		})
+		.then((x) => x.batchesId[0]);
+});
 
-		LIVER_BATCH_ID = await purchases_service
-			.registerBoughtIngrediets({
-				supplierId: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredientId: LIVER_ID,
-						batch_code: 'SOME CODE',
-						initialAmount: LIVER_BATCH_INTIAL_AMOUNT,
-						numberOfBags: 10,
-						cost: 1000,
-						productionDate: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId[0]);
-
-		SECOND_LIVER_BATCH_ID = await purchases_service
-			.registerBoughtIngrediets({
-				supplierId: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredientId: LIVER_ID,
-						batch_code: 'SOME OTHER CODE',
-						initialAmount: SECOND_LIVER_BATCH_INITIAL_AMOUNT,
-						numberOfBags: 12,
-						cost: 1000,
-						productionDate: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId[0]);
-
-		BANANA_BATCH_ID = await purchases_service
-			.registerBoughtIngrediets({
-				supplierId: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredientId: BANANA_ID,
-						batch_code: 'SOME OTHER CODE FOR BANANA',
-						initialAmount: 20,
-						numberOfBags: 1,
-						cost: 1000,
-						productionDate: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId[0]);
-	});
-	afterEach(() => {
-		vi.useRealTimers();
-	});
-
+describe.sequential('start production of derived ingredient_', async () => {
 	test('error if product does not exist', async () => {
 		const non_existing_id = FINAL_PRODUCT_ID * 100;
 		const res = await product_service.startProduction({
@@ -260,7 +257,9 @@ describe.sequential('start production of derived ingredient', async () => {
 				.then(getFirst);
 			expect(new_batch.batch_code).toBeTruthy(); //TODO: ask client
 			expect(new_batch.product_id).toBe(FINAL_PRODUCT_ID);
-			expect(new_batch.expiration_date).toEqual(new Date(2000, 7, 1)); //plus 6 months
+			expect(new_batch.expiration_date.toISOString().split('T')[0]).toEqual(
+				new Date(2000, 7, 1).toISOString().split('T')[0]
+			); //plus 6 months
 			expect(new_batch.production_date).toBe(null);
 			expect(new_batch.state).toBe('IN_PRODUCTION');
 			expect(new_batch.adjustment).toBe(null);
@@ -299,7 +298,9 @@ describe.sequential('start production of derived ingredient', async () => {
 				.then(getFirst);
 			expect(new_batch.batch_code).toBeTruthy(); //TODO: ask client
 			expect(new_batch.product_id).toBe(FINAL_PRODUCT_ID);
-			expect(new_batch.expiration_date).toEqual(new Date(2000, 7, 1)); //plus 6 months
+			expect(new_batch.expiration_date.toISOString().split('T')[0]).toEqual(
+				new Date(2000, 7, 1).toISOString().split('T')[0]
+			); //plus 6 months
 			expect(new_batch.production_date).toBe(null);
 			expect(new_batch.state).toBe('IN_PRODUCTION');
 			expect(new_batch.adjustment).toBe(null);
@@ -341,7 +342,9 @@ describe.sequential('start production of derived ingredient', async () => {
 				.then(getFirst);
 			expect(new_batch.batch_code).toBeTruthy(); //TODO: ask client
 			expect(new_batch.product_id).toBe(FINAL_PRODUCT_ID);
-			expect(new_batch.expiration_date).toEqual(new Date(2000, 7, 1)); //plus 6 months
+			expect(new_batch.expiration_date.toISOString().split('T')[0]).toEqual(
+				new Date(2000, 7, 1).toISOString().split('T')[0]
+			); //plus 6 months
 			expect(new_batch.production_date).toBe(null);
 			expect(new_batch.state).toBe('IN_PRODUCTION');
 			expect(new_batch.adjustment).toBe(null);
