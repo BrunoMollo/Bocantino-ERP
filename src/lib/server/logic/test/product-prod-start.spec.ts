@@ -2,6 +2,9 @@ import { describe, expect, vi, test, beforeEach, beforeAll } from 'vitest';
 import { INVOICE_TYPE, db } from '$lib/server/db/__mocks__';
 import {
 	t_document_type,
+	t_entry_document,
+	t_ingredient_batch,
+	t_ingridient_entry,
 	t_product_batch,
 	tr_product_batch_ingredient_batch
 } from '$lib/server/db/schema';
@@ -73,6 +76,15 @@ beforeAll(async () => {
 			ingredients: [{ id: LIVER_ID, amount: 10 }]
 		})
 		.then((x) => x.id);
+});
+
+beforeEach(async () => {
+	await db.delete(tr_product_batch_ingredient_batch);
+	await db.delete(t_product_batch);
+
+	await db.delete(t_ingredient_batch);
+	await db.delete(t_ingridient_entry);
+	await db.delete(t_entry_document);
 
 	LIVER_BATCH_ID = await purchases_service
 		.registerBoughtIngrediets({
@@ -142,11 +154,6 @@ beforeAll(async () => {
 			]
 		})
 		.then((x) => x.batchesId[0]);
-});
-
-beforeEach(async () => {
-	await db.delete(tr_product_batch_ingredient_batch);
-	await db.delete(t_product_batch);
 });
 
 describe.sequential('start production of product', async () => {

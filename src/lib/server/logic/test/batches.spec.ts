@@ -113,7 +113,7 @@ describe.sequential('buy ingredients', async () => {
 		});
 	});
 
-	describe('valid case, two batches', () => {
+	describe.sequential('valid case, two batches', () => {
 		let VALID_INPUT_2B: Parameters<typeof purchases_service.registerBoughtIngrediets>[0];
 
 		beforeAll(() => {

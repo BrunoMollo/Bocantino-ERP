@@ -1,5 +1,5 @@
 version: '3.8'
-
+# NOTE: this docker compose is only to run the tests, it does not spin upt the development server
 services:
   postgres:
     image: postgres:latest

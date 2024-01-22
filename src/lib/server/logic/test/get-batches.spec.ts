@@ -201,19 +201,30 @@ describe.sequential('start production of derived ingredient', async () => {
 		});
 	});
 
-	describe.sequential('getBatchById', () => {
-		test('get Banana', async () => {
+	describe.sequential('getBatchesIngredientById', () => {
+		test('get Banana batches', async () => {
 			const res = await ingredient_production_service.getBatchesByIngredientId(BANANA_ID);
+			expect(res.length).toBe(1);
 			expect(res[0]?.current_amount).toEqual(20);
 		});
 
-		test('get Liver', async () => {
+		test('get Liver batches', async () => {
 			const res = await ingredient_production_service.getBatchesByIngredientId(LIVER_ID);
-			expect(res[0]?.current_amount).toEqual(60);
+			expect(res.length).toBe(2);
+			{
+				const batch = res.find((x) => x.id === LIVER_BATCH_ID);
+				expect(batch?.current_amount).toEqual(60);
+			}
+
+			{
+				const batch = res.find((x) => x.id === SECOND_LIVER_BATCH_ID);
+				expect(batch?.current_amount).toEqual(200);
+			}
 		});
 
-		test('get Reduced Liver', async () => {
+		test('get Reduced Liver batches', async () => {
 			const res = await ingredient_production_service.getBatchesByIngredientId(REDUCED_LIVER_ID);
+			expect(res.length).toBe(1);
 			expect(res[0]?.current_amount).toEqual(8);
 		});
 	});
