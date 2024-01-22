@@ -9,7 +9,7 @@ import {
 	tr_product_batch_ingredient_batch
 } from '../db/schema';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
-import { ingredient_production_service, is_ok, logicError } from '$logic';
+import { ingredient_production_service, is_ok, logic_error } from '$logic';
 import moment from 'moment';
 
 class ProductService {
@@ -78,7 +78,7 @@ class ProductService {
 			.then(Boolean);
 
 		if (!product_exists) {
-			return logicError('producto no existe');
+			return logic_error('producto no existe');
 		}
 
 		return await this.db.transaction(async (tx) => {
@@ -99,7 +99,7 @@ class ProductService {
 				all_batches.push(batches);
 
 				if (batches.length !== batches_ids_with_same_ingredient.length) {
-					return logicError(
+					return logic_error(
 						'no se encontro alguon de los siguientes lotes por id ' +
 							JSON.stringify(batches_ids_with_same_ingredient)
 					);
@@ -107,14 +107,14 @@ class ProductService {
 
 				const are_same_ingredient = [...new Set(batches.map((x) => x.ingredient.id))].length === 1;
 				if (!are_same_ingredient) {
-					return logicError('los lotes agrupados no son del mismo ingrediente');
+					return logic_error('los lotes agrupados no son del mismo ingrediente');
 				}
 
 				const available_amount = batches.map((x) => x.stock).reduce((x, y) => x + y, 0);
 				const needed_amount = get_needed_amount(batches[0].ingredient.id);
 
 				if (available_amount < needed_amount) {
-					return logicError(
+					return logic_error(
 						'stock insuficiente de ingrediente ' +
 							batches[0].ingredient.name +
 							JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
@@ -127,7 +127,7 @@ class ProductService {
 					.reduce((x, y) => x + y, 0);
 
 				if (needed_amount < stock_without_last) {
-					return logicError(
+					return logic_error(
 						'se indicaron mas batches de los necesarios, ids' +
 							JSON.stringify(batches_ids_with_same_ingredient) +
 							JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })

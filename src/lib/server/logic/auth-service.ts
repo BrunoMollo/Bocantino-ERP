@@ -1,7 +1,7 @@
 import { eq } from 'drizzle-orm';
 import { db } from '../db';
 import { t_user } from '../db/schema';
-import { logicError } from '$logic';
+import { logic_error } from '$logic';
 import bcrypt from 'bcrypt';
 import { getFirst, getFirstIfPosible, type Prettify } from '$lib/utils';
 
@@ -46,12 +46,12 @@ export class AuthService {
 			.then(getFirstIfPosible);
 
 		if (!db_user) {
-			return logicError('Uusario no encontrado');
+			return logic_error('Uusario no encontrado');
 		}
 
 		const hash_match = await bcrypt.compare(recived_user.password, db_user.password_hash);
 		if (!hash_match) {
-			return logicError('constraseña incorrecta');
+			return logic_error('constraseña incorrecta');
 		}
 
 		const token = await this.signJWT({ id: db_user.id }, { exp: `${JWT_EXPIRES_IN}m` }); //TODO: invesigate
@@ -69,7 +69,7 @@ export class AuthService {
 			.then((x) => !!x);
 
 		if (user_already_exist) {
-			return logicError('nombre de usario ya existe');
+			return logic_error('nombre de usario ya existe');
 		}
 
 		const { id } = await db

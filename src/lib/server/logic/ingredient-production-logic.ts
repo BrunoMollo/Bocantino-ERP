@@ -1,6 +1,6 @@
 import { db, type Tx } from '$lib/server/db';
 import { getFirst, getFirstIfPosible } from '$lib/utils';
-import { ingredients_service, is_ok, logicError } from '$logic';
+import { ingredients_service, is_ok, logic_error } from '$logic';
 import {
 	t_ingredient,
 	t_ingredient_batch,
@@ -111,18 +111,18 @@ export async function startIngredientProduction(
 	const { ingedient_id, produced_amount } = ingredient;
 
 	if (produced_amount <= 0) {
-		return logicError('cantidad a producit invalida');
+		return logic_error('cantidad a producit invalida');
 	}
 	if (batches_ids.length < 1 || batches_ids.length > 2) {
-		return logicError('cantidad invalida de lotes');
+		return logic_error('cantidad invalida de lotes');
 	}
 	if ([...new Set(batches_ids)].length != batches_ids.length) {
-		return logicError('No se puede usar dos veces el mismo lote');
+		return logic_error('No se puede usar dos veces el mismo lote');
 	}
 
 	const recipe = await ingredients_service.getRecipie(ingedient_id);
 	if (!recipe) {
-		return logicError('El ingrediente no es derivado');
+		return logic_error('El ingrediente no es derivado');
 	}
 
 	const needed_amount = produced_amount * recipe.amount;
@@ -133,11 +133,11 @@ export async function startIngredientProduction(
 		for (let id of batches_ids) {
 			const batch = await getBatchById(id, tx);
 			if (!batch) {
-				return logicError(`El lote con id ${id} no existe`);
+				return logic_error(`El lote con id ${id} no existe`);
 			}
 
 			if (recipe.source.id != batch.ingredient.id) {
-				return logicError(
+				return logic_error(
 					`El ingrediente deriva de ${recipe.source.name} no de ${batch.ingredient.name}`
 				);
 			}
@@ -148,7 +148,7 @@ export async function startIngredientProduction(
 			.map((x) => x?.current_amount ?? 0)
 			.reduce((acc, prev) => acc + prev, 0);
 		if (total_available_source < needed_amount) {
-			return logicError(
+			return logic_error(
 				`Se requieren ${needed_amount}${batches[0]?.ingredient.unit} pero solo hay ${total_available_source}`
 			);
 		}
@@ -312,7 +312,7 @@ export async function closeProduction(obj: { batch_id: number; adjustment: numbe
 			)
 			.then(getFirstIfPosible);
 		if (!batch) {
-			return logicError('batch not found');
+			return logic_error('batch not found');
 		}
 
 		await tx
@@ -335,7 +335,7 @@ export async function deleteBatchById(id: number) {
 		.then((x) => Boolean(x.length));
 
 	if (!found) {
-		return logicError('lote no encontrado');
+		return logic_error('lote no encontrado');
 	}
 
 	await db
@@ -353,7 +353,7 @@ export async function deleteIngredientProduction(id: number) {
 		.from(t_ingredient_batch)
 		.where(and(eq(t_ingredient_batch.id, id), eq(t_ingredient_batch.state, 'IN_PRODUCTION')));
 	if (list.length !== 1) {
-		return logicError('batch is not in porduction');
+		return logic_error('batch is not in porduction');
 	}
 	return db.transaction(async (tx) => {
 		await tx
