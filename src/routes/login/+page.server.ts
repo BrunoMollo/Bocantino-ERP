@@ -1,10 +1,10 @@
 import { z } from 'zod';
 import type { Actions, PageServerLoad } from './$types';
 import { message, superValidate } from 'sveltekit-superforms/client';
-import { auth_service } from '$logic';
 import { redirect } from '@sveltejs/kit';
 import { JWT_EXPIRES_IN } from '$env/static/private';
 import { dev } from '$app/environment';
+import { auth_service } from '$logic/auth-service';
 
 const login_schema = z.object({
 	username: z.string().min(3).max(255),
