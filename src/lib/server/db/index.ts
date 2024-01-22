@@ -6,9 +6,6 @@ import ws from 'ws';
 import type { PgTransaction } from 'drizzle-orm/pg-core';
 import type { ExtractTablesWithRelations } from 'drizzle-orm';
 
-// const client = neon(NEON_DATABASE_URL);
-// export const db = drizzle(client, { schema, logger: dev });
-
 neonConfig.webSocketConstructor = ws; // <-- this is the key bit
 
 const pool = new Pool({ connectionString: NEON_DATABASE_URL });
