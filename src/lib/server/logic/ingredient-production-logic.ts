@@ -162,8 +162,8 @@ export async function startIngredientProduction(
 				ingredientId: ingedient_id,
 				numberOfBags: 1,
 				state: 'IN_PRODUCTION',
-				iva_tax: 0, //Produced dont have taxes
-				perceptions_tax: 0
+				iva_tax_percentage: 0, //Produced dont have taxes
+				perceptions_tax_amount: 0
 			})
 			.returning({ id: t_ingredient_batch.id })
 			.then(getFirst);

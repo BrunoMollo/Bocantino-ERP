@@ -14,8 +14,8 @@ export class IngredientPurchaseService {
 	registerBoughtIngrediets(data: {
 		supplierId: number;
 		document: TableInsert<typeof t_entry_document.$inferInsert, 'id'>;
-		perceptions_tax: number;
-		iva_tax: number;
+		perceptions_tax_amount: number;
+		iva_tax_percentage: number;
 		batches: {
 			ingredientId: number;
 			batch_code: string;
@@ -39,12 +39,12 @@ export class IngredientPurchaseService {
 				.returning({ entry_id: t_ingridient_entry.id })
 				.then(getFirst);
 
-			const { supplierId, iva_tax, perceptions_tax } = data;
+			const { supplierId, iva_tax_percentage, perceptions_tax_amount } = data;
 			const batchesId = [] as number[];
 			for (let batch of data.batches) {
 				const inserted = await tx
 					.insert(t_ingredient_batch)
-					.values({ ...batch, supplierId, state: 'AVAILABLE', entry_id, iva_tax, perceptions_tax })
+					.values({ ...batch, supplierId, state: 'AVAILABLE', entry_id, iva_tax_percentage, perceptions_tax_amount })
 					.returning({ id: t_ingredient_batch.id })
 					.then(getFirst);
 				batchesId.push(inserted.id);
