@@ -16,18 +16,20 @@ import {
 } from '$lib/server/db/schema';
 
 export async function __DELETE_ALL_DATABASE() {
-	await db.delete(tr_product_batch_ingredient_batch);
-	await db.delete(t_product_batch);
-	await db.delete(tr_ingredient_batch_ingredient_batch);
-	await db.delete(tr_ingredient_ingredient);
-	await db.delete(t_ingredient_batch);
-	await db.delete(t_ingridient_entry);
-	await db.delete(t_entry_document);
-	await db.delete(tr_supplier_ingredient);
-	await db.delete(t_supplier);
-	await db.delete(tr_ingredient_product);
-	await db.delete(t_product);
-	await db.delete(t_ingredient);
-	await db.delete(t_document_type);
+	await db.transaction(async (tx) => {
+		await tx.delete(tr_product_batch_ingredient_batch);
+		await tx.delete(t_product_batch);
+		await tx.delete(tr_ingredient_batch_ingredient_batch);
+		await tx.delete(tr_ingredient_ingredient);
+		await tx.delete(t_ingredient_batch);
+		await tx.delete(t_ingridient_entry);
+		await tx.delete(t_entry_document);
+		await tx.delete(tr_supplier_ingredient);
+		await tx.delete(t_supplier);
+		await tx.delete(tr_ingredient_product);
+		await tx.delete(t_product);
+		await tx.delete(t_ingredient);
+		await tx.delete(t_document_type);
+	});
 }
 

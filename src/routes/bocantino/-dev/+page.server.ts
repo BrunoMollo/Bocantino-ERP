@@ -1,19 +1,6 @@
 import { dev } from '$app/environment';
 import { db } from '$lib/server/db';
-import {
-	t_document_type,
-	t_entry_document,
-	t_ingredient,
-	t_ingredient_batch,
-	t_ingridient_entry,
-	t_product,
-	t_supplier,
-	t_user,
-	tr_ingredient_batch_ingredient_batch,
-	tr_ingredient_ingredient,
-	tr_ingredient_product,
-	tr_supplier_ingredient
-} from '$lib/server/db/schema';
+import { t_document_type } from '$lib/server/db/schema';
 import {
 	auth_service,
 	ingredient_production_service,
