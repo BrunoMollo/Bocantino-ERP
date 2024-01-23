@@ -9,7 +9,7 @@ import { purchases_service } from '$logic/ingredient-purchase-service';
 import { suppliers_service } from '$logic/suppliers-service';
 
 const boughBatchSchema = z.object({
-	supplierId: z.coerce.number().int().min(1, 'Requerido'),
+	supplier_id: z.coerce.number().int().min(1, 'Requerido'),
 	idDocumentType: z.coerce.number().int().min(1, ''),
 	invoiceNumber: z.string().min(4, 'Requerido').max(255),
 	issueDate: z.string().refine(isValidDateBackend).transform(parseStringToDate),
@@ -17,12 +17,12 @@ const boughBatchSchema = z.object({
 	batches: z
 		.object({
 			batch_code: z.string().min(2).max(256),
-			initialAmount: z.coerce.number().positive(),
-			productionDate: z.string().refine(isValidDateBackend).transform(parseStringToDate),
+			initial_amount: z.coerce.number().positive(),
+			production_date: z.string().refine(isValidDateBackend).transform(parseStringToDate),
 			expiration_date: z.string().refine(isValidDateBackend).transform(parseStringToDate),
-			ingredientId: z.coerce.number().int().min(1),
+			ingredient_id: z.coerce.number().int().min(1),
 			cost: z.coerce.number().positive(),
-			numberOfBags: z.coerce.number().positive()
+			number_of_bags: z.coerce.number().positive()
 		})
 		.array()
 		.nonempty()
@@ -42,11 +42,11 @@ export const actions: Actions = {
 			return { form };
 		}
 
-		const { batches, supplierId } = form.data;
+		const { batches, supplier_id } = form.data;
 		await purchases_service.registerBoughtIngrediets({
 			perceptions_tax_amount: 10, //TODO: Change
 			iva_tax_percentage: 21, //TODO: Change
-			supplierId,
+			supplier_id,
 			batches,
 			document: {
 				number: form.data.invoiceNumber,

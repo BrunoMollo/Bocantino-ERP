@@ -68,7 +68,7 @@
 		doc.setLineWidth(0.75);
 		doc.line(10, 13, 200, 13);
 		doc.text(
-			'Cantidad a producir:' + item.initialAmount + ' de ' + item.ingredient.name + '.',
+			'Cantidad a producir:' + item.initial_amount + ' de ' + item.ingredient.name + '.',
 			10,
 			23
 		);
@@ -111,7 +111,7 @@
 			<tr out:fade>
 				<td style="padding-left: 16px;">{item.id}</td>
 				<td style="padding-left: 16px;">{item.ingredient.name}</td>
-				<td style="padding-left: 16px;">{item.initialAmount} {item.ingredient.unit}</td>
+				<td style="padding-left: 16px;">{item.initial_amount} {item.ingredient.unit}</td>
 				<td style="padding-left: 16px;" class="gap-5 flex">
 					<button on:click={() => show(i)}>ver</button>
 					<button class="rounded-full bg-white px-3 py-2" on:click={generarPDF(item)}
@@ -134,7 +134,7 @@
 		<div class="px-10">
 			<h2 class="h2 text-primary-200">Solicitud pendiente {current?.id}</h2>
 			<p>
-				Cantidad producida: {current?.initialAmount}
+				Cantidad producida: {current?.initial_amount}
 				{current?.ingredient?.unit} de {current?.ingredient.name}.
 			</p>
 			{#each current?.used_batches ?? [] as used_batch}

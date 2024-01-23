@@ -35,7 +35,7 @@ class ProductService {
 
 			for (const { id, amount } of ingredients) {
 				await tx.insert(tr_ingredient_product).values({
-					ingredientId: id,
+					ingredient_id: id,
 					productId: inserted.id,
 					amount
 				});
@@ -56,7 +56,7 @@ class ProductService {
 			)
 			.from(tr_ingredient_product)
 			.where(eq(tr_ingredient_product.productId, product_id))
-			.innerJoin(t_ingredient, eq(tr_ingredient_product.ingredientId, t_ingredient.id));
+			.innerJoin(t_ingredient, eq(tr_ingredient_product.ingredient_id, t_ingredient.id));
 	}
 
 	async startProduction(obj: {

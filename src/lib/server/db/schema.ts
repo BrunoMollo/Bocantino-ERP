@@ -17,14 +17,14 @@ export const t_ingredient = pgTable('ingredient', {
 	id: serial('id').primaryKey(),
 	name: text('name').notNull(),
 	unit: text('unit').notNull().$type<'gr' | 'Kg'>(),
-	reorderPoint: real('reorder_point').notNull()
+	reorder_point: real('reorder_point').notNull()
 });
 export const tr_ingredient_ingredient = pgTable('r_ingredient_ingredient', {
 	amount: real('amount').notNull(),
-	derivedId: integer('derived_id')
+	derived_id: integer('derived_id')
 		.notNull()
 		.references(() => t_ingredient.id),
-	sourceId: integer('source_id')
+	source_id: integer('source_id')
 		.notNull()
 		.references(() => t_ingredient.id)
 });
@@ -45,7 +45,7 @@ export const t_product = pgTable('product', {
 export const tr_ingredient_product = pgTable(
 	'r_ingredient_product',
 	{
-		ingredientId: integer('ingredient_id')
+		ingredient_id: integer('ingredient_id')
 			.notNull()
 			.references(() => t_ingredient.id),
 		productId: integer('product_id')
@@ -53,8 +53,8 @@ export const tr_ingredient_product = pgTable(
 			.references(() => t_product.id),
 		amount: real('amount').notNull()
 	},
-	({ ingredientId, productId }) => ({
-		pk: primaryKey({ columns: [ingredientId, productId] })
+	({ ingredient_id, productId }) => ({
+		pk: primaryKey({ columns: [ingredient_id, productId] })
 	})
 );
 //-------------------------------------------------------------------------------------////
@@ -75,15 +75,15 @@ export const t_supplier = pgTable('supplier', {
 export const tr_supplier_ingredient = pgTable(
 	'r_supplier_ingredient',
 	{
-		supplierId: integer('supplier_id')
+		supplier_id: integer('supplier_id')
 			.notNull()
 			.references(() => t_supplier.id),
-		ingredientId: integer('ingredient_id')
+		ingredient_id: integer('ingredient_id')
 			.notNull()
 			.references(() => t_ingredient.id)
 	},
-	({ supplierId, ingredientId }) => ({
-		pk: primaryKey({ columns: [supplierId, ingredientId] })
+	({ supplier_id, ingredient_id }) => ({
+		pk: primaryKey({ columns: [supplier_id, ingredient_id] })
 	})
 );
 //-------------------------------------------------------------------------------------////
@@ -97,18 +97,18 @@ export const t_ingredient_batch = pgTable(
 	{
 		id: serial('id').primaryKey(),
 		batch_code: text('supplier_bag_code').notNull(), //may or may not be provided by the supplier
-		initialAmount: real('full_amount').notNull(),
-		productionDate: date('production_date', { mode: 'date' }), // is null when is IN_PRODUCTION
-		ingredientId: integer('ingredient_id')
+		initial_amount: real('full_amount').notNull(),
+		production_date: date('production_date', { mode: 'date' }), // is null when is IN_PRODUCTION
+		ingredient_id: integer('ingredient_id')
 			.notNull()
 			.references(() => t_ingredient.id),
-		numberOfBags: integer('amount_of_bags').notNull(),
+		number_of_bags: integer('amount_of_bags').notNull(),
 		state: text('state').notNull().$type<'IN_PRODUCTION' | 'AVAILABLE' | 'EMPTY'>(),
 		registration_date: timestamp('registration_date', { mode: 'date' })
 			.notNull()
 			.$defaultFn(() => new Date()),
 		//external only
-		supplierId: integer('supplier_id'),
+		supplier_id: integer('supplier_id'),
 		expiration_date: date('expiration_date', { mode: 'date' }),
 		cost: integer('cost'),
 		currency_alpha_code: varchar('currency_alpha_code', { length: 4 })
@@ -120,10 +120,10 @@ export const t_ingredient_batch = pgTable(
 		//internal only
 		adjustment: real('adjustment')
 	},
-	({ supplierId, ingredientId }) => ({
+	({ supplier_id, ingredient_id }) => ({
 		unq: foreignKey({
-			columns: [supplierId, ingredientId],
-			foreignColumns: [tr_supplier_ingredient.supplierId, tr_supplier_ingredient.ingredientId]
+			columns: [supplier_id, ingredient_id],
+			foreignColumns: [tr_supplier_ingredient.supplier_id, tr_supplier_ingredient.ingredient_id]
 		})
 	})
 );
@@ -157,12 +157,12 @@ export const t_ingridient_entry = pgTable('ingridient_entry', {
 	creation_date: timestamp('creation_date', { mode: 'date' })
 		.notNull()
 		.$defaultFn(() => new Date()),
-	totalCost: integer('total_cost'), // is calulated later, so can be null
+	total_cost: integer('total_cost'), // is calulated later, so can be null
 	currency_alpha_code: varchar('currency_alpha_code', { length: 4 })
 		.notNull()
 		.$defaultFn(() => 'ARG'),
-	documentId: integer('document_id').references(() => t_entry_document.id),
-	supplierId: integer('supplier_id')
+	document_id: integer('document_id').references(() => t_entry_document.id),
+	supplier_id: integer('supplier_id')
 		.notNull()
 		.references(() => t_supplier.id)
 });

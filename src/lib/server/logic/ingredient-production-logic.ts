@@ -12,7 +12,7 @@ import { sq_stock } from './_ingredient-stock';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
 import { alias } from 'drizzle-orm/pg-core';
 
-export async function getBatchesByIngredientId(id: number) {
+export async function getBatchesByingredient_id(id: number) {
 	return await db
 		.with(sq_stock)
 		.select({
@@ -23,17 +23,17 @@ export async function getBatchesByIngredientId(id: number) {
 			}
 		})
 		.from(t_ingredient_batch)
-		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
+		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredient_id))
 		.leftJoin(sq_stock, eq(sq_stock.batch_id, t_ingredient_batch.id))
 		.where(
 			and(
-				eq(t_ingredient_batch.ingredientId, id),
+				eq(t_ingredient_batch.ingredient_id, id),
 				eq(t_ingredient_batch.state, 'AVAILABLE'),
 				ne(sq_stock.currently_available, 0)
 			)
 		)
 		.orderBy(
-			desc(sql`${t_ingredient_batch.initialAmount} - ${sq_stock.currently_available}`),
+			desc(sql`${t_ingredient_batch.initial_amount} - ${sq_stock.currently_available}`),
 			asc(t_ingredient_batch.expiration_date)
 		) //A probar si anda esto che
 		.then(copy_column({ from: 'stock', field: 'current_amount', to: 'batch' }))
@@ -55,7 +55,7 @@ export async function getBatchById(id: number, tx?: Tx) {
 			stock: { current_amount: sq_stock.currently_available }
 		})
 		.from(t_ingredient_batch)
-		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
+		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredient_id))
 		.leftJoin(
 			sq_stock,
 			and(
@@ -86,7 +86,7 @@ export async function getBatchesByIds(ids: number[], tx?: Tx) {
 			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit'])
 		})
 		.from(t_ingredient_batch)
-		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
+		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredient_id))
 		.leftJoin(
 			sq_stock,
 			and(
@@ -157,10 +157,10 @@ export async function startIngredientProduction(
 			.insert(t_ingredient_batch)
 			.values({
 				batch_code: 'BOCANTINO-' + (ingedient_id + Date.now()).toString(),
-				initialAmount: produced_amount,
-				productionDate: null, // is asigned when production ends
-				ingredientId: ingedient_id,
-				numberOfBags: 1,
+				initial_amount: produced_amount,
+				production_date: null, // is asigned when production ends
+				ingredient_id: ingedient_id,
+				number_of_bags: 1,
 				state: 'IN_PRODUCTION',
 				iva_tax_percentage: 0, //Produced dont have taxes
 				perceptions_tax_amount: 0
@@ -212,10 +212,10 @@ export async function getBatchesAvailable({ page }: { page: number }) {
 						t_ingredient_batch,
 						'id',
 						'batch_code',
-						'productionDate',
+						'production_date',
 						'expiration_date',
 						'registration_date',
-						'ingredientId'
+						'ingredient_id'
 					)
 					.aliased(sq_stock, 'currently_available', 'stock')
 					.build()
@@ -235,7 +235,7 @@ export async function getBatchesAvailable({ page }: { page: number }) {
 			ingredient_batch: pick_columns(limited_ingredient_batch, [
 				'id',
 				'batch_code',
-				'productionDate',
+				'production_date',
 				'expiration_date',
 				'stock'
 			]),
@@ -244,7 +244,7 @@ export async function getBatchesAvailable({ page }: { page: number }) {
 			tr_ingredient_batch_ingredient_batch
 		})
 		.from(limited_ingredient_batch)
-		.innerJoin(t_ingredient, eq(t_ingredient.id, limited_ingredient_batch.ingredientId))
+		.innerJoin(t_ingredient, eq(t_ingredient.id, limited_ingredient_batch.ingredient_id))
 		.leftJoin(
 			tr_ingredient_batch_ingredient_batch,
 			eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, limited_ingredient_batch.id)
@@ -271,8 +271,8 @@ export async function getBatchesInProduction() {
 			t_ingredient_batch: pick_columns(t_ingredient_batch, [
 				'id',
 				'batch_code',
-				'initialAmount',
-				'productionDate',
+				'initial_amount',
+				'production_date',
 				'expiration_date'
 			]),
 			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit']),
@@ -283,7 +283,7 @@ export async function getBatchesInProduction() {
 				.build()
 		})
 		.from(t_ingredient_batch)
-		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
+		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredient_id))
 		.innerJoin(
 			tr_ingredient_batch_ingredient_batch,
 			eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, t_ingredient_batch.id)
@@ -292,7 +292,7 @@ export async function getBatchesInProduction() {
 			ta_used_batch,
 			eq(tr_ingredient_batch_ingredient_batch.used_batch_id, ta_used_batch.id)
 		)
-		.innerJoin(ta_used_ingredient, eq(ta_used_batch.ingredientId, ta_used_ingredient.id))
+		.innerJoin(ta_used_ingredient, eq(ta_used_batch.ingredient_id, ta_used_ingredient.id))
 		.where(eq(t_ingredient_batch.state, 'IN_PRODUCTION'))
 		.then(
 			drizzle_map({
@@ -320,7 +320,7 @@ export async function closeProduction(obj: { batch_id: number; adjustment: numbe
 		await tx
 			.update(t_ingredient_batch)
 			.set({
-				productionDate: new Date(),
+				production_date: new Date(),
 				state: 'AVAILABLE',
 				adjustment
 			})

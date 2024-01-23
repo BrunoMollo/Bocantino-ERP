@@ -39,7 +39,7 @@ beforeAll(async () => {
 		.add({
 			name: 'Liver',
 			unit: 'Kg',
-			reorderPoint: 100
+			reorder_point: 100
 		})
 		.then((x) => x.id);
 
@@ -47,7 +47,7 @@ beforeAll(async () => {
 		.add({
 			name: 'Banana',
 			unit: 'Kg',
-			reorderPoint: 120
+			reorder_point: 120
 		})
 		.then((x) => x.id);
 
@@ -64,7 +64,7 @@ beforeAll(async () => {
 			{
 				name: 'Liver reduced',
 				unit: 'Kg',
-				reorderPoint: 80
+				reorder_point: 80
 			},
 			{
 				id: LIVER_ID,
@@ -82,7 +82,7 @@ beforeEach(async () => {
 		.registerBoughtIngrediets({
 			perceptions_tax_amount: 10,
 			iva_tax_percentage: 21,
-			supplierId: SUPPLIER_ID,
+			supplier_id: SUPPLIER_ID,
 			document: {
 				number: '1234',
 				typeId: INVOICE_TYPE.id,
@@ -91,12 +91,12 @@ beforeEach(async () => {
 			},
 			batches: [
 				{
-					ingredientId: LIVER_ID,
+					ingredient_id: LIVER_ID,
 					batch_code: 'SOME CODE',
-					initialAmount: LIVER_BATCH_INTIAL_AMOUNT,
-					numberOfBags: 10,
+					initial_amount: LIVER_BATCH_INTIAL_AMOUNT,
+					number_of_bags: 10,
 					cost: 1000,
-					productionDate: new Date(),
+					production_date: new Date(),
 					expiration_date: new Date()
 				}
 			]
@@ -107,7 +107,7 @@ beforeEach(async () => {
 		.registerBoughtIngrediets({
 			perceptions_tax_amount: 10,
 			iva_tax_percentage: 21,
-			supplierId: SUPPLIER_ID,
+			supplier_id: SUPPLIER_ID,
 			document: {
 				number: '1234',
 				typeId: INVOICE_TYPE.id,
@@ -116,12 +116,12 @@ beforeEach(async () => {
 			},
 			batches: [
 				{
-					ingredientId: LIVER_ID,
+					ingredient_id: LIVER_ID,
 					batch_code: 'SOME OTHER CODE',
-					initialAmount: SECOND_LIVER_BATCH_INITIAL_AMOUNT,
-					numberOfBags: 12,
+					initial_amount: SECOND_LIVER_BATCH_INITIAL_AMOUNT,
+					number_of_bags: 12,
 					cost: 1000,
-					productionDate: new Date(),
+					production_date: new Date(),
 					expiration_date: new Date()
 				}
 			]
@@ -132,7 +132,7 @@ beforeEach(async () => {
 		.registerBoughtIngrediets({
 			perceptions_tax_amount: 10,
 			iva_tax_percentage: 21,
-			supplierId: SUPPLIER_ID,
+			supplier_id: SUPPLIER_ID,
 			document: {
 				number: '1234',
 				typeId: INVOICE_TYPE.id,
@@ -141,12 +141,12 @@ beforeEach(async () => {
 			},
 			batches: [
 				{
-					ingredientId: BANANA_ID,
+					ingredient_id: BANANA_ID,
 					batch_code: 'SOME OTHER CODE FOR BANANA',
-					initialAmount: 20,
-					numberOfBags: 1,
+					initial_amount: 20,
+					number_of_bags: 1,
 					cost: 1000,
-					productionDate: new Date(),
+					production_date: new Date(),
 					expiration_date: new Date()
 				}
 			]
@@ -168,8 +168,8 @@ describe.sequential('ingredient produciton start', () => {
 
 		const rel_sup_ingred = await db.select().from(tr_supplier_ingredient);
 		expect(rel_sup_ingred.length).toBe(2);
-		expect(rel_sup_ingred[0].supplierId).toBe(SUPPLIER_ID);
-		expect(rel_sup_ingred[0].ingredientId).toBe(LIVER_ID);
+		expect(rel_sup_ingred[0].supplier_id).toBe(SUPPLIER_ID);
+		expect(rel_sup_ingred[0].ingredient_id).toBe(LIVER_ID);
 
 		const batches = await db.select().from(t_ingredient_batch);
 		expect(batches.length).toBe(3);
@@ -399,13 +399,13 @@ describe.sequential('ingredient produciton start', () => {
 		expect(inserted).toBeTruthy();
 		expect(inserted.id).toBe(id);
 		expect(inserted.batch_code).toBeTruthy();
-		expect(inserted.initialAmount).toBe(110);
-		expect(inserted.productionDate).toEqual(null);
+		expect(inserted.initial_amount).toBe(110);
+		expect(inserted.production_date).toEqual(null);
 		expect(inserted.expiration_date).toEqual(null);
-		expect(inserted.ingredientId).toBe(REDUCED_LIVER_ID);
-		expect(inserted.numberOfBags).toBe(1);
+		expect(inserted.ingredient_id).toBe(REDUCED_LIVER_ID);
+		expect(inserted.number_of_bags).toBe(1);
 		expect(inserted.state).toBe('IN_PRODUCTION');
-		expect(inserted.supplierId).toBe(null);
+		expect(inserted.supplier_id).toBe(null);
 		expect(inserted.cost).toBe(null);
 		expect(inserted.currency_alpha_code).toBe('ARG');
 		expect(inserted.adjustment).toBe(null);

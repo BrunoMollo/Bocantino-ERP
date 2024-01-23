@@ -20,7 +20,7 @@ beforeAll(async () => {
 	await __DELETE_ALL_DATABASE();
 	await db.insert(t_document_type).values(INVOICE_TYPE);
 
-	BANANA = await ingredients_service.add({ name: 'Banana', unit: 'Kg', reorderPoint: 20 });
+	BANANA = await ingredients_service.add({ name: 'Banana', unit: 'Kg', reorder_point: 20 });
 	JUAN = await suppliers_service.add({
 		name: 'Juan Provide',
 		email: 'prov@prov.com',
@@ -38,7 +38,7 @@ describe.sequential('buy ingredients', async () => {
 	let VAILD_INPUT_1B: Parameters<typeof purchases_service.registerBoughtIngrediets>[0];
 	beforeAll(() => {
 		VAILD_INPUT_1B = {
-			supplierId: JUAN.id,
+			supplier_id: JUAN.id,
 			perceptions_tax_amount: 10,
 			iva_tax_percentage: 21,
 			document: {
@@ -50,12 +50,12 @@ describe.sequential('buy ingredients', async () => {
 			batches: [
 				{
 					batch_code: 'ABC123',
-					numberOfBags: 100,
-					initialAmount: 500,
-					productionDate: new Date(2000, 1, 1), // Example timestamp for January 1, 2000
+					number_of_bags: 100,
+					initial_amount: 500,
+					production_date: new Date(2000, 1, 1), // Example timestamp for January 1, 2000
 					expiration_date: new Date(2000, 1, 20), // Example timestamp for January 20, 2000
 					cost: 5000,
-					ingredientId: BANANA.id
+					ingredient_id: BANANA.id
 				}
 			]
 		};
@@ -84,12 +84,12 @@ describe.sequential('buy ingredients', async () => {
 			expect(entryList[0]).toBeTruthy();
 			expect(entryList[0].id).toBeTruthy();
 			expect(entryList[0].currency_alpha_code).toBe('ARG');
-			expect(entryList[0].totalCost).toBe(null);
-			expect(entryList[0].documentId).toBeTruthy();
+			expect(entryList[0].total_cost).toBe(null);
+			expect(entryList[0].document_id).toBeTruthy();
 			const referencedDoc = await db
 				.select()
 				.from(t_entry_document)
-				.where(eq(t_entry_document.id, entryList[0].documentId ?? -1));
+				.where(eq(t_entry_document.id, entryList[0].document_id ?? -1));
 			expect(referencedDoc.length).toBe(1);
 			expect(referencedDoc[0].typeId).toBe(INVOICE_TYPE.id);
 		});
@@ -99,18 +99,18 @@ describe.sequential('buy ingredients', async () => {
 			const list = await db.select().from(t_ingredient_batch);
 			expect(list.length).toBe(VAILD_INPUT_1B.batches.length);
 			expect(list[0].id).toBeTruthy();
-			expect(list[0].ingredientId).toBe(BANANA.id);
-			expect(list[0].supplierId).toBe(JUAN.id);
+			expect(list[0].ingredient_id).toBe(BANANA.id);
+			expect(list[0].supplier_id).toBe(JUAN.id);
 			expect(list[0].currency_alpha_code).toBe('ARG');
 			expect(list[0].cost).toBe(VAILD_INPUT_1B.batches[0].cost);
 			expect(list[0].batch_code).toBe(VAILD_INPUT_1B.batches[0].batch_code);
-			expect(list[0].numberOfBags).toBe(VAILD_INPUT_1B.batches[0].numberOfBags);
-			expect(list[0].initialAmount).toBe(VAILD_INPUT_1B.batches[0].initialAmount);
+			expect(list[0].number_of_bags).toBe(VAILD_INPUT_1B.batches[0].number_of_bags);
+			expect(list[0].initial_amount).toBe(VAILD_INPUT_1B.batches[0].initial_amount);
 			expect(list[0].expiration_date?.toISOString().split('T')[0]).toBe(
 				VAILD_INPUT_1B.batches[0].expiration_date.toISOString().split('T')[0]
 			);
-			expect(list[0].productionDate?.toISOString().split('T')[0]).toBe(
-				VAILD_INPUT_1B.batches[0].productionDate.toISOString().split('T')[0]
+			expect(list[0].production_date?.toISOString().split('T')[0]).toBe(
+				VAILD_INPUT_1B.batches[0].production_date.toISOString().split('T')[0]
 			);
 
 			expect(list[0].iva_tax_percentage).toBe(21);
@@ -126,7 +126,7 @@ describe.sequential('buy ingredients', async () => {
 			VALID_INPUT_2B = {
 				perceptions_tax_amount: 10,
 				iva_tax_percentage: 21,
-				supplierId: JUAN.id,
+				supplier_id: JUAN.id,
 				document: {
 					typeId: INVOICE_TYPE.id,
 					number: 'FACTURA-12345',
@@ -136,22 +136,22 @@ describe.sequential('buy ingredients', async () => {
 				batches: [
 					{
 						batch_code: 'ABC123',
-						numberOfBags: 100,
-						initialAmount: 500,
-						productionDate: new Date(2000, 1, 1), // Example timestamp for January 1, 2000
+						number_of_bags: 100,
+						initial_amount: 500,
+						production_date: new Date(2000, 1, 1), // Example timestamp for January 1, 2000
 						expiration_date: new Date(2000, 1, 20), // Example timestamp for January 20, 2000
 						cost: 5000,
-						ingredientId: BANANA.id
+						ingredient_id: BANANA.id
 					},
 
 					{
 						batch_code: 'XYZ123',
-						numberOfBags: 200,
-						initialAmount: 530,
-						productionDate: new Date(2000, 1, 1), // Example timestamp for January 1, 2000
+						number_of_bags: 200,
+						initial_amount: 530,
+						production_date: new Date(2000, 1, 1), // Example timestamp for January 1, 2000
 						expiration_date: new Date(2000, 1, 20), // Example timestamp for January 20, 2000
 						cost: 5000,
-						ingredientId: BANANA.id
+						ingredient_id: BANANA.id
 					}
 				]
 			};
@@ -179,12 +179,12 @@ describe.sequential('buy ingredients', async () => {
 			expect(entryList[0]).toBeTruthy();
 			expect(entryList[0].id).toBeTruthy();
 			expect(entryList[0].currency_alpha_code).toBe('ARG');
-			expect(entryList[0].totalCost).toBe(null);
-			expect(entryList[0].documentId).toBeTruthy();
+			expect(entryList[0].total_cost).toBe(null);
+			expect(entryList[0].document_id).toBeTruthy();
 			const referencedDoc = await db
 				.select()
 				.from(t_entry_document)
-				.where(eq(t_entry_document.id, entryList[0].documentId ?? -1));
+				.where(eq(t_entry_document.id, entryList[0].document_id ?? -1));
 			expect(referencedDoc.length).toBe(1);
 			expect(referencedDoc[0].typeId).toBe(INVOICE_TYPE.id);
 		});
@@ -195,21 +195,21 @@ describe.sequential('buy ingredients', async () => {
 			expect(list.length).toBe(VALID_INPUT_2B.batches.length);
 			for (let i of [0, 1]) {
 				expect(list[i].id).toBeTruthy();
-				expect(list[i].ingredientId).toBe(BANANA.id);
-				expect(list[i].supplierId).toBe(JUAN.id);
+				expect(list[i].ingredient_id).toBe(BANANA.id);
+				expect(list[i].supplier_id).toBe(JUAN.id);
 				expect(list[i].currency_alpha_code).toBe('ARG');
 				expect(list[i].cost).toBe(VALID_INPUT_2B.batches[i].cost);
 				expect(list[i].batch_code).toBe(VALID_INPUT_2B.batches[i].batch_code);
-				expect(list[i].numberOfBags).toBe(VALID_INPUT_2B.batches[i].numberOfBags);
-				expect(list[i].initialAmount).toBe(VALID_INPUT_2B.batches[i].initialAmount);
+				expect(list[i].number_of_bags).toBe(VALID_INPUT_2B.batches[i].number_of_bags);
+				expect(list[i].initial_amount).toBe(VALID_INPUT_2B.batches[i].initial_amount);
 				expect(list[i].expiration_date?.toISOString().split('T')[0]).toBe(
 					VALID_INPUT_2B.batches[i].expiration_date.toISOString().split('T')[0]
 				);
 				expect(list[i].expiration_date?.toISOString().split('T')[0]).toBe(
 					VALID_INPUT_2B.batches[i].expiration_date.toISOString().split('T')[0]
 				);
-				expect(list[i].productionDate?.toISOString().split('T')[0]).toBe(
-					VALID_INPUT_2B.batches[i].productionDate.toISOString().split('T')[0]
+				expect(list[i].production_date?.toISOString().split('T')[0]).toBe(
+					VALID_INPUT_2B.batches[i].production_date.toISOString().split('T')[0]
 				);
 				expect(list[i].adjustment).toBe(null);
 				expect(list[i].entry_id).toBeTruthy();

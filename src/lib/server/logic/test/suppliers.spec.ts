@@ -25,14 +25,14 @@ describe.sequential('supplier crud', () => {
 			.add({
 				name: 'Chicken',
 				unit: 'Kg',
-				reorderPoint: 200
+				reorder_point: 200
 			})
 			.then((x) => x.id);
 		FLOUR_ID = await ingredients_service
-			.add({ name: 'flour', unit: 'Kg', reorderPoint: 200 })
+			.add({ name: 'flour', unit: 'Kg', reorder_point: 200 })
 			.then((x) => x.id);
 		POTATOE_ID = await ingredients_service
-			.add({ name: 'Potato', unit: 'Kg', reorderPoint: 300 })
+			.add({ name: 'Potato', unit: 'Kg', reorder_point: 300 })
 			.then((x) => x.id);
 	});
 	describe.sequential('add', () => {
@@ -68,8 +68,8 @@ describe.sequential('supplier crud', () => {
 
 			const list_relations = await db.select().from(tr_supplier_ingredient);
 			expect(list_relations.length).toBe(1);
-			expect(list_relations[0].supplierId).toBe(list_suppliers[0].id);
-			expect(list_relations[0].ingredientId).toBe(data.ingredientsIds[0]);
+			expect(list_relations[0].supplier_id).toBe(list_suppliers[0].id);
+			expect(list_relations[0].ingredient_id).toBe(data.ingredientsIds[0]);
 		});
 
 		test('valid supplier with two ingredietns', async () => {
@@ -88,8 +88,8 @@ describe.sequential('supplier crud', () => {
 			const list_relations = await db.select().from(tr_supplier_ingredient);
 			expect(list_relations.length).toBe(2);
 			for (let i of [0, 1]) {
-				expect(list_relations[i].supplierId).toBe(list_suppliers[0].id);
-				expect(list_relations[i].ingredientId).toBe(data.ingredientsIds[i]);
+				expect(list_relations[i].supplier_id).toBe(list_suppliers[0].id);
+				expect(list_relations[i].ingredient_id).toBe(data.ingredientsIds[i]);
 			}
 		});
 

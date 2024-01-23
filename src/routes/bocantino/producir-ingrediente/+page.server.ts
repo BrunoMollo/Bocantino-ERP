@@ -22,11 +22,11 @@ export const load: PageServerLoad = async () => {
 			id: t_ingredient.id,
 			name: t_ingredient.name,
 			unit: t_ingredient.unit,
-			derivedId: tr_ingredient_ingredient.derivedId,
+			derived_id: tr_ingredient_ingredient.derived_id,
 			amount: tr_ingredient_ingredient.amount
 		})
 		.from(tr_ingredient_ingredient)
-		.innerJoin(t_ingredient, eq(t_ingredient.id, tr_ingredient_ingredient.derivedId));
+		.innerJoin(t_ingredient, eq(t_ingredient.id, tr_ingredient_ingredient.derived_id));
 	return { form, ingredients };
 };
 

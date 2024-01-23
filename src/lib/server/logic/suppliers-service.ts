@@ -18,8 +18,8 @@ class SuppliersService {
 				.values({ name, email })
 				.returning({ generatedId: t_supplier.id })
 				.then(getFirst);
-			for (const ingredientId of ingredientsIds) {
-				await tx.insert(tr_supplier_ingredient).values({ supplierId: generatedId, ingredientId });
+			for (const ingredient_id of ingredientsIds) {
+				await tx.insert(tr_supplier_ingredient).values({ supplier_id: generatedId, ingredient_id });
 			}
 			return generatedId;
 		});
@@ -31,8 +31,8 @@ class SuppliersService {
 		return await db
 			.select({ t_supplier, ingredients: pick_columns(t_ingredient, ['id', 'name', 'unit']) })
 			.from(t_supplier)
-			.leftJoin(tr_supplier_ingredient, eq(tr_supplier_ingredient.supplierId, t_supplier.id))
-			.leftJoin(t_ingredient, eq(tr_supplier_ingredient.ingredientId, t_ingredient.id))
+			.leftJoin(tr_supplier_ingredient, eq(tr_supplier_ingredient.supplier_id, t_supplier.id))
+			.leftJoin(t_ingredient, eq(tr_supplier_ingredient.ingredient_id, t_ingredient.id))
 			.then(drizzle_map({ one: 't_supplier', with_one: [], with_many: ['ingredients'] }));
 	}
 }

@@ -17,7 +17,7 @@ export const load: PageServerLoad = async () => {
 		})
 		.from(t_product)
 		.leftJoin(tr_ingredient_product, eq(tr_ingredient_product.productId, t_product.id))
-		.leftJoin(t_ingredient, eq(tr_ingredient_product.ingredientId, t_ingredient.id))
+		.leftJoin(t_ingredient, eq(tr_ingredient_product.ingredient_id, t_ingredient.id))
 		.then(drizzle_map({ one: 'product', with_one: [], with_many: ['ingredients'] }));
 
 	return { products };

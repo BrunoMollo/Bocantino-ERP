@@ -13,7 +13,7 @@ export async function getAllWithStock() {
 	return await db
 		.with(sq_stock)
 		.select({
-			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit', 'reorderPoint']),
+			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit', 'reorder_point']),
 			stock: {
 				stock: sql<number>`COALESCE(sum(${sq_stock.currently_available}), 0)`
 			}
@@ -22,20 +22,20 @@ export async function getAllWithStock() {
 		.leftJoin(
 			t_ingredient_batch,
 			and(
-				eq(t_ingredient_batch.ingredientId, t_ingredient.id),
+				eq(t_ingredient_batch.ingredient_id, t_ingredient.id),
 				eq(t_ingredient_batch.state, 'AVAILABLE')
 			)
 		)
 		.leftJoin(sq_stock, eq(sq_stock.batch_id, t_ingredient_batch.id))
 		.groupBy(t_ingredient.id, sq_stock.currently_available)
-		.orderBy(asc(sql`${sq_stock.currently_available}-${t_ingredient.reorderPoint}`))
+		.orderBy(asc(sql`${sq_stock.currently_available}-${t_ingredient.reorder_point}`))
 		.then(copy_column({ from: 'stock', field: 'stock', to: 'ingredient' }))
 		.then(drizzle_map({ one: 'ingredient', with_one: [], with_many: [] }));
 }
 
 export async function deletebyID(id: number) {
 	return await db.transaction(async (tx) => {
-		await tx.delete(tr_ingredient_ingredient).where(eq(tr_ingredient_ingredient.derivedId, id));
+		await tx.delete(tr_ingredient_ingredient).where(eq(tr_ingredient_ingredient.derived_id, id));
 		await tx.delete(t_ingredient).where(eq(t_ingredient.id, id));
 	});
 }
@@ -64,8 +64,8 @@ export async function add(
 
 		if (source) {
 			await tx.insert(tr_ingredient_ingredient).values({
-				derivedId: insertedIngredient.id,
-				sourceId: source.id,
+				derived_id: insertedIngredient.id,
+				source_id: source.id,
 				amount: source.amount
 			});
 		}
@@ -81,28 +81,28 @@ export async function edit(
 	return await db.transaction(async (tx) => {
 		await tx
 			.update(t_ingredient)
-			.set({ name: ingredient.name, unit: ingredient.unit, reorderPoint: ingredient.reorderPoint })
+			.set({ name: ingredient.name, unit: ingredient.unit, reorder_point: ingredient.reorder_point })
 			.where(eq(t_ingredient.id, id));
 		if (source) {
 			const relation = await tx
 				.select()
 				.from(tr_ingredient_ingredient)
-				.where(eq(tr_ingredient_ingredient.derivedId, id))
+				.where(eq(tr_ingredient_ingredient.derived_id, id))
 				.then(getFirstIfPosible);
 			if (relation) {
 				await tx.update(tr_ingredient_ingredient).set({
 					amount: source.amount,
-					sourceId: source.id
+					source_id: source.id
 				});
 			} else {
 				await tx.insert(tr_ingredient_ingredient).values({
-					derivedId: id,
+					derived_id: id,
 					amount: source.amount,
-					sourceId: source.id
+					source_id: source.id
 				});
 			}
 		} else if (!source) {
-			await tx.delete(tr_ingredient_ingredient).where(eq(tr_ingredient_ingredient.derivedId, id));
+			await tx.delete(tr_ingredient_ingredient).where(eq(tr_ingredient_ingredient.derived_id, id));
 		}
 	});
 }
@@ -114,8 +114,8 @@ export async function getRecipie(id: number) {
 			source: { id: t_ingredient.id, name: t_ingredient.name, unit: t_ingredient.unit }
 		})
 		.from(tr_ingredient_ingredient)
-		.where(eq(tr_ingredient_ingredient.derivedId, id))
-		.innerJoin(t_ingredient, eq(tr_ingredient_ingredient.sourceId, t_ingredient.id))
+		.where(eq(tr_ingredient_ingredient.derived_id, id))
+		.innerJoin(t_ingredient, eq(tr_ingredient_ingredient.source_id, t_ingredient.id))
 		.then(getFirstIfPosible);
 }
 

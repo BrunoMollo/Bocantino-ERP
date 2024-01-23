@@ -6,7 +6,7 @@ export const VALID_UNITS = ['gr', 'Kg'] as const;
 export const ingredient_schema = z.object({
 	name: z.string().min(2, 'demasiado corto').max(255, 'demaiado largo'),
 	unit: z.enum(VALID_UNITS),
-	reorderPoint: z.number().positive('Ingrese un numero valido.').min(1),
+	reorder_point: z.number().positive('Ingrese un numero valido.').min(1),
 	source: z
 		.object({
 			id: z.number().int().positive(),

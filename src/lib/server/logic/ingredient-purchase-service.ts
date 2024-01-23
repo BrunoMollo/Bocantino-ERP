@@ -12,39 +12,39 @@ import { and, eq, like } from 'drizzle-orm';
 
 export class IngredientPurchaseService {
 	registerBoughtIngrediets(data: {
-		supplierId: number;
+		supplier_id: number;
 		document: TableInsert<typeof t_entry_document.$inferInsert, 'id'>;
 		perceptions_tax_amount: number;
 		iva_tax_percentage: number;
 		batches: {
-			ingredientId: number;
+			ingredient_id: number;
 			batch_code: string;
-			initialAmount: number;
-			productionDate: Date;
+			initial_amount: number;
+			production_date: Date;
 			expiration_date: Date;
-			numberOfBags: number;
+			number_of_bags: number;
 			cost: number;
 		}[];
 	}) {
 		return db.transaction(async (tx) => {
-			const { documentId } = await tx
+			const { document_id } = await tx
 				.insert(t_entry_document)
 				.values(data.document)
-				.returning({ documentId: t_entry_document.id })
+				.returning({ document_id: t_entry_document.id })
 				.then(getFirst);
 
 			const { entry_id } = await tx
 				.insert(t_ingridient_entry)
-				.values({ totalCost: null, documentId, supplierId: data.supplierId })
+				.values({ total_cost: null, document_id, supplier_id: data.supplier_id })
 				.returning({ entry_id: t_ingridient_entry.id })
 				.then(getFirst);
 
-			const { supplierId, iva_tax_percentage, perceptions_tax_amount } = data;
+			const { supplier_id, iva_tax_percentage, perceptions_tax_amount } = data;
 			const batchesId = [] as number[];
 			for (let batch of data.batches) {
 				const inserted = await tx
 					.insert(t_ingredient_batch)
-					.values({ ...batch, supplierId, state: 'AVAILABLE', entry_id, iva_tax_percentage, perceptions_tax_amount })
+					.values({ ...batch, supplier_id, state: 'AVAILABLE', entry_id, iva_tax_percentage, perceptions_tax_amount })
 					.returning({ id: t_ingredient_batch.id })
 					.then(getFirst);
 				batchesId.push(inserted.id);
@@ -73,8 +73,8 @@ export class IngredientPurchaseService {
 				}
 			})
 			.from(t_ingridient_entry)
-			.innerJoin(t_supplier, eq(t_ingridient_entry.supplierId, t_supplier.id))
-			.innerJoin(t_entry_document, eq(t_entry_document.id, t_ingridient_entry.documentId))
+			.innerJoin(t_supplier, eq(t_ingridient_entry.supplier_id, t_supplier.id))
+			.innerJoin(t_entry_document, eq(t_entry_document.id, t_ingridient_entry.document_id))
 			.innerJoin(t_document_type, eq(t_entry_document.typeId, t_document_type.id))
 			.where(
 				and(
@@ -92,14 +92,14 @@ export class IngredientPurchaseService {
 			.select({
 				code: t_ingredient_batch.batch_code,
 				ingredient: t_ingredient.name,
-				initialAmount: t_ingredient_batch.initialAmount,
-				bags: t_ingredient_batch.numberOfBags,
-				productionDate: t_ingredient_batch.productionDate,
+				initial_amount: t_ingredient_batch.initial_amount,
+				bags: t_ingredient_batch.number_of_bags,
+				production_date: t_ingredient_batch.production_date,
 				expiration_date: t_ingredient_batch.expiration_date,
 				cost: t_ingredient_batch.cost
 			})
 			.from(t_ingredient_batch)
-			.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredientId))
+			.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredient_id))
 			.where(eq(t_ingredient_batch.entry_id, entry_id));
 	}
 }

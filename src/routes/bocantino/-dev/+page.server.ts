@@ -51,20 +51,20 @@ async function seed() {
 	const banana = await ingredients_service.add({
 		name: 'Banana',
 		unit: 'Kg',
-		reorderPoint: 120
+		reorder_point: 120
 	});
 
 	const higado = await ingredients_service.add({
 		name: 'Higado',
 		unit: 'Kg',
-		reorderPoint: 100
+		reorder_point: 100
 	});
 
 	const higado_desidatado = await ingredients_service.add(
 		{
 			name: 'higado desidatado',
 			unit: 'Kg',
-			reorderPoint: 200
+			reorder_point: 200
 		},
 		{ id: higado.id, amount: 2 }
 	);
@@ -78,7 +78,7 @@ async function seed() {
 	const first_entry = await purchases_service.registerBoughtIngrediets({
 		perceptions_tax_amount: 10,
 		iva_tax_percentage: 21,
-		supplierId: julian.id,
+		supplier_id: julian.id,
 		document: {
 			number: 'R-22121',
 			issue_date: new Date(2023, 12, 31),
@@ -88,11 +88,11 @@ async function seed() {
 		batches: [
 			{
 				batch_code: 'PPPP_1234',
-				initialAmount: 200,
-				productionDate: new Date(2023, 12, 30),
+				initial_amount: 200,
+				production_date: new Date(2023, 12, 30),
 				expiration_date: new Date(2023, 1, 30),
-				ingredientId: banana.id,
-				numberOfBags: 10,
+				ingredient_id: banana.id,
+				number_of_bags: 10,
 				cost: 2000
 			}
 		]
@@ -101,7 +101,7 @@ async function seed() {
 	const second_entry = await purchases_service.registerBoughtIngrediets({
 		perceptions_tax_amount: 10,
 		iva_tax_percentage: 21,
-		supplierId: julian.id,
+		supplier_id: julian.id,
 		document: {
 			number: 'F-11111',
 			issue_date: new Date(),
@@ -111,20 +111,20 @@ async function seed() {
 		batches: [
 			{
 				batch_code: 'ABCEDE_1234',
-				initialAmount: 300,
-				productionDate: new Date(2023, 12, 12),
+				initial_amount: 300,
+				production_date: new Date(2023, 12, 12),
 				expiration_date: new Date(2023, 2, 30),
-				ingredientId: higado.id,
-				numberOfBags: 10,
+				ingredient_id: higado.id,
+				number_of_bags: 10,
 				cost: 4000
 			},
 			{
 				batch_code: 'XYZP_1234',
-				initialAmount: 200,
-				productionDate: new Date(2023, 12, 30),
+				initial_amount: 200,
+				production_date: new Date(2023, 12, 30),
 				expiration_date: new Date(2023, 2, 30),
-				ingredientId: higado.id,
-				numberOfBags: 10,
+				ingredient_id: higado.id,
+				number_of_bags: 10,
 				cost: 4500
 			}
 		]

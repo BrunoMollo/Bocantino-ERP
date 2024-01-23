@@ -20,8 +20,8 @@
 		}
 	}
 
-	if ($form.reorderPoint == 0) {
-		startAs(form, 'reorderPoint', null);
+	if ($form.reorder_point == 0) {
+		startAs(form, 'reorder_point', null);
 	}
 	export let btnMsj = 'Agregar';
 </script>
@@ -66,8 +66,8 @@
 	<label for="puntoPedido" class="label">
 		<span>
 			Punto de pedido:
-			{#if $errors.reorderPoint}
-				<b class=" text-error-400" transition:fade>{$errors.reorderPoint}</b>
+			{#if $errors.reorder_point}
+				<b class=" text-error-400" transition:fade>{$errors.reorder_point}</b>
 			{/if}
 		</span>
 	</label>
@@ -75,10 +75,10 @@
 		placeholder="Punto de pedido"
 		style="margin-top: -10px"
 		class={`input ${$errors.unit ? 'input-error' : ''} w-1/3`}
-		name="reorderPoint"
+		name="reorder_point"
 		type="number"
-		id="reorderPoint"
-		bind:value={$form.reorderPoint}
+		id="reorder_point"
+		bind:value={$form.reorder_point}
 	/>
 
 	<label>
@@ -96,7 +96,7 @@
 		<select
 			transition:fade
 			class={`select ${$errors.source?.id ? 'input-error' : ''} w-4/5`}
-			name="derivedId"
+			name="derived_id"
 			bind:value={$form.source.id}
 		>
 			<option disabled selected={!$form.source.id}>---</option>

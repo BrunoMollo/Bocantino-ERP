@@ -19,7 +19,7 @@ export const ingredient = router({
 		}
 	}),
 	batches: publicProcedure.input(z.coerce.number().positive().int()).query(async ({ input }) => {
-		return await ingredient_production_service.getBatchesByIngredientId(input);
+		return await ingredient_production_service.getBatchesByingredient_id(input);
 	})
 });
 

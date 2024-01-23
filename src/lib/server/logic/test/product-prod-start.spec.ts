@@ -38,7 +38,7 @@ beforeAll(async () => {
 		.add({
 			name: 'Liver',
 			unit: 'Kg',
-			reorderPoint: 100
+			reorder_point: 100
 		})
 		.then((x) => x.id);
 
@@ -46,7 +46,7 @@ beforeAll(async () => {
 		.add({
 			name: 'Banana',
 			unit: 'Kg',
-			reorderPoint: 120
+			reorder_point: 120
 		})
 		.then((x) => x.id);
 
@@ -63,7 +63,7 @@ beforeAll(async () => {
 			{
 				name: 'Liver reduced',
 				unit: 'Kg',
-				reorderPoint: 80
+				reorder_point: 80
 			},
 			{
 				id: LIVER_ID,
@@ -92,7 +92,7 @@ beforeEach(async () => {
 		.registerBoughtIngrediets({
 			perceptions_tax_amount: 10,
 			iva_tax_percentage: 21,
-			supplierId: SUPPLIER_ID,
+			supplier_id: SUPPLIER_ID,
 			document: {
 				number: '1234',
 				typeId: INVOICE_TYPE.id,
@@ -101,12 +101,12 @@ beforeEach(async () => {
 			},
 			batches: [
 				{
-					ingredientId: LIVER_ID,
+					ingredient_id: LIVER_ID,
 					batch_code: 'SOME CODE',
-					initialAmount: LIVER_BATCH_INTIAL_AMOUNT,
-					numberOfBags: 10,
+					initial_amount: LIVER_BATCH_INTIAL_AMOUNT,
+					number_of_bags: 10,
 					cost: 1000,
-					productionDate: new Date(),
+					production_date: new Date(),
 					expiration_date: new Date()
 				}
 			]
@@ -117,7 +117,7 @@ beforeEach(async () => {
 		.registerBoughtIngrediets({
 			perceptions_tax_amount: 10,
 			iva_tax_percentage: 21,
-			supplierId: SUPPLIER_ID,
+			supplier_id: SUPPLIER_ID,
 			document: {
 				number: '1234',
 				typeId: INVOICE_TYPE.id,
@@ -126,12 +126,12 @@ beforeEach(async () => {
 			},
 			batches: [
 				{
-					ingredientId: LIVER_ID,
+					ingredient_id: LIVER_ID,
 					batch_code: 'SOME OTHER CODE',
-					initialAmount: SECOND_LIVER_BATCH_INITIAL_AMOUNT,
-					numberOfBags: 12,
+					initial_amount: SECOND_LIVER_BATCH_INITIAL_AMOUNT,
+					number_of_bags: 12,
 					cost: 1000,
-					productionDate: new Date(),
+					production_date: new Date(),
 					expiration_date: new Date()
 				}
 			]
@@ -142,7 +142,7 @@ beforeEach(async () => {
 		.registerBoughtIngrediets({
 			perceptions_tax_amount: 10,
 			iva_tax_percentage: 21,
-			supplierId: SUPPLIER_ID,
+			supplier_id: SUPPLIER_ID,
 			document: {
 				number: '1234',
 				typeId: INVOICE_TYPE.id,
@@ -151,12 +151,12 @@ beforeEach(async () => {
 			},
 			batches: [
 				{
-					ingredientId: BANANA_ID,
+					ingredient_id: BANANA_ID,
 					batch_code: 'SOME OTHER CODE FOR BANANA',
-					initialAmount: 20,
-					numberOfBags: 1,
+					initial_amount: 20,
+					number_of_bags: 1,
 					cost: 1000,
-					productionDate: new Date(),
+					production_date: new Date(),
 					expiration_date: new Date()
 				}
 			]

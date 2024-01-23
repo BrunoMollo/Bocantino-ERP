@@ -59,9 +59,9 @@
 					{#each batches as batch}
 						<tr>
 							<td>{batch.ingredient}</td>
-							<td>{batch.initialAmount}</td>
+							<td>{batch.initial_amount}</td>
 							<td>{batch.code}</td>
-							<td>{batch.productionDate}</td>
+							<td>{batch.production_date}</td>
 							<td>{batch.expiration_date}</td>
 							<td>{batch.cost}</td>
 							<td>{batch.bags}</td>

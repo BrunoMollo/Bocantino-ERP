@@ -38,9 +38,9 @@
 
 	const optionsSuppliers = makeOptions(data.suppliers, { value: 'id', label: 'name' });
 
-	const supplier_id = derived(form, (x) => x.supplierId);
-	const optionsIngredients = derived(supplier_id, (supplierId) => {
-		const selectedSupplier = data.suppliers.find((x) => x.id == Number(supplierId));
+	const supplier_id = derived(form, (x) => x.supplier_id);
+	const optionsIngredients = derived(supplier_id, (supplier_id) => {
+		const selectedSupplier = data.suppliers.find((x) => x.id == Number(supplier_id));
 		if (!selectedSupplier) {
 			return [];
 		}
@@ -66,12 +66,12 @@
 	}
 
 	const unit = derived(
-		[derived(form, (f) => f.supplierId), derived(form, (f) => f.batches)],
+		[derived(form, (f) => f.supplier_id), derived(form, (f) => f.batches)],
 		([$supplier_id, $batches]) => {
 			return (index: number) => {
 				const supplier = data.suppliers.find((x) => x.id == $supplier_id); // dont use ===
 				if (!supplier) return '-' as const;
-				const ingredient_id = $batches[index].ingredientId;
+				const ingredient_id = $batches[index].ingredient_id;
 				const ingredient = supplier.ingredients.find((x) => x.id == ingredient_id); // dont use ===
 				if (!ingredient) return '-' as const;
 				return ingredient.unit;
@@ -89,9 +89,9 @@
 				</label>
 				<Autocomplete
 					id="supplier_id"
-					name="supplierId"
-					bind:value={$form.supplierId}
-					className="input {$errors.supplierId ? 'error_border' : ''}"
+					name="supplier_id"
+					bind:value={$form.supplier_id}
+					className="input {$errors.supplier_id ? 'error_border' : ''}"
 					{...optionsSuppliers}
 				/>
 			</div>
@@ -166,8 +166,8 @@
 							<td>
 								<select
 									class="select w-56"
-									bind:value={$form.batches[i].ingredientId}
-									class:error_border={$batchesError(i, 'ingredientId')}
+									bind:value={$form.batches[i].ingredient_id}
+									class:error_border={$batchesError(i, 'ingredient_id')}
 									class:text-gray-500={$optionsIngredients.length == 0}
 								>
 									{#if $optionsIngredients.length == 0}
@@ -182,9 +182,9 @@
 								<div class="relative inline-block w-24">
 									<input
 										class="input"
-										class:error_border={$batchesError(i, 'initialAmount')}
+										class:error_border={$batchesError(i, 'initial_amount')}
 										type="text"
-										bind:value={$form.batches[i].initialAmount}
+										bind:value={$form.batches[i].initial_amount}
 									/>
 									<span class="suffix absolute right-3 top-1/4">{$unit(i)}</span>
 								</div>
@@ -193,9 +193,9 @@
 								<div class="relative inline-block w-20">
 									<input
 										class="input"
-										class:error_border={$batchesError(i, 'numberOfBags')}
+										class:error_border={$batchesError(i, 'number_of_bags')}
 										type="text"
-										bind:value={$form.batches[i].numberOfBags}
+										bind:value={$form.batches[i].number_of_bags}
 									/>
 								</div>
 							</td>
@@ -203,9 +203,9 @@
 								<div class="relative inline-block">
 									<InputDate
 										className={`input w-32 ${
-											$batchesError(i, 'productionDate') ? 'error_border' : ''
+											$batchesError(i, 'production_date') ? 'error_border' : ''
 										}`}
-										bind:value={$form.batches[i].productionDate}
+										bind:value={$form.batches[i].production_date}
 									/>
 								</div>
 							</td>
