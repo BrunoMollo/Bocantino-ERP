@@ -23,7 +23,12 @@
 	const title = derived(page, ({ url }) => {
 		for (let group of routes) {
 			for (let { href, name } of group.routes) {
-				if (url.pathname === href) {
+				const match = url.pathname
+					.split('/')
+					.filter((_, i) => i < 3)
+					.join('/');
+
+				if (match === href) {
 					return name;
 				}
 			}
