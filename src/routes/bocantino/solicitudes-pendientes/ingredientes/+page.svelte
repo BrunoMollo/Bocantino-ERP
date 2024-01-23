@@ -95,7 +95,9 @@
 	}
 </script>
 
-<h1 class="text-center w-full uppercase text-2xl my-5">Ordenes de producción en proceso</h1>
+<h1 class="text-center w-full uppercase text-2xl my-5">
+	Ordenes de producción en proceso: Ingredientes
+</h1>
 
 <table class="table w-11/12 mx-auto p-2 rounded-md shadow-lg">
 	<thead>
@@ -190,3 +192,4 @@
 		</div>
 	</div>
 </dialog>
+

@@ -268,13 +268,7 @@ export async function getBatchesInProduction() {
 	const ta_used_ingredient = alias(t_ingredient, 'used_ingredient');
 	return await db
 		.select({
-			t_ingredient_batch: pick_columns(t_ingredient_batch, [
-				'id',
-				'batch_code',
-				'initial_amount',
-				'production_date',
-				'expiration_date'
-			]),
+			t_ingredient_batch: pick_columns(t_ingredient_batch, ['id', 'batch_code', 'initial_amount']),
 			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit']),
 			used_ingredient: pick_columns(ta_used_ingredient, ['id', 'name', 'unit']),
 			used_batches: pick_merge()

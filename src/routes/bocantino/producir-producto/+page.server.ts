@@ -38,7 +38,10 @@ export const actions: Actions = {
 			case 'LOGIC_ERROR':
 				throw error(400, res.message);
 			case 'SUCCESS':
-				throw redirect(302, '/bocantino/solicitudes-pendientes?toast=Produccion iniciada');
+				throw redirect(
+					302,
+					'/bocantino/solicitudes-pendientes/productos?toast=Produccion iniciada'
+				);
 			default:
 				should_not_reach(res);
 		}

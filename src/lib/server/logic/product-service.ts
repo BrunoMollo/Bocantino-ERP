@@ -3,14 +3,16 @@ import { eq } from 'drizzle-orm';
 import { db, type Db } from '../db';
 import {
 	t_ingredient,
+	t_ingredient_batch,
 	t_product,
 	t_product_batch,
 	tr_ingredient_product,
 	tr_product_batch_ingredient_batch
 } from '../db/schema';
-import { pick_merge } from 'drizzle-tools/src/pick-columns';
+import { pick_columns, pick_merge } from 'drizzle-tools/src/pick-columns';
 import { ingredient_production_service, is_ok, logic_error } from '$logic';
 import moment from 'moment';
+import { drizzle_map } from 'drizzle-tools';
 
 class ProductService {
 	constructor(private db: Db) {}
@@ -168,6 +170,35 @@ class ProductService {
 			}
 			return is_ok(inserted);
 		});
+	}
+
+	async getBatchesInProduction() {
+		return await db
+			.select({
+				product_batch: pick_columns(t_product_batch, ['id', 'batch_code', 'initial_amount']),
+				used_batches: pick_merge()
+					.table(t_ingredient_batch, 'id', 'batch_code')
+					.table(tr_product_batch_ingredient_batch, 'amount_used_to_produce_batch')
+					.aliased(t_ingredient, 'name', 'ingredient_name')
+					.aliased(t_ingredient, 'unit', 'ingredient_unit')
+					.build(),
+				product: pick_columns(t_product, ['id', 'desc'])
+			})
+			.from(t_product_batch)
+			.where(eq(t_product_batch.state, 'IN_PRODUCTION'))
+			.innerJoin(t_product, eq(t_product.id, t_product_batch.product_id))
+			.innerJoin(
+				tr_product_batch_ingredient_batch,
+				eq(tr_product_batch_ingredient_batch.produced_batch_id, t_product_batch.id)
+			)
+			.innerJoin(
+				t_ingredient_batch,
+				eq(tr_product_batch_ingredient_batch.ingredient_batch_id, t_ingredient_batch.id)
+			)
+			.innerJoin(t_ingredient, eq(t_ingredient_batch.ingredient_id, t_ingredient.id))
+			.then(
+				drizzle_map({ one: 'product_batch', with_many: ['used_batches'], with_one: ['product'] })
+			);
 	}
 }
 
