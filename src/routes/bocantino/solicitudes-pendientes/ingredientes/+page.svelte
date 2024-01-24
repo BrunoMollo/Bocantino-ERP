@@ -2,15 +2,9 @@
 	import { startAs } from '$lib/utils.js';
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
-	import { jsPDF } from 'jspdf';
-	import autoTable from 'jspdf-autotable';
+	import { generarPDF } from '../_shared/generar_orden_produccion.js';
 
 	export let data;
-	const fechaHoy = new Date();
-	const año = fechaHoy.getFullYear();
-	const mes = fechaHoy.getMonth() + 1;
-	const dia = fechaHoy.getDate();
-	const fechaFormateada = `${año}-${mes < 10 ? '0' + mes : mes}-${dia < 10 ? '0' + dia : dia}`;
 
 	const { form, enhance, delayed, errors } = superForm(data.form, {
 		taintedMessage: null,
@@ -60,43 +54,6 @@
 	$: current = data.pending_productions[focused_index];
 	$: $form.batch_id = current?.id ?? -1;
 	$: $cancel_form.batch_id = current?.id ?? -1;
-
-	function generarPDF(item: any) {
-		const doc = new jsPDF();
-		doc.text('Solicitud de produccion numero:' + item.id, 10, 10);
-		doc.text(fechaFormateada, 170, 10);
-		doc.setLineWidth(0.75);
-		doc.line(10, 13, 200, 13);
-		doc.text(
-			'Cantidad a producir:' + item.initial_amount + ' de ' + item.ingredient.name + '.',
-			10,
-			23
-		);
-
-		autoTable(doc, {
-			styles: {
-				fontSize: 20
-			},
-			margin: { top: 30 },
-			head: [['Cantidad utilizada', 'Numero lote']],
-			body: item.used_batches.map(
-				(x: {
-					amount_used_to_produce_batch: { toString: () => any };
-					batch_code: { toString: () => any };
-				}) => {
-					return [x.amount_used_to_produce_batch.toString(), x.batch_code.toString()];
-				}
-			)
-		});
-		doc.text('Merma:', 10, 270);
-		doc.line(31, 270, 70, 270);
-		doc.text('Firma responsable:', 120, 270);
-		doc.line(170, 270, 200, 270);
-		doc.text('©' + año + 'BOCANTINO. Todos los derechos reservados.', 10, 290);
-		doc.autoPrint({ variant: 'non-conform' });
-		doc.save('Solicitud' + item.id + '.pdf');
-		return null;
-	}
 </script>
 
 <h1 class="text-center w-full uppercase text-2xl my-5">
@@ -120,7 +77,9 @@
 				<td style="padding-left: 16px;">{item.initial_amount} {item.ingredient.unit}</td>
 				<td style="padding-left: 16px;" class="gap-5 flex">
 					<button on:click={() => show(i)}>ver</button>
-					<button class="rounded-full bg-white px-3 py-2" on:click={generarPDF(item)}
+					<button
+						class="rounded-full bg-white px-3 py-2"
+						on:click={generarPDF(item.ingredient.name, item)}
 						><i class="bx bx-printer text-xl text-black h-5 w-5"></i></button
 					>
 				</td>
@@ -196,4 +155,3 @@
 		</div>
 	</div>
 </dialog>
-

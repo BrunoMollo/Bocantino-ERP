@@ -275,6 +275,8 @@ export async function getBatchesInProduction() {
 			used_batches: pick_merge()
 				.table(ta_used_batch, 'id', 'batch_code')
 				.table(tr_ingredient_batch_ingredient_batch, 'amount_used_to_produce_batch')
+				.aliased(t_ingredient, 'name', 'ingredient_name')
+				.aliased(t_ingredient, 'unit', 'ingredient_unit')
 				.build()
 		})
 		.from(t_ingredient_batch)

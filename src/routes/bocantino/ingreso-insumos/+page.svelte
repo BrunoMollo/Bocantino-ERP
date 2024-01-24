@@ -7,6 +7,8 @@
 	import { derived } from 'svelte/store';
 
 	export let data;
+	let subtotal = 0;
+	let iva = 21;
 	const { form, enhance, errors } = superForm(data.form, {
 		dataType: 'json',
 		defaultValidator: 'clear',
@@ -78,6 +80,14 @@
 			};
 		}
 	);
+
+	function actualizarCosto(event: Event & { currentTarget: EventTarget & HTMLInputElement }) {
+		let variable = 0;
+		$form.batches.forEach((element) => {
+			variable += Number(element.cost);
+		});
+		subtotal = variable;
+	}
 </script>
 
 <main class="container h-full mx-auto flex justify-center items-center">
@@ -226,6 +236,7 @@
 										type="text"
 										class:error_border={$batchesError(i, 'cost')}
 										bind:value={$form.batches[i].cost}
+										on:input={actualizarCosto}
 									/>
 									<span class="suffix absolute right-3 top-1/4">$</span>
 								</div>
@@ -271,9 +282,23 @@
 				>
 			</div>
 		</div>
+		<div class="flex w-11/12 mx-auto justify-between">
+			<div class="flex">
+				<h2 class="p-2">Subtotal:</h2>
+				<div class="input w-24 p-2">{subtotal}</div>
+			</div>
+			<div class="flex">
+				<h2 class="p-2">Iva:</h2>
+				<div class="input w-24 p-2">{(subtotal / 100) * 21}</div>
+			</div>
+			<div class="flex align-middle">
+				<h2 class="p-2">Percepciones:</h2>
+				<input type="text" class="input" />
+			</div>
+			<div class="w-1/2"></div>
+		</div>
 		<div class="w-11/12 mx-auto flex justify-end">
 			<button type="submit" class="btn rounded-lg variant-filled-secondary w-1/5">Enviar</button>
 		</div>
 	</form>
 </main>
-

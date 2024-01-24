@@ -3,6 +3,8 @@
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 	import PaperBag from '$lib/ui/icons/PaperBag.svelte';
+	import { generarPDF } from '../_shared/generar_orden_produccion.js';
+	import { desc } from 'drizzle-orm';
 
 	export let data;
 
@@ -78,7 +80,9 @@
 				<td class="gap-5 flex p-4">
 					<button on:click={() => show(i)}>ver</button>
 					<!-- TODO: generate pdf-->
-					<button class="rounded-full bg-white px-3 py-2" on:click={() => alert('not implemeted')}
+					<button
+						class="rounded-full bg-white px-3 py-2"
+						on:click={generarPDF(item.product.desc, item)}
 						><i class="bx bx-printer text-xl text-black h-5 w-5"></i></button
 					>
 				</td>
@@ -164,4 +168,3 @@
 		</div>
 	</div>
 </dialog>
-
