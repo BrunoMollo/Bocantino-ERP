@@ -2,8 +2,8 @@ import { redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from '../$types';
 import { createForm, supplier_schema } from '../_components/shared';
 import { superValidate } from 'sveltekit-superforms/server';
-import { ingredients_service } from '$logic';
 import { suppliers_service } from '$logic/suppliers-service';
+import { ingredients_service } from '$logic/ingredient-service';
 
 export const load: PageServerLoad = async () => {
 	const ingredients = await ingredients_service.getAll();

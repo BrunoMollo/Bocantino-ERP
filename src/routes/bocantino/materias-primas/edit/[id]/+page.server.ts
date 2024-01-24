@@ -2,7 +2,7 @@ import type { PageServerLoad, RouteParams, Actions } from './$types';
 import { error, redirect } from '@sveltejs/kit';
 import { createForm, ingredient_schema } from '../../_components/shared';
 import { superValidate } from 'sveltekit-superforms/server';
-import { ingredients_service } from '$logic';
+import { ingredients_service } from '$logic/ingredient-service';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = parseParams(params);

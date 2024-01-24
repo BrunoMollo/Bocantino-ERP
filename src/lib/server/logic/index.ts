@@ -1,6 +1,3 @@
-import * as ingredients_logic from './ingredients-logic';
-export const ingredients_service = ingredients_logic;
-
 import * as ingredient_production_logic from './ingredient-production-logic';
 export const ingredient_production_service = ingredient_production_logic;
 

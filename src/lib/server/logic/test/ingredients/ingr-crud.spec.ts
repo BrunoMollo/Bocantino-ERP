@@ -9,9 +9,9 @@ import {
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
-import { ingredients_service } from '$logic';
 import { getFirst } from '$lib/utils';
 import { __DELETE_ALL_DATABASE } from '../utils';
+import { ingredients_service } from '$logic/ingredient-service';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -76,7 +76,9 @@ describe.sequential('ingredients crud', () => {
 			await db
 				.insert(t_ingredient)
 				.values({ id: 1, name: 'Banana', unit: 'Kg', reorder_point: 100 });
-			await db.insert(t_ingredient).values({ id: 3, name: 'Water', unit: 'Kg', reorder_point: 100 });
+			await db
+				.insert(t_ingredient)
+				.values({ id: 3, name: 'Water', unit: 'Kg', reorder_point: 100 });
 			const data = await ingredients_service.getById(2);
 
 			expect(data).toBe(null);
@@ -86,7 +88,9 @@ describe.sequential('ingredients crud', () => {
 			await db
 				.insert(t_ingredient)
 				.values({ id: 1, name: 'Banana', unit: 'Kg', reorder_point: 100 });
-			await db.insert(t_ingredient).values({ id: 3, name: 'Water', unit: 'Kg', reorder_point: 200 });
+			await db
+				.insert(t_ingredient)
+				.values({ id: 3, name: 'Water', unit: 'Kg', reorder_point: 200 });
 			const data = await ingredients_service.getById(-1);
 
 			expect(spy_select).not.toHaveBeenCalled();
@@ -99,7 +103,9 @@ describe.sequential('ingredients crud', () => {
 			await db
 				.insert(t_ingredient)
 				.values({ id: 1, name: 'Banana', unit: 'Kg', reorder_point: 200 });
-			await db.insert(t_ingredient).values({ id: 3, name: 'Water', unit: 'Kg', reorder_point: 200 });
+			await db
+				.insert(t_ingredient)
+				.values({ id: 3, name: 'Water', unit: 'Kg', reorder_point: 200 });
 			const data = await ingredients_service.getById(0);
 
 			expect(spy_select).not.toHaveBeenCalled();
