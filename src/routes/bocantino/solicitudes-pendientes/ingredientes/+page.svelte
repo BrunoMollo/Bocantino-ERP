@@ -88,6 +88,10 @@
 				}
 			)
 		});
+		doc.text('Merma:', 10, 270);
+		doc.line(31, 270, 70, 270);
+		doc.text('Firma responsable:', 120, 270);
+		doc.line(170, 270, 200, 270);
 		doc.text('©' + año + 'BOCANTINO. Todos los derechos reservados.', 10, 290);
 		doc.autoPrint({ variant: 'non-conform' });
 		doc.save('Solicitud' + item.id + '.pdf');
