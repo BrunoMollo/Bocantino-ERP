@@ -1,7 +1,7 @@
-import { ingredient_production_service } from '$logic';
 import { z } from 'zod';
 import { publicProcedure, router } from '../context';
 import { ingredients_service } from '$logic/ingredient-service';
+import { ingredient_production_service } from '$logic/ingredient-production-service';
 
 export const ingredient = router({
 	delete: publicProcedure.input(z.number().positive().int()).mutation(async ({ input }) => {

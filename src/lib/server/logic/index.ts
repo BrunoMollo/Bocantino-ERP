@@ -1,6 +1,3 @@
-import * as ingredient_production_logic from './ingredient-production-logic';
-export const ingredient_production_service = ingredient_production_logic;
-
 export function logic_error(message: string) {
 	return {
 		type: 'LOGIC_ERROR' as const,

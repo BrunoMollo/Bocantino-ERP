@@ -1,8 +1,8 @@
-import { ingredient_production_service } from '$logic';
 import { z } from 'zod';
 import type { PageServerLoad } from './$types';
 import { error, type Actions } from '@sveltejs/kit';
 import { superValidate } from 'sveltekit-superforms/client';
+import { ingredient_production_service } from '$logic/ingredient-production-service';
 
 const accidental_adjustment_schema = z.object({
 	adjustment: z.coerce.number().positive()

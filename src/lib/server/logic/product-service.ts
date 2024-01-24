@@ -10,9 +10,10 @@ import {
 	tr_product_batch_ingredient_batch
 } from '../db/schema';
 import { pick_columns, pick_merge } from 'drizzle-tools/src/pick-columns';
-import { ingredient_production_service, is_ok, logic_error } from '$logic';
+import { is_ok, logic_error } from '$logic';
 import moment from 'moment';
 import { drizzle_map } from 'drizzle-tools';
+import { ingredient_production_service } from './ingredient-production-service';
 
 class ProductService {
 	constructor(private db: Db) {}

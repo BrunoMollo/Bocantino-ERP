@@ -10,7 +10,6 @@ import {
 	tr_ingredient_batch_ingredient_batch,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
-import { ingredient_production_service } from '$logic';
 import { __DELETE_ALL_DATABASE } from '../utils';
 import { sq_stock } from '$logic/_ingredient-stock';
 import { eq } from 'drizzle-orm';
@@ -18,6 +17,7 @@ import { getFirst } from '$lib/utils';
 import { suppliers_service } from '$logic/suppliers-service';
 import { purchases_service } from '$logic/ingredient-purchase-service';
 import { ingredients_service } from '$logic/ingredient-service';
+import { ingredient_production_service } from '$logic/ingredient-production-service';
 
 vi.mock('$lib/server/db/index.ts');
 

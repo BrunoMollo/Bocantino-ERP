@@ -1,4 +1,4 @@
-import { ingredient_production_service } from '$logic';
+import { ingredient_production_service } from '$logic/ingredient-production-service';
 import type { PageServerLoad } from '../$types';
 
 export const load: PageServerLoad = async ({ url }) => {

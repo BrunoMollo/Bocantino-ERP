@@ -5,8 +5,8 @@ import type { PageServerLoad } from './$types';
 import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';
 import { redirect, type Actions, error } from '@sveltejs/kit';
-import { ingredient_production_service } from '$logic';
 import { should_not_reach } from '$lib/utils';
+import { ingredient_production_service } from '$logic/ingredient-production-service';
 
 const ingredinetProduction_schema = z.object({
 	ingredeintId: z.coerce.number().int().positive(),

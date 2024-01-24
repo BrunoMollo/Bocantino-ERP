@@ -1,8 +1,8 @@
 import { dev } from '$app/environment';
 import { db } from '$lib/server/db';
 import { t_document_type } from '$lib/server/db/schema';
-import { ingredient_production_service } from '$logic';
 import { auth_service } from '$logic/auth-service';
+import { ingredient_production_service } from '$logic/ingredient-production-service';
 import { purchases_service } from '$logic/ingredient-purchase-service';
 import { ingredients_service } from '$logic/ingredient-service';
 import { product_service } from '$logic/product-service';

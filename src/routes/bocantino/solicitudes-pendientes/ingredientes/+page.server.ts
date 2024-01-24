@@ -1,8 +1,8 @@
-import { ingredient_production_service } from '$logic';
 import { z } from 'zod';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms/client';
 import { error } from '@sveltejs/kit';
+import { ingredient_production_service } from '$logic/ingredient-production-service';
 
 const close_production_schema = z.object({
 	batch_id: z.coerce.number().int().positive(),
