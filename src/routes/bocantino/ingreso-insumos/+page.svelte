@@ -7,8 +7,10 @@
 	import { derived } from 'svelte/store';
 
 	export let data;
+	let percepciones = 0;
+	$: total = subtotal + subtotal * iva + Number(percepciones);
 	let subtotal = 0;
-	let iva = 21;
+	let iva = 0.21;
 	const { form, enhance, errors } = superForm(data.form, {
 		dataType: 'json',
 		defaultValidator: 'clear',
@@ -285,19 +287,29 @@
 		<div class="flex w-11/12 mx-auto justify-between">
 			<div class="flex">
 				<h2 class="p-2">Subtotal:</h2>
-				<div class="input w-24 p-2">{subtotal}</div>
+				<div class="input rounded w-24 p-2">{subtotal}</div>
 			</div>
 			<div class="flex">
 				<h2 class="p-2">Iva:</h2>
-				<div class="input w-24 p-2">{(subtotal / 100) * 21}</div>
+				<select id="opciones" class="select w-24" bind:value={iva}>
+					<option value="0.21">21%</option>
+					<option value="0.105">10,5%</option>
+					<option value="0">0%</option>
+				</select>
 			</div>
 			<div class="flex align-middle">
 				<h2 class="p-2">Percepciones:</h2>
-				<input type="text" class="input" />
+				<input type="text" class="input rounded" bind:value={percepciones} />
 			</div>
 			<div class="w-1/2"></div>
 		</div>
 		<div class="w-11/12 mx-auto flex justify-end">
+			<div class="flex mr-10">
+				<h1 class="p-2">Total:</h1>
+				<div class="input w-32 p-2 rounded">
+					{total}
+				</div>
+			</div>
 			<button type="submit" class="btn rounded-lg variant-filled-secondary w-1/5">Enviar</button>
 		</div>
 	</form>
