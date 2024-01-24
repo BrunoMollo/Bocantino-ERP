@@ -314,7 +314,7 @@ export async function closeProduction(obj: { batch_id: number; adjustment: numbe
 			return logic_error('batch not found');
 		}
 
-		await tx
+		const EXPIRAION_DELAY = await tx
 			.update(t_ingredient_batch)
 			.set({
 				production_date: new Date(),

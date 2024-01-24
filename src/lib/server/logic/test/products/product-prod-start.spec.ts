@@ -10,7 +10,7 @@ import {
 } from '$lib/server/db/schema';
 import { ingredients_service } from '$logic';
 import { product_service } from '$logic/product-service';
-import { __DELETE_ALL_DATABASE } from './utils';
+import { __DELETE_ALL_DATABASE } from '../utils';
 import { eq } from 'drizzle-orm';
 import { getFirst } from '$lib/utils';
 import { suppliers_service } from '$logic/suppliers-service';

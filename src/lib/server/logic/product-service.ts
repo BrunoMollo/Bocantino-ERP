@@ -1,5 +1,5 @@
 import { getFirst, getFirstIfPosible } from '$lib/utils';
-import { eq } from 'drizzle-orm';
+import { eq, and } from 'drizzle-orm';
 import { db, type Db } from '../db';
 import {
 	t_ingredient,
@@ -16,6 +16,30 @@ import { drizzle_map } from 'drizzle-tools';
 
 class ProductService {
 	constructor(private db: Db) {}
+
+	async closeProduction(data: { batch_id: number; adjustment: number }) {
+		const { batch_id, adjustment } = data;
+
+		const batch_exists = await this.db
+			.select()
+			.from(t_product_batch)
+			.where(and(eq(t_product_batch.id, batch_id), eq(t_product_batch.state, 'IN_PRODUCTION')))
+			.then(getFirstIfPosible)
+			.then(Boolean);
+
+		if (!batch_exists) {
+			return logic_error('lote indicado no existe');
+		}
+
+		await this.db.transaction(async (tx) => {
+			await tx
+				.update(t_product_batch)
+				.set({ state: 'AVAILABLE', adjustment, production_date: new Date() })
+				.where(eq(t_product_batch.id, batch_id));
+		});
+
+		return is_ok(null);
+	}
 
 	async getAll() {
 		return await this.db.select().from(t_product);

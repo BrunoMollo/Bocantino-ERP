@@ -2,6 +2,7 @@ import { z } from 'zod';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms/client';
 import { product_service } from '$logic/product-service';
+import { error } from '@sveltejs/kit';
 
 const close_production_schema = z.object({
 	batch_id: z.coerce.number().int().positive(),
@@ -16,7 +17,6 @@ export const load: PageServerLoad = async () => {
 	const form = superValidate(close_production_schema);
 	const cancel_form = superValidate(cancel_production_schema);
 	const pending_productions = await product_service.getBatchesInProduction();
-	console.log({ pending_productions });
 	return { form, cancel_form, pending_productions };
 };
 
@@ -26,10 +26,10 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return { form };
 		}
-		// const res = await product_service.closeProduction(form.data);
-		// if (res.type == 'LOGIC_ERROR') {
-		// 	throw error(400, res.message);
-		// }
+		const res = await product_service.closeProduction(form.data);
+		if (res.type == 'LOGIC_ERROR') {
+			throw error(400, res.message);
+		}
 		return { form };
 	},
 
@@ -38,7 +38,7 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return { form };
 		}
-		const { batch_id } = form.data;
+		// const { batch_id } = form.data;
 		// const res = await product_service.deleteBatchById(batch_id);
 		//
 		// if (res.type == 'LOGIC_ERROR') {
