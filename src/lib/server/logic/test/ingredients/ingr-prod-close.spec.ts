@@ -204,7 +204,7 @@ describe.sequential('start production of derived ingredient', async () => {
 		expect(res.type).toBe('SUCCESS');
 		const { batch } = await db
 			.select({
-				batch: pick_columns(t_ingredient_batch, ['state', 'production_date', 'adjustment'])
+				batch: pick_columns(t_ingredient_batch, 'state', 'production_date', 'adjustment')
 			})
 			.from(t_ingredient_batch)
 			.where(eq(t_ingredient_batch.id, BATCH_IN_PROD_ID))

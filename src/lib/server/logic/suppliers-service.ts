@@ -29,7 +29,7 @@ class SuppliersService {
 
 	async getAll() {
 		return await db
-			.select({ t_supplier, ingredients: pick_columns(t_ingredient, ['id', 'name', 'unit']) })
+			.select({ t_supplier, ingredients: pick_columns(t_ingredient, 'id', 'name', 'unit') })
 			.from(t_supplier)
 			.leftJoin(tr_supplier_ingredient, eq(tr_supplier_ingredient.supplier_id, t_supplier.id))
 			.leftJoin(t_ingredient, eq(tr_supplier_ingredient.ingredient_id, t_ingredient.id))

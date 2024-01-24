@@ -175,14 +175,14 @@ class ProductService {
 	async getBatchesInProduction() {
 		return await db
 			.select({
-				product_batch: pick_columns(t_product_batch, ['id', 'batch_code', 'initial_amount']),
+				product_batch: pick_columns(t_product_batch, 'id', 'batch_code', 'initial_amount'),
 				used_batches: pick_merge()
 					.table(t_ingredient_batch, 'id', 'batch_code')
 					.table(tr_product_batch_ingredient_batch, 'amount_used_to_produce_batch')
 					.aliased(t_ingredient, 'name', 'ingredient_name')
 					.aliased(t_ingredient, 'unit', 'ingredient_unit')
 					.build(),
-				product: pick_columns(t_product, ['id', 'desc'])
+				product: pick_columns(t_product, 'id', 'desc')
 			})
 			.from(t_product_batch)
 			.where(eq(t_product_batch.state, 'IN_PRODUCTION'))

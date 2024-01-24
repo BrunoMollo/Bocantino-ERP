@@ -16,8 +16,8 @@ export async function getBatchesByingredient_id(id: number) {
 	return await db
 		.with(sq_stock)
 		.select({
-			batch: pick_columns(t_ingredient_batch, ['id', 'batch_code', 'expiration_date']),
-			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit']),
+			batch: pick_columns(t_ingredient_batch, 'id', 'batch_code', 'expiration_date'),
+			ingredient: pick_columns(t_ingredient, 'id', 'name', 'unit'),
 			stock: {
 				current_amount: sq_stock.currently_available
 			}
@@ -50,8 +50,8 @@ export async function getBatchById(id: number, tx?: Tx) {
 	return await (tx ?? db)
 		.with(sq_stock)
 		.select({
-			batch: pick_columns(t_ingredient_batch, ['id', 'batch_code', 'expiration_date']),
-			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit']),
+			batch: pick_columns(t_ingredient_batch, 'id', 'batch_code', 'expiration_date'),
+			ingredient: pick_columns(t_ingredient, 'id', 'name', 'unit'),
 			stock: { current_amount: sq_stock.currently_available }
 		})
 		.from(t_ingredient_batch)
@@ -83,7 +83,7 @@ export async function getBatchesByIds(ids: number[], tx?: Tx) {
 				.table(t_ingredient_batch, 'id', 'batch_code', 'expiration_date')
 				.aliased(sq_stock, 'currently_available', 'stock')
 				.build(),
-			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit'])
+			ingredient: pick_columns(t_ingredient, 'id', 'name', 'unit')
 		})
 		.from(t_ingredient_batch)
 		.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredient_id))
@@ -232,15 +232,16 @@ export async function getBatchesAvailable({ page }: { page: number }) {
 	return await db
 		.with(limited_ingredient_batch)
 		.select({
-			ingredient_batch: pick_columns(limited_ingredient_batch, [
+			ingredient_batch: pick_columns(
+				limited_ingredient_batch,
 				'id',
 				'batch_code',
 				'production_date',
 				'expiration_date',
 				'stock'
-			]),
-			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit']),
-			used_batches: pick_columns(ta_used_batch, ['id', 'batch_code']),
+			),
+			ingredient: pick_columns(t_ingredient, 'id', 'name', 'unit'),
+			used_batches: pick_columns(ta_used_batch, 'id', 'batch_code'),
 			tr_ingredient_batch_ingredient_batch
 		})
 		.from(limited_ingredient_batch)
@@ -268,9 +269,9 @@ export async function getBatchesInProduction() {
 	const ta_used_ingredient = alias(t_ingredient, 'used_ingredient');
 	return await db
 		.select({
-			t_ingredient_batch: pick_columns(t_ingredient_batch, ['id', 'batch_code', 'initial_amount']),
-			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit']),
-			used_ingredient: pick_columns(ta_used_ingredient, ['id', 'name', 'unit']),
+			t_ingredient_batch: pick_columns(t_ingredient_batch, 'id', 'batch_code', 'initial_amount'),
+			ingredient: pick_columns(t_ingredient, 'id', 'name', 'unit'),
+			used_ingredient: pick_columns(ta_used_ingredient, 'id', 'name', 'unit'),
 			used_batches: pick_merge()
 				.table(ta_used_batch, 'id', 'batch_code')
 				.table(tr_ingredient_batch_ingredient_batch, 'amount_used_to_produce_batch')

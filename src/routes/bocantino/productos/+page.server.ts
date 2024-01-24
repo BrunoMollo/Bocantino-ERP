@@ -8,12 +8,12 @@ import { pick_merge } from 'drizzle-tools/src/pick-columns';
 export const load: PageServerLoad = async () => {
 	const products = await db
 		.select({
-			product: pick_columns(t_product, ['id', 'desc']),
+			product: pick_columns(t_product, 'id', 'desc'),
 			ingredients: pick_merge()
 				.table(t_ingredient, 'id', 'name', 'unit')
 				.table(tr_ingredient_product, 'amount')
 				.build(),
-			r_ingredient_product: pick_columns(tr_ingredient_product, ['amount'])
+			r_ingredient_product: pick_columns(tr_ingredient_product, 'amount')
 		})
 		.from(t_product)
 		.leftJoin(tr_ingredient_product, eq(tr_ingredient_product.productId, t_product.id))

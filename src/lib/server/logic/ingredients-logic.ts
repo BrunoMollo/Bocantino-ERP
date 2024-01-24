@@ -13,7 +13,7 @@ export async function getAllWithStock() {
 	return await db
 		.with(sq_stock)
 		.select({
-			ingredient: pick_columns(t_ingredient, ['id', 'name', 'unit', 'reorder_point']),
+			ingredient: pick_columns(t_ingredient, 'id', 'name', 'unit', 'reorder_point'),
 			stock: {
 				stock: sql<number>`COALESCE(sum(${sq_stock.currently_available}), 0)`
 			}
@@ -81,7 +81,11 @@ export async function edit(
 	return await db.transaction(async (tx) => {
 		await tx
 			.update(t_ingredient)
-			.set({ name: ingredient.name, unit: ingredient.unit, reorder_point: ingredient.reorder_point })
+			.set({
+				name: ingredient.name,
+				unit: ingredient.unit,
+				reorder_point: ingredient.reorder_point
+			})
 			.where(eq(t_ingredient.id, id));
 		if (source) {
 			const relation = await tx
