@@ -3,6 +3,7 @@ import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms/client';
 import { product_service } from '$logic/product-service';
 import { error } from '@sveltejs/kit';
+import { should_not_reach } from '$lib/utils';
 
 const close_production_schema = z.object({
 	batch_id: z.coerce.number().int().positive(),
@@ -38,14 +39,17 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return { form };
 		}
-		// const { batch_id } = form.data;
-		// const res = await product_service.deleteBatchById(batch_id);
-		//
-		// if (res.type == 'LOGIC_ERROR') {
-		// 	throw error(400, res.message);
-		// }
+		const { batch_id } = form.data;
+		const res = await product_service.deleteBatchById(batch_id);
 
-		return { form };
+		switch (res.type) {
+			case 'LOGIC_ERROR':
+				throw error(400, res.message);
+			case 'SUCCESS':
+				return { form };
+			default:
+				should_not_reach(res);
+		}
 	}
 };
 

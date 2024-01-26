@@ -4,7 +4,6 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import PaperBag from '$lib/ui/icons/PaperBag.svelte';
 	import { generarPDF } from '../_shared/generar_orden_produccion.js';
-	import { desc } from 'drizzle-orm';
 
 	export let data;
 
@@ -168,3 +167,4 @@
 		</div>
 	</div>
 </dialog>
+

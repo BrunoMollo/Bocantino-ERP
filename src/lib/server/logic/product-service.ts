@@ -18,16 +18,34 @@ import { ingredient_production_service } from './ingredient-production-service';
 class ProductService {
 	constructor(private db: Db) {}
 
-	async closeProduction(data: { batch_id: number; adjustment: number }) {
-		const { batch_id, adjustment } = data;
+	async deleteBatchById(batch_id: number) {
+		const batch_exists = await this.isBatchInProduction(batch_id);
+		if (!batch_exists) {
+			return logic_error('lote indicado no existe');
+		}
 
-		const batch_exists = await this.db
+		await this.db.transaction(async (tx) => {
+			await tx
+				.delete(tr_product_batch_ingredient_batch)
+				.where(eq(tr_product_batch_ingredient_batch.produced_batch_id, batch_id));
+			await tx.delete(t_product_batch).where(eq(t_product_batch.id, batch_id));
+		});
+		return is_ok(null);
+	}
+
+	private async isBatchInProduction(batch_id: number) {
+		return await this.db
 			.select()
 			.from(t_product_batch)
 			.where(and(eq(t_product_batch.id, batch_id), eq(t_product_batch.state, 'IN_PRODUCTION')))
 			.then(getFirstIfPosible)
 			.then(Boolean);
+	}
 
+	async closeProduction(data: { batch_id: number; adjustment: number }) {
+		const { batch_id, adjustment } = data;
+
+		const batch_exists = await this.isBatchInProduction(batch_id);
 		if (!batch_exists) {
 			return logic_error('lote indicado no existe');
 		}
@@ -114,9 +132,8 @@ class ProductService {
 					.filter((x) => x.ingredient_id === ingredient_id)
 					.map((x) => x.amount * produced_amount)[0] ?? 0;
 
-			const all_batches = [] as Awaited<
-				ReturnType<typeof ingredient_production_service.getBatchesByIds>
-			>[];
+			type Batch = Awaited<ReturnType<typeof ingredient_production_service.getBatchesByIds>>;
+			const all_batches = [] as Batch[];
 
 			for (let batches_ids_with_same_ingredient of batches_ids) {
 				const batches = await ingredient_production_service.getBatchesByIds(
