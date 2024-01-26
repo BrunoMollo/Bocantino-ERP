@@ -2,8 +2,8 @@
 	import { startAs } from '$lib/utils.js';
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
-	import PaperBag from '$lib/ui/icons/PaperBag.svelte';
 	import { generarPDF } from '../_shared/generar_orden_produccion.js';
+	import { IconPaperBag } from '@tabler/icons-svelte';
 
 	export let data;
 
@@ -109,7 +109,7 @@
 			<dl class="list-dl">
 				{#each current?.used_batches ?? [] as { ingredient_name, ingredient_unit, amount_used_to_produce_batch, batch_code }}
 					<div>
-						<span class="badge p-2 bg-surface-500"><PaperBag /></span>
+						<span class="badge p-2 bg-surface-500"><IconPaperBag /></span>
 						<span class="flex-auto">
 							<dt class="text-l">
 								{amount_used_to_produce_batch}
