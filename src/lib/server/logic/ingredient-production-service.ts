@@ -232,8 +232,6 @@ class IngredientProductionService {
 				.limit(this.PAGE_SIZE)
 				.offset(page * this.PAGE_SIZE)
 		);
-		limited_ingredient_batch;
-
 		const ta_used_batch = alias(t_ingredient_batch, 'used_batches');
 		return await db
 			.with(limited_ingredient_batch)

@@ -206,6 +206,7 @@ export const t_product_batch = pgTable('product_batch', {
 	expiration_date: date('expiration_date', { mode: 'date' }).notNull(),
 	production_date: date('production_date', { mode: 'date' }), // is null when is IN_PRODUCTION
 	product_id: integer('product_id')
+		.references(() => t_product.id)
 		.notNull()
 		.references(() => t_product.id),
 	state: text('state').notNull().$type<'IN_PRODUCTION' | 'AVAILABLE' | 'EMPTY'>(),
