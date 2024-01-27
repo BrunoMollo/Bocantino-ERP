@@ -21,7 +21,7 @@
 		"@floating-ui/dom": "^1.5.3",
 		"@skeletonlabs/skeleton": "2.5.1",
 		"@skeletonlabs/tw-plugin": "0.2.4",
-		"@sveltejs/adapter-auto": "^2.0.0",
+		"@sveltejs/adapter-vercel": "^2.1.0",
 		"@sveltejs/kit": "^1.27.4",
 		"@tabler/icons-svelte": "^2.46.0",
 		"@tailwindcss/forms": "^0.5.7",
@@ -52,20 +52,21 @@
 		"vite": "^4.4.2",
 		"vite-plugin-tailwind-purgecss": "0.1.4",
 		"vitest": "^0.34.0",
-		"zod": "^3.22.4"
+		"jspdf": "^2.5.1",
+		"jspdf-autotable": "^3.8.1",
+		"boxicons": "^2.1.4"
 	},
 	"type": "module",
 	"dependencies": {
-		"@neondatabase/serverless": "^0.7.2",
-		"@trpc/client": "^10.45.0",
-		"@trpc/server": "^10.45.0",
-		"boxicons": "^2.1.4",
 		"drizzle-orm": "^0.29.3",
 		"drizzle-tools": "0.0.5",
+		"@neondatabase/serverless": "^0.7.2",
+		"ws": "^8.16.0",
+		"@trpc/client": "^10.45.0",
+		"@trpc/server": "^10.45.0",
 		"jose": "^5.2.0",
-		"jspdf": "^2.5.1",
-		"jspdf-autotable": "^3.8.1",
 		"moment": "^2.30.1",
-		"ws": "^8.16.0"
+		"zod": "^3.22.4"
 	}
 }
+
