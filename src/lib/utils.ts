@@ -84,7 +84,7 @@ export function makeOptions<T>(arr: T[], fields: { label: keyof T; value: keyof 
 	);
 }
 
-import { writable, type Readable, readonly } from 'svelte/store';
+import { writable, type Readable } from 'svelte/store';
 import type { ZodValidation } from 'sveltekit-superforms';
 import type { SuperForm } from 'sveltekit-superforms/client';
 import type { AnyZodObject } from 'zod';
@@ -116,5 +116,7 @@ export function derivedAsync<T, R>(store: Readable<T>, func: (x: T) => Promise<R
 /**
  * This function is a helper to implement the exaustive shiwtch pattern
  **/
-export function should_not_reach(para: never) {}
+export function should_not_reach(para: never) {
+	throw Error(para);
+}
 

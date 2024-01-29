@@ -3,6 +3,11 @@
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { ProductSchema } from './zodSchema';
+	import { startAs } from '$lib/utils';
+
+	export let product:
+		| { desc: string; ingredients: Array<{ ingredient_id: number; amount: number }> }
+		| undefined = undefined;
 
 	export let data: { form: any };
 	const { form, enhance, errors, delayed } = superForm<ProductSchema>(data.form, {
@@ -23,7 +28,6 @@
 			return f;
 		});
 	}
-	addLine();
 
 	function removeLine(index: number) {
 		form.update((f) => {
@@ -34,6 +38,14 @@
 			return f;
 		});
 	}
+
+	if (product) {
+		startAs(form, 'desc', product.desc);
+		startAs(form, 'ingredients', product.ingredients);
+	} else {
+		addLine();
+	}
+
 	function ingredientError(index: number, field: keyof (typeof $form.ingredients)[0]) {
 		if ($errors.ingredients) {
 			return $errors.ingredients[index][field];
@@ -66,8 +78,8 @@
 			<label class="label">
 				<select
 					class="select"
-					class:input-error={ingredientError(i, 'id')}
-					bind:value={$form.ingredients[i].id}
+					class:input-error={ingredientError(i, 'ingredient_id')}
+					bind:value={$form.ingredients[i].ingredient_id}
 				>
 					<option selected disabled>---</option>
 					{#each availableIngredients as { id, name, unit }}

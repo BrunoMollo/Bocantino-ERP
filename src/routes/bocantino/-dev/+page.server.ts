@@ -138,8 +138,8 @@ async function seed() {
 	await product_service.add({
 		desc: 'Alimento para perros',
 		ingredients: [
-			{ id: banana.id, amount: 10 },
-			{ id: higado.id, amount: 20 }
+			{ ingredient_id: banana.id, amount: 10 },
+			{ ingredient_id: higado.id, amount: 20 }
 		]
 	});
 

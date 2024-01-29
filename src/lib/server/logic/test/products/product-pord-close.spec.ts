@@ -55,7 +55,7 @@ beforeAll(async () => {
 	LIVER_PRODUCT_ID = await product_service
 		.add({
 			desc: 'Alimento para perros',
-			ingredients: [{ id: LIVER_ID, amount: 10 }]
+			ingredients: [{ ingredient_id: LIVER_ID, amount: 10 }]
 		})
 		.then((x) => x.id);
 

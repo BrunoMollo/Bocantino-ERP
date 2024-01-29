@@ -16,6 +16,41 @@ import { drizzle_map } from 'drizzle-tools';
 import { ingredient_production_service } from './ingredient-production-service';
 
 class ProductService {
+	async edit(
+		product_id: number,
+		data: {
+			desc: string;
+			ingredients: { ingredient_id: number; amount: number }[];
+		}
+	) {
+		await this.db.transaction(async (tx) => {
+			await tx.update(t_product).set({ desc: data.desc }).where(eq(t_product.id, product_id));
+			await tx.delete(tr_ingredient_product).where(eq(tr_ingredient_product.productId, product_id));
+			for (let { ingredient_id, amount } of data.ingredients) {
+				await tx.insert(tr_ingredient_product).values({
+					productId: product_id,
+					ingredient_id,
+					amount
+				});
+			}
+		});
+		return is_ok(null);
+	}
+	async getById(product_id: number) {
+		return await this.db
+			.select({
+				t_product,
+				ingredients: pick_merge()
+					.table(tr_ingredient_product, 'ingredient_id', 'amount')
+					.aliased(tr_ingredient_product, 'ingredient_id', 'id') //internal for drizzle_map
+					.build()
+			})
+			.from(t_product)
+			.innerJoin(tr_ingredient_product, eq(tr_ingredient_product.productId, t_product.id))
+			.where(eq(t_product.id, product_id))
+			.then(drizzle_map({ one: 't_product', with_one: [], with_many: ['ingredients'] }))
+			.then(getFirstIfPosible);
+	}
 	constructor(private db: Db) {}
 
 	public PAGE_SIZE = 10;
@@ -102,6 +137,16 @@ class ProductService {
 		return is_ok(null);
 	}
 
+	private async product_exists(product_id: number) {
+		return await this.db
+			.select()
+			.from(t_product)
+			.where(eq(t_product.id, product_id))
+			.limit(1)
+			.then(getFirstIfPosible)
+			.then(Boolean);
+	}
+
 	async getAll() {
 		return await this.db.select().from(t_product);
 	}
@@ -111,7 +156,7 @@ class ProductService {
 		ingredients
 	}: {
 		desc: string;
-		ingredients: { id: number; amount: number }[];
+		ingredients: { ingredient_id: number; amount: number }[];
 	}) {
 		return await this.db.transaction(async (tx) => {
 			const inserted = await tx
@@ -120,9 +165,9 @@ class ProductService {
 				.returning({ id: t_product.id })
 				.then(getFirst);
 
-			for (const { id, amount } of ingredients) {
+			for (const { ingredient_id, amount } of ingredients) {
 				await tx.insert(tr_ingredient_product).values({
-					ingredient_id: id,
+					ingredient_id,
 					productId: inserted.id,
 					amount
 				});
@@ -157,12 +202,7 @@ class ProductService {
 	}) {
 		const { product_id, produced_amount, recipe, batches_ids } = obj;
 
-		const product_exists = await this.db
-			.select()
-			.from(t_product)
-			.where(eq(t_product.id, product_id))
-			.then(getFirstIfPosible)
-			.then(Boolean);
+		const product_exists = await this.product_exists(product_id);
 
 		if (!product_exists) {
 			return logic_error('producto no existe');

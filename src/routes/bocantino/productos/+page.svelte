@@ -3,10 +3,6 @@
 
 	export let data;
 	let { products } = data;
-
-	function eliminar(id: number): void {
-		products = products.filter((_, i) => products[i].id != id);
-	}
 </script>
 
 <div class="table-container w-11/12 rounded-lg shadow-lg">
@@ -42,16 +38,10 @@
 					<td class="w-1/12">
 						<a
 							class="my-2 mr-5 btn-icon btn-icon-md variant-soft-secondary"
-							href="/productos/edit/{id}"
+							href="/bocantino/productos/edit/{id}"
 						>
 							<i class="bx bx-edit place-self-center text-2xl"></i>
 						</a>
-						<button
-							on:click={() => eliminar(id)}
-							class="my-2 btn-icon btn-icon-md variant-soft-secondary"
-						>
-							<i class="bx bxs-trash place-self-center text-2xl"></i></button
-						>
 					</td>
 				</tr>
 			{/each}

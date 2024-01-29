@@ -5,7 +5,7 @@ export const product_schema = z.object({
 	ingredients: z
 		.array(
 			z.object({
-				id: z.coerce.number().positive().int(),
+				ingredient_id: z.coerce.number().positive().int(),
 				amount: z.coerce.number().positive('debe ser positivo')
 			})
 		)
@@ -13,3 +13,4 @@ export const product_schema = z.object({
 });
 
 export type ProductSchema = typeof product_schema;
+

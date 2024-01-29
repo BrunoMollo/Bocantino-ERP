@@ -5,7 +5,7 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { ingredients_service } from '$logic/ingredient-service';
 
 export const load: PageServerLoad = async ({ params }) => {
-	const { id } = parseParams(params);
+	const { id } = parse_id_param(params);
 
 	const ingredient = await ingredients_service.getById(id);
 	const source = await ingredients_service.getRecipie(id).then((x) => {
@@ -27,7 +27,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
 export const actions: Actions = {
 	default: async ({ request, params }) => {
-		const { id } = parseParams(params);
+		const { id } = parse_id_param(params);
 
 		const form = await superValidate(request, ingredient_schema);
 		if (!form.valid) {
@@ -39,9 +39,9 @@ export const actions: Actions = {
 	}
 };
 
-function parseParams(params: RouteParams) {
+export function parse_id_param(params: RouteParams) {
 	const id = Number(params.id);
-	if (isNaN(id)) {
+	if (isNaN(id) || id < 0) {
 		throw error(400, { message: 'invalid id' });
 	}
 	return { id };
