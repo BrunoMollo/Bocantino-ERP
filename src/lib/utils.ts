@@ -47,6 +47,10 @@ export function parseStringToDate(str: DateString) {
 	return new Date(year, month - 1, day);
 }
 
+export const by =
+	<T extends Object>(k: keyof T) =>
+	(a: T, b: T) =>
+		Number(a[k]) - Number(b[k]);
 /**
  * Type Helper to show nicer types
  * Source: https://www.totaltypescript.com/concepts/the-prettify-helper

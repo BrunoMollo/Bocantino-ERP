@@ -19,6 +19,7 @@ export const sq_stock = db.$with('stock').as(
           + COALESCE(${t_ingredient_batch.adjustment}, 0)`.as('currently_available')
 		})
 		.from(t_ingredient_batch)
+		.where(eq(t_ingredient_batch.state, 'AVAILABLE'))
 		.leftJoin(
 			tr_ingredient_batch_ingredient_batch,
 			eq(tr_ingredient_batch_ingredient_batch.used_batch_id, t_ingredient_batch.id)
