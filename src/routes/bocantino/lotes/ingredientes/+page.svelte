@@ -1,8 +1,21 @@
 <script lang="ts">
 	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+
 	import { Paginator, type PaginationSettings } from '@skeletonlabs/skeleton';
+	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	export let data;
+
+	const popupClick: PopupSettings = {
+		event: 'click',
+		target: 'popupClick',
+		placement: 'bottom'
+	};
+
+	const filtros = {
+		codigo: '',
+		ingrediente: ''
+	};
 
 	const paginationSettings = {
 		page: Number($page.url.searchParams.get('page')) || 0,
@@ -16,9 +29,54 @@
 		query.set('page', detail.toString());
 		goto(`?${query.toString()}`);
 	}
+	let listaFiltrada = data.batches;
+	const condicionFiltrado = (item: any): boolean =>
+		String(item.batch_code).includes(filtros.codigo) &&
+		String(item.ingredient.name).includes(filtros.ingrediente);
+
+	async function filtrar() {
+		if (filtros.codigo != '' || filtros.ingrediente != '') {
+			listaFiltrada = data.batches.filter(condicionFiltrado);
+		} else listaFiltrada = data.batches;
+	}
 </script>
 
-<main class="container flex flex-col mx-auto pt-10 mb-10">
+<main class="container flex flex-col mx-auto pt-10">
+	<div class="w-11/12 mx-auto">
+		<div
+			class="rounded-full bg-slate-950 w-1/4 flex justify-between py-4 px-6 mb-8"
+			use:popup={popupClick}
+		>
+			<p class="mr-10">Filtrar...</p>
+			<i class="bx bx-search-alt text-white text-2xl"></i>
+		</div>
+	</div>
+
+	<div class="card p-4 variant-filled-secondary w-80 rounded" data-popup="popupClick">
+		<h1 class="text-center w-full">Filtros</h1>
+		<div class="">
+			<p>Ingrediente:</p>
+			<input
+				type="text"
+				class="input rounded"
+				placeholder="Ingrese el ingrediente..."
+				bind:value={filtros.ingrediente}
+			/>
+		</div>
+		<div class="">
+			<p>Codigo:</p>
+			<input
+				type="text"
+				class="input rounded"
+				placeholder="Ingrese el codigo..."
+				bind:value={filtros.codigo}
+			/>
+		</div>
+		<button type="button" class="btn rounded variant-filled mt-5 float-right" on:click={filtrar}
+			>Filtrar</button
+		>
+		<div class="arrow variant-filled-secondary" />
+	</div>
 	<table class="table table-hover shadow-lg rounded-lg w-11/12 mx-auto">
 		<thead>
 			<tr>
@@ -31,7 +89,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each data.batches as batch}
+			{#each listaFiltrada as batch}
 				<tr class="align-middle">
 					<td class="w-1/12 align-middle">{batch.id}</td>
 					<td class="w-2/12">{batch.batch_code}</td>
@@ -39,7 +97,9 @@
 					<td class="w-2/12">{batch.stock} {batch.ingredient.unit}</td>
 					<td>{batch.used_batches.map((x) => x.batch_code).join(', ') || '-'}</td>
 
-					<td class="w-1/12"><a class="btn p-0" href={`lotes/${batch.id.toString()}`}>Ver</a></td>
+					<td class="w-1/12"
+						><a class="btn p-0" href={`ingredientes/${batch.id.toString()}`}>Ver</a></td
+					>
 				</tr>
 			{/each}
 			<!-- this wierd reduce is because somtimes the backend returns less items because of how the limit works tihe the joins in the sql query-->
