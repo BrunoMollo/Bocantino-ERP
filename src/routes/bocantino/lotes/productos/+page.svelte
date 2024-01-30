@@ -24,13 +24,22 @@
 				<td class="">{batch.production_date?.toLocaleDateString()}</td>
 				<td class="">{batch.expiration_date?.toLocaleDateString()}</td>
 
-				<td>
+				<td class="divide-y-2 divide-slate-400 divide-dashed">
+					<!-- To be honest y think that this information should be on Detalles screen, cause it expands a lot the row-->
 					{#each batch.used_batches as used_batch}
-						{used_batch.ingredient_name}
+						<div class="py-1">
+							{used_batch.ingredient_name}<br />
+							Lote:
+							{used_batch.batch_code}<br />
+						</div>
 					{/each}
 				</td>
 				<td class="w-1/12">{batch.state}</td>
-				<td class="w-2/12"></td>
+				<td class="w-2/12">
+					<div class="flex w-11/12 justify-end">
+						<button class="btn variant-filled-primary rounded">Detalles</button>
+					</div></td
+				>
 			</tr>
 		{/each}
 	</tbody>
