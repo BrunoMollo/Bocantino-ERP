@@ -38,7 +38,7 @@
 	<input
 		style="margin-top:-10px"
 		placeholder="nombre del nuevo ingrediente"
-		class={`input ${$errors.unit ? 'input-error' : ''} w-5/6`}
+		class={`input ${$errors.name ? 'input-error' : ''} w-5/6`}
 		name="name"
 		type="text"
 		id="name"
