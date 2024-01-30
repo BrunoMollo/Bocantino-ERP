@@ -9,6 +9,7 @@
 	import { routes } from './_components/routes';
 	import Navigation from './_components/Navigation.svelte';
 	import Spinner from '$lib/ui/Spinner.svelte';
+	import { fade } from 'svelte/transition';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
@@ -34,6 +35,11 @@
 			}
 		}
 		return '';
+	});
+
+	let debounce_flag = null as any;
+	navigating.subscribe((x) => {
+		setTimeout(() => (debounce_flag = x), 360);
 	});
 </script>
 
@@ -79,9 +85,8 @@
 		</AppBar>
 	</svelte:fragment>
 
-	<!-- Page Route Content -->
-	{#if $navigating}
-		<div class="w-full h-full flex items-center justify-center">
+	{#if $navigating && debounce_flag}
+		<div class="w-full h-full flex items-center justify-center absolute opacity-80" transition:fade>
 			<Spinner showIf={true} size={36} />
 		</div>
 	{:else}
