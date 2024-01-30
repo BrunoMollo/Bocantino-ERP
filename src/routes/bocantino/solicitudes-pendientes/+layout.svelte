@@ -21,3 +21,4 @@
 <main class="container h-full mx-auto flex flex-col pt-4">
 	<slot />
 </main>
+
