@@ -20,7 +20,6 @@ export async function __DELETE_ALL_DATABASE() {
 		await tx.delete(tr_product_batch_ingredient_batch);
 		await tx.delete(t_product_batch);
 		await tx.delete(tr_ingredient_batch_ingredient_batch);
-		await tx.delete(tr_ingredient_ingredient);
 		await tx.delete(t_ingredient_batch);
 		await tx.delete(t_ingridient_entry);
 		await tx.delete(t_entry_document);
@@ -28,6 +27,7 @@ export async function __DELETE_ALL_DATABASE() {
 		await tx.delete(t_supplier);
 		await tx.delete(tr_ingredient_product);
 		await tx.delete(t_product);
+		await tx.delete(tr_ingredient_ingredient);
 		await tx.delete(t_ingredient);
 		await tx.delete(t_document_type);
 	});

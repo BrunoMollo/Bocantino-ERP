@@ -39,7 +39,7 @@ export const actions: Actions = {
 	}
 };
 
-export function parse_id_param(params: RouteParams) {
+function parse_id_param(params: RouteParams) {
 	const id = Number(params.id);
 	if (isNaN(id) || id < 0) {
 		throw error(400, { message: 'invalid id' });

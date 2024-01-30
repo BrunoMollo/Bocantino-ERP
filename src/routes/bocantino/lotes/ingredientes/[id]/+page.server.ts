@@ -30,6 +30,7 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return { form };
 		}
+		// TODO: register modificarion of stock
 		console.log(form.data);
 
 		return { form };
