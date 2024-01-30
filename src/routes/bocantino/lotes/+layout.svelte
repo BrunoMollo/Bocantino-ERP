@@ -4,16 +4,10 @@
 </script>
 
 <TabGroup active="variant-filled-primary" border="border-solid border-b border-primary-500">
-	<TabAnchor
-		href="/bocantino/solicitudes-pendientes/ingredientes"
-		selected={$page.url.pathname === '/proveedores'}
-	>
+	<TabAnchor href="/bocantino/lotes/ingresados" selected={$page.url.pathname === '/lotes'}>
 		<span>Ingredientes</span>
 	</TabAnchor>
-	<TabAnchor
-		href="/bocantino/solicitudes-pendientes/productos"
-		selected={$page.url.pathname === '/proveedores/add'}
-	>
+	<TabAnchor href="/bocantino/lotes/producidos" selected={$page.url.pathname === '/lotes'}>
 		<span>Productos</span>
 	</TabAnchor>
 </TabGroup>
