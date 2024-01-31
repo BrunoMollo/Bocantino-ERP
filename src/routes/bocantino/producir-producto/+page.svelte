@@ -1,14 +1,14 @@
 <script lang="ts">
 	import { trpc } from '$lib/trpc-client.js';
 	import { derivedAsync, startAs } from '$lib/utils.js';
-	import { derived, writable, } from 'svelte/store';
+	import { derived, writable } from 'svelte/store';
 	import { superForm } from 'sveltekit-superforms/client';
 	import IngredientLine from './_compoenets/ingredient-line.svelte';
 	import Spinner from '$lib/ui/Spinner.svelte';
 
 	export let data;
 	const { ingredients_all } = data;
-	const { form, enhance, errors, delayed, message } = superForm(data.form, {
+	const { form, enhance, delayed } = superForm(data.form, {
 		taintedMessage: null,
 		dataType: 'json'
 	});
@@ -23,7 +23,10 @@
 
 	$: $form.recipe = $recipe as Exclude<typeof $recipe, string | undefined>;
 	const insuficient_arr = writable<any[]>([]);
-	$: can_send =  !$form.produced_amount || $insuficient_arr.reduce((a, b) => a + b, 0)
+	$: can_send =
+		!$form.produced_amount ||
+		!($recipe instanceof Object) ||
+		$insuficient_arr.reduce((a, b) => a + b, 0);
 
 	let dialog: HTMLDialogElement;
 </script>
