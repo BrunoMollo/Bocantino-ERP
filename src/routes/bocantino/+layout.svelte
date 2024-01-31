@@ -9,6 +9,7 @@
 	import { routes } from './_components/routes';
 	import Navigation from './_components/Navigation.svelte';
 	import Spinner from '$lib/ui/Spinner.svelte';
+	import Loader from './_components/Loader.svelte';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
@@ -82,10 +83,9 @@
 	<!-- Page Route Content -->
 	{#if $navigating}
 		<div class="w-full h-full flex items-center justify-center">
-			<Spinner showIf={true} size={36} />
+			<Loader />
 		</div>
 	{:else}
 		<slot />
 	{/if}
 </AppShell>
-
