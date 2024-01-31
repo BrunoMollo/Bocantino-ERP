@@ -7,6 +7,7 @@
 	export let data: { form: any };
 	export let ingridientsAvailables: { id: number; name: string }[];
 	const { form, enhance, errors, delayed } = superForm<SupplierSchema>(data.form, {
+		onError: ({ result }) => alert(`ERROR: ${result.error.message}`),
 		dataType: 'json',
 		clearOnSubmit: 'none'
 	});

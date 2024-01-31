@@ -10,7 +10,8 @@
 	const { ingredients_all } = data;
 	const { form, enhance, delayed } = superForm(data.form, {
 		taintedMessage: null,
-		dataType: 'json'
+		dataType: 'json',
+		onError: ({ result }) => alert(`ERROR: ${result.error.message}`)
 	});
 	startAs(form, 'produced_amount', null);
 

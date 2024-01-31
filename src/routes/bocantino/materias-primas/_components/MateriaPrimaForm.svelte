@@ -8,6 +8,7 @@
 
 	export let data: { form: any };
 	const { form, enhance, errors, delayed } = superForm<IngredientSchema>(data.form, {
+		onError: ({ result }) => alert(`ERROR: ${result.error.message}`),
 		dataType: 'json',
 		taintedMessage: null
 	});
