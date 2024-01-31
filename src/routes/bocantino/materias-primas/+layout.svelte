@@ -1,19 +1,12 @@
 <script lang="ts">
-	import { TabAnchor, TabGroup } from '@skeletonlabs/skeleton';
-	import { page } from '$app/stores';
+	import Tabs from '../_components/Tabs.svelte';
+	const routes = [
+		{ name: 'Lista', href: '/bocantino/materias-primas' },
+		{ name: 'Agregar', href: '/bocantino/materias-primas/add' }
+	];
 </script>
 
-<TabGroup active="variant-filled-primary" border="border-solid border-b border-primary-500">
-	<TabAnchor href="/bocantino/materias-primas" selected={$page.url.pathname === '/materias-primas'}>
-		<span>Lista</span>
-	</TabAnchor>
-	<TabAnchor
-		href="/bocantino/materias-primas/add"
-		selected={$page.url.pathname === '/materias-primas/add'}
-	>
-		<span>Agregar</span>
-	</TabAnchor>
-</TabGroup>
+<Tabs {routes} />
 
 <main class="container h-full mx-auto flex justify-center items-center">
 	<slot />

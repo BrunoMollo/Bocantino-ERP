@@ -3,7 +3,11 @@
 
 	export let data;
 
-	const { form, enhance, errors, delayed } = superForm(data.form, { defaultValidator: 'clear' });
+	const { form, enhance, errors, delayed } = superForm(data.form, {
+		defaultValidator: 'clear',
+		taintedMessage: null,
+		onError: ({ result }) => alert(`ERROR: ${result.error.message}`)
+	});
 </script>
 
 <main class="container mx-auto mt-10">
@@ -51,3 +55,4 @@
 		</div>
 	</div>
 </main>
+
