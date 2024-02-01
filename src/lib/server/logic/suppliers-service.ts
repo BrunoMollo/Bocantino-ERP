@@ -1,17 +1,21 @@
 import { db } from '$lib/server/db';
 import { t_ingredient, t_supplier, tr_supplier_ingredient } from '$lib/server/db/schema';
-import { getFirst, type TableInsert } from '$lib/utils';
+import { getFirst, getFirstIfPosible, type TableInsert } from '$lib/utils';
 import { eq } from 'drizzle-orm';
 import { drizzle_map, pick_columns } from 'drizzle-tools';
 
 class SuppliersService {
 	async getById(supplier_id: number) {
 		return await db
-			.select()
+			.select({
+				t_supplier,
+				ingredients: pick_columns(tr_supplier_ingredient, 'id', 'ingredient_id')
+			})
 			.from(t_supplier)
 			.where(eq(t_supplier.id, supplier_id))
 			.leftJoin(tr_supplier_ingredient, eq(tr_supplier_ingredient.supplier_id, t_supplier.id))
-			.then(drizzle_map({ one: 'supplier', with_one: [], with_many: ['r_supplier_ingredient'] }));
+			.then(drizzle_map({ one: 't_supplier', with_one: [], with_many: ['ingredients'] }))
+			.then(getFirstIfPosible);
 	}
 	async add(
 		data: TableInsert<typeof t_supplier.$inferInsert, 'id'> & {

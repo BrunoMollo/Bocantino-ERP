@@ -3,8 +3,11 @@
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { SupplierSchema } from './shared';
+	import type { suppliers_service } from '$logic/suppliers-service';
+	import { startAs } from '$lib/utils';
 
 	export let data: { form: any };
+	export let supplier: Exclude<Awaited<ReturnType<typeof suppliers_service.getById>>, undefined>;
 	export let ingridientsAvailables: { id: number; name: string }[];
 	const { form, enhance, errors, delayed } = superForm<SupplierSchema>(data.form, {
 		onError: ({ result }) => alert(`ERROR: ${result.error.message}`),
@@ -12,13 +15,20 @@
 		clearOnSubmit: 'none'
 	});
 
+	startAs(form, 'name', supplier.name);
+	startAs(form, 'cuit', supplier.cuit);
+	startAs(form, 'phone_number', supplier.phone_number);
+	startAs(form, 'address', supplier.address);
+	startAs(form, 'email', supplier.email);
+	startAs(
+		form,
+		'ingredientsIds',
+		supplier.ingredients.map((x) => x.ingredient_id)
+	);
+
 	export let btnMsj = 'Agregar';
 </script>
 
-<!-- TODO:remove -->
-<pre>
-    {JSON.stringify($form, null, 2)}
-  </pre>
 <form class="flex flex-col gap-4 p-9" action="" method="post" use:enhance>
 	<label for="name" class="label">
 		<span>
