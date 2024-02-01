@@ -1,4 +1,5 @@
 import {
+	boolean,
 	date,
 	foreignKey,
 	integer,
@@ -92,7 +93,8 @@ export const tr_supplier_ingredient = pgTable(
 			.references(() => t_supplier.id),
 		ingredient_id: integer('ingredient_id')
 			.notNull()
-			.references(() => t_ingredient.id)
+			.references(() => t_ingredient.id),
+		disabled: boolean('disabled').notNull().default(false)
 	},
 	({ supplier_id, ingredient_id }) => ({
 		pk: primaryKey({ columns: [supplier_id, ingredient_id] })

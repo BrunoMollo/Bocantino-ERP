@@ -52,6 +52,9 @@ beforeAll(async () => {
 		.add({
 			name: 'Juan',
 			email: 'jj@gmail.com',
+			cuit: '123456789',
+			phone_number: '3354123456',
+			address: 'fake street 123',
 			ingredientsIds: [LIVER_ID, REDUCED_LIVER_ID]
 		})
 		.then((x) => x.id);

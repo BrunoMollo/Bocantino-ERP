@@ -7,7 +7,7 @@
 	import { startAs } from '$lib/utils';
 
 	export let data: { form: any };
-	export let supplier: Exclude<Awaited<ReturnType<typeof suppliers_service.getById>>, undefined>;
+	export let supplier: Awaited<ReturnType<typeof suppliers_service.getById>> = undefined;
 	export let ingridientsAvailables: { id: number; name: string }[];
 	const { form, enhance, errors, delayed } = superForm<SupplierSchema>(data.form, {
 		onError: ({ result }) => alert(`ERROR: ${result.error.message}`),
@@ -15,16 +15,18 @@
 		clearOnSubmit: 'none'
 	});
 
-	startAs(form, 'name', supplier.name);
-	startAs(form, 'cuit', supplier.cuit);
-	startAs(form, 'phone_number', supplier.phone_number);
-	startAs(form, 'address', supplier.address);
-	startAs(form, 'email', supplier.email);
-	startAs(
-		form,
-		'ingredientsIds',
-		supplier.ingredients.map((x) => x.ingredient_id)
-	);
+	if (supplier) {
+		startAs(form, 'name', supplier.name);
+		startAs(form, 'cuit', supplier.cuit);
+		startAs(form, 'phone_number', supplier.phone_number);
+		startAs(form, 'address', supplier.address);
+		startAs(form, 'email', supplier.email);
+		startAs(
+			form,
+			'ingredientsIds',
+			supplier.ingredients.map((x) => x.ingredient_id)
+		);
+	}
 
 	export let btnMsj = 'Agregar';
 </script>
