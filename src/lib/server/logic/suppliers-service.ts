@@ -5,17 +5,25 @@ import { eq } from 'drizzle-orm';
 import { drizzle_map, pick_columns } from 'drizzle-tools';
 
 class SuppliersService {
+	async getById(supplier_id: number) {
+		return await db
+			.select()
+			.from(t_supplier)
+			.where(eq(t_supplier.id, supplier_id))
+			.leftJoin(tr_supplier_ingredient, eq(tr_supplier_ingredient.supplier_id, t_supplier.id))
+			.then(drizzle_map({ one: 'supplier', with_one: [], with_many: ['r_supplier_ingredient'] }));
+	}
 	async add(
 		data: TableInsert<typeof t_supplier.$inferInsert, 'id'> & {
 			ingredientsIds: number[];
 		}
 	) {
-		const { name, email, ingredientsIds } = data;
+		const { name, email, cuit, phone_number, address, ingredientsIds } = data;
 
 		const id = await db.transaction(async (tx) => {
 			const { generatedId } = await tx
 				.insert(t_supplier)
-				.values({ name, email })
+				.values({ name, email, cuit, phone_number, address })
 				.returning({ generatedId: t_supplier.id })
 				.then(getFirst);
 			for (const ingredient_id of ingredientsIds) {

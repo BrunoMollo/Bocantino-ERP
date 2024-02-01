@@ -15,6 +15,10 @@
 	export let btnMsj = 'Agregar';
 </script>
 
+<!-- TODO:remove -->
+<pre>
+    {JSON.stringify($form, null, 2)}
+  </pre>
 <form class="flex flex-col gap-4 p-9" action="" method="post" use:enhance>
 	<label for="name" class="label">
 		<span>
@@ -42,29 +46,29 @@
 		<input class="input {$errors.cuit ? 'input-error' : ''}" bind:value={$form.cuit} />
 	</label>
 
-	<!--Telefono(Opcional)-->
-	<label for="telefono" class="label">
+	<!--phone_number(Opcional)-->
+	<label for="phone_number" class="label">
 		<span>
-			Telefono:
-			{#if $errors.telefono}
-				<b class=" text-error-400" transition:fade>{$errors.telefono}</b>
+			phone_number:
+			{#if $errors.phone_number}
+				<b class=" text-error-400" transition:fade>{$errors.phone_number}</b>
 			{/if}
 		</span>
 		<input
 			type="tel"
-			class="input {$errors.telefono ? 'input-error' : ''}"
-			bind:value={$form.telefono}
+			class="input {$errors.phone_number ? 'input-error' : ''}"
+			bind:value={$form.phone_number}
 		/>
 	</label>
-	<!--Direccion-->
-	<label for="direccion" class="label">
+	<!--address-->
+	<label for="address" class="label">
 		<span>
-			Direccion:
-			{#if $errors.direccion}
-				<b class=" text-error-400" transition:fade>{$errors.direccion}</b>
+			address:
+			{#if $errors.address}
+				<b class=" text-error-400" transition:fade>{$errors.address}</b>
 			{/if}
 		</span>
-		<input class="input {$errors.direccion ? 'input-error' : ''}" bind:value={$form.direccion} />
+		<input class="input {$errors.address ? 'input-error' : ''}" bind:value={$form.address} />
 	</label>
 
 	<label for="email" class="label">
@@ -93,3 +97,4 @@
 		<Spinner showIf={$delayed} size={4} />
 	</button>
 </form>
+

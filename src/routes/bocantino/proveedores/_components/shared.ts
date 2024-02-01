@@ -5,8 +5,8 @@ export const supplier_schema = z.object({
 	name: z.string().min(3, 'muy corto').max(255),
 	email: z.string().email('email invalido'),
 	cuit: z.string().min(9, 'Cuit invalido'),
-	telefono: z.string(),
-	direccion: z.string(),
+	phone_number: z.string(),
+	address: z.string(),
 	ingredientsIds: z.coerce.number().positive().array().default([])
 });
 
@@ -19,3 +19,4 @@ export function createForm(value?: { name: string; email: string; ingredients: {
 		return superValidate(supplier_schema);
 	}
 }
+
