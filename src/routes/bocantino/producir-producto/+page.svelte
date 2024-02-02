@@ -123,17 +123,25 @@
 		>
 			<i class="bx bx-arrow-back text-2xl"></i>
 		</button>
+		<h1 class="text-2xl text-center mb-5">EDITAR RECETA</h1>
+		<div class="flex w-full gap-1 justify-around px-5">
+			<h1>Ingrediente:</h1>
+			<h1>Cantidad por unidad:</h1>
+		</div>
 		{#if $recipe && $recipe != 'WAITING' && $recipe != 'ERROR'}
 			{#each $recipe as { ingredient_id }, i}
-				<select class="select" bind:value={ingredient_id}>
-					{#each data.ingredients_all as { id, name }}
-						<option value={id}>{name} </option>
-					{/each}
-				</select>
-				<input class="input" type="number" bind:value={$recipe[i].amount} />
+				<div class="flex justify-center gap-1 px-5 mb-3">
+					<select class="select" bind:value={ingredient_id}>
+						{#each data.ingredients_all as { id, name }}
+							<option value={id}>{name} </option>
+						{/each}
+					</select>
+					<input class="input" type="number" bind:value={$recipe[i].amount} />
+				</div>
 			{/each}
 		{/if}
-		<button class="btn variant-filled-primary" on:click={() => dialog.close()}>Aceptar</button>
+		<button class="btn variant-filled-primary m-5 rounded" on:click={() => dialog.close()}
+			>Aceptar</button
+		>
 	</div>
 </dialog>
-

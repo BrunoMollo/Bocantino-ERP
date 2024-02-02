@@ -1,22 +1,24 @@
+<script>
+</script>
+
 <span class="loader"></span>
 
 <style>
 	.loader {
-		width: 48px;
-		height: 48px;
 		display: inline-block;
 		position: relative;
+		transform: scale(var(--scale, 1));
 	}
 	.loader::after,
 	.loader::before {
 		content: '';
 		box-sizing: border-box;
-		width: 56px;
-		height: 56px;
+		width: var(--size, 55px);
+		height: var(--size, 55px);
 		border-radius: 50%;
 		border: 2px solid #fff;
 		position: absolute;
-		left: 0;
+		left: calc(-1 * var(--size, 55px) / 2);
 		top: 0;
 		animation: animloader 2s linear infinite;
 	}

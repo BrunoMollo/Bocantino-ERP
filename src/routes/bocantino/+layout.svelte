@@ -88,7 +88,7 @@
 
 	{#if $navigating && debounce_flag}
 		<div class="w-full h-full flex items-center justify-center absolute opacity-80" transition:fade>
-			<Spinner showIf={true} size={36} />
+			<Loader />
 		</div>
 	{:else}
 		<slot />

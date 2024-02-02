@@ -13,8 +13,8 @@
 	};
 
 	const filtros = {
-		codigo: '',
-		ingrediente: ''
+		batch_code: '',
+		ingredient_name: ''
 	};
 
 	const paginationSettings = {
@@ -29,6 +29,7 @@
 		query.set('page', detail.toString());
 		goto(`?${query.toString()}`);
 	}
+
 	let listaFiltrada = data.batches;
 	const condicionFiltrado = (item: any): boolean =>
 		String(item.batch_code).includes(filtros.codigo) &&
@@ -60,7 +61,7 @@
 				type="text"
 				class="input rounded"
 				placeholder="Ingrese el ingrediente..."
-				bind:value={filtros.ingrediente}
+				bind:value={filtros.ingredient_name}
 			/>
 		</div>
 		<div class="">
@@ -69,7 +70,7 @@
 				type="text"
 				class="input rounded"
 				placeholder="Ingrese el codigo..."
-				bind:value={filtros.codigo}
+				bind:value={filtros.batch_code}
 			/>
 		</div>
 		<button type="button" class="btn rounded variant-filled mt-5 float-right" on:click={filtrar}
