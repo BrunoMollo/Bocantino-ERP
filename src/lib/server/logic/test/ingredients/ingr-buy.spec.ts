@@ -8,9 +8,9 @@ import {
 } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { __DELETE_ALL_DATABASE } from '../utils';
-import { suppliers_service } from '$logic/suppliers-service';
 import { purchases_service } from '$logic/ingredient-purchase-service';
 import { ingredient_defaulter_service } from '$logic/defaulters/ingredient-service.default';
+import { suppliers_defaulter_service } from '$logic/defaulters/supplier-service.default';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -21,14 +21,7 @@ beforeAll(async () => {
 	await db.insert(t_document_type).values(INVOICE_TYPE);
 
 	BANANA = { id: await ingredient_defaulter_service.add_simple() };
-	JUAN = await suppliers_service.add({
-		name: 'Juan Provide',
-		email: 'prov@prov.com',
-		cuit: '123456789',
-		phone_number: '3364123456',
-		address: 'Fake Street 123',
-		ingredientsIds: [BANANA.id]
-	});
+	JUAN = { id: await suppliers_defaulter_service.add({ ingredientsIds: [BANANA.id] }) };
 });
 
 beforeEach(async () => {

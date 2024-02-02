@@ -14,10 +14,10 @@ import { __DELETE_ALL_DATABASE } from '../utils';
 import { sq_stock } from '$logic/_ingredient-stock';
 import { eq } from 'drizzle-orm';
 import { getFirst } from '$lib/utils';
-import { suppliers_service } from '$logic/suppliers-service';
 import { purchases_service } from '$logic/ingredient-purchase-service';
 import { ingredient_production_service } from '$logic/ingredient-production-service';
 import { ingredient_defaulter_service } from '$logic/defaulters/ingredient-service.default';
+import { suppliers_defaulter_service } from '$logic/defaulters/supplier-service.default';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -40,16 +40,7 @@ beforeAll(async () => {
 	BANANA_ID = await ingredient_defaulter_service.add_simple();
 	REDUCED_LIVER_ID = await ingredient_defaulter_service.add_derived({ from: LIVER_ID, amount: 2 });
 
-	SUPPLIER_ID = await suppliers_service
-		.add({
-			name: 'Juan',
-			email: 'jj@gmail.com',
-			cuit: '123456789',
-			phone_number: '3364123456',
-			address: 'Fake Street 123',
-			ingredientsIds: [LIVER_ID, BANANA_ID]
-		})
-		.then((x) => x.id);
+	SUPPLIER_ID = await suppliers_defaulter_service.add({ ingredientsIds: [LIVER_ID, BANANA_ID] });
 });
 beforeEach(async () => {
 	await db.delete(tr_ingredient_batch_ingredient_batch);

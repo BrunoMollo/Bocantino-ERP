@@ -1,9 +1,6 @@
 import { ingredients_service } from '$logic/ingredient-service';
-import crypto from 'crypto';
+import { some_string } from './utils';
 
-function some_string() {
-	return crypto.randomBytes(4).toString('hex');
-}
 class IngredientServiceDefaulter {
 	async add_derived({ from, amount }: { from: number; amount: number }) {
 		return await ingredients_service
