@@ -1,16 +1,17 @@
 <script lang="ts">
 	import { trpc } from '$lib/trpc-client.js';
 	import { derivedAsync, startAs } from '$lib/utils.js';
-	import { derived } from 'svelte/store';
+	import { derived, writable } from 'svelte/store';
 	import { superForm } from 'sveltekit-superforms/client';
 	import IngredientLine from './_compoenets/ingredient-line.svelte';
 	import Spinner from '$lib/ui/Spinner.svelte';
 
 	export let data;
 	const { ingredients_all } = data;
-	const { form, enhance, errors, delayed, message } = superForm(data.form, {
+	const { form, enhance, delayed } = superForm(data.form, {
 		taintedMessage: null,
-		dataType: 'json'
+		dataType: 'json',
+		onError: ({ result }) => alert(`ERROR: ${result.error.message}`)
 	});
 	startAs(form, 'produced_amount', null);
 
@@ -22,10 +23,11 @@
 	});
 
 	$: $form.recipe = $recipe as Exclude<typeof $recipe, string | undefined>;
-
-	function ingredient<T extends keyof (typeof ingredients_all)[0]>(id: number, key: T) {
-		return data.ingredients_all.find((x) => x.id == id)?.[key];
-	}
+	const insuficient_arr = writable<any[]>([]);
+	$: can_send =
+		!$form.produced_amount ||
+		!($recipe instanceof Object) ||
+		$insuficient_arr.reduce((a, b) => a + b, 0);
 
 	let dialog: HTMLDialogElement;
 </script>
@@ -90,6 +92,7 @@
 						{ingredients_all}
 						produced_amount={$form.produced_amount}
 						bind:value={$form.batches_ids[i]}
+						on:insuffiecient={(e) => ($insuficient_arr[i] = e.detail)}
 					/>
 				{/each}
 			{/if}
@@ -97,7 +100,7 @@
 	</table>
 
 	<div class="pt-4 w-full flex justify-end">
-		<button type="submit" class="btn rounded-lg variant-filled-secondary w-1/5">
+		<button type="submit" class="btn rounded-lg variant-filled-secondary w-1/5" disabled={can_send}>
 			{#if $delayed}
 				<Spinner showIf={$delayed} size={20} />
 			{:else}

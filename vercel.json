@@ -1,0 +1,9 @@
+{
+	"git": {
+		"deploymentEnabled": {
+			"bruno": false,
+			"fili": false
+		}
+	}
+}
+

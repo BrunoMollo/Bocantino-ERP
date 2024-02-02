@@ -8,6 +8,7 @@
 
 	export let data: { form: any };
 	const { form, enhance, errors, delayed } = superForm<IngredientSchema>(data.form, {
+		onError: ({ result }) => alert(`ERROR: ${result.error.message}`),
 		dataType: 'json',
 		taintedMessage: null
 	});
@@ -38,7 +39,7 @@
 	<input
 		style="margin-top:-10px"
 		placeholder="nombre del nuevo ingrediente"
-		class={`input ${$errors.unit ? 'input-error' : ''} w-5/6`}
+		class={`input ${$errors.name ? 'input-error' : ''} w-5/6`}
 		name="name"
 		type="text"
 		id="name"
