@@ -22,7 +22,6 @@ export type IngredientSchema = typeof ingredient_schema;
 
 export function createForm(value?: typeof ingredient_schema._type) {
 	if (value) {
-		console.log(value);
 		return superValidate(value, ingredient_schema, { errors: false });
 	} else {
 		return superValidate(ingredient_schema);
