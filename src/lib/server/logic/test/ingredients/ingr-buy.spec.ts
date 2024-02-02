@@ -10,7 +10,7 @@ import { eq } from 'drizzle-orm';
 import { __DELETE_ALL_DATABASE } from '../utils';
 import { suppliers_service } from '$logic/suppliers-service';
 import { purchases_service } from '$logic/ingredient-purchase-service';
-import { ingredients_service } from '$logic/ingredient-service';
+import { ingredient_defaulter_service } from '$logic/defaulters/ingredient-service.default';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -20,7 +20,7 @@ beforeAll(async () => {
 	await __DELETE_ALL_DATABASE();
 	await db.insert(t_document_type).values(INVOICE_TYPE);
 
-	BANANA = await ingredients_service.add({ name: 'Banana', unit: 'Kg', reorder_point: 20 });
+	BANANA = { id: await ingredient_defaulter_service.add_simple() };
 	JUAN = await suppliers_service.add({
 		name: 'Juan Provide',
 		email: 'prov@prov.com',
