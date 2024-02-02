@@ -45,7 +45,14 @@ describe.sequential('supplier crud', () => {
 			await db.delete(t_supplier);
 		});
 		test('valid supplier with no ingredietns', async () => {
-			const data = { name: 'Jon Doe', email: 'jon.doe@gmai.com', ingredientsIds: [] };
+			const data = {
+				name: 'Jon Doe',
+				email: 'jon.doe@gmai.com',
+				cuit: '123456789',
+				phone_number: '3354123456',
+				address: 'fake street 123',
+				ingredientsIds: []
+			};
 			await suppliers_service.add(data);
 			const list_suppliers = await db.select().from(t_supplier);
 			expect(list_suppliers.length).toBe(1);
@@ -58,7 +65,14 @@ describe.sequential('supplier crud', () => {
 		});
 
 		test('valid supplier with one ingredietns', async () => {
-			const data = { name: 'Jon Doe', email: 'jon.doe@gmai.com', ingredientsIds: [FLOUR_ID] };
+			const data = {
+				name: 'Jon Doe',
+				email: 'jon.doe@gmai.com',
+				cuit: '123456789',
+				phone_number: '3354123456',
+				address: 'fake street 123',
+				ingredientsIds: [FLOUR_ID]
+			};
 			await suppliers_service.add(data);
 			const list_suppliers = await db.select().from(t_supplier);
 			expect(list_suppliers.length).toBe(1);
@@ -76,6 +90,9 @@ describe.sequential('supplier crud', () => {
 			const data = {
 				name: 'Jon Doe',
 				email: 'jon.doe@gmai.com',
+				cuit: '123456789',
+				phone_number: '3354123456',
+				address: 'fake street 123',
 				ingredientsIds: [POTATOE_ID, CHICKEN_ID]
 			};
 			await suppliers_service.add(data);
@@ -95,7 +112,14 @@ describe.sequential('supplier crud', () => {
 
 		//TODO:transactions dont work in in memoery database, fix someday
 		test('supplier with non existing ingredietn id', async () => {
-			const data = { name: 'Pablo Martin', email: 'jon.doe@gmai.com', ingredientsIds: [10000] };
+			const data = {
+				name: 'Pablo Martin',
+				email: 'jon.doe@gmai.com',
+				cuit: '123456789',
+				phone_number: '3354123456',
+				address: 'fake street 123',
+				ingredientsIds: [10000]
+			};
 			await expect(async () => {
 				await suppliers_service.add(data);
 			}).rejects.toThrow();

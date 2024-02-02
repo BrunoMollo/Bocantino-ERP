@@ -73,6 +73,9 @@ async function seed() {
 	const julian = await suppliers_service.add({
 		name: 'julian',
 		email: 'julian@hotmail.com',
+		cuit: '123456789',
+		phone_number: '3364123456',
+		address: 'Fake Street 123',
 		ingredientsIds: [higado.id, banana.id]
 	});
 
