@@ -81,14 +81,7 @@ class IngredientService {
 		source?: { id: number; amount: number } | undefined | null
 	) {
 		return await this.db.transaction(async (tx) => {
-			await tx
-				.update(t_ingredient)
-				.set({
-					name: ingredient.name,
-					unit: ingredient.unit,
-					reorder_point: ingredient.reorder_point
-				})
-				.where(eq(t_ingredient.id, id));
+			await tx.update(t_ingredient).set(ingredient).where(eq(t_ingredient.id, id));
 			if (source) {
 				const relation = await tx
 					.select()

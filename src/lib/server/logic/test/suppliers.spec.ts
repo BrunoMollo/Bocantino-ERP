@@ -11,7 +11,7 @@ import {
 } from '$lib/server/db/schema';
 import { __DELETE_ALL_DATABASE } from './utils';
 import { suppliers_service } from '$logic/suppliers-service';
-import { ingredients_service } from '$logic/ingredient-service';
+import { ingredient_defaulter_service } from '$logic/defaulters/ingredient-service.default';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -21,19 +21,9 @@ describe.sequential('supplier crud', () => {
 	let POTATOE_ID = 0;
 	beforeAll(async () => {
 		await __DELETE_ALL_DATABASE();
-		CHICKEN_ID = await ingredients_service
-			.add({
-				name: 'Chicken',
-				unit: 'Kg',
-				reorder_point: 200
-			})
-			.then((x) => x.id);
-		FLOUR_ID = await ingredients_service
-			.add({ name: 'flour', unit: 'Kg', reorder_point: 200 })
-			.then((x) => x.id);
-		POTATOE_ID = await ingredients_service
-			.add({ name: 'Potato', unit: 'Kg', reorder_point: 300 })
-			.then((x) => x.id);
+		CHICKEN_ID = await ingredient_defaulter_service.add_simple();
+		FLOUR_ID = await ingredient_defaulter_service.add_simple();
+		POTATOE_ID = await ingredient_defaulter_service.add_simple();
 	});
 	describe.sequential('add', () => {
 		beforeEach(async () => {
@@ -110,7 +100,6 @@ describe.sequential('supplier crud', () => {
 			}
 		});
 
-		//TODO:transactions dont work in in memoery database, fix someday
 		test('supplier with non existing ingredietn id', async () => {
 			const data = {
 				name: 'Pablo Martin',
@@ -123,10 +112,10 @@ describe.sequential('supplier crud', () => {
 			await expect(async () => {
 				await suppliers_service.add(data);
 			}).rejects.toThrow();
-			// const list_suppliers = await db.select().from(t_supplier);
-			// expect(list_suppliers.length).toBe(0);
-			// const list_relations = await db.select().from(tr_supplier_ingredient);
-			// expect(list_relations.length).toBe(0);
+			const list_suppliers = await db.select().from(t_supplier);
+			expect(list_suppliers.length).toBe(0);
+			const list_relations = await db.select().from(tr_supplier_ingredient);
+			expect(list_relations.length).toBe(0);
 		});
 	});
 });
