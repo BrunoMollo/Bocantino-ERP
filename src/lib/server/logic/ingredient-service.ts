@@ -7,8 +7,8 @@ import { copy_column, drizzle_map, pick_columns } from 'drizzle-tools';
 
 class IngredientService {
 	constructor(private db: Db) {}
-	getAll() {
-		return this.db.select().from(t_ingredient);
+	async getAll() {
+		return await this.db.select().from(t_ingredient);
 	}
 
 	async getAllWithStock() {
