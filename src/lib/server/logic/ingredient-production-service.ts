@@ -1,5 +1,5 @@
 import { db as database, type Db, type Tx } from '$lib/server/db';
-import { getFirst, getFirstIfPosible } from '$lib/utils';
+import { getFirst, getFirstIfPosible, has_repeted } from '$lib/utils';
 import { is_ok, logic_error } from '$logic';
 import {
 	t_ingredient,
@@ -120,7 +120,7 @@ class IngredientProductionService {
 		if (batches_ids.length < 1 || batches_ids.length > 2) {
 			return logic_error('cantidad invalida de lotes');
 		}
-		if ([...new Set(batches_ids)].length != batches_ids.length) {
+		if (has_repeted(batches_ids)) {
 			return logic_error('No se puede usar dos veces el mismo lote');
 		}
 
