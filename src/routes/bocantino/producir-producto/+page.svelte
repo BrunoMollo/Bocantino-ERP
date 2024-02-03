@@ -21,6 +21,28 @@
 			return trpc.products.recipe.query(id);
 		}
 	});
+	const base_nutritional_info = derivedAsync(product_id, async (id) => {
+		if (id) {
+			const res = await trpc.products.nutritional_info.query(id);
+			if (res.type == 'LOGIC_ERROR') {
+				alert(res.message);
+				return undefined;
+			}
+			return res.data;
+		}
+	});
+
+	const current_nutritional_info = derivedAsync(recipe, async ($recipe) => {
+		if (!$recipe) return undefined;
+		if ($recipe == 'WAITING') return undefined;
+		if ($recipe == 'ERROR') return undefined;
+		const res = await trpc.products.nutritional_info_modified.query($recipe);
+		if (res.type == 'LOGIC_ERROR') {
+			alert(res.message);
+			return undefined;
+		}
+		return res.data;
+	});
 
 	$: $form.recipe = $recipe as Exclude<typeof $recipe, string | undefined>;
 	const insuficient_arr = writable<any[]>([]);
@@ -136,4 +158,14 @@
 		<button class="btn variant-filled-primary" on:click={() => dialog.close()}>Aceptar</button>
 	</div>
 </dialog>
+
+<!-- TODO:remove -->
+<div class="flex flex-row">
+	<pre>
+    {JSON.stringify($base_nutritional_info, null, 2)}
+  </pre>
+	<pre>
+    {JSON.stringify($current_nutritional_info, null, 2)}
+</pre>
+</div>
 
