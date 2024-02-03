@@ -124,3 +124,7 @@ export function should_not_reach(para: never) {
 	throw Error(para);
 }
 
+export function has_repeted<T>(arr: T[]) {
+	return [...new Set(arr)].length != arr.length;
+}
+

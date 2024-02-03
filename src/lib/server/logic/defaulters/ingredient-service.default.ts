@@ -29,6 +29,24 @@ class IngredientServiceDefaulter {
 			})
 			.then((x) => x.id);
 	}
+
+	async add_simple_with_nutrients(data: {
+		nutrient_protein: number;
+		nutrient_fat: number;
+		nutrient_carb: number;
+	}) {
+		const { nutrient_carb, nutrient_fat, nutrient_protein } = data;
+		return await ingredients_service
+			.add({
+				name: some_string(),
+				unit: 'Kg',
+				reorder_point: 100,
+				nutrient_fat,
+				nutrient_carb,
+				nutrient_protein
+			})
+			.then((x) => x.id);
+	}
 }
 
 export const ingredient_defaulter_service = new IngredientServiceDefaulter();
