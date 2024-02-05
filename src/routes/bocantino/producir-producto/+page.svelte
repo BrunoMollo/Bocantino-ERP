@@ -4,6 +4,7 @@
 	import { derived, writable } from 'svelte/store';
 	import { superForm } from 'sveltekit-superforms/client';
 	import IngredientLine from './_compoenets/ingredient-line.svelte';
+	import RecipeDiffGraph from './_compoenets/recipie-diff-graph.svelte';
 	import Spinner from '$lib/ui/Spinner.svelte';
 
 	export let data;
@@ -42,6 +43,14 @@
 			return undefined;
 		}
 		return res.data;
+	});
+
+	let prev: any;
+	const modified_nutritional_info = derived(current_nutritional_info, (x) => {
+		if (x == undefined) return prev;
+		if (x == 'WAITING') return prev;
+		prev = x;
+		return x;
 	});
 
 	$: $form.recipe = $recipe as Exclude<typeof $recipe, string | undefined>;
@@ -138,34 +147,44 @@
 </div>
 
 <dialog bind:this={dialog} class="absolute h-screen w-screen bg-transparent text-primary-100">
-	<div class="card w-9/12 md:w-2/4 m-auto mt-14 shadow-lg rounded-lg">
+	<div class="card w-full m-auto mt-14 shadow-lg rounded-lg">
 		<button
 			class="bg-black m-3 p-3 rounded-full h-12 w-12 align-middle shadow-md"
 			on:click={() => dialog.close()}
 		>
 			<i class="bx bx-arrow-back text-2xl"></i>
 		</button>
-		{#if $recipe && $recipe != 'WAITING' && $recipe != 'ERROR'}
-			{#each $recipe as { ingredient_id }, i}
-				<select class="select" bind:value={ingredient_id}>
-					{#each data.ingredients_all as { id, name }}
-						<option value={id}>{name} </option>
+
+		<div class="flex flex-row">
+			<div class="w-2//12">
+				{#if $recipe && $recipe != 'WAITING' && $recipe != 'ERROR'}
+					{#each $recipe as { ingredient_id }, i}
+						<select class="select" bind:value={ingredient_id}>
+							{#each data.ingredients_all as { id, name }}
+								<option value={id}>{name} </option>
+							{/each}
+						</select>
+						<input class="input" type="number" bind:value={$recipe[i].amount} />
 					{/each}
-				</select>
-				<input class="input" type="number" bind:value={$recipe[i].amount} />
-			{/each}
-		{/if}
-		<button class="btn variant-filled-primary" on:click={() => dialog.close()}>Aceptar</button>
+				{/if}
+				<button class="btn variant-filled-primary" on:click={() => dialog.close()}>Aceptar</button>
+			</div>
+			<div class="p-5 w-10/12">
+				{#if $modified_nutritional_info instanceof Object && $base_nutritional_info instanceof Object}
+					<RecipeDiffGraph modified={$modified_nutritional_info} base={$base_nutritional_info} />
+				{/if}
+			</div>
+		</div>
 	</div>
 </dialog>
 
 <!-- TODO:remove -->
-<div class="flex flex-row">
-	<pre>
-    {JSON.stringify($base_nutritional_info, null, 2)}
-  </pre>
-	<pre>
-    {JSON.stringify($current_nutritional_info, null, 2)}
-</pre>
-</div>
+<!-- <div class="flex flex-row"> -->
+<!-- 	<pre> -->
+<!--     {JSON.stringify($base_nutritional_info, null, 2)} -->
+<!--   </pre> -->
+<!-- 	<pre> -->
+<!--     {JSON.stringify($current_nutritional_info, null, 2)} -->
+<!-- </pre> -->
+<!-- </div> -->
 

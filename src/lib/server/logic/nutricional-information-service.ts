@@ -4,7 +4,7 @@ import { t_ingredient } from '../db/schema';
 import { has_repeted } from '$lib/utils';
 import { is_ok, logic_error } from '$logic';
 
-type NutritionalInfo = {
+export type NutritionalInfo = {
 	nutrient_fat: number;
 	nutrient_carb: number;
 	nutrient_protein: number;
