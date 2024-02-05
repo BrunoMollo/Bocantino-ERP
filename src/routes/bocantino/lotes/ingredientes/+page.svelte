@@ -29,6 +29,7 @@
 		query.set('page', detail.toString());
 		goto(`?${query.toString()}`);
 	}
+
 	let listaFiltrada = data.batches;
 
 	async function filtrar() {

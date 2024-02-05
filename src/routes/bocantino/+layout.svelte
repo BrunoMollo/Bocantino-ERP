@@ -10,6 +10,7 @@
 	import Navigation from './_components/Navigation.svelte';
 	import Spinner from '$lib/ui/Spinner.svelte';
 	import { fade } from 'svelte/transition';
+	import Loader from './_components/Loader.svelte';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
@@ -87,10 +88,9 @@
 
 	{#if $navigating && debounce_flag}
 		<div class="w-full h-full flex items-center justify-center absolute opacity-80" transition:fade>
-			<Spinner showIf={true} size={36} />
+			<Loader />
 		</div>
 	{:else}
 		<slot />
 	{/if}
 </AppShell>
-
