@@ -12,11 +12,6 @@
 		placement: 'bottom'
 	};
 
-	const filters = {
-		batch_code: $page.url.searchParams.get('batch_code'),
-		ingredient_name: $page.url.searchParams.get('ingredient_name')
-	};
-
 	const paginationSettings = {
 		page: Number($page.url.searchParams.get('page')) || 0,
 		limit: data.page_size,
@@ -27,20 +22,36 @@
 	function changePage({ detail }: { detail: number }) {
 		let query = new URLSearchParams($page.url.searchParams.toString());
 		query.set('page', detail.toString());
-		goto(`?${query.toString()}`, { invalidateAll: true });
+		goto(`?${query.toString()}`);
 	}
 
+	const query = new URLSearchParams($page.url.searchParams.toString());
+
+	const filters = {
+		batch_code: $page.url.searchParams.get('batch_code'),
+		ingredient_name: $page.url.searchParams.get('ingredient_name')
+	};
+
 	async function filtrar() {
-		let query = new URLSearchParams($page.url.searchParams.toString());
 		for (let key in filters) {
 			//@ts-ignore
-			query.set(key, filters[key]);
+			const value = filters[key];
+			if (value) {
+				query.set(key, value);
+			} else {
+				query.delete(key);
+			}
 		}
 		goto(`?${query.toString()}`);
 	}
 	function closeOnEnterKeyPress({ key }: { key: string }) {
 		//@ts-ignore
 		if (key == 'Enter') document.querySelector('#filter-btn')?.click();
+	}
+	async function clear_filters() {
+		filters.batch_code = '';
+		filters.ingredient_name = '';
+		await filtrar();
 	}
 </script>
 
@@ -77,11 +88,19 @@
 				on:keypress={closeOnEnterKeyPress}
 			/>
 		</div>
+
+		<button
+			type="button"
+			class="btn rounded variant-filled. mt-5 float-left"
+			on:click={clear_filters}
+		>
+			Limpiar
+		</button>
 		<button
 			id="filter-btn"
 			type="button"
 			class="btn rounded variant-filled mt-5 float-right"
-			on:click={filtrar}
+			on:click={() => filtrar()}
 		>
 			Filtrar
 		</button>
