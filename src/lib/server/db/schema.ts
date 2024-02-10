@@ -207,7 +207,7 @@ export const t_document_type = pgTable('document_type', {
 
 ////-------------------------------------------------------------------------------------//
 // USER
-export const t_user = pgTable('user', {
+export const t_user = pgTable('app_user', {
 	id: serial('id').primaryKey(),
 	username: text('username').notNull().unique(),
 	password_hash: text('password_hash').notNull()
