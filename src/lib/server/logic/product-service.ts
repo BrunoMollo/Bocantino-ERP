@@ -51,7 +51,7 @@ class ProductService {
 			.then(drizzle_map({ one: 't_product', with_one: [], with_many: ['ingredients'] }))
 			.then(getFirstIfPosible);
 	}
-	constructor(private db: Db) { }
+	constructor(private db: Db) {}
 
 	public PAGE_SIZE = 10;
 	async getBatchesAvailable({ page }: { page: number }) {
@@ -227,7 +227,7 @@ class ProductService {
 				if (batches.length !== batches_ids_with_same_ingredient.length) {
 					return logic_error(
 						'no se encontro alguon de los siguientes lotes por id ' +
-						JSON.stringify(batches_ids_with_same_ingredient)
+							JSON.stringify(batches_ids_with_same_ingredient)
 					);
 				}
 
@@ -242,8 +242,8 @@ class ProductService {
 				if (available_amount < needed_amount) {
 					return logic_error(
 						'stock insuficiente de ingrediente ' +
-						batches[0].ingredient.name +
-						JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
+							batches[0].ingredient.name +
+							JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
 					);
 				}
 
@@ -255,8 +255,8 @@ class ProductService {
 				if (needed_amount < stock_without_last) {
 					return logic_error(
 						'se indicaron mas batches de los necesarios, ids' +
-						JSON.stringify(batches_ids_with_same_ingredient) +
-						JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
+							JSON.stringify(batches_ids_with_same_ingredient) +
+							JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
 					);
 				}
 			}
@@ -320,35 +320,6 @@ class ProductService {
 				eq(tr_product_batch_ingredient_batch.ingredient_batch_id, t_ingredient_batch.id)
 			)
 			.innerJoin(t_ingredient, eq(t_ingredient_batch.ingredient_id, t_ingredient.id))
-			.then(
-				drizzle_map({ one: 'product_batch', with_many: ['used_batches'], with_one: ['product'] })
-			);
-	}
-	async getLastBatchesInProduction() {
-		return await db
-			.select({
-				product_batch: pick_columns(t_product_batch, 'id', 'batch_code', 'initial_amount'),
-				used_batches: pick_merge()
-					.table(t_ingredient_batch, 'id', 'batch_code')
-					.table(tr_product_batch_ingredient_batch, 'amount_used_to_produce_batch')
-					.aliased(t_ingredient, 'name', 'ingredient_name')
-					.aliased(t_ingredient, 'unit', 'ingredient_unit')
-					.build(),
-				product: pick_columns(t_product, 'id', 'desc')
-			})
-			.from(t_product_batch)
-			.where(eq(t_product_batch.state, 'IN_PRODUCTION'))
-			.innerJoin(t_product, eq(t_product.id, t_product_batch.product_id))
-			.innerJoin(
-				tr_product_batch_ingredient_batch,
-				eq(tr_product_batch_ingredient_batch.produced_batch_id, t_product_batch.id)
-			)
-			.innerJoin(
-				t_ingredient_batch,
-				eq(tr_product_batch_ingredient_batch.ingredient_batch_id, t_ingredient_batch.id)
-			)
-			.innerJoin(t_ingredient, eq(t_ingredient_batch.ingredient_id, t_ingredient.id))
-			.limit(5)
 			.then(
 				drizzle_map({ one: 'product_batch', with_many: ['used_batches'], with_one: ['product'] })
 			);

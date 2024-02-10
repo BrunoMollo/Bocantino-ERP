@@ -3,13 +3,11 @@
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { VALID_UNITS, type IngredientSchema } from './shared';
-	import { should_not_reach, startAs } from '$lib/utils';
-
+	import { startAs } from '$lib/utils';
 	export let ingredients: { id: number; name: string; unit: string }[];
 
 	export let data: { form: any };
 	const { form, enhance, errors, delayed } = superForm<IngredientSchema>(data.form, {
-		onError: ({ result }) => alert(`ERROR: ${result.error.message}`),
 		dataType: 'json',
 		taintedMessage: null
 	});
@@ -22,28 +20,10 @@
 		}
 	}
 
-	// if it does not come from backend
-	if ($form.name === '') {
+	if ($form.reorder_point == 0) {
 		startAs(form, 'reorder_point', null);
-		startAs(form, 'nutrient_carb', null);
-		startAs(form, 'nutrient_protein', null);
-		startAs(form, 'nutrient_fat', null);
 	}
 	export let btnMsj = 'Agregar';
-
-	const nutrients = ['nutrient_protein', 'nutrient_fat', 'nutrient_carb'] as const;
-	function name_nutrient(name: (typeof nutrients)[number]) {
-		switch (name) {
-			case 'nutrient_protein':
-				return 'Proteina';
-			case 'nutrient_fat':
-				return 'Grasas';
-			case 'nutrient_carb':
-				return 'Carbohidratos';
-			default:
-				should_not_reach(name);
-		}
-	}
 </script>
 
 <form class="flex flex-col gap-4 p-9 w-full" action="" method="post" use:enhance>
@@ -58,7 +38,7 @@
 	<input
 		style="margin-top:-10px"
 		placeholder="nombre del nuevo ingrediente"
-		class={`input ${$errors.name ? 'input-error' : ''} w-5/6`}
+		class={`input ${$errors.unit ? 'input-error' : ''} w-5/6`}
 		name="name"
 		type="text"
 		id="name"
@@ -143,30 +123,6 @@
 			bind:value={$form.source.amount}
 		/>
 	{/if}
-
-	{#each nutrients as n}
-		<div class="">
-			<label class="label" transition:fade for={n}>
-				<span>{name_nutrient(n)}</span>
-				{#if $errors[n]}
-					<b class=" text-error-400" transition:fade>Ingrese un valor valido</b>
-				{/if}
-			</label>
-			<div class="relative inline-block w-36">
-				<input
-					type="number"
-					transition:fade
-					placeholder="cantidad"
-					class={`input ${$errors[n] ? 'input-error' : ''}`}
-					name={n}
-					bind:value={$form[n]}
-				/>
-				<!-- TODO: if the ingrediet is in grams, how do we mesure its porporsion gr/gr???? surely not-->
-				<span class="suffix absolute right-3 bottom-[20%] pt-0">gr/{$form.unit}</span>
-			</div>
-		</div>
-	{/each}
-
 	<button class="btn variant-filled-primary" type="submit">
 		<b>{btnMsj}</b>
 		<Spinner showIf={$delayed} size={4} />
