@@ -75,7 +75,7 @@
 	<!--address-->
 	<label for="address" class="label">
 		<span>
-			address:
+			direccion:
 			{#if $errors.address}
 				<b class=" text-error-400" transition:fade>{$errors.address}</b>
 			{/if}
