@@ -53,26 +53,6 @@ export class IngredientPurchaseService {
 		});
 	}
 
-	public async getLastEntries() {
-		const entries = await db
-			.select({
-				id: t_ingridient_entry.id,
-				supplier: t_supplier.name,
-				date: t_ingridient_entry.creation_date,
-				document: {
-					number: t_entry_document.number,
-					issue_date: t_entry_document.issue_date,
-					type: t_document_type.desc
-				}
-			})
-			.from(t_ingridient_entry)
-			.innerJoin(t_supplier, eq(t_ingridient_entry.supplier_id, t_supplier.id))
-			.innerJoin(t_entry_document, eq(t_entry_document.id, t_ingridient_entry.document_id))
-			.innerJoin(t_document_type, eq(t_entry_document.typeId, t_document_type.id))
-			.limit(5)
-		return entries;
-	}
-
 	async getEntries(input: {
 		supplierName?: string;
 		pageSize: number;

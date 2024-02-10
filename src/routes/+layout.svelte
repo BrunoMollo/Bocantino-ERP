@@ -2,7 +2,7 @@
 	import '../app.postcss';
 	import { getToastStore, initializeStores } from '@skeletonlabs/skeleton';
 	import { page } from '$app/stores';
-	import { goto, onNavigate } from '$app/navigation';
+	import { goto } from '$app/navigation';
 
 	initializeStores();
 
@@ -13,19 +13,6 @@
 			toastStore.trigger({ message, timeout: 1500, classes: 'end-0' });
 			goto(url.href.split('?')[0]); // to avoid multple triggers
 		}
-	});
-
-	onNavigate((navigation) => {
-		//@ts-ignore
-		if (!document.startViewTransition) return;
-
-		return new Promise((resolve) => {
-			//@ts-ignore
-			document.startViewTransition(async () => {
-				resolve();
-				await navigation.complete;
-			});
-		});
 	});
 </script>
 

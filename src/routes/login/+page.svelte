@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms/client';
-	import Loader from '../bocantino/_components/Loader.svelte';
 
 	export let data;
 	const { form, enhance, errors, delayed, message } = superForm(data.form, {
@@ -43,15 +42,16 @@
 					bind:value={$form.password}
 				/>
 			</div>
-			<div class="w-2/3 mx-auto justify-around flex mt-7">
-				{#if $delayed}
-					<div class="mx-a">
-						<Loader />
-					</div>
-				{:else}
-					<button type="submit" class="btn variant-filled w-32 rounded">Iniciar sesion</button>
-				{/if}
+			<div class="w-2/3 mx-auto flex justify-end mt-7">
+				<button type="submit" class="btn variant-filled w-32 rounded">
+					{#if $delayed}
+						.....
+					{:else}
+						Iniciar sesion
+					{/if}
+				</button>
 			</div>
 		</form>
 	</div>
 </div>
+

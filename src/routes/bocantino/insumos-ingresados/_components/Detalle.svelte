@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { trpc } from '$lib/trpc-client';
 	import type { PageData } from '../$types';
-	import Loader from '../../_components/Loader.svelte';
 
 	export let selected_entry: PageData['entries'][0] | undefined;
 
@@ -19,7 +18,7 @@
 </script>
 
 {#if selected_entry}
-	<div class="absolute inset-48 rounded-md bg-surface-100-800-token p-4">
+	<div class="absolute inset-24 rounded-md bg-slate-800 p-4">
 		<div>
 			<button
 				on:click={restart}
@@ -27,24 +26,24 @@
 				><i class="bx bx-arrow-back text-2xl"></i></button
 			>
 		</div>
-		<div class="flex w-full justify-between text-xl pt-4">
-			<h1>Id: {selected_entry.id}</h1>
-			<h2>Proveedor: {selected_entry.supplier}</h2>
+		<div class="flex w-full justify-between text-2xl pt-4">
+			<h1>ID: {selected_entry.id}</h1>
+			<h2>PROVEEDOR: {selected_entry.supplier}</h2>
 			<h2>
-				Fecha ingreso: {selected_entry.date.getDay()} / {selected_entry.date.getMonth() + 1} / {selected_entry.date.getFullYear()}
+				FECHA INGRESO: {selected_entry.date.getDay()} / {selected_entry.date.getMonth() + 1} / {selected_entry.date.getFullYear()}
 			</h2>
 		</div>
-		<div class="flex justify-between">
-			<h2 class="text-xl py-2">
-				Numero de {selected_entry.document.type}: {selected_entry.document.number}
-			</h2>
-			<h2 class="text-xl py-2">
-				Fecha de emision: {selected_entry.document.issue_date.getDay()} / {selected_entry.document.issue_date.getMonth() +
-					1} / {selected_entry.document.issue_date.getFullYear()}
-			</h2>
-		</div>
+
+		<h2 class="text-xl py-2">
+			NUMERO DE {selected_entry.document.type.toUpperCase()}: {selected_entry.document.number}
+		</h2>
+		<h2>
+			FECHA DE EMISION: {selected_entry.document.issue_date.getDay()} / {selected_entry.document.issue_date.getMonth() +
+				1} / {selected_entry.document.issue_date.getFullYear()}
+		</h2>
+
 		{#if batches}
-			<table class="w-full mt-5 border-collapse table">
+			<table class="w-full mt-5 shadow-lg border-collapse table">
 				<thead class="text-xl my-2">
 					<tr class="mt-1 mb-2">
 						<th>Ingrediente</th>
@@ -71,9 +70,7 @@
 				</tbody>
 			</table>
 		{:else}
-			<div class="w-full mt-20 flex justify-center align-middle">
-				<Loader --scale="2" />
-			</div>
+			<p>cargando</p>
 		{/if}
 	</div>
 {/if}

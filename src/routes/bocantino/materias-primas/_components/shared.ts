@@ -7,9 +7,6 @@ export const ingredient_schema = z.object({
 	name: z.string().min(2, 'demasiado corto').max(255, 'demaiado largo'),
 	unit: z.enum(VALID_UNITS),
 	reorder_point: z.number().positive('Ingrese un numero valido.').min(1),
-	nutrient_protein: z.number().positive(),
-	nutrient_carb: z.number().positive(),
-	nutrient_fat: z.number().positive(),
 	source: z
 		.object({
 			id: z.number().int().positive(),
@@ -22,9 +19,9 @@ export type IngredientSchema = typeof ingredient_schema;
 
 export function createForm(value?: typeof ingredient_schema._type) {
 	if (value) {
+		console.log(value);
 		return superValidate(value, ingredient_schema, { errors: false });
 	} else {
 		return superValidate(ingredient_schema);
 	}
 }
-
