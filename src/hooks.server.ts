@@ -28,7 +28,7 @@ export const handle: Handle = async ({ event, resolve }) => {
 	return respose;
 };
 
-/** custom redirect */
+/* custom redirect */
 function hook_redirect(location: string) {
 	return new Response(undefined, {
 		status: 303,

@@ -1,4 +1,5 @@
 import {
+	boolean,
 	date,
 	foreignKey,
 	integer,
@@ -17,17 +18,27 @@ export const t_ingredient = pgTable('ingredient', {
 	id: serial('id').primaryKey(),
 	name: text('name').notNull(),
 	unit: text('unit').notNull().$type<'gr' | 'Kg'>(),
-	reorder_point: real('reorder_point').notNull()
+	reorder_point: real('reorder_point').notNull(),
+	nutrient_protein: real('protein').notNull(),
+	nutrient_carb: real('carbs').notNull(),
+	nutrient_fat: real('fats').notNull()
 });
-export const tr_ingredient_ingredient = pgTable('r_ingredient_ingredient', {
-	amount: real('amount').notNull(),
-	derived_id: integer('derived_id')
-		.notNull()
-		.references(() => t_ingredient.id),
-	source_id: integer('source_id')
-		.notNull()
-		.references(() => t_ingredient.id)
-});
+export const tr_ingredient_ingredient = pgTable(
+	'r_ingredient_ingredient',
+	{
+		id: serial('id'),
+		amount: real('amount').notNull(),
+		derived_id: integer('derived_id')
+			.notNull()
+			.references(() => t_ingredient.id),
+		source_id: integer('source_id')
+			.notNull()
+			.references(() => t_ingredient.id)
+	},
+	({ derived_id, source_id }) => ({
+		pk: primaryKey({ columns: [derived_id, source_id] })
+	})
+);
 //-------------------------------------------------------------------------------------////
 //
 
@@ -45,6 +56,7 @@ export const t_product = pgTable('product', {
 export const tr_ingredient_product = pgTable(
 	'r_ingredient_product',
 	{
+		id: serial('id'),
 		ingredient_id: integer('ingredient_id')
 			.notNull()
 			.references(() => t_ingredient.id),
@@ -65,7 +77,10 @@ export const tr_ingredient_product = pgTable(
 export const t_supplier = pgTable('supplier', {
 	id: serial('id').primaryKey(),
 	name: text('name').notNull(),
-	email: text('email').notNull()
+	email: text('email').notNull(),
+	cuit: text('cuit').notNull(),
+	phone_number: text('phone_number').notNull(),
+	address: text('address').notNull()
 });
 //-------------------------------------------------------------------------------------////
 //
@@ -75,12 +90,14 @@ export const t_supplier = pgTable('supplier', {
 export const tr_supplier_ingredient = pgTable(
 	'r_supplier_ingredient',
 	{
+		id: serial('id'),
 		supplier_id: integer('supplier_id')
 			.notNull()
 			.references(() => t_supplier.id),
 		ingredient_id: integer('ingredient_id')
 			.notNull()
-			.references(() => t_ingredient.id)
+			.references(() => t_ingredient.id),
+		disabled: boolean('disabled').notNull().default(false)
 	},
 	({ supplier_id, ingredient_id }) => ({
 		pk: primaryKey({ columns: [supplier_id, ingredient_id] })
@@ -135,6 +152,7 @@ export const t_ingredient_batch = pgTable(
 export const tr_ingredient_batch_ingredient_batch = pgTable(
 	'r_ingredient_batch_ingredient_batch',
 	{
+		id: serial('id'),
 		produced_batch_id: integer('produced_batch_id')
 			.notNull()
 			.references(() => t_ingredient_batch.id),
@@ -189,7 +207,7 @@ export const t_document_type = pgTable('document_type', {
 
 ////-------------------------------------------------------------------------------------//
 // USER
-export const t_user = pgTable('user', {
+export const t_user = pgTable('app_user', {
 	id: serial('id').primaryKey(),
 	username: text('username').notNull().unique(),
 	password_hash: text('password_hash').notNull()
@@ -223,6 +241,7 @@ export const t_product_batch = pgTable('product_batch', {
 export const tr_product_batch_ingredient_batch = pgTable(
 	'r_product_batch_ingredient_batch',
 	{
+		id: serial('id'),
 		produced_batch_id: integer('product_batch_id')
 			.notNull()
 			.references(() => t_product_batch.id),

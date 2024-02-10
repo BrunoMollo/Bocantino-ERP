@@ -16,10 +16,10 @@ import { eq } from 'drizzle-orm';
 import { getFirst } from '$lib/utils';
 import { pick_columns } from 'drizzle-tools';
 import { __DELETE_ALL_DATABASE } from '../utils';
-import { suppliers_service } from '$logic/suppliers-service';
 import { purchases_service } from '$logic/ingredient-purchase-service';
-import { ingredients_service } from '$logic/ingredient-service';
 import { ingredient_production_service } from '$logic/ingredient-production-service';
+import { ingredient_defaulter_service } from '$logic/defaulters/ingredient-service.default';
+import { suppliers_defaulter_service } from '$logic/defaulters/supplier-service.default';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -39,43 +39,11 @@ beforeAll(async () => {
 	await __DELETE_ALL_DATABASE();
 	await db.insert(t_document_type).values(INVOICE_TYPE);
 
-	LIVER_ID = await ingredients_service
-		.add({
-			name: 'Liver',
-			unit: 'Kg',
-			reorder_point: 100
-		})
-		.then((x) => x.id);
+	LIVER_ID = await ingredient_defaulter_service.add_simple();
+	BANANA_ID = await ingredient_defaulter_service.add_simple();
+	REDUCED_LIVER_ID = await ingredient_defaulter_service.add_derived({ from: LIVER_ID, amount: 2 });
 
-	BANANA_ID = await ingredients_service
-		.add({
-			name: 'Banana',
-			unit: 'Kg',
-			reorder_point: 120
-		})
-		.then((x) => x.id);
-
-	SUPPLIER_ID = await suppliers_service
-		.add({
-			name: 'Juan',
-			email: 'jj@gmail.com',
-			ingredientsIds: [LIVER_ID, BANANA_ID]
-		})
-		.then((x) => x.id);
-
-	REDUCED_LIVER_ID = await ingredients_service
-		.add(
-			{
-				name: 'Liver reduced',
-				unit: 'Kg',
-				reorder_point: 80
-			},
-			{
-				id: LIVER_ID,
-				amount: 2
-			}
-		)
-		.then((x) => x.id);
+	SUPPLIER_ID = await suppliers_defaulter_service.add({ ingredientsIds: [LIVER_ID, BANANA_ID] });
 });
 
 beforeEach(async () => {
