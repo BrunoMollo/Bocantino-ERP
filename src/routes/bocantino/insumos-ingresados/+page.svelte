@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { trpc } from '$lib/trpc-client';
+	import Loader from '../_components/Loader.svelte';
 	import Detalle from './_components/Detalle.svelte';
 	import { popup, type PaginationSettings, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { Paginator } from '@skeletonlabs/skeleton';
@@ -143,4 +144,3 @@
 </div>
 
 <Detalle {selected_entry} />
-

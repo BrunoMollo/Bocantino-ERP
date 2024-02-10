@@ -1,12 +1,12 @@
 import { db as database, type Db, type Tx } from '$lib/server/db';
-import { getFirst, getFirstIfPosible } from '$lib/utils';
+import { getFirst, getFirstIfPosible, has_repeted } from '$lib/utils';
 import { is_ok, logic_error } from '$logic';
 import {
 	t_ingredient,
 	t_ingredient_batch,
 	tr_ingredient_batch_ingredient_batch
 } from '../db/schema';
-import { eq, and, asc, desc, ne, count, inArray, sql } from 'drizzle-orm';
+import { eq, and, asc, desc, ne, count, inArray, sql, like, ilike } from 'drizzle-orm';
 import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
 import { sq_stock } from './_ingredient-stock';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
@@ -120,7 +120,7 @@ class IngredientProductionService {
 		if (batches_ids.length < 1 || batches_ids.length > 2) {
 			return logic_error('cantidad invalida de lotes');
 		}
-		if ([...new Set(batches_ids)].length != batches_ids.length) {
+		if (has_repeted(batches_ids)) {
 			return logic_error('No se puede usar dos veces el mismo lote');
 		}
 
@@ -208,7 +208,18 @@ class IngredientProductionService {
 	}
 
 	public PAGE_SIZE = 10;
-	async getBatchesAvailable({ page }: { page: number }) {
+	async getBatchesAvailable(filter: { page: number; batch_code: string; ingredient_name: string }) {
+		const { page, batch_code, ingredient_name } = filter;
+
+		const possible_ingredinets_ids = await database
+			.select()
+			.from(t_ingredient)
+			.where(ilike(t_ingredient.name, `%${ingredient_name}%`))
+			.then((arr) => arr.map((x) => x.id));
+		if (possible_ingredinets_ids.length === 0) {
+			return [];
+		}
+
 		const limited_ingredient_batch = this.db.$with('limited_ingredient_batch').as(
 			database
 				.with(sq_stock)
@@ -228,7 +239,14 @@ class IngredientProductionService {
 				)
 				.from(t_ingredient_batch)
 				.innerJoin(sq_stock, eq(t_ingredient_batch.id, sq_stock.batch_id))
-				.where(and(eq(t_ingredient_batch.state, 'AVAILABLE'), ne(sq_stock.currently_available, 0)))
+				.where(
+					and(
+						eq(t_ingredient_batch.state, 'AVAILABLE'),
+						ne(sq_stock.currently_available, 0),
+						ilike(t_ingredient_batch.batch_code, `%${batch_code}%`),
+						inArray(t_ingredient_batch.ingredient_id, possible_ingredinets_ids)
+					)
+				)
 				.limit(this.PAGE_SIZE)
 				.offset(page * this.PAGE_SIZE)
 		);

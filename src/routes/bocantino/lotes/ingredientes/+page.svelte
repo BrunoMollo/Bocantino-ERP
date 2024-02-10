@@ -12,11 +12,6 @@
 		placement: 'bottom'
 	};
 
-	const filtros = {
-		codigo: '',
-		ingrediente: ''
-	};
-
 	const paginationSettings = {
 		page: Number($page.url.searchParams.get('page')) || 0,
 		limit: data.page_size,
@@ -29,15 +24,34 @@
 		query.set('page', detail.toString());
 		goto(`?${query.toString()}`);
 	}
-	let listaFiltrada = data.batches;
-	const condicionFiltrado = (item: any): boolean =>
-		String(item.batch_code).includes(filtros.codigo) &&
-		String(item.ingredient.name).includes(filtros.ingrediente);
+
+	const query = new URLSearchParams($page.url.searchParams.toString());
+
+	const filters = {
+		batch_code: $page.url.searchParams.get('batch_code'),
+		ingredient_name: $page.url.searchParams.get('ingredient_name')
+	};
 
 	async function filtrar() {
-		if (filtros.codigo != '' || filtros.ingrediente != '') {
-			listaFiltrada = data.batches.filter(condicionFiltrado);
-		} else listaFiltrada = data.batches;
+		for (let key in filters) {
+			//@ts-ignore
+			const value = filters[key];
+			if (value) {
+				query.set(key, value);
+			} else {
+				query.delete(key);
+			}
+		}
+		goto(`?${query.toString()}`);
+	}
+	function closeOnEnterKeyPress({ key }: { key: string }) {
+		//@ts-ignore
+		if (key == 'Enter') document.querySelector('#filter-btn')?.click();
+	}
+	async function clear_filters() {
+		filters.batch_code = '';
+		filters.ingredient_name = '';
+		await filtrar();
 	}
 </script>
 
@@ -60,7 +74,8 @@
 				type="text"
 				class="input rounded"
 				placeholder="Ingrese el ingrediente..."
-				bind:value={filtros.ingrediente}
+				bind:value={filters.ingredient_name}
+				on:keypress={closeOnEnterKeyPress}
 			/>
 		</div>
 		<div class="">
@@ -69,12 +84,26 @@
 				type="text"
 				class="input rounded"
 				placeholder="Ingrese el codigo..."
-				bind:value={filtros.codigo}
+				bind:value={filters.batch_code}
+				on:keypress={closeOnEnterKeyPress}
 			/>
 		</div>
-		<button type="button" class="btn rounded variant-filled mt-5 float-right" on:click={filtrar}
-			>Filtrar</button
+
+		<button
+			type="button"
+			class="btn rounded variant-filled. mt-5 float-left"
+			on:click={clear_filters}
 		>
+			Limpiar
+		</button>
+		<button
+			id="filter-btn"
+			type="button"
+			class="btn rounded variant-filled mt-5 float-right"
+			on:click={() => filtrar()}
+		>
+			Filtrar
+		</button>
 		<div class="arrow variant-filled-secondary" />
 	</div>
 	<table class="table table-hover shadow-lg rounded-lg w-11/12 mx-auto">
@@ -89,7 +118,7 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each listaFiltrada as batch}
+			{#each data.batches as batch}
 				<tr class="align-middle">
 					<td class="w-1/12 align-middle">{batch.id}</td>
 					<td class="w-2/12">{batch.batch_code}</td>
@@ -129,3 +158,4 @@
 		/>
 	</div>
 </main>
+

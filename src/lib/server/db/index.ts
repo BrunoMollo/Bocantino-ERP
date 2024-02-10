@@ -28,8 +28,9 @@ export function create_docker_db_client() {
 	return dizzle_local(queryClient);
 }
 
-export const db = dev ? create_docker_db_client() : await create_neon_db_client();
 export type Db = Awaited<ReturnType<typeof create_neon_db_client>>;
+//@ts-ignore
+export const db: Db = dev ? create_docker_db_client() : await create_neon_db_client();
 
 export type Tx = PgTransaction<
 	NeonQueryResultHKT,
