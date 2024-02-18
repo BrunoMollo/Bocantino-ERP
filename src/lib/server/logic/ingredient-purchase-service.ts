@@ -1,4 +1,4 @@
-import { getFirst, type TableInsert } from '$lib/utils';
+import { getFirst, getFirstIfPosible, type TableInsert } from '$lib/utils';
 import {
 	t_document_type,
 	t_entry_document,
@@ -9,8 +9,27 @@ import {
 } from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
 import { and, eq, like } from 'drizzle-orm';
+import { pick_merge } from 'drizzle-tools/src/pick-columns';
 
 export class IngredientPurchaseService {
+	async getEntryById(entry_id: number) {
+		return await db
+			.select({
+				id: t_ingridient_entry.id,
+				supplier: t_supplier.name,
+				date: t_ingridient_entry.creation_date,
+				document: pick_merge()
+					.table(t_entry_document, 'number', 'issue_date')
+					.aliased(t_document_type, 'desc', 'type')
+					.build()
+			})
+			.from(t_ingridient_entry)
+			.innerJoin(t_supplier, eq(t_supplier.id, t_ingridient_entry.supplier_id))
+			.innerJoin(t_entry_document, eq(t_entry_document.id, t_ingridient_entry.document_id))
+			.innerJoin(t_document_type, eq(t_document_type.id, t_entry_document.typeId))
+			.where(eq(t_ingridient_entry.id, entry_id))
+			.then(getFirstIfPosible);
+	}
 	registerBoughtIngrediets(data: {
 		supplier_id: number;
 		document: TableInsert<typeof t_entry_document.$inferInsert, 'id'>;
@@ -44,7 +63,14 @@ export class IngredientPurchaseService {
 			for (let batch of data.batches) {
 				const inserted = await tx
 					.insert(t_ingredient_batch)
-					.values({ ...batch, supplier_id, state: 'AVAILABLE', entry_id, iva_tax_percentage, perceptions_tax_amount })
+					.values({
+						...batch,
+						supplier_id,
+						state: 'AVAILABLE',
+						entry_id,
+						iva_tax_percentage,
+						perceptions_tax_amount
+					})
 					.returning({ id: t_ingredient_batch.id })
 					.then(getFirst);
 				batchesId.push(inserted.id);
@@ -69,7 +95,7 @@ export class IngredientPurchaseService {
 			.innerJoin(t_supplier, eq(t_ingridient_entry.supplier_id, t_supplier.id))
 			.innerJoin(t_entry_document, eq(t_entry_document.id, t_ingridient_entry.document_id))
 			.innerJoin(t_document_type, eq(t_entry_document.typeId, t_document_type.id))
-			.limit(5)
+			.limit(5);
 		return entries;
 	}
 
