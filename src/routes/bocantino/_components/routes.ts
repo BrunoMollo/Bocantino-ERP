@@ -18,18 +18,18 @@ export const routes = [
 			{
 				name: 'Producir ingrediente',
 				href: '/bocantino/producir-ingrediente',
-				icon: 'bx text-xl bx-file'
+				icon: 'bx text-xl bxs-bone'
 			},
 
 			{
 				name: 'Producir producto',
 				href: '/bocantino/producir-producto',
-				icon: 'bx text-xl bx-file'
+				icon: 'bx text-xl bxs-dog'
 			},
 			{
 				name: 'Producciones pendientes',
 				href: '/bocantino/solicitudes-pendientes',
-				icon: 'bx bx-list-check'
+				icon: 'bx bx-timer'
 			},
 			{ name: 'Lotes', href: '/bocantino/lotes', icon: 'bx bx-list-check' }
 		] satisfies Route[]

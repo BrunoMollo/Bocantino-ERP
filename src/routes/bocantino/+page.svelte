@@ -59,8 +59,44 @@
 			</div>
 		</div>
 	</div>
-	<div class="grid gap-4 p-5 mt-5 rounded overflow-y-auto glass" style="height: 90vh;">
+	<div
+		class="grid gap-4 p-5 mt-5 rounded overflow-y-auto glass"
+		style="height: calc(100vh - 100px)"
+	>
 		<input class="input w-full h-14 p-4 rounded" placeholder="Buscar..." />
+		{#each data.ingredients as { id, name, stock, reorder_point }}
+			{#if data.ingredients.length == 0}
+				<div class=" shrink-0 card p-3 w-96 rounded-lg shadow-lg relative">
+					<h1>No se encontraron materias primas...</h1>
+				</div>
+			{/if}
+			<div
+				class=" shrink-0 card p-3 w-96 rounded-lg shadow-lg relative"
+				style:background-color={stock < reorder_point ? 'rgba(127, 29, 29, 0.4)' : ''}
+				style:box-shadow={stock < reorder_point ? '0 1px 25px 1px rgba(255, 0, 0, 0.8)' : ''}
+			>
+				{#if stock < reorder_point}
+					<div class="absolute right-5 bottom-4">
+						<ProgressRadial
+							width="w-24"
+							font={128}
+							stroke={70}
+							value={(stock / reorder_point) * 100}
+						>
+							{Math.round((stock / reorder_point) * 100)}%
+						</ProgressRadial>
+					</div>
+				{:else}
+					<div class="absolute right-5 bottom-4">
+						<ProgressRadial width="w-24" font={128} stroke={70} value={100}>OK</ProgressRadial>
+					</div>
+				{/if}
+				<h1>ID:{id}</h1>
+				<h2 class="uppercase text-xl self-end w-9/12">{name}</h2>
+				<p class="mt-3">Punto de pedido: {reorder_point}</p>
+				<p>Stock real: {stock}</p>
+			</div>
+		{/each}
 		{#each data.ingredients as { id, name, stock, reorder_point }}
 			{#if data.ingredients.length == 0}
 				<div class=" shrink-0 card p-3 w-96 rounded-lg shadow-lg relative">
