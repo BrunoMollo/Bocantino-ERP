@@ -22,24 +22,43 @@
 		}
 	}
 
+	const nutrients = [
+		'nutrient_protein',
+		'nutrient_fat',
+		'nutrient_carb',
+		'nutrient_ashes',
+		'nutrient_fiber',
+		'nutrient_calcium',
+		'nutrient_sodium',
+		'nutrient_humidity',
+		'nutrient_phosphorus'
+	] as const satisfies (keyof typeof $form)[];
 	// if it does not come from backend
 	if ($form.name === '') {
-		startAs(form, 'reorder_point', null);
-		startAs(form, 'nutrient_carb', null);
-		startAs(form, 'nutrient_protein', null);
-		startAs(form, 'nutrient_fat', null);
+		nutrients.forEach((x) => startAs(form, x, null));
 	}
 	export let btnMsj = 'Agregar';
 
-	const nutrients = ['nutrient_protein', 'nutrient_fat', 'nutrient_carb'] as const;
 	function name_nutrient(name: (typeof nutrients)[number]) {
 		switch (name) {
 			case 'nutrient_protein':
 				return 'Proteina';
-			case 'nutrient_fat':
-				return 'Grasas';
 			case 'nutrient_carb':
 				return 'Carbohidratos';
+			case 'nutrient_fat':
+				return 'Grasas';
+			case 'nutrient_ashes':
+				return 'Cenizas';
+			case 'nutrient_fiber':
+				return 'Fibra';
+			case 'nutrient_calcium':
+				return 'Calcio';
+			case 'nutrient_sodium':
+				return 'Sodio';
+			case 'nutrient_humidity':
+				return 'Humedad';
+			case 'nutrient_phosphorus':
+				return 'Fosoforo';
 			default:
 				should_not_reach(name);
 		}
@@ -144,28 +163,30 @@
 		/>
 	{/if}
 
-	{#each nutrients as n}
-		<div class="">
-			<label class="label" transition:fade for={n}>
-				<span>{name_nutrient(n)}</span>
-				{#if $errors[n]}
-					<b class=" text-error-400" transition:fade>Ingrese un valor valido</b>
-				{/if}
-			</label>
-			<div class="relative inline-block w-36">
-				<input
-					type="number"
-					transition:fade
-					placeholder="cantidad"
-					class={`input ${$errors[n] ? 'input-error' : ''}`}
-					name={n}
-					bind:value={$form[n]}
-				/>
-				<!-- TODO: if the ingrediet is in grams, how do we mesure its porporsion gr/gr???? surely not-->
-				<span class="suffix absolute right-3 bottom-[20%] pt-0">gr/{$form.unit}</span>
+	<hr class="mb-4" />
+	<div class="grid grid-cols-3 gap-7">
+		{#each nutrients as n}
+			<div>
+				<label class="label" transition:fade for={n}>
+					<span>{name_nutrient(n)}</span>
+					{#if $errors[n]}
+						<b class=" text-error-400" transition:fade>Ingrese un valor valido</b>
+					{/if}
+				</label>
+				<div class="relative inline-block w-48">
+					<input
+						type="number"
+						transition:fade
+						placeholder="cantidad"
+						class={`input ${$errors[n] ? 'input-error' : ''}`}
+						name={n}
+						bind:value={$form[n]}
+					/>
+					<span class="suffix absolute right-3 bottom-[20%] pt-0">gr/100gr</span>
+				</div>
 			</div>
-		</div>
-	{/each}
+		{/each}
+	</div>
 
 	<button class="btn variant-filled-primary" type="submit">
 		<b>{btnMsj}</b>

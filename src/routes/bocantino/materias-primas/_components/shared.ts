@@ -10,6 +10,12 @@ export const ingredient_schema = z.object({
 	nutrient_protein: z.number().positive(),
 	nutrient_carb: z.number().positive(),
 	nutrient_fat: z.number().positive(),
+	nutrient_ashes: z.number().positive(),
+	nutrient_fiber: z.number().positive(),
+	nutrient_calcium: z.number().positive(),
+	nutrient_sodium: z.number().positive(),
+	nutrient_humidity: z.number().positive(),
+	nutrient_phosphorus: z.number().positive(),
 	source: z
 		.object({
 			id: z.number().int().positive(),

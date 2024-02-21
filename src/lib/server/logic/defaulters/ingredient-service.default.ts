@@ -11,7 +11,13 @@ class IngredientServiceDefaulter {
 					reorder_point: 100,
 					nutrient_fat: 1,
 					nutrient_carb: 1,
-					nutrient_protein: 1
+					nutrient_protein: 1,
+					nutrient_ashes: 0,
+					nutrient_fiber: 0,
+					nutrient_calcium: 0,
+					nutrient_sodium: 0,
+					nutrient_humidity: 0,
+					nutrient_phosphorus: 0
 				},
 				{ id: from, amount }
 			)
@@ -25,7 +31,13 @@ class IngredientServiceDefaulter {
 				reorder_point: 100,
 				nutrient_fat: 1,
 				nutrient_carb: 1,
-				nutrient_protein: 1
+				nutrient_protein: 1,
+				nutrient_ashes: 0,
+				nutrient_fiber: 0,
+				nutrient_calcium: 0,
+				nutrient_sodium: 0,
+				nutrient_humidity: 0,
+				nutrient_phosphorus: 0
 			})
 			.then((x) => x.id);
 	}
@@ -43,7 +55,13 @@ class IngredientServiceDefaulter {
 				reorder_point: 100,
 				nutrient_fat,
 				nutrient_carb,
-				nutrient_protein
+				nutrient_protein,
+				nutrient_ashes: 0,
+				nutrient_fiber: 0,
+				nutrient_calcium: 0,
+				nutrient_sodium: 0,
+				nutrient_humidity: 0,
+				nutrient_phosphorus: 0
 			})
 			.then((x) => x.id);
 	}
