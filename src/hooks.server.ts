@@ -2,7 +2,7 @@ import { auth_service } from '$logic/auth-service';
 import type { Handle } from '@sveltejs/kit';
 
 export const handle: Handle = async ({ event, resolve }) => {
-	if (event.url.pathname === '/login') {
+	if (event.url.pathname === '/login' || event.url.pathname == '/-dev') {
 		return await resolve(event);
 	}
 
