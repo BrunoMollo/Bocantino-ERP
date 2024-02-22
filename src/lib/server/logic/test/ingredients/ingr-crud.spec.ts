@@ -149,6 +149,20 @@ describe.sequential('ingredients crud', () => {
 	});
 
 	describe.sequential('edit', () => {
+		const new_ingr = {
+			name: 'Higado desidratado',
+			unit: 'gr' as const,
+			reorder_point: 10,
+			nutrient_fat: 10,
+			nutrient_carb: 20,
+			nutrient_protein: 30,
+			nutrient_ashes: 0,
+			nutrient_fiber: 0,
+			nutrient_calcium: 0,
+			nutrient_sodium: 0,
+			nutrient_humidity: 0,
+			nutrient_phosphorus: 0
+		};
 		let LIVER = { id: 0 };
 		let REDUCED_LIVER = { id: 0 };
 		let SYNTETIC_LIVER = { id: 0 };
@@ -182,9 +196,19 @@ describe.sequential('ingredients crud', () => {
 		test('change non derived ingredietn', async () => {
 			await ingredients_service.edit(LIVER.id, {
 				name: 'Higado editado',
-				unit: 'gr',
-				reorder_point: 10
+				unit: 'gr' as const,
+				reorder_point: 10,
+				nutrient_fat: 10,
+				nutrient_carb: 20,
+				nutrient_protein: 30,
+				nutrient_ashes: 0,
+				nutrient_fiber: 0,
+				nutrient_calcium: 0,
+				nutrient_sodium: 0,
+				nutrient_humidity: 0,
+				nutrient_phosphorus: 0
 			});
+			await ingredients_service.edit(LIVER.id, new_ingr);
 			const edited = await db
 				.select()
 				.from(t_ingredient)
@@ -262,7 +286,16 @@ describe.sequential('ingredients crud', () => {
 				{
 					name: 'Really Higado desidratado',
 					unit: 'Kg',
-					reorder_point: 120
+					reorder_point: 120,
+					nutrient_protein: 5,
+					nutrient_carb: 5,
+					nutrient_fat: 6,
+					nutrient_ashes: 0,
+					nutrient_fiber: 0,
+					nutrient_calcium: 0,
+					nutrient_sodium: 0,
+					nutrient_humidity: 0,
+					nutrient_phosphorus: 0
 				},
 				{ id: LIVER.id, amount: 0.9 }
 			);
@@ -271,7 +304,16 @@ describe.sequential('ingredients crud', () => {
 			await ingredients_service.edit(REDUCED_LIVER.id, {
 				name: 'Higado reducido',
 				unit: 'Kg',
-				reorder_point: 10
+				reorder_point: 10,
+				nutrient_protein: 5,
+				nutrient_carb: 5,
+				nutrient_fat: 6,
+				nutrient_ashes: 0,
+				nutrient_fiber: 0,
+				nutrient_calcium: 0,
+				nutrient_sodium: 0,
+				nutrient_humidity: 0,
+				nutrient_phosphorus: 0
 			});
 			const edited = await db
 				.select()

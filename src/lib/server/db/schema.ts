@@ -17,7 +17,16 @@ export const t_ingredient = pgTable('ingredient', {
 	id: serial('id').primaryKey(),
 	name: text('name').notNull(),
 	unit: text('unit').notNull().$type<'gr' | 'Kg'>(),
-	reorder_point: real('reorder_point').notNull()
+	reorder_point: real('reorder_point').notNull(),
+	nutrient_protein: real('protein').notNull(),
+	nutrient_carb: real('carbs').notNull(),
+	nutrient_fat: real('fats').notNull(),
+	nutrient_humidity: real('humidity').notNull(),
+	nutrient_fiber: real('fiber').notNull(),
+	nutrient_ashes: real('ashes').notNull(),
+	nutrient_calcium: real('calcium').notNull(),
+	nutrient_sodium: real('sodium').notNull(),
+	nutrient_phosphorus: real('phosphorus').notNull()
 });
 export const tr_ingredient_ingredient = pgTable('r_ingredient_ingredient', {
 	amount: real('amount').notNull(),
