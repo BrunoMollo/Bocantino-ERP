@@ -12,7 +12,6 @@
 	let subtotal = 0;
 	let iva = 0.21;
 	const { form, enhance, errors } = superForm(data.form, {
-		onError: ({ result }) => alert(`ERROR: ${result.error.message}`),
 		dataType: 'json',
 		defaultValidator: 'clear',
 		taintedMessage: null

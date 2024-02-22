@@ -3,30 +3,13 @@
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 	import type { SupplierSchema } from './shared';
-	import type { suppliers_service } from '$logic/suppliers-service';
-	import { startAs } from '$lib/utils';
 
 	export let data: { form: any };
-	export let supplier: Awaited<ReturnType<typeof suppliers_service.getById>> = undefined;
 	export let ingridientsAvailables: { id: number; name: string }[];
 	const { form, enhance, errors, delayed } = superForm<SupplierSchema>(data.form, {
-		onError: ({ result }) => alert(`ERROR: ${result.error.message}`),
 		dataType: 'json',
 		clearOnSubmit: 'none'
 	});
-
-	if (supplier) {
-		startAs(form, 'name', supplier.name);
-		startAs(form, 'cuit', supplier.cuit);
-		startAs(form, 'phone_number', supplier.phone_number);
-		startAs(form, 'address', supplier.address);
-		startAs(form, 'email', supplier.email);
-		startAs(
-			form,
-			'ingredientsIds',
-			supplier.ingredients.map((x) => x.ingredient_id)
-		);
-	}
 
 	export let btnMsj = 'Agregar';
 </script>
@@ -58,29 +41,29 @@
 		<input class="input {$errors.cuit ? 'input-error' : ''}" bind:value={$form.cuit} />
 	</label>
 
-	<!--phone_number(Opcional)-->
-	<label for="phone_number" class="label">
+	<!--Telefono(Opcional)-->
+	<label for="telefono" class="label">
 		<span>
-			phone_number:
-			{#if $errors.phone_number}
-				<b class=" text-error-400" transition:fade>{$errors.phone_number}</b>
+			Telefono:
+			{#if $errors.telefono}
+				<b class=" text-error-400" transition:fade>{$errors.telefono}</b>
 			{/if}
 		</span>
 		<input
 			type="tel"
-			class="input {$errors.phone_number ? 'input-error' : ''}"
-			bind:value={$form.phone_number}
+			class="input {$errors.telefono ? 'input-error' : ''}"
+			bind:value={$form.telefono}
 		/>
 	</label>
-	<!--address-->
-	<label for="address" class="label">
+	<!--Direccion-->
+	<label for="direccion" class="label">
 		<span>
-			direccion:
-			{#if $errors.address}
-				<b class=" text-error-400" transition:fade>{$errors.address}</b>
+			Direccion:
+			{#if $errors.direccion}
+				<b class=" text-error-400" transition:fade>{$errors.direccion}</b>
 			{/if}
 		</span>
-		<input class="input {$errors.address ? 'input-error' : ''}" bind:value={$form.address} />
+		<input class="input {$errors.direccion ? 'input-error' : ''}" bind:value={$form.direccion} />
 	</label>
 
 	<label for="email" class="label">
@@ -109,4 +92,3 @@
 		<Spinner showIf={$delayed} size={4} />
 	</button>
 </form>
-

@@ -24,7 +24,9 @@
 							<a
 								class="btn variant-filled w-full flex justify-between hover:text-slate-50 uppercase"
 								{href}
-								on:click={() => setTimeout(drawerStore.close, 120)}
+								on:click={() => {
+									drawerStore.close();
+								}}
 								class:active={$page.url.pathname === href}
 								tabindex="0"
 							>

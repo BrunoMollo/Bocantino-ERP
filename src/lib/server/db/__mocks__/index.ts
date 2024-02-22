@@ -1,8 +1,7 @@
-import { NEON_DATABASE_URL } from '$env/static/private';
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 
-const uri = NEON_DATABASE_URL;
+const uri = 'postgresql://postgres:postgres@localhost:5432/mydatabase';
 
 const queryClient = postgres(uri);
 export const db = drizzle(queryClient);

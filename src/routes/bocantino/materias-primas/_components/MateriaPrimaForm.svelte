@@ -3,13 +3,11 @@
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { VALID_UNITS, type IngredientSchema } from './shared';
-	import { should_not_reach, startAs } from '$lib/utils';
-
+	import { startAs } from '$lib/utils';
 	export let ingredients: { id: number; name: string; unit: string }[];
 
 	export let data: { form: any };
 	const { form, enhance, errors, delayed } = superForm<IngredientSchema>(data.form, {
-		onError: ({ result }) => alert(`ERROR: ${result.error.message}`),
 		dataType: 'json',
 		taintedMessage: null
 	});
@@ -77,7 +75,7 @@
 	<input
 		style="margin-top:-10px"
 		placeholder="nombre del nuevo ingrediente"
-		class={`input ${$errors.name ? 'input-error' : ''} w-5/6`}
+		class={`input ${$errors.unit ? 'input-error' : ''} w-5/6`}
 		name="name"
 		type="text"
 		id="name"

@@ -1,18 +1,16 @@
 <script lang="ts">
 	import { trpc } from '$lib/trpc-client.js';
 	import { derivedAsync, startAs } from '$lib/utils.js';
-	import { derived, writable } from 'svelte/store';
+	import { derived } from 'svelte/store';
 	import { superForm } from 'sveltekit-superforms/client';
 	import IngredientLine from './_compoenets/ingredient-line.svelte';
-	import RecipeDiffGraph from './_compoenets/recipie-diff-graph.svelte';
 	import Spinner from '$lib/ui/Spinner.svelte';
 
 	export let data;
 	const { ingredients_all } = data;
-	const { form, enhance, delayed } = superForm(data.form, {
+	const { form, enhance, errors, delayed, message } = superForm(data.form, {
 		taintedMessage: null,
-		dataType: 'json',
-		onError: ({ result }) => alert(`ERROR: ${result.error.message}`)
+		dataType: 'json'
 	});
 	startAs(form, 'produced_amount', null);
 
@@ -22,43 +20,12 @@
 			return trpc.products.recipe.query(id);
 		}
 	});
-	const base_nutritional_info = derivedAsync(product_id, async (id) => {
-		if (id) {
-			const res = await trpc.products.nutritional_info.query(id);
-			if (res.type == 'LOGIC_ERROR') {
-				alert(res.message);
-				return undefined;
-			}
-			return res.data;
-		}
-	});
-
-	const current_nutritional_info = derivedAsync(recipe, async ($recipe) => {
-		if (!$recipe) return undefined;
-		if ($recipe == 'WAITING') return undefined;
-		if ($recipe == 'ERROR') return undefined;
-		const res = await trpc.products.nutritional_info_modified.query($recipe);
-		if (res.type == 'LOGIC_ERROR') {
-			alert(res.message);
-			return undefined;
-		}
-		return res.data;
-	});
-
-	let prev: any;
-	const modified_nutritional_info = derived(current_nutritional_info, (x) => {
-		if (x == undefined) return prev;
-		if (x == 'WAITING') return prev;
-		prev = x;
-		return x;
-	});
 
 	$: $form.recipe = $recipe as Exclude<typeof $recipe, string | undefined>;
-	const insuficient_arr = writable<any[]>([]);
-	$: can_send =
-		!$form.produced_amount ||
-		!($recipe instanceof Object) ||
-		$insuficient_arr.reduce((a, b) => a + b, 0);
+
+	function ingredient<T extends keyof (typeof ingredients_all)[0]>(id: number, key: T) {
+		return data.ingredients_all.find((x) => x.id == id)?.[key];
+	}
 
 	let dialog: HTMLDialogElement;
 </script>
@@ -123,7 +90,6 @@
 						{ingredients_all}
 						produced_amount={$form.produced_amount}
 						bind:value={$form.batches_ids[i]}
-						on:insuffiecient={(e) => ($insuficient_arr[i] = e.detail)}
 					/>
 				{/each}
 			{/if}
@@ -131,7 +97,7 @@
 	</table>
 
 	<div class="pt-4 w-full flex justify-end">
-		<button type="submit" class="btn rounded-lg variant-filled-secondary w-1/5" disabled={can_send}>
+		<button type="submit" class="btn rounded-lg variant-filled-secondary w-1/5">
 			{#if $delayed}
 				<Spinner showIf={$delayed} size={20} />
 			{:else}
@@ -147,43 +113,24 @@
 </div>
 
 <dialog bind:this={dialog} class="absolute h-screen w-screen bg-transparent text-primary-100">
-	<div class="card w-full m-auto mt-14 shadow-lg rounded-lg">
+	<div class="card w-9/12 md:w-2/4 m-auto mt-14 shadow-lg rounded-lg">
 		<button
 			class="bg-black m-3 p-3 rounded-full h-12 w-12 align-middle shadow-md"
 			on:click={() => dialog.close()}
 		>
 			<i class="bx bx-arrow-back text-2xl"></i>
 		</button>
-		<div class="w-full flex flex-row">
-			<div class="w-4/12">
-				<h1 class="text-2xl text-center mb-5">EDITAR RECETA</h1>
-				<div class="flex gap-1 justify-around px-5 w-full">
-					<h1>Ingrediente:</h1>
-					<h1>Cantidad por unidad:</h1>
-				</div>
-				{#if $recipe && $recipe != 'WAITING' && $recipe != 'ERROR'}
-					{#each $recipe as { ingredient_id }, i}
-						<div class="flex justify-center gap-1 px-5 mb-3 w-full">
-							<select class="select" bind:value={ingredient_id}>
-								{#each data.ingredients_all as { id, name }}
-									<option value={id}>{name} </option>
-								{/each}
-							</select>
-							<input class="input" type="number" bind:value={$recipe[i].amount} />
-						</div>
+		{#if $recipe && $recipe != 'WAITING' && $recipe != 'ERROR'}
+			{#each $recipe as { ingredient_id }, i}
+				<select class="select" bind:value={ingredient_id}>
+					{#each data.ingredients_all as { id, name }}
+						<option value={id}>{name} </option>
 					{/each}
-				{/if}
-				<button class="btn variant-filled-primary m-5 rounded" on:click={() => dialog.close()}>
-					Aceptar
-				</button>
-			</div>
-
-			<div class="p-5 w-8/12">
-				{#if $modified_nutritional_info instanceof Object && $base_nutritional_info instanceof Object}
-					<RecipeDiffGraph modified={$modified_nutritional_info} base={$base_nutritional_info} />
-				{/if}
-			</div>
-		</div>
+				</select>
+				<input class="input" type="number" bind:value={$recipe[i].amount} />
+			{/each}
+		{/if}
+		<button class="btn variant-filled-primary" on:click={() => dialog.close()}>Aceptar</button>
 	</div>
 </dialog>
 

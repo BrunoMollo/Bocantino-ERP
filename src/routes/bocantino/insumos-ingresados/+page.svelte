@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { trpc } from '$lib/trpc-client';
+	import Detalle from './_components/Detalle.svelte';
+
 	import { popup, type PaginationSettings, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { Paginator } from '@skeletonlabs/skeleton';
 	export let data;
