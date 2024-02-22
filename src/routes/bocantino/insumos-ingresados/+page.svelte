@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { trpc } from '$lib/trpc-client';
 	import Detalle from './_components/Detalle.svelte';
+
 	import { popup, type PaginationSettings, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { Paginator } from '@skeletonlabs/skeleton';
 	export let data;
@@ -24,15 +25,6 @@
 		number: ''
 	};
 	let listafiltrada = data.entries;
-
-	let selected_entry: (typeof data.entries)[0] | undefined = undefined;
-
-	function expandirDetalle(idEntrada: string) {
-		if (idEntrada) {
-			selected_entry = data.entries.find((x) => x.id == Number(idEntrada));
-			return null;
-		}
-	}
 
 	async function filtrar() {
 		listafiltrada = await trpc.entries.get
@@ -123,13 +115,12 @@
 						>{entrada.document.number} ({entrada.document.type})</td
 					>
 					<td style="vertical-align:middle" class="text-center w-2/12">
-						<button
-							type="button"
-							class="btn variant-filled-primary rounded"
-							on:click={expandirDetalle(entrada.id.toString())}>Detalles</button
-						></td
-					>
-				</tr>
+						<a
+							class="btn variant-filled-secondary"
+							href={'/bocantino/insumos-ingresados/' + entrada.id}>ver detalle</a
+						>
+					</td></tr
+				>
 			{/each}
 		</tbody>
 	</table>
@@ -141,6 +132,4 @@
 		showPreviousNextButtons={true}
 	/>
 </div>
-
-<Detalle {selected_entry} />
 
