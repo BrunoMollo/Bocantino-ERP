@@ -15,48 +15,37 @@
 				<th>Direccion</th>
 				<th>Email</th>
 				<th>Materias primas</th>
-				<th></th>
 			</tr>
 		</thead>
 		<tbody>
-			{#each suppliers as { id, name, email, ingredients, cuit, phone_number }}
+			{#each suppliers as { id, name, email, ingredients }}
 				<tr class="align-middle">
 					<td class="align-middle">{id}</td>
 					<td>{name}</td>
-					<td>{cuit}</td>
-					<td>{phone_number}</td>
+					<td>Cuit del proveedor</td>
+					<!--Modificar cuando esten los datos en el back-->
+					<td>Direccion del proveedor</td>
+					<!--Modificar cuando esten los datos en el back-->
 					<td>{email}</td>
-					<td>
-						<TreeView>
-							<TreeViewItem>
-								Expandir materias primas
-								<svelte:fragment slot="children">
-									{#each ingredients as ingredient}
-										<TreeViewItem class="grid justify-between">
-											{ingredient.name}
-										</TreeViewItem>
-									{/each}
-									{#if ingredients.length === 0}
-										<TreeViewItem class="grid justify-between">
-											No tiene ingredientes asignados
-										</TreeViewItem>
-									{/if}
-								</svelte:fragment>
-							</TreeViewItem>
-						</TreeView>
-					</td>
-
-					<td class="w-1/12">
-						<a
-							class="my-2 mr-5 btn-icon btn-icon-md variant-soft-secondary"
-							href="/bocantino/proveedores/edit/{id}"
-						>
-							<i class="bx bx-edit place-self-center text-2xl"></i>
-						</a>
-					</td>
+					<TreeView>
+						<TreeViewItem>
+							Expandir materias primas
+							<svelte:fragment slot="children">
+								{#each ingredients as ingredient}
+									<TreeViewItem class="grid justify-between">
+										{ingredient.name}
+									</TreeViewItem>
+								{/each}
+								{#if ingredients.length === 0}
+									<TreeViewItem class="grid justify-between">
+										No tiene ingredientes asignados
+									</TreeViewItem>
+								{/if}
+							</svelte:fragment>
+						</TreeViewItem>
+					</TreeView>
 				</tr>
 			{/each}
 		</tbody>
 	</table>
 </div>
-

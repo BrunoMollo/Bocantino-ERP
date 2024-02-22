@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { trpc } from '$lib/trpc-client';
-	import { createEventDispatcher, onMount } from 'svelte';
+	import { modeCurrent } from '@skeletonlabs/skeleton';
 	import { fade, fly } from 'svelte/transition';
 
 	export let value = [] as number[];
@@ -20,11 +20,6 @@
 
 	$: current_amount = selected_batches.reduce((acc, item) => acc + item.current_amount, 0);
 	$: insuffiecient = !!selected_batches.length && needed_amount > current_amount;
-	const dispach = createEventDispatcher();
-	onMount(() => {
-		dispach('insuffiecient', true); // dispatch whe  created
-	});
-	$: dispach('insuffiecient', insuffiecient) && current_amount; // the current_amount amoutn is to trigger
 
 	let number_of_barches = 1;
 </script>
@@ -89,7 +84,6 @@
 					if (number_of_barches > 1) {
 						number_of_barches--;
 						value.pop();
-						selected_batches = selected_batches.filter((x) => value.includes(x.id));
 					}
 				}}
 			>
@@ -98,4 +92,3 @@
 		</td>
 	{/if}
 </tr>
-

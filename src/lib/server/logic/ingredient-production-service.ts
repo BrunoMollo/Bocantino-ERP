@@ -1,5 +1,5 @@
-import { db as database, type Db, type Tx } from '$lib/server/db';
-import { getFirst, getFirstIfPosible, has_repeted } from '$lib/utils';
+import { db, type Db, type Tx } from '$lib/server/db';
+import { getFirst, getFirstIfPosible } from '$lib/utils';
 import { is_ok, logic_error } from '$logic';
 import {
 	t_ingredient,
@@ -14,10 +14,10 @@ import { alias } from 'drizzle-orm/pg-core';
 import { ingredients_service } from './ingredient-service';
 
 class IngredientProductionService {
-	constructor(private db: Db) {}
+	constructor(private db: Db) { }
 
 	async getBatchesByingredient_id(id: number) {
-		return await database
+		return await db
 			.with(sq_stock)
 			.select({
 				batch: pick_columns(t_ingredient_batch, 'id', 'batch_code', 'expiration_date'),
@@ -51,7 +51,7 @@ class IngredientProductionService {
 	}
 
 	async getBatchById(id: number, tx?: Tx) {
-		return await (tx ?? database)
+		return await (tx ?? db)
 			.with(sq_stock)
 			.select({
 				batch: pick_columns(t_ingredient_batch, 'id', 'batch_code', 'expiration_date'),
@@ -80,7 +80,7 @@ class IngredientProductionService {
 	}
 
 	async getBatchesByIds(ids: number[], tx?: Tx) {
-		return await (tx ?? database)
+		return await (tx ?? db)
 			.with(sq_stock)
 			.select({
 				batch: pick_merge()
@@ -120,7 +120,7 @@ class IngredientProductionService {
 		if (batches_ids.length < 1 || batches_ids.length > 2) {
 			return logic_error('cantidad invalida de lotes');
 		}
-		if (has_repeted(batches_ids)) {
+		if ([...new Set(batches_ids)].length != batches_ids.length) {
 			return logic_error('No se puede usar dos veces el mismo lote');
 		}
 
@@ -196,7 +196,7 @@ class IngredientProductionService {
 	}
 
 	async getCountOfAvailableBatches() {
-		return await database
+		return await db
 			.with(sq_stock)
 			.select({
 				value: count(t_ingredient_batch.id)
@@ -210,7 +210,7 @@ class IngredientProductionService {
 	public PAGE_SIZE = 10;
 	async getBatchesAvailable({ page }: { page: number }) {
 		const limited_ingredient_batch = this.db.$with('limited_ingredient_batch').as(
-			database
+			db
 				.with(sq_stock)
 				.select(
 					pick_merge()
@@ -233,7 +233,7 @@ class IngredientProductionService {
 				.offset(page * this.PAGE_SIZE)
 		);
 		const ta_used_batch = alias(t_ingredient_batch, 'used_batches');
-		return await database
+		return await db
 			.with(limited_ingredient_batch)
 			.select({
 				ingredient_batch: pick_columns(
@@ -271,7 +271,7 @@ class IngredientProductionService {
 	async getBatchesInProduction() {
 		const ta_used_batch = alias(t_ingredient_batch, 'used_batches');
 		const ta_used_ingredient = alias(t_ingredient, 'used_ingredient');
-		return await database
+		return await db
 			.select({
 				t_ingredient_batch: pick_columns(t_ingredient_batch, 'id', 'batch_code', 'initial_amount'),
 				ingredient: pick_columns(t_ingredient, 'id', 'name', 'unit'),
@@ -331,7 +331,7 @@ class IngredientProductionService {
 	}
 
 	async deleteBatchById(id: number) {
-		const found = await database
+		const found = await db
 			.select()
 			.from(t_ingredient_batch)
 			.where(eq(t_ingredient_batch.id, id))
@@ -341,7 +341,7 @@ class IngredientProductionService {
 			return logic_error('lote no encontrado');
 		}
 
-		await database
+		await db
 			.delete(tr_ingredient_batch_ingredient_batch)
 			.where(eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, id));
 
@@ -351,7 +351,7 @@ class IngredientProductionService {
 	}
 
 	async deleteIngredientProduction(id: number) {
-		const list = await database
+		const list = await db
 			.select()
 			.from(t_ingredient_batch)
 			.where(and(eq(t_ingredient_batch.id, id), eq(t_ingredient_batch.state, 'IN_PRODUCTION')));
@@ -366,26 +366,7 @@ class IngredientProductionService {
 			return is_ok(null);
 		});
 	}
-
-	async modifyStock({ batch_id, adjustment }: { batch_id: number; adjustment: number }) {
-		return await this.db.transaction(async (tx) => {
-			const batch = await this.db
-				.select()
-				.from(t_ingredient_batch)
-				.where(eq(t_ingredient_batch.id, batch_id))
-				.then(getFirstIfPosible);
-			if (!batch) {
-				return logic_error('lote no existe');
-			}
-
-			await tx
-				.update(t_ingredient_batch)
-				.set({ adjustment: Number(batch.adjustment) + adjustment })
-				.where(eq(t_ingredient_batch.id, batch_id));
-			return is_ok(null);
-		});
-	}
 }
 
-export const ingredient_production_service = new IngredientProductionService(database);
+export const ingredient_production_service = new IngredientProductionService(db);
 

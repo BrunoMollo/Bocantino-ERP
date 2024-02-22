@@ -13,8 +13,8 @@
 	};
 
 	const filtros = {
-		batch_code: '',
-		ingredient_name: ''
+		codigo: '',
+		ingrediente: ''
 	};
 
 	const paginationSettings = {
@@ -29,16 +29,15 @@
 		query.set('page', detail.toString());
 		goto(`?${query.toString()}`);
 	}
-
 	let listaFiltrada = data.batches;
+	const condicionFiltrado = (item: any): boolean =>
+		String(item.batch_code).includes(filtros.codigo) &&
+		String(item.ingredient.name).includes(filtros.ingrediente);
 
 	async function filtrar() {
-		let query = new URLSearchParams($page.url.searchParams.toString());
-		for (let key in filtros) {
-			//@ts-ignore
-			query.set(key, filtros[key]);
-		}
-		goto(`?${query.toString()}`);
+		if (filtros.codigo != '' || filtros.ingrediente != '') {
+			listaFiltrada = data.batches.filter(condicionFiltrado);
+		} else listaFiltrada = data.batches;
 	}
 </script>
 
@@ -61,7 +60,7 @@
 				type="text"
 				class="input rounded"
 				placeholder="Ingrese el ingrediente..."
-				bind:value={filtros.ingredient_name}
+				bind:value={filtros.ingrediente}
 			/>
 		</div>
 		<div class="">
@@ -70,7 +69,7 @@
 				type="text"
 				class="input rounded"
 				placeholder="Ingrese el codigo..."
-				bind:value={filtros.batch_code}
+				bind:value={filtros.codigo}
 			/>
 		</div>
 		<button type="button" class="btn rounded variant-filled mt-5 float-right" on:click={filtrar}
@@ -130,4 +129,3 @@
 		/>
 	</div>
 </main>
-
