@@ -4,22 +4,18 @@
 	import { generarPDF } from './solicitudes-pendientes/_shared/generar_orden_produccion.js';
 	export let data;
 	let buscados = '';
-	const produccionesPendientes = data.pending_productions;
 
 	$: ingredientes = data.ingredients;
 
 	function mostrarIngreso(id: any) {
 		window.location.href = 'bocantino/insumos-ingresados/' + id;
-		return null;
-	}
-	function mostrarSolicitud(id: any) {
-		return null;
+		return;
 	}
 	function filtrar() {
 		ingredientes = data.ingredients.filter((ingrediente) => {
 			return ingrediente.name.toLocaleLowerCase().includes(buscados.toLocaleLowerCase());
 		});
-		console.log(ingredientes.length);
+		console.log(buscados);
 	}
 </script>
 
