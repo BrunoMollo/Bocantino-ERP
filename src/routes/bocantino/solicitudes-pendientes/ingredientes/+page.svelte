@@ -3,6 +3,7 @@
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { generarPDF } from '../_shared/generar_orden_produccion.js';
+	import CompleteTable from '../../_components/complete-table.svelte';
 
 	export let data;
 
@@ -85,6 +86,7 @@
 				</td>
 			</tr>
 		{/each}
+		<CompleteTable list={data.pending_productions} rows={4} />
 	</tbody>
 </table>
 

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { TreeView, TreeViewItem } from '@skeletonlabs/skeleton';
+	import CompleteTable from '../_components/complete-table.svelte';
 
 	export let data;
 	const { suppliers } = data;
@@ -56,6 +57,7 @@
 					</td>
 				</tr>
 			{/each}
+			<CompleteTable list={suppliers} rows={7} />
 		</tbody>
 	</table>
 </div>

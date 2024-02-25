@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { trpc } from '$lib/trpc-client';
+	import CompleteTable from '../_components/complete-table.svelte';
 
 	export let data;
 
@@ -23,41 +24,34 @@
 			<th>ID</th>
 			<th>Nombre</th>
 			<th>Unidad</th>
+			<th>Punto de pedido</th>
 			<th></th>
 		</tr>
 	</thead>
 	<tbody>
 		{#each data.list as ingredient}
-			<tr class="align-middle">
+			<tr class="align-middle h-16">
 				<td class="w-2/12 align-middle">{ingredient.id}</td>
 				<td class="w-3/12">{ingredient.name}</td>
 				<td class="w-2/12">{ingredient.unit}</td>
+				<td class="w-2/12">{ingredient.reorder_point}</td>
 				<td class="w-2/12">
 					<a
-						class="my-2 btn-icon btn-icon-md variant-soft-secondary mr-5"
+						class="btn-icon btn-icon-md variant-soft-secondary"
 						href="materias-primas/edit/{ingredient.id}"
 					>
-						<i class="bx bx-edit place-self-center text-2xl"></i></a
+						<i class="bx bx-edit place-self-center text-xl"></i></a
 					>
 					<button
 						on:click={() => deleteIngredient(ingredient.id)}
-						class="my-2 btn-icon btn-icon-md variant-soft-secondary"
+						class=" btn-icon btn-icon-md variant-soft-secondary"
 					>
-						<i class="bx bxs-trash place-self-center text-2xl"></i></button
+						<i class="bx bxs-trash place-self-center text-xl"></i></button
 					>
 				</td>
 			</tr>
 		{/each}
-		{#if 10 - data.list.length > 0}
-			{#each Array(10 - data.list.length) as _}
-				<tr>
-					<td />
-					<td />
-					<td />
-					<td />
-				</tr>
-			{/each}
-		{/if}
+		<CompleteTable list={data.list} rows={5} />
 	</tbody>
 </table>
 

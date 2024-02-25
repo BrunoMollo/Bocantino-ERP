@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { TreeView, TreeViewItem } from '@skeletonlabs/skeleton';
+	import CompleteTable from '../_components/complete-table.svelte';
 
 	export let data;
 	let { products } = data;
@@ -45,6 +46,7 @@
 					</td>
 				</tr>
 			{/each}
+			<CompleteTable list={products} rows={4} />
 		</tbody>
 	</table>
 </div>
@@ -54,3 +56,4 @@
 		vertical-align: middle;
 	}
 </style>
+
