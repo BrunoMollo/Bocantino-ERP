@@ -314,8 +314,3 @@
 		</div>
 	</form>
 </main>
-<!-- TODO:remove -->
-<pre>
-    {JSON.stringify($errors, null, 2)}
-  </pre>
-

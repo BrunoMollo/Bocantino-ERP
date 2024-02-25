@@ -78,7 +78,6 @@
 				<td class="p-4">{item.initial_amount} Kg</td>
 				<td class="gap-5 flex p-4">
 					<button on:click={() => show(i)}>ver</button>
-					<!-- TODO: generate pdf-->
 					<button
 						class="rounded-full bg-white px-3 py-2"
 						on:click={generarPDF(item.product.desc, item)}
