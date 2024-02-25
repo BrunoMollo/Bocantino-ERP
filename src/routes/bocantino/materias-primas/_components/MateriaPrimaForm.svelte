@@ -176,6 +176,7 @@
 				<div class="relative inline-block w-48">
 					<input
 						type="number"
+						step=".01"
 						transition:fade
 						placeholder="cantidad"
 						class={`input ${$errors[n] ? 'input-error' : ''}`}

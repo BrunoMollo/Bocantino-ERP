@@ -39,6 +39,7 @@
 						class:error_border={$errors.adjustment}
 						name="adjustment"
 						type="number"
+						step=".001"
 						id="adjustment"
 						bind:value={$form.adjustment}
 					/>
