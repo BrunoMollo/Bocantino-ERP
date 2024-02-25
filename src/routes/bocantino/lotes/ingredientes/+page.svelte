@@ -4,6 +4,7 @@
 
 	import { Paginator, type PaginationSettings } from '@skeletonlabs/skeleton';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
+	import CompleteTable from '../../_components/complete-table.svelte';
 	export let data;
 
 	const popupClick: PopupSettings = {
@@ -131,19 +132,7 @@
 					>
 				</tr>
 			{/each}
-			<!-- this wierd reduce is because somtimes the backend returns less items because of how the limit works tihe the joins in the sql query-->
-			{#if data.batches.reduce((acc, item) => acc + item.used_batches.length, 0) < data.page_size}
-				{#each Array(data.page_size - data.batches.length) as _}
-					<tr>
-						<td><wbr /></td>
-						<td />
-						<td />
-						<td />
-						<td />
-						<td />
-					</tr>
-				{/each}
-			{/if}
+			<CompleteTable list={data.batches} rows={6} />
 		</tbody>
 	</table>
 	<div class="pt-4 mx-auto">

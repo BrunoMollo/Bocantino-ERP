@@ -1,4 +1,6 @@
 <script lang="ts">
+	import CompleteTable from '../../_components/complete-table.svelte';
+
 	export let data;
 </script>
 
@@ -42,5 +44,7 @@
 				>
 			</tr>
 		{/each}
+		<CompleteTable list={data.product_batches} rows={8} />
 	</tbody>
 </table>
+

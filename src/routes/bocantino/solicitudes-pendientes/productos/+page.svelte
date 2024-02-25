@@ -4,6 +4,7 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import { generarPDF } from '../_shared/generar_orden_produccion.js';
 	import { IconPaperBag } from '@tabler/icons-svelte';
+	import CompleteTable from '../../_components/complete-table.svelte';
 
 	export let data;
 
@@ -86,6 +87,7 @@
 				</td>
 			</tr>
 		{/each}
+		<CompleteTable list={data.pending_productions} rows={4} />
 	</tbody>
 </table>
 

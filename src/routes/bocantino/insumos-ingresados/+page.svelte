@@ -2,6 +2,7 @@
 	import { trpc } from '$lib/trpc-client';
 	import { popup, type PaginationSettings, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { Paginator } from '@skeletonlabs/skeleton';
+	import CompleteTable from '../_components/complete-table.svelte';
 	export let data;
 	let paginationSettings = {
 		page: 0,
@@ -120,6 +121,7 @@
 					</td></tr
 				>
 			{/each}
+			<CompleteTable list={listafiltrada} rows={5} />
 		</tbody>
 	</table>
 	<Paginator
