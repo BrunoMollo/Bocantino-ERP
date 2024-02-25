@@ -139,7 +139,7 @@ export const t_ingredient_batch = pgTable(
 			.$defaultFn(() => 'ARG'),
 		entry_id: integer('entry_id').references(() => t_ingridient_entry.id),
 		iva_tax_percentage: real('iva_tax_percentage').notNull(),
-		perceptions_tax_amount: real('perceptions_tax_amount').notNull(),
+		withdrawal_tax_amount: real('withdrawal_tax_amount').notNull(),
 		//internal only
 		adjustment: real('adjustment')
 	},

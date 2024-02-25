@@ -7,16 +7,15 @@
 	import { derived } from 'svelte/store';
 
 	export let data;
-	let percepciones = 0;
-	$: total = subtotal + subtotal * iva + Number(percepciones);
-	let subtotal = 0;
-	let iva = 0.21;
 	const { form, enhance, errors } = superForm(data.form, {
 		onError: ({ result }) => alert(`ERROR: ${result.error.message}`),
 		dataType: 'json',
 		defaultValidator: 'clear',
 		taintedMessage: null
 	});
+
+	$: total = subtotal + subtotal * $form.iva_tax_percentage + Number($form.withdrawal_tax_amount);
+	let subtotal = 0;
 
 	if ($form.batches.length === 0) {
 		addLine();
@@ -84,7 +83,7 @@
 		}
 	);
 
-	function actualizarCosto(event: Event & { currentTarget: EventTarget & HTMLInputElement }) {
+	function actualizarCosto() {
 		let variable = 0;
 		$form.batches.forEach((element) => {
 			variable += Number(element.cost);
@@ -292,7 +291,7 @@
 			</div>
 			<div class="flex">
 				<h2 class="p-2">Iva:</h2>
-				<select id="opciones" class="select w-24" bind:value={iva}>
+				<select id="opciones" class="select w-24" bind:value={$form.iva_tax_percentage}>
 					<option value="0.21">21%</option>
 					<option value="0.105">10,5%</option>
 					<option value="0">0%</option>
@@ -300,7 +299,7 @@
 			</div>
 			<div class="flex align-middle">
 				<h2 class="p-2">Percepciones:</h2>
-				<input type="text" class="input rounded" bind:value={percepciones} />
+				<input type="text" class="input rounded" bind:value={$form.withdrawal_tax_amount} />
 			</div>
 			<div class="w-1/2"></div>
 		</div>
@@ -315,3 +314,8 @@
 		</div>
 	</form>
 </main>
+<!-- TODO:remove -->
+<pre>
+    {JSON.stringify($errors, null, 2)}
+  </pre>
+

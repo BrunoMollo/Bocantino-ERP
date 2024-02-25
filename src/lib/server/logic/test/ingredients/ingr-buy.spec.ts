@@ -35,7 +35,7 @@ describe.sequential('buy ingredients', async () => {
 	beforeAll(() => {
 		VAILD_INPUT_1B = {
 			supplier_id: JUAN.id,
-			perceptions_tax_amount: 10,
+			withdrawal_tax_amount: 10,
 			iva_tax_percentage: 21,
 			document: {
 				typeId: INVOICE_TYPE.id,
@@ -110,7 +110,7 @@ describe.sequential('buy ingredients', async () => {
 			);
 
 			expect(list[0].iva_tax_percentage).toBe(21);
-			expect(list[0].perceptions_tax_amount).toBe(10);
+			expect(list[0].withdrawal_tax_amount).toBe(10);
 			expect(list[0].adjustment).toBe(null);
 		});
 	});
@@ -120,7 +120,7 @@ describe.sequential('buy ingredients', async () => {
 
 		beforeAll(() => {
 			VALID_INPUT_2B = {
-				perceptions_tax_amount: 10,
+				withdrawal_tax_amount: 10,
 				iva_tax_percentage: 21,
 				supplier_id: JUAN.id,
 				document: {

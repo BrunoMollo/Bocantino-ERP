@@ -33,7 +33,7 @@ export class IngredientPurchaseService {
 	registerBoughtIngrediets(data: {
 		supplier_id: number;
 		document: TableInsert<typeof t_entry_document.$inferInsert, 'id'>;
-		perceptions_tax_amount: number;
+		withdrawal_tax_amount: number;
 		iva_tax_percentage: number;
 		batches: {
 			ingredient_id: number;
@@ -58,7 +58,7 @@ export class IngredientPurchaseService {
 				.returning({ entry_id: t_ingridient_entry.id })
 				.then(getFirst);
 
-			const { supplier_id, iva_tax_percentage, perceptions_tax_amount } = data;
+			const { supplier_id, iva_tax_percentage, withdrawal_tax_amount } = data;
 			const batchesId = [] as number[];
 			for (let batch of data.batches) {
 				const inserted = await tx
@@ -69,7 +69,7 @@ export class IngredientPurchaseService {
 						state: 'AVAILABLE',
 						entry_id,
 						iva_tax_percentage,
-						perceptions_tax_amount
+						withdrawal_tax_amount
 					})
 					.returning({ id: t_ingredient_batch.id })
 					.then(getFirst);
@@ -142,7 +142,9 @@ export class IngredientPurchaseService {
 				bags: t_ingredient_batch.number_of_bags,
 				production_date: t_ingredient_batch.production_date,
 				expiration_date: t_ingredient_batch.expiration_date,
-				cost: t_ingredient_batch.cost
+				cost: t_ingredient_batch.cost,
+				withdrawal_tax_amount: t_ingredient_batch.withdrawal_tax_amount,
+				iva_tax_percentage: t_ingredient_batch.iva_tax_percentage
 			})
 			.from(t_ingredient_batch)
 			.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredient_id))

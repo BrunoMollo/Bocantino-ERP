@@ -14,6 +14,8 @@ const boughBatchSchema = z.object({
 	invoiceNumber: z.string().min(4, 'Requerido').max(255),
 	issueDate: z.string().refine(isValidDateBackend).transform(parseStringToDate),
 	due_date: z.string().refine(isValidDateBackend).transform(parseStringToDate),
+	withdrawal_tax_amount: z.coerce.number().min(0),
+	iva_tax_percentage: z.coerce.number().min(0),
 	batches: z
 		.object({
 			batch_code: z.string().min(2).max(256),
@@ -42,10 +44,10 @@ export const actions: Actions = {
 			return { form };
 		}
 
-		const { batches, supplier_id } = form.data;
+		const { batches, supplier_id, withdrawal_tax_amount, iva_tax_percentage } = form.data;
 		await purchases_service.registerBoughtIngrediets({
-			perceptions_tax_amount: 10, //TODO: Change
-			iva_tax_percentage: 21, //TODO: Change
+			withdrawal_tax_amount,
+			iva_tax_percentage,
 			supplier_id,
 			batches,
 			document: {

@@ -61,7 +61,7 @@ describe.sequential('stock ingredients', () => {
 	test('after buying two ingredients batches, stock increase', async () => {
 		const [first_batch_id, second_batch_id] = await purchases_service
 			.registerBoughtIngrediets({
-				perceptions_tax_amount: 10,
+				withdrawal_tax_amount: 10,
 				iva_tax_percentage: 21,
 				supplier_id: SUPPLIER_ID,
 				document: {
@@ -103,7 +103,7 @@ describe.sequential('stock ingredients', () => {
 	test('when start producing product,substract stock', async () => {
 		const [first_batch_id] = await purchases_service
 			.registerBoughtIngrediets({
-				perceptions_tax_amount: 10,
+				withdrawal_tax_amount: 10,
 				iva_tax_percentage: 21,
 				supplier_id: SUPPLIER_ID,
 				document: {
@@ -152,7 +152,7 @@ describe.sequential('stock ingredients', () => {
 	test('when close product production, mantain substracted stock and djunstent does not affect (+10)', async () => {
 		const [first_batch_id] = await purchases_service
 			.registerBoughtIngrediets({
-				perceptions_tax_amount: 10,
+				withdrawal_tax_amount: 10,
 				iva_tax_percentage: 21,
 				supplier_id: SUPPLIER_ID,
 				document: {
@@ -204,7 +204,7 @@ describe.sequential('stock ingredients', () => {
 	test('when cancel produciton of product, stoke is resotred', async () => {
 		const [first_batch_id] = await purchases_service
 			.registerBoughtIngrediets({
-				perceptions_tax_amount: 10,
+				withdrawal_tax_amount: 10,
 				iva_tax_percentage: 21,
 				supplier_id: SUPPLIER_ID,
 				document: {
@@ -246,7 +246,7 @@ describe.sequential('stock ingredients', () => {
 	test('while producing ingredient, stock is reduced used & produced batch does not appear', async () => {
 		const [first_batch_id] = await purchases_service
 			.registerBoughtIngrediets({
-				perceptions_tax_amount: 10,
+				withdrawal_tax_amount: 10,
 				iva_tax_percentage: 21,
 				supplier_id: SUPPLIER_ID,
 				document: {
@@ -283,7 +283,7 @@ describe.sequential('stock ingredients', () => {
 	test('after producing ingredient, stock is reduced used & produced batch appear (adjusntment=0)', async () => {
 		const [first_batch_id] = await purchases_service
 			.registerBoughtIngrediets({
-				perceptions_tax_amount: 10,
+				withdrawal_tax_amount: 10,
 				iva_tax_percentage: 21,
 				supplier_id: SUPPLIER_ID,
 				document: {
@@ -326,7 +326,7 @@ describe.sequential('stock ingredients', () => {
 	test('after producing ingredient, stock is reduced used & produced batch appear (adjusntment=+10)', async () => {
 		const [first_batch_id] = await purchases_service
 			.registerBoughtIngrediets({
-				perceptions_tax_amount: 10,
+				withdrawal_tax_amount: 10,
 				iva_tax_percentage: 21,
 				supplier_id: SUPPLIER_ID,
 				document: {
@@ -369,7 +369,7 @@ describe.sequential('stock ingredients', () => {
 	test('after producing ingredient, stock is reduced used & produced batch appear (adjusntment=-15)', async () => {
 		const [first_batch_id] = await purchases_service
 			.registerBoughtIngrediets({
-				perceptions_tax_amount: 10,
+				withdrawal_tax_amount: 10,
 				iva_tax_percentage: 21,
 				supplier_id: SUPPLIER_ID,
 				document: {
@@ -412,7 +412,7 @@ describe.sequential('stock ingredients', () => {
 	test('cancel producing ingredient, stock is restored used & produced batch does not appear', async () => {
 		const [first_batch_id] = await purchases_service
 			.registerBoughtIngrediets({
-				perceptions_tax_amount: 10,
+				withdrawal_tax_amount: 10,
 				iva_tax_percentage: 21,
 				supplier_id: SUPPLIER_ID,
 				document: {
@@ -454,7 +454,7 @@ describe.sequential('stock ingredients', () => {
 	test('a lot of stuff', async () => {
 		const [first_batch_id] = await purchases_service
 			.registerBoughtIngrediets({
-				perceptions_tax_amount: 10,
+				withdrawal_tax_amount: 10,
 				iva_tax_percentage: 21,
 				supplier_id: SUPPLIER_ID,
 				document: {
