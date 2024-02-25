@@ -79,6 +79,7 @@
 		<div class="relative inline-block w-70">
 			<input
 				type="number"
+				step=".01"
 				placeholder="cantidad..."
 				bind:value={$form.produced_amount}
 				class="input w-full rounded ml-3"
@@ -169,7 +170,7 @@
 									<option value={id}>{name} </option>
 								{/each}
 							</select>
-							<input class="input" type="number" bind:value={$recipe[i].amount} />
+							<input class="input" type="number" step="0.01" bind:value={$recipe[i].amount} />
 						</div>
 					{/each}
 				{/if}

@@ -112,10 +112,11 @@
 			<h3 class="h3 pt-4">Finalizar produccion</h3>
 			<form bind:this={form_el} class="flex flex-col" method="post" action="?/finish" use:enhance>
 				<div class="mb-4">
-					<label class="label" for="loss">Ajuste:</label>
+					<label class="label" for="adjustment">Ajuste:</label>
 					<div>
 						<input
 							type="number"
+							step=".01"
 							class="input w-40 mr-2"
 							id="adjustment"
 							bind:value={$form.adjustment}
@@ -155,3 +156,4 @@
 		</div>
 	</div>
 </dialog>
+

@@ -111,6 +111,7 @@
 		<div class="relative inline-block w-70">
 			<input
 				type="number"
+				step=".01"
 				placeholder="cantidad..."
 				bind:value={$form.producedAmount}
 				class="input w-full rounded ml-3"
@@ -262,3 +263,4 @@
 		</button>
 	</div>
 </form>
+
