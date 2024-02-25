@@ -48,7 +48,7 @@
 						<th>Codigo Lote</th>
 						<th>Fecha Produccion</th>
 						<th>Fecha Vencimiento</th>
-						<th>Costo</th>
+						<th>Importe</th>
 						<th># bolsas</th>
 					</tr>
 				</thead>
@@ -66,6 +66,17 @@
 					{/each}
 				</tbody>
 			</table>
+
+			{@const iva = batches[0].iva_tax_percentage}
+			{@const withdrawal = batches[0].withdrawal_tax_amount}
+			{@const subtotal = batches.map((x) => x.cost ?? 0).reduce((a, b) => a + b, 0)}
+			{@const total = subtotal * (1 + iva) + withdrawal}
+
+			<div>
+				<p>Iva:{iva}</p>
+				<p>Percepciones: {withdrawal}</p>
+				<p>Total: {total}</p>
+			</div>
 		{:else}
 			<div class="w-full mt-20 flex justify-center align-middle">
 				<Loader --scale="2" />

@@ -54,7 +54,7 @@ export class AuthService {
 			return logic_error('constraseña incorrecta');
 		}
 
-		const token = await this.signJWT({ id: db_user.id }, { exp: `${JWT_EXPIRES_IN}m` }); //TODO: invesigate
+		const token = await this.signJWT({ id: db_user.id }, { exp: `${JWT_EXPIRES_IN}m` });
 
 		return { token, type: 'SUCCESS' } as const;
 	}
@@ -74,7 +74,7 @@ export class AuthService {
 
 		const { id } = await db
 			.insert(t_user)
-			.values({ username, password_hash: await bcrypt.hash(password, 10) }) //TODO: investigate further
+			.values({ username, password_hash: await bcrypt.hash(password, 10) })
 			.returning({ id: t_user.id })
 			.then(getFirst);
 

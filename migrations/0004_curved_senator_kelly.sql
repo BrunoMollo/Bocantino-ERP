@@ -1,0 +1,1 @@
+ALTER TABLE "ingredient_batch" RENAME COLUMN "perceptions_tax_amount" TO "withdrawal_tax_amount";

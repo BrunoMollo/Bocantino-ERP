@@ -187,13 +187,3 @@
 	</div>
 </dialog>
 
-<!-- TODO:remove -->
-<div class="flex flex-row">
-	<pre>
-    {JSON.stringify($base_nutritional_info, null, 2)}
-  </pre>
-	<pre>
-    {JSON.stringify($current_nutritional_info, null, 2)}
-</pre>
-</div>
-

@@ -38,7 +38,7 @@ beforeAll(async () => {
 
 	LIVER_BATCH_ID = await purchases_service
 		.registerBoughtIngrediets({
-			perceptions_tax_amount: 10,
+			withdrawal_tax_amount: 10,
 			iva_tax_percentage: 21,
 			supplier_id: SUPPLIER_ID,
 			document: {
@@ -63,7 +63,7 @@ beforeAll(async () => {
 
 	SECOND_LIVER_BATCH_ID = await purchases_service
 		.registerBoughtIngrediets({
-			perceptions_tax_amount: 10,
+			withdrawal_tax_amount: 10,
 			iva_tax_percentage: 21,
 			supplier_id: SUPPLIER_ID,
 			document: {
@@ -88,7 +88,7 @@ beforeAll(async () => {
 
 	BANANA_BATCH_ID = await purchases_service
 		.registerBoughtIngrediets({
-			perceptions_tax_amount: 10,
+			withdrawal_tax_amount: 10,
 			iva_tax_percentage: 21,
 			supplier_id: SUPPLIER_ID,
 			document: {
