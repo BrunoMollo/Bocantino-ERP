@@ -5,9 +5,10 @@
 	import Autocomplete from '$lib/ui/Autocomplete.svelte';
 	import { makeOptions } from '$lib/utils.js';
 	import { derived } from 'svelte/store';
+	import Loader from '../_components/Loader.svelte';
 
 	export let data;
-	const { form, enhance, errors } = superForm(data.form, {
+	const { form, enhance, errors, delayed } = superForm(data.form, {
 		onError: ({ result }) => alert(`ERROR: ${result.error.message}`),
 		dataType: 'json',
 		defaultValidator: 'clear',
@@ -287,7 +288,10 @@
 		<div class="flex w-11/12 mx-auto justify-between">
 			<div class="flex">
 				<h2 class="p-2">Subtotal:</h2>
-				<div class="input rounded w-24 p-2">{subtotal}</div>
+				<div class="relative inline-block">
+					<div class="input rounded p-2 w-36">{subtotal}</div>
+					<span class="suffix absolute right-3 top-[20%]">$</span>
+				</div>
 			</div>
 			<div class="flex">
 				<h2 class="p-2">Iva:</h2>
@@ -299,7 +303,10 @@
 			</div>
 			<div class="flex align-middle">
 				<h2 class="p-2">Percepciones:</h2>
-				<input type="text" class="input rounded" bind:value={$form.withdrawal_tax_amount} />
+				<div class="relative inline-block">
+					<input type="text" class="input rounded w-28" bind:value={$form.withdrawal_tax_amount} />
+					<span class="suffix absolute right-3 top-[20%]">$</span>
+				</div>
 			</div>
 			<div class="w-1/2"></div>
 		</div>
@@ -310,7 +317,17 @@
 					{total}
 				</div>
 			</div>
-			<button type="submit" class="btn rounded-lg variant-filled-secondary w-1/5">Enviar</button>
+
+			<div class="w-1/5 h-0 grid place-items-center">
+				{#if $delayed}
+					<Loader />
+				{:else}
+					<button type="submit" class="btn rounded-lg variant-filled-secondary w-full">
+						Enviar
+					</button>
+				{/if}
+			</div>
 		</div>
 	</form>
 </main>
+

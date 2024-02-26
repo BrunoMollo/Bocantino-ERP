@@ -113,7 +113,7 @@
 	<input
 		placeholder="Punto de pedido"
 		style="margin-top: -10px"
-		class={`input ${$errors.unit ? 'input-error' : ''} w-1/3`}
+		class={`input ${$errors.reorder_point ? 'input-error' : ''} w-1/3`}
 		name="reorder_point"
 		type="number"
 		id="reorder_point"
