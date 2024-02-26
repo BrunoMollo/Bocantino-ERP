@@ -2,12 +2,23 @@
 	import CompleteTable from '../../_components/complete-table.svelte';
 
 	export let data;
+
+	type States = (typeof data.product_batches)[0]['state'];
+	function display_state(state: States) {
+		switch (state) {
+			case 'IN_PRODUCTION':
+				return 'EN PRODUCION';
+			case 'AVAILABLE':
+				return 'DISPONIBLE';
+			case 'EMPTY':
+				return 'VACIO';
+		}
+	}
 </script>
 
 <table class="table table-hover shadow-lg rounded-lg w-11/12 mx-auto">
 	<thead>
 		<tr>
-			<th>ID</th>
 			<th>Codigo</th>
 			<th>Producto</th>
 			<th>Elaboracion</th>
@@ -20,11 +31,10 @@
 	<tbody>
 		{#each data.product_batches as batch}
 			<tr class="align-middle">
-				<td class="">{batch.id}</td>
 				<td class="">{batch.batch_code}</td>
 				<td class="">{batch.product.desc}</td>
-				<td class="">{batch.production_date?.toLocaleDateString()}</td>
-				<td class="">{batch.expiration_date?.toLocaleDateString()}</td>
+				<td class="">{batch.production_date?.toLocaleDateString('es') ?? ''}</td>
+				<td class="">{batch.expiration_date?.toLocaleDateString('es') ?? ''}</td>
 
 				<td class="divide-y-2 divide-slate-400 divide-dashed">
 					<!-- To be honest y think that this information should be on Detalles screen, cause it expands a lot the row-->
@@ -36,15 +46,13 @@
 						</div>
 					{/each}
 				</td>
-				<td class="w-1/12">{batch.state}</td>
+				<td class="w-1/12">{display_state(batch.state)}</td>
 				<td class="w-2/12">
-					<div class="flex w-11/12 justify-end">
-						<button class="btn variant-filled-primary rounded">Detalles</button>
-					</div></td
-				>
+					<a class="btn p-4" href={`productos/${batch.id.toString()}`}>Ver</a>
+				</td>
 			</tr>
 		{/each}
-		<CompleteTable list={data.product_batches} rows={8} />
+		<CompleteTable list={data.product_batches} rows={7} />
 	</tbody>
 </table>
 
