@@ -287,7 +287,10 @@
 		<div class="flex w-11/12 mx-auto justify-between">
 			<div class="flex">
 				<h2 class="p-2">Subtotal:</h2>
-				<div class="input rounded w-24 p-2">{subtotal}</div>
+				<div class="relative inline-block">
+					<div class="input rounded p-2 w-36">{subtotal}</div>
+					<span class="suffix absolute right-3 top-[20%]">$</span>
+				</div>
 			</div>
 			<div class="flex">
 				<h2 class="p-2">Iva:</h2>
@@ -299,7 +302,10 @@
 			</div>
 			<div class="flex align-middle">
 				<h2 class="p-2">Percepciones:</h2>
-				<input type="text" class="input rounded" bind:value={$form.withdrawal_tax_amount} />
+				<div class="relative inline-block">
+					<input type="text" class="input rounded w-28" bind:value={$form.withdrawal_tax_amount} />
+					<span class="suffix absolute right-3 top-[20%]">$</span>
+				</div>
 			</div>
 			<div class="w-1/2"></div>
 		</div>
@@ -314,3 +320,4 @@
 		</div>
 	</form>
 </main>
+
