@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { trpc } from '$lib/trpc-client';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
 	import { generarPDF } from './solicitudes-pendientes/_shared/generar_orden_produccion.js';
 	export let data;
 	let buscados = '';
-	const produccionesPendientes = data.pending_productions;
 
 	$: ingredientes = data.ingredients;
 
@@ -12,9 +10,7 @@
 		window.location.href = 'bocantino/insumos-ingresados/' + id;
 		return null;
 	}
-	function mostrarSolicitud(id: any) {
-		return null;
-	}
+
 	function filtrar() {
 		ingredientes = data.ingredients.filter((ingrediente) => {
 			return ingrediente.name.toLocaleLowerCase().includes(buscados.toLocaleLowerCase());
@@ -116,8 +112,9 @@
 				<h1>ID:{id}</h1>
 				<h2 class="uppercase text-xl w-9/12">{name}</h2>
 				<p class="mt-3">Punto de pedido: {reorder_point}</p>
-				<p>Stock real: {stock}</p>
+				<p>Stock real: {Math.round(stock * 10) / 10}</p>
 			</div>
 		{/each}
 	</div>
 </main>
+
