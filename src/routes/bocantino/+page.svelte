@@ -1,10 +1,8 @@
 <script lang="ts">
-	import { trpc } from '$lib/trpc-client';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
 	import { generarPDF } from './solicitudes-pendientes/_shared/generar_orden_produccion.js';
 	export let data;
 	let buscados = '';
-	const produccionesPendientes = data.pending_productions;
 
 	$: ingredientes = data.ingredients;
 
@@ -12,30 +10,27 @@
 		window.location.href = 'bocantino/insumos-ingresados/' + id;
 		return null;
 	}
-	function mostrarSolicitud(id: any) {
-		return null;
-	}
+
 	function filtrar() {
 		ingredientes = data.ingredients.filter((ingrediente) => {
 			return ingrediente.name.toLocaleLowerCase().includes(buscados.toLocaleLowerCase());
 		});
-		console.log(ingredientes.length);
 	}
 </script>
 
 <main class="container h-full mx-auto flex gap-10 items-start">
 	<div class="flex gap-4 w-8/12 py-5">
 		<div class="container glass rounded p-3 w-1/2 relative">
-			<h1 class="text-2xl mb-2 text-center">Solicitudes de produccion pendientes:</h1>
+			<h1 class="text-2xl mb-2 text-center">Producciones pendientes:</h1>
 			<div class="">
 				{#if data.pending_productions.length == 0}
 					<h1 class="text-center inset-36 absolute">No hay solicitudes pendientes</h1>
 				{/if}
 				{#each data.pending_productions as pendiente}
 					<div class="flex justify-between border py-1 px-3 h-14">
-						<h1 class="text-center my-auto">{pendiente.id}</h1>
-						<h1 class="text-center my-auto">{pendiente.product.desc}</h1>
-						<h1 class="text-center my-auto">{pendiente.initial_amount} kg</h1>
+						<span class="text-center my-auto">{pendiente.id}</span>
+						<span class="text-center my-auto">{pendiente.product.desc}</span>
+						<span class="text-center my-auto">{pendiente.initial_amount} kg</span>
 						<button
 							class="px-5 py-2 my-auto btn variant-filled-primary rounded"
 							on:click={generarPDF(pendiente.product.desc, pendiente)}
@@ -56,14 +51,11 @@
 			<div class="">
 				{#each data.entries as entrada}
 					<div class="flex justify-between border py-1 px-3 h-14">
-						<h1 class="text-center my-auto">{entrada.id}</h1>
-						<h1 class="text-center my-auto">{entrada.supplier}</h1>
-						<h1 class="text-center my-auto">
+						<span class="text-center my-auto">{entrada.id}</span>
+						<span class="text-center my-auto">{entrada.supplier}</span>
+						<span class="text-center my-auto">
 							{entrada.date.toLocaleDateString('es')}
-						</h1>
-						<h1 class="text-center my-auto">
-							{entrada.document.number}
-						</h1>
+						</span>
 						<button
 							type="button"
 							class="btn variant-filled-primary py-1 my-1 rounded"
@@ -116,8 +108,9 @@
 				<h1>ID:{id}</h1>
 				<h2 class="uppercase text-xl w-9/12">{name}</h2>
 				<p class="mt-3">Punto de pedido: {reorder_point}</p>
-				<p>Stock real: {stock}</p>
+				<p>Stock real: {Math.round(stock * 10) / 10}</p>
 			</div>
 		{/each}
 	</div>
 </main>
+

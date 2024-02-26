@@ -127,9 +127,9 @@
 					<td class="w-2/12">{batch.stock} {batch.ingredient.unit}</td>
 					<td>{batch.used_batches.map((x) => x.batch_code).join(', ') || '-'}</td>
 
-					<td class="w-1/12"
-						><a class="btn p-0" href={`ingredientes/${batch.id.toString()}`}>Ver</a></td
-					>
+					<td class="w-1/12">
+						<a class="btn p-0" href={`ingredientes/${batch.id.toString()}`}>Ver</a>
+					</td>
 				</tr>
 			{/each}
 			<CompleteTable list={data.batches} rows={6} />

@@ -3,6 +3,7 @@
 	import { getToastStore, initializeStores } from '@skeletonlabs/skeleton';
 	import { page } from '$app/stores';
 	import { goto, onNavigate } from '$app/navigation';
+	import { dev } from '$app/environment';
 
 	initializeStores();
 
@@ -27,10 +28,11 @@
 			});
 		});
 	});
+	const title = dev ? 'DEV-BOCANTIO' : 'Bocantino';
 </script>
 
 <svelte:head>
-	<title>Bocantino</title>
+	<title>{title}</title>
 	<link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet" />
 </svelte:head>
 
