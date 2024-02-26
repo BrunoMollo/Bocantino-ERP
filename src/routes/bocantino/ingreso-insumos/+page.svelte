@@ -5,9 +5,10 @@
 	import Autocomplete from '$lib/ui/Autocomplete.svelte';
 	import { makeOptions } from '$lib/utils.js';
 	import { derived } from 'svelte/store';
+	import Loader from '../_components/Loader.svelte';
 
 	export let data;
-	const { form, enhance, errors } = superForm(data.form, {
+	const { form, enhance, errors, delayed } = superForm(data.form, {
 		onError: ({ result }) => alert(`ERROR: ${result.error.message}`),
 		dataType: 'json',
 		defaultValidator: 'clear',
@@ -316,7 +317,16 @@
 					{total}
 				</div>
 			</div>
-			<button type="submit" class="btn rounded-lg variant-filled-secondary w-1/5">Enviar</button>
+
+			<div class="w-1/5 h-0 grid place-items-center">
+				{#if $delayed}
+					<Loader />
+				{:else}
+					<button type="submit" class="btn rounded-lg variant-filled-secondary w-full">
+						Enviar
+					</button>
+				{/if}
+			</div>
 		</div>
 	</form>
 </main>
