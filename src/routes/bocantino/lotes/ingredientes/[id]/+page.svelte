@@ -21,15 +21,16 @@
 		</a>
 		<div class="p-6">
 			<div class="flex justify-between pb-3">
-				<h1 class="text-2xl">Id: {data.batch.ingredient.id}</h1>
-				<h1 class="text-2xl">Materia prima: {data.batch.ingredient.name}</h1>
-				<h1 class="text-2xl">Unidad: {data.batch.ingredient.unit}</h1>
+				<p class="text-2xl">Id: {data.batch.ingredient.id}</p>
+				<p class="text-2xl">Materia prima: {data.batch.ingredient.name}</p>
+				<p class="text-2xl">Unidad: {data.batch.ingredient.unit}</p>
 			</div>
-			<h1 class="text-2xl">Codigo lote: {data.batch.batch_code}</h1>
-			<h1 class="text-xl">
-				Fecha vencimiento: {data.batch.expiration_date?.toDateString()}
-			</h1>
-			<h1 class="text-xl mb-10">Cantidad actual: {data.batch.current_amount}</h1>
+			<p class="text-2xl">Codigo lote: {data.batch.batch_code}</p>
+
+			<p class="text-xl">
+				Fecha vencimiento: {data.batch.expiration_date?.toLocaleDateString('es') ?? '-'}
+			</p>
+			<p class="text-xl mb-10">Cantidad actual: {data.batch.current_amount}</p>
 
 			<form action="" method="post" use:enhance class="flex flex-col">
 				<label class="label" for="adjustment">Cantidad Perdida</label>
@@ -56,4 +57,3 @@
 		</div>
 	</div>
 </main>
-
