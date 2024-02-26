@@ -80,8 +80,13 @@ class IngredientService {
 		ingredient: Omit<typeof t_ingredient.$inferInsert, 'id'>,
 		source?: { id: number; amount: number } | undefined | null
 	) {
+		//@ts-ignore
+		delete ingredient.source;
 		return await this.db.transaction(async (tx) => {
-			await tx.update(t_ingredient).set(ingredient).where(eq(t_ingredient.id, id));
+			await tx
+				.update(t_ingredient)
+				.set({ ...ingredient })
+				.where(eq(t_ingredient.id, id));
 			if (source) {
 				const relation = await tx
 					.select()
