@@ -1,7 +1,26 @@
 <script lang="ts">
 	import { trpc } from '$lib/trpc-client';
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
+	import { generarPDF } from './solicitudes-pendientes/_shared/generar_orden_produccion.js';
 	export let data;
+	let buscados = '';
+	const produccionesPendientes = data.pending_productions;
+
+	$: ingredientes = data.ingredients;
+
+	function mostrarIngreso(id: any) {
+		window.location.href = 'bocantino/insumos-ingresados/' + id;
+		return null;
+	}
+	function mostrarSolicitud(id: any) {
+		return null;
+	}
+	function filtrar() {
+		ingredientes = data.ingredients.filter((ingrediente) => {
+			return ingrediente.name.toLocaleLowerCase().includes(buscados.toLocaleLowerCase());
+		});
+		console.log(ingredientes.length);
+	}
 </script>
 
 <main class="container h-full mx-auto flex gap-10 items-start">
@@ -17,10 +36,9 @@
 						<h1 class="text-center my-auto">{pendiente.id}</h1>
 						<h1 class="text-center my-auto">{pendiente.product.desc}</h1>
 						<h1 class="text-center my-auto">{pendiente.initial_amount} kg</h1>
-						<button type="button" class="btn variant-filled-primary py-1 my-1 rounded"
-							>Ver mas</button
-						>
-						<button class="p-1 pt-2 my-auto"
+						<button
+							class="px-5 py-2 my-auto btn variant-filled-primary rounded"
+							on:click={generarPDF(pendiente.product.desc, pendiente)}
 							><i class="bx bx-printer text-xl text-black h-5 w-5"></i></button
 						>
 					</div>
@@ -46,8 +64,10 @@
 						<h1 class="text-center my-auto">
 							{entrada.document.number}
 						</h1>
-						<button type="button" class="btn variant-filled-primary py-1 my-1 rounded"
-							>Ver mas</button
+						<button
+							type="button"
+							class="btn variant-filled-primary py-1 my-1 rounded"
+							on:click={mostrarIngreso(entrada.id)}>Ver mas</button
 						>
 					</div>
 				{/each}
@@ -59,52 +79,21 @@
 			</div>
 		</div>
 	</div>
-	<div
-		class="grid gap-4 p-5 mt-5 rounded overflow-y-auto glass"
-		style="height: calc(100vh - 100px)"
-	>
-		<input class="input w-full h-14 p-4 rounded" placeholder="Buscar..." />
-		{#each data.ingredients as { id, name, stock, reorder_point }}
-			{#if data.ingredients.length == 0}
-				<div class=" shrink-0 card p-3 w-96 rounded-lg shadow-lg relative">
-					<h1>No se encontraron materias primas...</h1>
-				</div>
-			{/if}
-			<div
-				class=" shrink-0 card p-3 w-96 rounded-lg shadow-lg relative"
-				style:background-color={stock < reorder_point ? 'rgba(127, 29, 29, 0.4)' : ''}
-				style:box-shadow={stock < reorder_point ? '0 1px 25px 1px rgba(255, 0, 0, 0.8)' : ''}
-			>
-				{#if stock < reorder_point}
-					<div class="absolute right-5 bottom-4">
-						<ProgressRadial
-							width="w-24"
-							font={128}
-							stroke={70}
-							value={(stock / reorder_point) * 100}
-						>
-							{Math.round((stock / reorder_point) * 100)}%
-						</ProgressRadial>
-					</div>
-				{:else}
-					<div class="absolute right-5 bottom-4">
-						<ProgressRadial width="w-24" font={128} stroke={70} value={100}>OK</ProgressRadial>
-					</div>
-				{/if}
-				<h1>ID:{id}</h1>
-				<h2 class="uppercase text-xl self-end w-9/12">{name}</h2>
-				<p class="mt-3">Punto de pedido: {reorder_point}</p>
-				<p>Stock real: {stock}</p>
+	<div class="gap-4 p-5 mt-5 rounded glass flex flex-col" style="height: calc(100vh - 100px)">
+		<input
+			class="input w-full h-14 p-4 rounded"
+			placeholder="Buscar..."
+			bind:value={buscados}
+			on:input={filtrar}
+		/>
+		{#if ingredientes.length === 0}
+			<div class="card w-96 p-3 shadow-lg rounded-lg">
+				<h1>No se encontraron materias primas...</h1>
 			</div>
-		{/each}
-		{#each data.ingredients as { id, name, stock, reorder_point }}
-			{#if data.ingredients.length == 0}
-				<div class=" shrink-0 card p-3 w-96 rounded-lg shadow-lg relative">
-					<h1>No se encontraron materias primas...</h1>
-				</div>
-			{/if}
+		{/if}
+		{#each ingredientes as { id, name, stock, reorder_point }}
 			<div
-				class=" shrink-0 card p-3 w-96 rounded-lg shadow-lg relative"
+				class="shrink-0 card p-3 w-96 rounded-lg shadow-lg relative"
 				style:background-color={stock < reorder_point ? 'rgba(127, 29, 29, 0.4)' : ''}
 				style:box-shadow={stock < reorder_point ? '0 1px 25px 1px rgba(255, 0, 0, 0.8)' : ''}
 			>
@@ -125,7 +114,7 @@
 					</div>
 				{/if}
 				<h1>ID:{id}</h1>
-				<h2 class="uppercase text-xl self-end w-9/12">{name}</h2>
+				<h2 class="uppercase text-xl w-9/12">{name}</h2>
 				<p class="mt-3">Punto de pedido: {reorder_point}</p>
 				<p>Stock real: {stock}</p>
 			</div>

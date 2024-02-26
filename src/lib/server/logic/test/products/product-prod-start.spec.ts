@@ -238,7 +238,8 @@ describe.sequential('start production of product', async () => {
 				.from(t_product_batch)
 				.where(eq(t_product_batch.id, res.data.id))
 				.then(getFirst);
-			expect(new_batch.batch_code).toBeTruthy();
+			expect(new_batch.batch_code).toContain('BOC');
+			expect(new_batch.batch_code).toContain(new_batch.id);
 			expect(new_batch.product_id).toBe(FINAL_PRODUCT_ID);
 			expect(new_batch.expiration_date.toISOString().split('T')[0]).toEqual(
 				new Date(2000, 7, 1).toISOString().split('T')[0]
@@ -279,7 +280,8 @@ describe.sequential('start production of product', async () => {
 				.from(t_product_batch)
 				.where(eq(t_product_batch.id, res.data.id))
 				.then(getFirst);
-			expect(new_batch.batch_code).toBeTruthy();
+			expect(new_batch.batch_code).toContain('BOC');
+			expect(new_batch.batch_code).toContain(new_batch.id);
 			expect(new_batch.product_id).toBe(FINAL_PRODUCT_ID);
 			expect(new_batch.expiration_date.toISOString().split('T')[0]).toEqual(
 				new Date(2000, 7, 1).toISOString().split('T')[0]
@@ -331,7 +333,9 @@ describe.sequential('start production of product', async () => {
 				.from(t_product_batch)
 				.where(eq(t_product_batch.id, res.data.id))
 				.then(getFirst);
-			expect(new_batch.batch_code).toBeTruthy();
+
+			expect(new_batch.batch_code).toContain('BOC');
+			expect(new_batch.batch_code).toContain(new_batch.id);
 			expect(new_batch.product_id).toBe(FINAL_PRODUCT_ID);
 			expect(new_batch.expiration_date.toISOString().split('T')[0]).toEqual(
 				new Date(2000, 7, 1).toISOString().split('T')[0]

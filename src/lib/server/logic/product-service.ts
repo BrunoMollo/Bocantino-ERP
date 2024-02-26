@@ -51,7 +51,7 @@ class ProductService {
 			.then(drizzle_map({ one: 't_product', with_one: [], with_many: ['ingredients'] }))
 			.then(getFirstIfPosible);
 	}
-	constructor(private db: Db) { }
+	constructor(private db: Db) {}
 
 	public PAGE_SIZE = 10;
 	async getBatchesAvailable({ page }: { page: number }) {
@@ -227,7 +227,7 @@ class ProductService {
 				if (batches.length !== batches_ids_with_same_ingredient.length) {
 					return logic_error(
 						'no se encontro alguon de los siguientes lotes por id ' +
-						JSON.stringify(batches_ids_with_same_ingredient)
+							JSON.stringify(batches_ids_with_same_ingredient)
 					);
 				}
 
@@ -242,8 +242,8 @@ class ProductService {
 				if (available_amount < needed_amount) {
 					return logic_error(
 						'stock insuficiente de ingrediente ' +
-						batches[0].ingredient.name +
-						JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
+							batches[0].ingredient.name +
+							JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
 					);
 				}
 
@@ -255,8 +255,8 @@ class ProductService {
 				if (needed_amount < stock_without_last) {
 					return logic_error(
 						'se indicaron mas batches de los necesarios, ids' +
-						JSON.stringify(batches_ids_with_same_ingredient) +
-						JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
+							JSON.stringify(batches_ids_with_same_ingredient) +
+							JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
 					);
 				}
 			}
@@ -277,6 +277,12 @@ class ProductService {
 				})
 				.returning({ id: t_product_batch.id })
 				.then(getFirst);
+
+			const batch_code = 'BOC' + inserted.id.toString().padStart(10, '0');
+			await tx
+				.update(t_product_batch)
+				.set({ batch_code })
+				.where(eq(t_product_batch.id, inserted.id));
 
 			for (let batch_group of all_batches) {
 				let asigned_amount = 0;
