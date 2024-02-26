@@ -52,6 +52,7 @@
 	bind:value={$label}
 	{placeholder}
 	use:popup={popupSettings}
+	autocomplete="off"
 />
 <div data-popup={name} class="card w-1/6 z-50 pt-0 mt-0">
 	<Autocomplete bind:input={$label} {options} on:selection={onFlavorSelection} emptyState=":(" />
