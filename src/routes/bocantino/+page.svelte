@@ -21,16 +21,16 @@
 <main class="container h-full mx-auto flex gap-10 items-start">
 	<div class="flex gap-4 w-8/12 py-5">
 		<div class="container glass rounded p-3 w-1/2 relative">
-			<h1 class="text-2xl mb-2 text-center">Solicitudes de produccion pendientes:</h1>
+			<h1 class="text-2xl mb-2 text-center">Producciones pendientes:</h1>
 			<div class="">
 				{#if data.pending_productions.length == 0}
 					<h1 class="text-center inset-36 absolute">No hay solicitudes pendientes</h1>
 				{/if}
 				{#each data.pending_productions as pendiente}
 					<div class="flex justify-between border py-1 px-3 h-14">
-						<h1 class="text-center my-auto">{pendiente.id}</h1>
-						<h1 class="text-center my-auto">{pendiente.product.desc}</h1>
-						<h1 class="text-center my-auto">{pendiente.initial_amount} kg</h1>
+						<span class="text-center my-auto">{pendiente.id}</span>
+						<span class="text-center my-auto">{pendiente.product.desc}</span>
+						<span class="text-center my-auto">{pendiente.initial_amount} kg</span>
 						<button
 							class="px-5 py-2 my-auto btn variant-filled-primary rounded"
 							on:click={generarPDF(pendiente.product.desc, pendiente)}
