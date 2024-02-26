@@ -64,7 +64,7 @@
 </script>
 
 <div class="flex justify-between w-11/12 mx-auto">
-	<h1 class="uppercase text-2xl my-5">Orden de produccion de prodcuto final</h1>
+	<h1 class="uppercase text-2xl my-5">Orden de produccion de producto final</h1>
 </div>
 
 <form action="" class="mx-auto w-11/12" use:enhance method="post">
@@ -188,3 +188,12 @@
 	</div>
 </dialog>
 
+<!-- TODO:remove -->
+<div class="flex flex-row">
+	<pre>
+    {JSON.stringify($base_nutritional_info, null, 2)}
+  </pre>
+	<pre>
+    {JSON.stringify($current_nutritional_info, null, 2)}
+</pre>
+</div>
