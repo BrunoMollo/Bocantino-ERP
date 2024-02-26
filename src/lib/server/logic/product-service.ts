@@ -1,5 +1,5 @@
 import { getFirst, getFirstIfPosible } from '$lib/utils';
-import { eq, and } from 'drizzle-orm';
+import { eq, and, ilike } from 'drizzle-orm';
 import { db, type Db } from '../db';
 import {
 	t_ingredient,
@@ -51,10 +51,12 @@ class ProductService {
 			.then(drizzle_map({ one: 't_product', with_one: [], with_many: ['ingredients'] }))
 			.then(getFirstIfPosible);
 	}
-	constructor(private db: Db) {}
+	constructor(private db: Db) { }
 
 	public PAGE_SIZE = 10;
-	async getBatchesAvailable({ page }: { page: number }) {
+	async getBatchesAvailable(filter: { page: number; batch_code: string; ingredient_name: string }) {
+		const { page, batch_code, ingredient_name } = filter;
+
 		const limited_batches = this.db.$with('limited_products_batches').as(
 			db
 				.select()
@@ -92,7 +94,17 @@ class ProductService {
 				eq(tr_product_batch_ingredient_batch.ingredient_batch_id, t_ingredient_batch.id)
 			)
 			.innerJoin(t_ingredient, eq(t_ingredient_batch.ingredient_id, t_ingredient.id))
-			.then(drizzle_map({ one: 'batch', with_one: ['product'], with_many: ['used_batches'] }));
+			.where(ilike(t_product.desc, `%${ingredient_name}%`))
+			.limit(this.PAGE_SIZE)
+			.offset(page * this.PAGE_SIZE)
+			.then(drizzle_map({ one: 'batch', with_one: ['product'], with_many: ['used_batches'] }))
+			.then((x) => x.flatMap((obj) => obj.used_batches).filter((a) => a.batch_code.includes(batch_code))
+				.map((a) => {
+					const element = x.find((obj) => obj.used_batches.includes(a));
+					return element;
+				})
+			)
+			.then((x) => x.filter((objeto, indice) => x.indexOf(objeto) === indice));
 	}
 
 	async deleteBatchById(batch_id: number) {
@@ -227,7 +239,7 @@ class ProductService {
 				if (batches.length !== batches_ids_with_same_ingredient.length) {
 					return logic_error(
 						'no se encontro alguon de los siguientes lotes por id ' +
-							JSON.stringify(batches_ids_with_same_ingredient)
+						JSON.stringify(batches_ids_with_same_ingredient)
 					);
 				}
 
@@ -242,8 +254,8 @@ class ProductService {
 				if (available_amount < needed_amount) {
 					return logic_error(
 						'stock insuficiente de ingrediente ' +
-							batches[0].ingredient.name +
-							JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
+						batches[0].ingredient.name +
+						JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
 					);
 				}
 
@@ -255,8 +267,8 @@ class ProductService {
 				if (needed_amount < stock_without_last) {
 					return logic_error(
 						'se indicaron mas batches de los necesarios, ids' +
-							JSON.stringify(batches_ids_with_same_ingredient) +
-							JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
+						JSON.stringify(batches_ids_with_same_ingredient) +
+						JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
 					);
 				}
 			}
