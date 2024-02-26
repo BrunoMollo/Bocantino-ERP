@@ -15,7 +15,6 @@
 		ingredientes = data.ingredients.filter((ingrediente) => {
 			return ingrediente.name.toLocaleLowerCase().includes(buscados.toLocaleLowerCase());
 		});
-		console.log(ingredientes.length);
 	}
 </script>
 
@@ -52,14 +51,11 @@
 			<div class="">
 				{#each data.entries as entrada}
 					<div class="flex justify-between border py-1 px-3 h-14">
-						<h1 class="text-center my-auto">{entrada.id}</h1>
-						<h1 class="text-center my-auto">{entrada.supplier}</h1>
-						<h1 class="text-center my-auto">
+						<span class="text-center my-auto">{entrada.id}</span>
+						<span class="text-center my-auto">{entrada.supplier}</span>
+						<span class="text-center my-auto">
 							{entrada.date.toLocaleDateString('es')}
-						</h1>
-						<h1 class="text-center my-auto">
-							{entrada.document.number}
-						</h1>
+						</span>
 						<button
 							type="button"
 							class="btn variant-filled-primary py-1 my-1 rounded"
