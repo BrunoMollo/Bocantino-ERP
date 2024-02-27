@@ -268,7 +268,7 @@ class ProductService {
 			const inserted = await tx
 				.insert(t_product_batch)
 				.values({
-					batch_code: 'DEFINE WITH CLIENT', //TODO: ask client when this is asigned
+					batch_code: crypto.randomUUID(), //defualt
 					initial_amount: produced_amount,
 					expiration_date: get_expiration_date(),
 					production_date: null,
