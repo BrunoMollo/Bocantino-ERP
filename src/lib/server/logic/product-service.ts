@@ -1,4 +1,5 @@
-import { getFirst, getFirstIfPosible } from '$lib/utils';
+
+import { getFirst, getFirstIfPosible, is_not_nullish, only_unique } from '$lib/utils';
 import { eq, and, ilike } from 'drizzle-orm';
 import { db, type Db } from '../db';
 import {
@@ -98,13 +99,14 @@ class ProductService {
 			.limit(this.PAGE_SIZE)
 			.offset(page * this.PAGE_SIZE)
 			.then(drizzle_map({ one: 'batch', with_one: ['product'], with_many: ['used_batches'] }))
-			.then((x) => x.flatMap((obj) => obj.used_batches).filter((a) => a.batch_code.includes(batch_code))
-				.map((a) => {
-					const element = x.find((obj) => obj.used_batches.includes(a));
-					return element;
-				})
+			.then((arr) =>
+				arr
+					.flatMap((obj) => obj.used_batches)
+					.filter((used_batch) => used_batch.batch_code.includes(batch_code))
+					.map((found_batches) => arr.find((obj) => obj.used_batches.includes(found_batches)))
+					.filter(is_not_nullish)
 			)
-			.then((x) => x.filter((objeto, indice) => x.indexOf(objeto) === indice));
+			.then(only_unique);
 	}
 
 	async deleteBatchById(batch_id: number) {

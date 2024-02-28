@@ -55,6 +55,7 @@
 		await filtrar();
 	}
 
+
 	type States = (typeof data.product_batches)[0]['state'];
 	function display_state(state: States) {
 		switch (state) {
@@ -66,6 +67,7 @@
 				return 'VACIO';
 		}
 	}
+
 </script>
 
 <main class=" container flex flex-col mx-auto pt-10">
@@ -92,7 +94,7 @@
 			/>
 		</div>
 		<div class="">
-			<p>Codigo:</p>
+			<p>Codigo lote ingrediente:</p>
 			<input
 				type="text"
 				class="input rounded"
@@ -140,8 +142,8 @@
 						<td class="">{batch.id}</td>
 						<td class="">{batch.batch_code}</td>
 						<td class="">{batch.product.desc}</td>
-						<td class="">{batch.production_date?.toLocaleDateString()}</td>
-						<td class="">{batch.expiration_date?.toLocaleDateString()}</td>
+						<td class="">{batch.production_date?.toLocaleDateString("es")}</td>
+						<td class="">{batch.expiration_date?.toLocaleDateString("es")}</td>
 						<td class="divide-y-2 divide-slate-400 divide-dashed">
 							<!-- To be honest y think that this information should be on Detalles screen, cause it expands a lot the row-->
 							{#each batch.used_batches as used_batch}
