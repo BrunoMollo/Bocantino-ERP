@@ -102,8 +102,8 @@ export class IngredientPurchaseService {
 		supplierName?: string;
 		page: number;
 		documentNumber?: string;
-		dateInitial?: String;
-		dateFinal?: String;
+		dateInitial?: string;
+		dateFinal?: string;
 	}) {
 		const entries = await db
 			.select({
@@ -117,10 +117,13 @@ export class IngredientPurchaseService {
 				and(
 					like(t_supplier.name, `${input.supplierName ?? ''}%`),
 					like(t_entry_document.number, `${input.documentNumber ?? ''}%`),
-					// between(, `${dateInitial}`, `${dateFinal}`)
-					//GOTO falta que la fecha a filtrar sea mayor a la incial y menos a la final
+					between(
+						t_ingridient_entry.creation_date,
+						new Date(input.dateInitial ?? '1000-01-01'),
+						new Date(input.dateFinal ?? '4000-01-01')
+					)
 				)
-			)
+			);
 		return entries;
 	}
 	public PAGE_SIZE = 10;
@@ -128,8 +131,8 @@ export class IngredientPurchaseService {
 		supplierName?: string;
 		page: number;
 		documentNumber?: string;
-		dateInitial?: String;
-		dateFinal?: String;
+		dateInitial?: string;
+		dateFinal?: string;
 	}) {
 		const entries = await db
 			.select({
@@ -149,7 +152,12 @@ export class IngredientPurchaseService {
 			.where(
 				and(
 					like(t_supplier.name, `${input.supplierName ?? ''}%`),
-					like(t_entry_document.number, `${input.documentNumber ?? ''}%`)
+					like(t_entry_document.number, `${input.documentNumber ?? ''}%`),
+					between(
+						t_ingridient_entry.creation_date,
+						new Date(input.dateInitial ?? '1000-01-01'),
+						new Date(input.dateFinal ?? '4000-01-01')
+					)
 				)
 			)
 			.limit(this.PAGE_SIZE)
