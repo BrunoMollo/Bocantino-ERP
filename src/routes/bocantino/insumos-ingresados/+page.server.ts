@@ -22,7 +22,6 @@ export const load: PageServerLoad = async ({ url }) => {
 		dateInitial,
 		dateFinal
 	});
-	console.log(dateFinal);
 	const page_size = purchases_service.PAGE_SIZE;
 	return { entries, page_size, count_entries };
 };
