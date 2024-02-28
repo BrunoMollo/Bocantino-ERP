@@ -71,7 +71,10 @@
 			</div>
 		</div>
 	</div>
-	<div class="gap-4 p-5 mt-5 rounded glass flex flex-col" style="height: calc(100vh - 100px)">
+	<div
+		class="gap-4 p-5 mt-5 rounded glass flex flex-col overflow-y-auto"
+		style="height: calc(100vh - 100px)"
+	>
 		<input
 			class="input w-full h-14 p-4 rounded"
 			placeholder="Buscar..."
@@ -113,4 +116,3 @@
 		{/each}
 	</div>
 </main>
-
