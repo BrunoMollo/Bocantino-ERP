@@ -8,7 +8,7 @@ import {
 	t_supplier
 } from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
-import { and, eq, like } from 'drizzle-orm';
+import { and, between, count, eq, like } from 'drizzle-orm';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
 
 export class IngredientPurchaseService {
@@ -98,14 +98,38 @@ export class IngredientPurchaseService {
 			.limit(5);
 		return entries;
 	}
-
-	async getEntries(input: {
+	async getCountOfAvailableEntries(input: {
 		supplierName?: string;
-		pageSize: number;
 		page: number;
 		documentNumber?: string;
-		dateInitial?: Date;
-		dateFinal?: Date;
+		dateInitial?: String;
+		dateFinal?: String;
+	}) {
+		const entries = await db
+			.select({
+				value: count(t_ingridient_entry.id)
+			})
+			.from(t_ingridient_entry)
+			.innerJoin(t_supplier, eq(t_ingridient_entry.supplier_id, t_supplier.id))
+			.innerJoin(t_entry_document, eq(t_entry_document.id, t_ingridient_entry.document_id))
+			.innerJoin(t_document_type, eq(t_entry_document.typeId, t_document_type.id))
+			.where(
+				and(
+					like(t_supplier.name, `${input.supplierName ?? ''}%`),
+					like(t_entry_document.number, `${input.documentNumber ?? ''}%`),
+					// between(, `${dateInitial}`, `${dateFinal}`)
+					//GOTO falta que la fecha a filtrar sea mayor a la incial y menos a la final
+				)
+			)
+		return entries;
+	}
+	public PAGE_SIZE = 10;
+	async getEntries(input: {
+		supplierName?: string;
+		page: number;
+		documentNumber?: string;
+		dateInitial?: String;
+		dateFinal?: String;
 	}) {
 		const entries = await db
 			.select({
@@ -128,8 +152,8 @@ export class IngredientPurchaseService {
 					like(t_entry_document.number, `${input.documentNumber ?? ''}%`)
 				)
 			)
-			.limit(input.pageSize)
-			.offset(input.page * input.pageSize);
+			.limit(this.PAGE_SIZE)
+			.offset(input.page * this.PAGE_SIZE);
 		return entries;
 	}
 

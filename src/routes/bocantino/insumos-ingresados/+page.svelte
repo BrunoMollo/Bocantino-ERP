@@ -3,12 +3,15 @@
 	import { popup, type PaginationSettings, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { Paginator } from '@skeletonlabs/skeleton';
 	import CompleteTable from '../_components/complete-table.svelte';
+	import { page } from '$app/stores';
+	import { goto } from '$app/navigation';
+
 	export let data;
-	let paginationSettings = {
-		page: 0,
-		limit: 10,
-		size: 100,
-		amounts: [1, 2, 5, 10]
+	const paginationSettings = {
+		page: Number($page.url.searchParams.get('page')) || 0,
+		limit: data.page_size,
+		size: data.count_entries,
+		amounts: []
 	} satisfies PaginationSettings;
 
 	const popupClick: PopupSettings = {
@@ -18,31 +21,24 @@
 	};
 
 	const filtros = {
-		supplier: '',
-		dateInitial: null,
-		dateFinal: null,
-		number: ''
+		supplier: $page.url.searchParams.get('supplier'),
+		dateInitial: $page.url.searchParams.get('initial_date'),
+		dateFinal: $page.url.searchParams.get('final_date'),
+		number: $page.url.searchParams.get('number')
 	};
-	let listafiltrada = data.entries;
+	const query = new URLSearchParams($page.url.searchParams.toString());
 
 	async function filtrar() {
-		listafiltrada = await trpc.entries.get
-			.query({
-				dateFinal: filtros.dateFinal,
-				dateInitial: filtros.dateInitial,
-				supplierName: filtros.supplier,
-				documentNumber: filtros.number,
-				page: paginationSettings.page,
-				pageSize: paginationSettings.limit
-			})
-			.then((x) => (x ? x : []))
-			.then((x) =>
-				x.map((b) => ({
-					...b,
-					date: new Date(b.date),
-					document: { ...b.document, issue_date: new Date(b.document.issue_date) }
-				}))
-			);
+		for (let key in filtros) {
+			//@ts-ignore
+			const value = filtros[key];
+			if (value) {
+				query.set(key, value);
+			} else {
+				query.delete(key);
+			}
+		}
+		goto(`?${query.toString()}`);
 	}
 </script>
 
@@ -56,7 +52,7 @@
 
 <div class="card p-4 variant-filled-secondary w-80 rounded" data-popup="popupClick">
 	<h1 class="text-center w-full">Filtros</h1>
-	<div class="">
+	<div class="pb-1">
 		<p>Proveedor:</p>
 		<input
 			type="text"
@@ -65,7 +61,7 @@
 			bind:value={filtros.supplier}
 		/>
 	</div>
-	<div class="">
+	<div class="pb-1">
 		<p>Fechas:</p>
 		<div class="flex gap-1">
 			<input
@@ -86,8 +82,10 @@
 			bind:value={filtros.number}
 		/>
 	</div>
-	<button type="button" class="btn rounded variant-filled mt-5 float-right" on:click={filtrar}
-		>Filtrar</button
+	<button
+		type="button"
+		class="btn rounded variant-filled mt-5 float-right"
+		on:click={() => filtrar()}>Filtrar</button
 	>
 	<div class="arrow variant-filled-secondary" />
 </div>
@@ -103,7 +101,7 @@
 			</tr>
 		</thead>
 		<tbody class="">
-			{#each listafiltrada as entrada}
+			{#each data.entries as entrada}
 				<tr class="align-middle my-auto">
 					<td style="vertical-align:middle" class="text-center w-2/12">{entrada.id}</td>
 					<td style="vertical-align:middle" class="text-center w-2/12">{entrada.supplier}</td>
@@ -121,15 +119,13 @@
 					</td></tr
 				>
 			{/each}
-			<CompleteTable list={listafiltrada} rows={5} />
+			<CompleteTable list={data.entries} rows={5} />
 		</tbody>
 	</table>
 	<Paginator
-		bind:settings={paginationSettings}
+		settings={paginationSettings}
 		showFirstLastButtons={true}
 		on:page={filtrar}
-		on:amount={filtrar}
 		showPreviousNextButtons={true}
 	/>
 </div>
-
