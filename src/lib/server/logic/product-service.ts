@@ -1,5 +1,5 @@
-import { getFirst, getFirstIfPosible } from '$lib/utils';
-import { eq, and } from 'drizzle-orm';
+import { getFirst, getFirstIfPosible, is_not_nullish, only_unique } from '$lib/utils';
+import { eq, and, ilike } from 'drizzle-orm';
 import { db, type Db } from '../db';
 import {
 	t_ingredient,
@@ -54,7 +54,9 @@ class ProductService {
 	constructor(private db: Db) {}
 
 	public PAGE_SIZE = 10;
-	async getBatchesAvailable({ page }: { page: number }) {
+	async getBatchesAvailable(filter: { page: number; batch_code: string; ingredient_name: string }) {
+		const { page, batch_code, ingredient_name } = filter;
+
 		const limited_batches = this.db.$with('limited_products_batches').as(
 			db
 				.select()
@@ -92,7 +94,18 @@ class ProductService {
 				eq(tr_product_batch_ingredient_batch.ingredient_batch_id, t_ingredient_batch.id)
 			)
 			.innerJoin(t_ingredient, eq(t_ingredient_batch.ingredient_id, t_ingredient.id))
-			.then(drizzle_map({ one: 'batch', with_one: ['product'], with_many: ['used_batches'] }));
+			.where(ilike(t_product.desc, `%${ingredient_name}%`))
+			.limit(this.PAGE_SIZE)
+			.offset(page * this.PAGE_SIZE)
+			.then(drizzle_map({ one: 'batch', with_one: ['product'], with_many: ['used_batches'] }))
+			.then((arr) =>
+				arr
+					.flatMap((obj) => obj.used_batches)
+					.filter((used_batch) => used_batch.batch_code.includes(batch_code))
+					.map((found_batches) => arr.find((obj) => obj.used_batches.includes(found_batches)))
+					.filter(is_not_nullish)
+			)
+			.then(only_unique);
 	}
 
 	async deleteBatchById(batch_id: number) {
