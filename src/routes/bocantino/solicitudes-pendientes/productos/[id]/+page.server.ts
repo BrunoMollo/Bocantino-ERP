@@ -1,7 +1,7 @@
 import { z } from 'zod';
 import type { PageServerLoad, RouteParams } from './$types';
 import { superValidate } from 'sveltekit-superforms/client';
-import { error, type Actions } from '@sveltejs/kit';
+import { error, type Actions, redirect } from '@sveltejs/kit';
 import { product_service } from '$logic/product-service';
 import { should_not_reach } from '$lib/utils';
 
@@ -19,8 +19,8 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	const batch = product_service.getBatchById(id);
 
-	const form = superValidate(close_production_schema);
-	const cancel_form = superValidate(cancel_production_schema);
+	const form = superValidate({ batch_id: id, adjustment: 0 }, close_production_schema);
+	const cancel_form = superValidate({ batch_id: id }, cancel_production_schema);
 
 	return { form, cancel_form, batch };
 };
@@ -43,7 +43,7 @@ export const actions: Actions = {
 		if (res.type == 'LOGIC_ERROR') {
 			throw error(400, res.message);
 		}
-		return { form };
+		throw redirect(302, '/bocantino/solicitudes-pendientes/productos');
 	},
 
 	cancel: async ({ request }) => {
@@ -58,7 +58,7 @@ export const actions: Actions = {
 			case 'LOGIC_ERROR':
 				throw error(400, res.message);
 			case 'SUCCESS':
-				return { form };
+				throw redirect(302, '/bocantino/solicitudes-pendientes/productos');
 			default:
 				should_not_reach(res);
 		}

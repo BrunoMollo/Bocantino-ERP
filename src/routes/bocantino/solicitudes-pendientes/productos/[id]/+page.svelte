@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { page } from '$app/stores';
 	import { IconPaperBag } from '@tabler/icons-svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 
@@ -89,7 +90,6 @@
 						class="btn variant-filled-error w-40"
 						type="submit"
 						on:click={(event) => {
-							$cancel_form.batch_id = current?.id; // other from reset this
 							const question =
 								'Estas seguro que quieres eliminar este lote?\nEsta accion no se puede deshacer';
 							if (!confirm(question)) {
