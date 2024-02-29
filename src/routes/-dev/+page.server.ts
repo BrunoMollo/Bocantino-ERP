@@ -185,7 +185,7 @@ async function seed() {
 		const product_batch_id = await product_service
 			.startProduction({
 				product_id,
-				produced_amount: 100,
+				produced_amount: 10,
 				recipe: [
 					{ ingredient_id: banana.id, amount: 1 },
 					{ ingredient_id: higado.id, amount: 2 }
@@ -193,7 +193,20 @@ async function seed() {
 				batches_ids: [[banana_batch_id], [liver_batch_id]]
 			})
 			.then((x) => (x.type === 'SUCCESS' ? x.data.id : -1));
+
 		await product_service.closeProduction({ batch_id: product_batch_id, adjustment: 0 });
+
+		await product_service
+			.startProduction({
+				product_id,
+				produced_amount: 10,
+				recipe: [
+					{ ingredient_id: banana.id, amount: 1 },
+					{ ingredient_id: higado.id, amount: 2 }
+				],
+				batches_ids: [[banana_batch_id], [liver_batch_id]]
+			})
+			.then((x) => (x.type === 'SUCCESS' ? x.data.id : -1));
 	}
 
 	// leave it last, cache might bring up an error
