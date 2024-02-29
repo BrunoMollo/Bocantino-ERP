@@ -315,6 +315,52 @@ class ProductService {
 			return is_ok(inserted);
 		});
 	}
+	async getProductBatchByID(id: number) {
+		const limited_batches = this.db.$with('limited_products_batches').as(
+			db
+				.select()
+				.from(t_product_batch)
+				.where(and(eq(t_product_batch.state, 'AVAILABLE'), eq(t_product_batch.id, id)))
+		);
+		return await db
+			.with(limited_batches)
+			.select({
+				batch: pick_columns(
+					limited_batches,
+					'id',
+					'batch_code',
+					'state',
+					'production_date',
+					'expiration_date'
+				),
+				product: pick_columns(t_product, 'id', 'desc'),
+				used_batches: pick_merge()
+					.table(t_ingredient_batch, 'id', 'batch_code')
+					.table(tr_product_batch_ingredient_batch, 'amount_used_to_produce_batch')
+					.aliased(t_ingredient, 'name', 'ingredient_name')
+					.build()
+			})
+			.from(limited_batches)
+			.innerJoin(t_product, eq(limited_batches.product_id, t_product.id))
+			.innerJoin(
+				tr_product_batch_ingredient_batch,
+				eq(tr_product_batch_ingredient_batch.produced_batch_id, limited_batches.id)
+			)
+			.innerJoin(
+				t_ingredient_batch,
+				eq(tr_product_batch_ingredient_batch.ingredient_batch_id, t_ingredient_batch.id)
+			)
+			.innerJoin(t_ingredient, eq(t_ingredient_batch.ingredient_id, t_ingredient.id))
+			.then(drizzle_map({ one: 'batch', with_one: ['product'], with_many: ['used_batches'] }))
+			.then((arr) =>
+				arr
+					.flatMap((obj) => obj.used_batches)
+					.map((found_batches) => arr.find((obj) => obj.used_batches.includes(found_batches)))
+					.filter(is_not_nullish)
+			)
+			.then(only_unique);
+
+	}
 
 	async getBatchesInProduction() {
 		return await db
