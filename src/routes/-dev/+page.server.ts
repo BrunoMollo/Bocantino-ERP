@@ -164,12 +164,12 @@ async function seed() {
 
 	const liver_batch_id = second_entry.batchesId[0];
 	const reduced_liver_batch_id = await ingredient_production_service.startIngredientProduction(
-		{ ingedient_id: higado_desidatado.id, produced_amount: 50 },
-		first_entry.batchesId
+		{ ingedient_id: higado_desidatado.id, produced_amount: 2 },
+		[liver_batch_id]
 	);
 	const res = await ingredient_production_service.startIngredientProduction(
-		{ ingedient_id: higado_desidatado.id, produced_amount: 50 },
-		first_entry.batchesId
+		{ ingedient_id: higado_desidatado.id, produced_amount: 4 },
+		[liver_batch_id]
 	);
 	if (res.type == 'SUCCESS') {
 		ingredient_production_service.closeProduction({ batch_id: res.id, adjustment: -1 });
