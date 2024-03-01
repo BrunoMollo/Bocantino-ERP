@@ -5,9 +5,9 @@ import type { PageServerLoad } from "../$types";
 export const load: PageServerLoad = async (url) => {
     //@ts-ignore
     const id = url.params.id;
-    const product = await product_service.getProductBatchByID(id);
-    if (!product) {
+    const productBatch = await product_service.getProductBatchByID(id);
+    if (!productBatch) {
         throw error(400, 'id invalido');
     }
-    return { product }
+    return { productBatch }
 }

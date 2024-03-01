@@ -4,9 +4,10 @@
 
 <main>
 	<section class="w-4/6 mx-auto bg-slate-700 p-5 rounded-lg shadow-md">
-		<h1 class="text-2xl pb-3">Resumen lote numero: {data.product[0].id}</h1>
-		<p class="text-xl">Codigo: {data.product[0].batch_code}</p>
-		<p class="text-xl">Producto: {data.product[0].product.desc}</p>
+		<h1 class="text-2xl pb-3">Resumen lote numero: {data.productBatch.id}</h1>
+		<p class="text-xl">Codigo: {data.productBatch.batch_code}</p>
+		<p class="text-xl">Producto: {data.productBatch.product.desc}</p>
+		<p class="text-xl">Cantidad producida: {data.productBatch.initial_amount.toString()} Kg</p>
 		<table class="table rounded my-3">
 			<thead>
 				<tr>
@@ -17,7 +18,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each data.product[0].used_batches as used_batch}
+				{#each data.productBatch.used_batches as used_batch}
 					<tr>
 						<td>{used_batch.id}</td>
 						<td>{used_batch.batch_code}</td>
@@ -28,8 +29,8 @@
 			</tbody>
 		</table>
 		<div class="flex gap-14">
-			<p>Fecha elaboracion:{data.product[0].production_date?.toLocaleDateString('es')}</p>
-			<p>Fecha vencimiento: {data.product[0].expiration_date.toLocaleDateString('es')}</p>
+			<p>Fecha elaboracion:{data.productBatch.production_date?.toLocaleDateString('es')}</p>
+			<p>Fecha vencimiento: {data.productBatch.expiration_date.toLocaleDateString('es')}</p>
 		</div>
 	</section>
 </main>
