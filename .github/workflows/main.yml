@@ -1,0 +1,20 @@
+name: Unit tests
+
+on:
+  pull_request:
+    branches: [ master ]
+
+
+jobs:
+  test_pull_request:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: actions/setup-node@v1
+      - uses: docker-practice/actions-setup-docker@master
+        with:
+          node-version: '^16.14'
+      - run: rm package-lock.json
+      - run: npm i
+      - run: npm run test
+      - run: npm run build
