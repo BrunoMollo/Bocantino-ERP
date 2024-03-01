@@ -19,7 +19,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
-    - uses: docker-practice/actions-setup-docker@master
     - name: Use Node.js ${{ matrix.node-version }}
       uses: actions/setup-node@v3
       with:
@@ -28,4 +27,6 @@ jobs:
     - run: rm package-lock.json
     - run: mv .env.example .env
     - run: npm i
+    - run: npm run check
+    - uses: docker-practice/actions-setup-docker@master
     - run: npm test
