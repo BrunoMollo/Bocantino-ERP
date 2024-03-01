@@ -1,30 +1,41 @@
-<script>
+<script lang="ts">
+	import { page } from '$app/stores';
 	import { IconPaperBag } from '@tabler/icons-svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 
 	export let data;
-	const current = {};
+	const current = data.batch;
 
-	const { form: cancel_form, enhance } = superForm(
-		{},
-		{
-			taintedMessage: null,
-			defaultValidator: 'clear',
-			dataType: 'json', // needed for id
-			onError: ({ result }) => {
-				if (result.type == 'error') {
-					alert(result.error.message);
-				}
-			},
-			onUpdated: ({ form }) => {}
+	const { form: cancel_form, enhance: cancel_enhance } = superForm(data.cancel_form, {
+		taintedMessage: null,
+		defaultValidator: 'clear',
+		dataType: 'json', // needed for id
+		onError: ({ result }) => {
+			if (result.type == 'error') {
+				alert(result.error.message);
+			}
 		}
-	);
+	});
+
+	const { form, enhance, delayed, errors } = superForm(data.form, {
+		taintedMessage: null,
+		dataType: 'json', // needed for id
+		defaultValidator: 'clear',
+		onError: ({ result }) => {
+			if (result.type == 'error') {
+				alert(result.error.message);
+			}
+		}
+	});
 </script>
 
 <div class="card w-9/12 md:w-2/4 m-auto mt-14 shadow-lg rounded-lg">
-	<button class="bg-black m-3 p-3 rounded-full h-12 w-12 align-middle shadow-md">
+	<a
+		href="/bocantino/solicitudes-pendientes/productos"
+		class="block bg-black m-3 p-3 rounded-full h-12 w-12 align-middle shadow-md"
+	>
 		<i class="bx bx-arrow-back text-2xl"></i>
-	</button>
+	</a>
 	<div class="px-10">
 		<h2 class="h2 text-primary-200">Solicitud pendiente {current?.id}</h2>
 		<p class="text-xl">
@@ -79,7 +90,6 @@
 						class="btn variant-filled-error w-40"
 						type="submit"
 						on:click={(event) => {
-							$cancel_form.batch_id = current?.id; // other from reset this
 							const question =
 								'Estas seguro que quieres eliminar este lote?\nEsta accion no se puede deshacer';
 							if (!confirm(question)) {
