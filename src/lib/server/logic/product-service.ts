@@ -314,6 +314,41 @@ class ProductService {
 			return is_ok(inserted);
 		});
 	}
+	async getProductBatchByID(id: number) {
+		return await db
+			.select({
+				batch: pick_columns(
+					t_product_batch,
+					'id',
+					'batch_code',
+					'state',
+					'production_date',
+					'expiration_date',
+					'initial_amount'
+				),
+				product: pick_columns(t_product, 'id', 'desc'),
+				used_batches: pick_merge()
+					.table(t_ingredient_batch, 'id', 'batch_code')
+					.table(tr_product_batch_ingredient_batch, 'amount_used_to_produce_batch')
+					.aliased(t_ingredient, 'name', 'ingredient_name')
+					.build()
+			})
+			.from(t_product_batch)
+			.innerJoin(t_product, eq(t_product_batch.product_id, t_product.id))
+			.innerJoin(
+				tr_product_batch_ingredient_batch,
+				eq(tr_product_batch_ingredient_batch.produced_batch_id, t_product_batch.id)
+			)
+			.innerJoin(
+				t_ingredient_batch,
+				eq(tr_product_batch_ingredient_batch.ingredient_batch_id, t_ingredient_batch.id)
+			)
+			.innerJoin(t_ingredient, eq(t_ingredient_batch.ingredient_id, t_ingredient.id))
+			.where(eq(t_product_batch.id, id))
+			.then(drizzle_map({ one: 'batch', with_one: ['product'], with_many: ['used_batches'] }))
+			.then(getFirstIfPosible);
+
+	}
 
 	async getBatchesInProduction() {
 		return await db
