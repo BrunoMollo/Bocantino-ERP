@@ -128,6 +128,7 @@ async function seed() {
 			}
 		]
 	});
+	const banana_batch_id = first_entry.batchesId[0];
 
 	const second_entry = await purchases_service.registerBoughtIngrediets({
 		withdrawal_tax_amount: 10,
@@ -160,18 +161,53 @@ async function seed() {
 			}
 		]
 	});
-	await ingredient_production_service.startIngredientProduction(
-		{ ingedient_id: higado_desidatado.id, produced_amount: 50 },
-		first_entry.batchesId
-	);
 
-	await product_service.add({
-		desc: 'Alimento para perros',
-		ingredients: [
-			{ ingredient_id: banana.id, amount: 10 },
-			{ ingredient_id: higado.id, amount: 20 }
-		]
-	});
+	const liver_batch_id = second_entry.batchesId[0];
+	const reduced_liver_batch_id = await ingredient_production_service.startIngredientProduction(
+		{ ingedient_id: higado_desidatado.id, produced_amount: 2 },
+		[liver_batch_id]
+	);
+	const res = await ingredient_production_service.startIngredientProduction(
+		{ ingedient_id: higado_desidatado.id, produced_amount: 4 },
+		[liver_batch_id]
+	);
+	if (res.type == 'SUCCESS') {
+		ingredient_production_service.closeProduction({ batch_id: res.id, adjustment: -1 });
+	}
+	{
+		const { id: product_id } = await product_service.add({
+			desc: 'Alimento para perros',
+			ingredients: [
+				{ ingredient_id: banana.id, amount: 1 },
+				{ ingredient_id: higado.id, amount: 2 }
+			]
+		});
+		const product_batch_id = await product_service
+			.startProduction({
+				product_id,
+				produced_amount: 10,
+				recipe: [
+					{ ingredient_id: banana.id, amount: 1 },
+					{ ingredient_id: higado.id, amount: 2 }
+				],
+				batches_ids: [[banana_batch_id], [liver_batch_id]]
+			})
+			.then((x) => (x.type === 'SUCCESS' ? x.data.id : -1));
+
+		await product_service.closeProduction({ batch_id: product_batch_id, adjustment: 0 });
+
+		await product_service
+			.startProduction({
+				product_id,
+				produced_amount: 10,
+				recipe: [
+					{ ingredient_id: banana.id, amount: 1 },
+					{ ingredient_id: higado.id, amount: 2 }
+				],
+				batches_ids: [[banana_batch_id], [liver_batch_id]]
+			})
+			.then((x) => (x.type === 'SUCCESS' ? x.data.id : -1));
+	}
 
 	// leave it last, cache might bring up an error
 	await auth_service.createUser({ username: 'admin', password: 'admin' });
