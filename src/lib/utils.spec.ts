@@ -1,6 +1,12 @@
 import { describe, expect, test } from 'vitest';
 import { isValidDateBackend } from './utils';
 
+describe('test', () => {
+	test('should fail', () => {
+		expect(2 + 2).toBe(5);
+	});
+});
+
 describe('isValidDate', () => {
 	describe('valid cases', () => {
 		test.each([
@@ -47,3 +53,4 @@ describe('isValidDate', () => {
 		});
 	});
 });
+
