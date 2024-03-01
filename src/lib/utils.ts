@@ -131,3 +131,18 @@ export function has_repeted<T>(arr: T[]) {
 	return [...new Set(arr)].length != arr.length;
 }
 
+/**
+ * return an array without repited elements
+ **/
+export function only_unique<T>(arr: T[]) {
+	return [...new Set(arr)];
+}
+
+/**
+ * Chech if a certain element is nullish with a type guard
+ * More information in [this article](https://www.benmvp.com/blog/filtering-undefined-elements-from-array-typescript)
+ **/
+export function is_not_nullish<T>(item: T | undefined): item is NonNullable<T> {
+	return !!item;
+}
+

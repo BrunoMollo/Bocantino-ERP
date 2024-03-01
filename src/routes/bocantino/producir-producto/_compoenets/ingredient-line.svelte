@@ -12,7 +12,7 @@
 	$: ingredient = ingredients_all.find((x) => x.id == ingredient_id);
 
 	let batches = 'WAITING' as Awaited<ReturnType<typeof trpc.ingredient.batches.query>> | 'WAITING';
-	trpc.ingredient.batches.query(ingredient_id).then((x) => (batches = x));
+	$: trpc.ingredient.batches.query(ingredient_id).then((x) => (batches = x));
 
 	$: selected_batches = batches !== 'WAITING' ? batches.filter((x) => value.includes(x.id)) : [];
 

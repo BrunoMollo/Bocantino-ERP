@@ -75,7 +75,7 @@
 			<div>
 				<p>Iva:{iva}</p>
 				<p>Percepciones: {withdrawal}</p>
-				<p>Total: {total}</p>
+				<p>Total: {Math.round(total * 100) / 100}</p>
 			</div>
 		{:else}
 			<div class="w-full mt-20 flex justify-center align-middle">

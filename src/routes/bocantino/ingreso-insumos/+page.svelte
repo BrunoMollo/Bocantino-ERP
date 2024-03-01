@@ -314,7 +314,7 @@
 			<div class="flex mr-10">
 				<h1 class="p-2">Total:</h1>
 				<div class="input w-32 p-2 rounded">
-					{total}
+					{Math.round(total * 100) / 100}
 				</div>
 			</div>
 

@@ -72,9 +72,13 @@
 				<h1 class="h2 pl-4">{$title}</h1>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<button class="btn variant-filled-secondary rounded-full mr-4" use:popup={popupFeatured}
-					><i class="bx bx-notification text-2xl"></i></button
+				<button
+					style="display: none;"
+					class=" btn variant-filled-secondary rounded-full mr-4"
+					use:popup={popupFeatured}
 				>
+					<i class="bx bx-notification text-2xl"></i>
+				</button>
 				<div class="card p-4 w-72 shadow-xl rounded-lg" data-popup="popupFeatured">
 					<div><h1 class="text-xl uppercase">Notifications:</h1></div>
 					<div class="arrow bg-surface-100-800-token" />
@@ -94,3 +98,4 @@
 		<slot />
 	{/if}
 </AppShell>
+

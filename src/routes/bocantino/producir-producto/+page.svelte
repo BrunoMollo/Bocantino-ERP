@@ -64,7 +64,7 @@
 </script>
 
 <div class="flex justify-between w-11/12 mx-auto">
-	<h1 class="uppercase text-2xl my-5">Orden de produccion de prodcuto final</h1>
+	<h1 class="uppercase text-2xl my-5">Orden de produccion de producto final</h1>
 </div>
 
 <form action="" class="mx-auto w-11/12" use:enhance method="post">
