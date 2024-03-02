@@ -20,9 +20,9 @@ async function create_neon_db_client() {
 	return drizzle_neon(client, { logger: dev });
 }
 
-export function create_docker_db_client() {
+export async function create_docker_db_client() {
 	const migrationClient = postgres(NEON_DATABASE_URL, { max: 1 });
-	migrate(dizzle_local(migrationClient), { migrationsFolder: 'migrations' });
+	await migrate(dizzle_local(migrationClient), { migrationsFolder: 'migrations' });
 
 	const queryClient = postgres(NEON_DATABASE_URL);
 	return dizzle_local(queryClient);
@@ -30,7 +30,7 @@ export function create_docker_db_client() {
 
 export type Db = Awaited<ReturnType<typeof create_neon_db_client>>;
 //@ts-ignore
-export const db: Db = dev ? create_docker_db_client() : await create_neon_db_client();
+export const db: Db = dev ? await create_docker_db_client() : await create_neon_db_client();
 
 export type Tx = PgTransaction<
 	NeonQueryResultHKT,
