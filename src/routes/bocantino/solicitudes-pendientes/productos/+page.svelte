@@ -38,4 +38,3 @@
 		<CompleteTable list={data.pending_productions} rows={4} />
 	</tbody>
 </table>
-

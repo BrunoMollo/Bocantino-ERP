@@ -13,4 +13,3 @@ class ProductServiceDefaulter {
 }
 
 export const product_service_defaulter = new ProductServiceDefaulter();
-

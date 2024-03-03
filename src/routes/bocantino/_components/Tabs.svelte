@@ -11,4 +11,3 @@
 		</TabAnchor>
 	{/each}
 </TabGroup>
-

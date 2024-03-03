@@ -13,4 +13,3 @@ export const product_schema = z.object({
 });
 
 export type ProductSchema = typeof product_schema;
-

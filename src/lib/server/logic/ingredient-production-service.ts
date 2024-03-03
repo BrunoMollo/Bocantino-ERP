@@ -406,4 +406,3 @@ class IngredientProductionService {
 }
 
 export const ingredient_production_service = new IngredientProductionService(database);
-

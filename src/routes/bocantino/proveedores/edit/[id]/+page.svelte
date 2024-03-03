@@ -13,4 +13,3 @@
 		btnMsj="Editar"
 	/>
 </article>
-

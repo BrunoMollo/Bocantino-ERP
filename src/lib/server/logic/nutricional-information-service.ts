@@ -75,4 +75,3 @@ export class NutricionalInformationserivce {
 	}
 }
 export const nutritional_information_service = new NutricionalInformationserivce();
-

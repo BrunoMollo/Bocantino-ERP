@@ -146,4 +146,3 @@ describe('nutritional information of a product', () => {
 		expect(info.type).toEqual('LOGIC_ERROR');
 	});
 });
-
