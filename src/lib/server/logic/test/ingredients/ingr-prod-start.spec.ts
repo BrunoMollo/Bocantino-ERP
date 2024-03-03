@@ -389,4 +389,3 @@ describe.sequential('ingredient produciton start', () => {
 		expect(r_batches[1].amount_used_to_produce_batch).toBe(2 * 110 - LIVER_BATCH_INTIAL_AMOUNT);
 	});
 });
-

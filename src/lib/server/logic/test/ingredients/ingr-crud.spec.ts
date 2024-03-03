@@ -170,4 +170,3 @@ describe.sequential('ingredients crud', () => {
 		});
 	});
 });
-

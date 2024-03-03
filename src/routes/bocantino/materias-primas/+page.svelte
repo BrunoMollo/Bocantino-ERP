@@ -60,4 +60,3 @@
 		vertical-align: middle;
 	}
 </style>
-

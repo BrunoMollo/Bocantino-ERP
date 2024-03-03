@@ -5,4 +5,3 @@ export const load: PageServerLoad = async () => {
 	const pending_productions = await product_service.getBatchesInProduction();
 	return { pending_productions };
 };
-

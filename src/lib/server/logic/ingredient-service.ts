@@ -127,4 +127,3 @@ class IngredientService {
 }
 
 export const ingredients_service = new IngredientService(db);
-
