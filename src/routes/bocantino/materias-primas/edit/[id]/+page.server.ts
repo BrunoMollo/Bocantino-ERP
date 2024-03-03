@@ -46,4 +46,3 @@ function parse_id_param(params: RouteParams) {
 	}
 	return { id };
 }
-

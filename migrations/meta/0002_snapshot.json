@@ -1,894 +1,807 @@
 {
-  "id": "81e4a7b9-c247-4cdb-be25-b8f7dd595558",
-  "prevId": "07e2968d-875c-4982-97e2-37f53fde7663",
-  "version": "5",
-  "dialect": "pg",
-  "tables": {
-    "document_type": {
-      "name": "document_type",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "entry_document": {
-      "name": "entry_document",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "document_identifier": {
-          "name": "document_identifier",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "issue_date": {
-          "name": "issue_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "due_date": {
-          "name": "due_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "type_id": {
-          "name": "type_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "entry_document_type_id_document_type_id_fk": {
-          "name": "entry_document_type_id_document_type_id_fk",
-          "tableFrom": "entry_document",
-          "tableTo": "document_type",
-          "columnsFrom": [
-            "type_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "ingredient": {
-      "name": "ingredient",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "unit": {
-          "name": "unit",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "reorder_point": {
-          "name": "reorder_point",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "protein": {
-          "name": "protein",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "carbs": {
-          "name": "carbs",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "fats": {
-          "name": "fats",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "ingredient_batch": {
-      "name": "ingredient_batch",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "supplier_bag_code": {
-          "name": "supplier_bag_code",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "full_amount": {
-          "name": "full_amount",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "production_date": {
-          "name": "production_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "ingredient_id": {
-          "name": "ingredient_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "amount_of_bags": {
-          "name": "amount_of_bags",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "state": {
-          "name": "state",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "registration_date": {
-          "name": "registration_date",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "supplier_id": {
-          "name": "supplier_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "expiration_date": {
-          "name": "expiration_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "cost": {
-          "name": "cost",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "currency_alpha_code": {
-          "name": "currency_alpha_code",
-          "type": "varchar(4)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "entry_id": {
-          "name": "entry_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "iva_tax_percentage": {
-          "name": "iva_tax_percentage",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "perceptions_tax_amount": {
-          "name": "perceptions_tax_amount",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "adjustment": {
-          "name": "adjustment",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "ingredient_batch_ingredient_id_ingredient_id_fk": {
-          "name": "ingredient_batch_ingredient_id_ingredient_id_fk",
-          "tableFrom": "ingredient_batch",
-          "tableTo": "ingredient",
-          "columnsFrom": [
-            "ingredient_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "ingredient_batch_entry_id_ingridient_entry_id_fk": {
-          "name": "ingredient_batch_entry_id_ingridient_entry_id_fk",
-          "tableFrom": "ingredient_batch",
-          "tableTo": "ingridient_entry",
-          "columnsFrom": [
-            "entry_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "ingredient_batch_supplier_id_ingredient_id_r_supplier_ingredient_supplier_id_ingredient_id_fk": {
-          "name": "ingredient_batch_supplier_id_ingredient_id_r_supplier_ingredient_supplier_id_ingredient_id_fk",
-          "tableFrom": "ingredient_batch",
-          "tableTo": "r_supplier_ingredient",
-          "columnsFrom": [
-            "supplier_id",
-            "ingredient_id"
-          ],
-          "columnsTo": [
-            "supplier_id",
-            "ingredient_id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "ingridient_entry": {
-      "name": "ingridient_entry",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "creation_date": {
-          "name": "creation_date",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "total_cost": {
-          "name": "total_cost",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "currency_alpha_code": {
-          "name": "currency_alpha_code",
-          "type": "varchar(4)",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "document_id": {
-          "name": "document_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "supplier_id": {
-          "name": "supplier_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "ingridient_entry_document_id_entry_document_id_fk": {
-          "name": "ingridient_entry_document_id_entry_document_id_fk",
-          "tableFrom": "ingridient_entry",
-          "tableTo": "entry_document",
-          "columnsFrom": [
-            "document_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "ingridient_entry_supplier_id_supplier_id_fk": {
-          "name": "ingridient_entry_supplier_id_supplier_id_fk",
-          "tableFrom": "ingridient_entry",
-          "tableTo": "supplier",
-          "columnsFrom": [
-            "supplier_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "product": {
-      "name": "product",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "desc": {
-          "name": "desc",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "product_batch": {
-      "name": "product_batch",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "supplier_bag_code": {
-          "name": "supplier_bag_code",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "full_amount": {
-          "name": "full_amount",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "expiration_date": {
-          "name": "expiration_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "production_date": {
-          "name": "production_date",
-          "type": "date",
-          "primaryKey": false,
-          "notNull": false
-        },
-        "product_id": {
-          "name": "product_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "state": {
-          "name": "state",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "registration_date": {
-          "name": "registration_date",
-          "type": "timestamp",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "adjustment": {
-          "name": "adjustment",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "product_batch_product_id_product_id_fk": {
-          "name": "product_batch_product_id_product_id_fk",
-          "tableFrom": "product_batch",
-          "tableTo": "product",
-          "columnsFrom": [
-            "product_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "supplier": {
-      "name": "supplier",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "name": {
-          "name": "name",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "email": {
-          "name": "email",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "cuit": {
-          "name": "cuit",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "phone_number": {
-          "name": "phone_number",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "address": {
-          "name": "address",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {}
-    },
-    "app_user": {
-      "name": "app_user",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": true,
-          "notNull": true
-        },
-        "username": {
-          "name": "username",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "password_hash": {
-          "name": "password_hash",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {
-        "app_user_username_unique": {
-          "name": "app_user_username_unique",
-          "nullsNotDistinct": false,
-          "columns": [
-            "username"
-          ]
-        }
-      }
-    },
-    "r_ingredient_batch_ingredient_batch": {
-      "name": "r_ingredient_batch_ingredient_batch",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "produced_batch_id": {
-          "name": "produced_batch_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "used_batch_id": {
-          "name": "used_batch_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "amount_used": {
-          "name": "amount_used",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "r_ingredient_batch_ingredient_batch_produced_batch_id_ingredient_batch_id_fk": {
-          "name": "r_ingredient_batch_ingredient_batch_produced_batch_id_ingredient_batch_id_fk",
-          "tableFrom": "r_ingredient_batch_ingredient_batch",
-          "tableTo": "ingredient_batch",
-          "columnsFrom": [
-            "produced_batch_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "r_ingredient_batch_ingredient_batch_used_batch_id_ingredient_batch_id_fk": {
-          "name": "r_ingredient_batch_ingredient_batch_used_batch_id_ingredient_batch_id_fk",
-          "tableFrom": "r_ingredient_batch_ingredient_batch",
-          "tableTo": "ingredient_batch",
-          "columnsFrom": [
-            "used_batch_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "r_ingredient_batch_ingredient_batch_produced_batch_id_used_batch_id_pk": {
-          "name": "r_ingredient_batch_ingredient_batch_produced_batch_id_used_batch_id_pk",
-          "columns": [
-            "produced_batch_id",
-            "used_batch_id"
-          ]
-        }
-      },
-      "uniqueConstraints": {}
-    },
-    "r_ingredient_ingredient": {
-      "name": "r_ingredient_ingredient",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "amount": {
-          "name": "amount",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "derived_id": {
-          "name": "derived_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "source_id": {
-          "name": "source_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "r_ingredient_ingredient_derived_id_ingredient_id_fk": {
-          "name": "r_ingredient_ingredient_derived_id_ingredient_id_fk",
-          "tableFrom": "r_ingredient_ingredient",
-          "tableTo": "ingredient",
-          "columnsFrom": [
-            "derived_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "r_ingredient_ingredient_source_id_ingredient_id_fk": {
-          "name": "r_ingredient_ingredient_source_id_ingredient_id_fk",
-          "tableFrom": "r_ingredient_ingredient",
-          "tableTo": "ingredient",
-          "columnsFrom": [
-            "source_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "r_ingredient_ingredient_derived_id_source_id_pk": {
-          "name": "r_ingredient_ingredient_derived_id_source_id_pk",
-          "columns": [
-            "derived_id",
-            "source_id"
-          ]
-        }
-      },
-      "uniqueConstraints": {}
-    },
-    "r_ingredient_product": {
-      "name": "r_ingredient_product",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "ingredient_id": {
-          "name": "ingredient_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "product_id": {
-          "name": "product_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "amount": {
-          "name": "amount",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "r_ingredient_product_ingredient_id_ingredient_id_fk": {
-          "name": "r_ingredient_product_ingredient_id_ingredient_id_fk",
-          "tableFrom": "r_ingredient_product",
-          "tableTo": "ingredient",
-          "columnsFrom": [
-            "ingredient_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "r_ingredient_product_product_id_product_id_fk": {
-          "name": "r_ingredient_product_product_id_product_id_fk",
-          "tableFrom": "r_ingredient_product",
-          "tableTo": "product",
-          "columnsFrom": [
-            "product_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "r_ingredient_product_ingredient_id_product_id_pk": {
-          "name": "r_ingredient_product_ingredient_id_product_id_pk",
-          "columns": [
-            "ingredient_id",
-            "product_id"
-          ]
-        }
-      },
-      "uniqueConstraints": {}
-    },
-    "r_product_batch_ingredient_batch": {
-      "name": "r_product_batch_ingredient_batch",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "product_batch_id": {
-          "name": "product_batch_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "ingredient_batch_id": {
-          "name": "ingredient_batch_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "amount_used": {
-          "name": "amount_used",
-          "type": "real",
-          "primaryKey": false,
-          "notNull": true
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "r_product_batch_ingredient_batch_product_batch_id_product_batch_id_fk": {
-          "name": "r_product_batch_ingredient_batch_product_batch_id_product_batch_id_fk",
-          "tableFrom": "r_product_batch_ingredient_batch",
-          "tableTo": "product_batch",
-          "columnsFrom": [
-            "product_batch_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "r_product_batch_ingredient_batch_ingredient_batch_id_ingredient_batch_id_fk": {
-          "name": "r_product_batch_ingredient_batch_ingredient_batch_id_ingredient_batch_id_fk",
-          "tableFrom": "r_product_batch_ingredient_batch",
-          "tableTo": "ingredient_batch",
-          "columnsFrom": [
-            "ingredient_batch_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "r_product_batch_ingredient_batch_product_batch_id_ingredient_batch_id_pk": {
-          "name": "r_product_batch_ingredient_batch_product_batch_id_ingredient_batch_id_pk",
-          "columns": [
-            "product_batch_id",
-            "ingredient_batch_id"
-          ]
-        }
-      },
-      "uniqueConstraints": {}
-    },
-    "r_supplier_ingredient": {
-      "name": "r_supplier_ingredient",
-      "schema": "",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "serial",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "supplier_id": {
-          "name": "supplier_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "ingredient_id": {
-          "name": "ingredient_id",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true
-        },
-        "disabled": {
-          "name": "disabled",
-          "type": "boolean",
-          "primaryKey": false,
-          "notNull": true,
-          "default": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "r_supplier_ingredient_supplier_id_supplier_id_fk": {
-          "name": "r_supplier_ingredient_supplier_id_supplier_id_fk",
-          "tableFrom": "r_supplier_ingredient",
-          "tableTo": "supplier",
-          "columnsFrom": [
-            "supplier_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        },
-        "r_supplier_ingredient_ingredient_id_ingredient_id_fk": {
-          "name": "r_supplier_ingredient_ingredient_id_ingredient_id_fk",
-          "tableFrom": "r_supplier_ingredient",
-          "tableTo": "ingredient",
-          "columnsFrom": [
-            "ingredient_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
-      "compositePrimaryKeys": {
-        "r_supplier_ingredient_supplier_id_ingredient_id_pk": {
-          "name": "r_supplier_ingredient_supplier_id_ingredient_id_pk",
-          "columns": [
-            "supplier_id",
-            "ingredient_id"
-          ]
-        }
-      },
-      "uniqueConstraints": {}
-    }
-  },
-  "enums": {},
-  "schemas": {},
-  "_meta": {
-    "schemas": {},
-    "tables": {
-      "\"user\"": "\"app_user\""
-    },
-    "columns": {}
-  }
+	"id": "81e4a7b9-c247-4cdb-be25-b8f7dd595558",
+	"prevId": "07e2968d-875c-4982-97e2-37f53fde7663",
+	"version": "5",
+	"dialect": "pg",
+	"tables": {
+		"document_type": {
+			"name": "document_type",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"description": {
+					"name": "description",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"entry_document": {
+			"name": "entry_document",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"document_identifier": {
+					"name": "document_identifier",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"issue_date": {
+					"name": "issue_date",
+					"type": "date",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"due_date": {
+					"name": "due_date",
+					"type": "date",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"type_id": {
+					"name": "type_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"entry_document_type_id_document_type_id_fk": {
+					"name": "entry_document_type_id_document_type_id_fk",
+					"tableFrom": "entry_document",
+					"tableTo": "document_type",
+					"columnsFrom": ["type_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"ingredient": {
+			"name": "ingredient",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"name": {
+					"name": "name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"unit": {
+					"name": "unit",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"reorder_point": {
+					"name": "reorder_point",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"protein": {
+					"name": "protein",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"carbs": {
+					"name": "carbs",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"fats": {
+					"name": "fats",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"ingredient_batch": {
+			"name": "ingredient_batch",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"supplier_bag_code": {
+					"name": "supplier_bag_code",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"full_amount": {
+					"name": "full_amount",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"production_date": {
+					"name": "production_date",
+					"type": "date",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"ingredient_id": {
+					"name": "ingredient_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"amount_of_bags": {
+					"name": "amount_of_bags",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"state": {
+					"name": "state",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"registration_date": {
+					"name": "registration_date",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"supplier_id": {
+					"name": "supplier_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"expiration_date": {
+					"name": "expiration_date",
+					"type": "date",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"cost": {
+					"name": "cost",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"currency_alpha_code": {
+					"name": "currency_alpha_code",
+					"type": "varchar(4)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"entry_id": {
+					"name": "entry_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"iva_tax_percentage": {
+					"name": "iva_tax_percentage",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"perceptions_tax_amount": {
+					"name": "perceptions_tax_amount",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"adjustment": {
+					"name": "adjustment",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"ingredient_batch_ingredient_id_ingredient_id_fk": {
+					"name": "ingredient_batch_ingredient_id_ingredient_id_fk",
+					"tableFrom": "ingredient_batch",
+					"tableTo": "ingredient",
+					"columnsFrom": ["ingredient_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"ingredient_batch_entry_id_ingridient_entry_id_fk": {
+					"name": "ingredient_batch_entry_id_ingridient_entry_id_fk",
+					"tableFrom": "ingredient_batch",
+					"tableTo": "ingridient_entry",
+					"columnsFrom": ["entry_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"ingredient_batch_supplier_id_ingredient_id_r_supplier_ingredient_supplier_id_ingredient_id_fk": {
+					"name": "ingredient_batch_supplier_id_ingredient_id_r_supplier_ingredient_supplier_id_ingredient_id_fk",
+					"tableFrom": "ingredient_batch",
+					"tableTo": "r_supplier_ingredient",
+					"columnsFrom": ["supplier_id", "ingredient_id"],
+					"columnsTo": ["supplier_id", "ingredient_id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"ingridient_entry": {
+			"name": "ingridient_entry",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"creation_date": {
+					"name": "creation_date",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"total_cost": {
+					"name": "total_cost",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"currency_alpha_code": {
+					"name": "currency_alpha_code",
+					"type": "varchar(4)",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"document_id": {
+					"name": "document_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"supplier_id": {
+					"name": "supplier_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"ingridient_entry_document_id_entry_document_id_fk": {
+					"name": "ingridient_entry_document_id_entry_document_id_fk",
+					"tableFrom": "ingridient_entry",
+					"tableTo": "entry_document",
+					"columnsFrom": ["document_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"ingridient_entry_supplier_id_supplier_id_fk": {
+					"name": "ingridient_entry_supplier_id_supplier_id_fk",
+					"tableFrom": "ingridient_entry",
+					"tableTo": "supplier",
+					"columnsFrom": ["supplier_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"product": {
+			"name": "product",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"desc": {
+					"name": "desc",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"product_batch": {
+			"name": "product_batch",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"supplier_bag_code": {
+					"name": "supplier_bag_code",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"full_amount": {
+					"name": "full_amount",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"expiration_date": {
+					"name": "expiration_date",
+					"type": "date",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"production_date": {
+					"name": "production_date",
+					"type": "date",
+					"primaryKey": false,
+					"notNull": false
+				},
+				"product_id": {
+					"name": "product_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"state": {
+					"name": "state",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"registration_date": {
+					"name": "registration_date",
+					"type": "timestamp",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"adjustment": {
+					"name": "adjustment",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"product_batch_product_id_product_id_fk": {
+					"name": "product_batch_product_id_product_id_fk",
+					"tableFrom": "product_batch",
+					"tableTo": "product",
+					"columnsFrom": ["product_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"supplier": {
+			"name": "supplier",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"name": {
+					"name": "name",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"email": {
+					"name": "email",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"cuit": {
+					"name": "cuit",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"phone_number": {
+					"name": "phone_number",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"address": {
+					"name": "address",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {}
+		},
+		"app_user": {
+			"name": "app_user",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": true,
+					"notNull": true
+				},
+				"username": {
+					"name": "username",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"password_hash": {
+					"name": "password_hash",
+					"type": "text",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {},
+			"compositePrimaryKeys": {},
+			"uniqueConstraints": {
+				"app_user_username_unique": {
+					"name": "app_user_username_unique",
+					"nullsNotDistinct": false,
+					"columns": ["username"]
+				}
+			}
+		},
+		"r_ingredient_batch_ingredient_batch": {
+			"name": "r_ingredient_batch_ingredient_batch",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"produced_batch_id": {
+					"name": "produced_batch_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"used_batch_id": {
+					"name": "used_batch_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"amount_used": {
+					"name": "amount_used",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"r_ingredient_batch_ingredient_batch_produced_batch_id_ingredient_batch_id_fk": {
+					"name": "r_ingredient_batch_ingredient_batch_produced_batch_id_ingredient_batch_id_fk",
+					"tableFrom": "r_ingredient_batch_ingredient_batch",
+					"tableTo": "ingredient_batch",
+					"columnsFrom": ["produced_batch_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"r_ingredient_batch_ingredient_batch_used_batch_id_ingredient_batch_id_fk": {
+					"name": "r_ingredient_batch_ingredient_batch_used_batch_id_ingredient_batch_id_fk",
+					"tableFrom": "r_ingredient_batch_ingredient_batch",
+					"tableTo": "ingredient_batch",
+					"columnsFrom": ["used_batch_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {
+				"r_ingredient_batch_ingredient_batch_produced_batch_id_used_batch_id_pk": {
+					"name": "r_ingredient_batch_ingredient_batch_produced_batch_id_used_batch_id_pk",
+					"columns": ["produced_batch_id", "used_batch_id"]
+				}
+			},
+			"uniqueConstraints": {}
+		},
+		"r_ingredient_ingredient": {
+			"name": "r_ingredient_ingredient",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"amount": {
+					"name": "amount",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"derived_id": {
+					"name": "derived_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"source_id": {
+					"name": "source_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"r_ingredient_ingredient_derived_id_ingredient_id_fk": {
+					"name": "r_ingredient_ingredient_derived_id_ingredient_id_fk",
+					"tableFrom": "r_ingredient_ingredient",
+					"tableTo": "ingredient",
+					"columnsFrom": ["derived_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"r_ingredient_ingredient_source_id_ingredient_id_fk": {
+					"name": "r_ingredient_ingredient_source_id_ingredient_id_fk",
+					"tableFrom": "r_ingredient_ingredient",
+					"tableTo": "ingredient",
+					"columnsFrom": ["source_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {
+				"r_ingredient_ingredient_derived_id_source_id_pk": {
+					"name": "r_ingredient_ingredient_derived_id_source_id_pk",
+					"columns": ["derived_id", "source_id"]
+				}
+			},
+			"uniqueConstraints": {}
+		},
+		"r_ingredient_product": {
+			"name": "r_ingredient_product",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"ingredient_id": {
+					"name": "ingredient_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"product_id": {
+					"name": "product_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"amount": {
+					"name": "amount",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"r_ingredient_product_ingredient_id_ingredient_id_fk": {
+					"name": "r_ingredient_product_ingredient_id_ingredient_id_fk",
+					"tableFrom": "r_ingredient_product",
+					"tableTo": "ingredient",
+					"columnsFrom": ["ingredient_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"r_ingredient_product_product_id_product_id_fk": {
+					"name": "r_ingredient_product_product_id_product_id_fk",
+					"tableFrom": "r_ingredient_product",
+					"tableTo": "product",
+					"columnsFrom": ["product_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {
+				"r_ingredient_product_ingredient_id_product_id_pk": {
+					"name": "r_ingredient_product_ingredient_id_product_id_pk",
+					"columns": ["ingredient_id", "product_id"]
+				}
+			},
+			"uniqueConstraints": {}
+		},
+		"r_product_batch_ingredient_batch": {
+			"name": "r_product_batch_ingredient_batch",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"product_batch_id": {
+					"name": "product_batch_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"ingredient_batch_id": {
+					"name": "ingredient_batch_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"amount_used": {
+					"name": "amount_used",
+					"type": "real",
+					"primaryKey": false,
+					"notNull": true
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"r_product_batch_ingredient_batch_product_batch_id_product_batch_id_fk": {
+					"name": "r_product_batch_ingredient_batch_product_batch_id_product_batch_id_fk",
+					"tableFrom": "r_product_batch_ingredient_batch",
+					"tableTo": "product_batch",
+					"columnsFrom": ["product_batch_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"r_product_batch_ingredient_batch_ingredient_batch_id_ingredient_batch_id_fk": {
+					"name": "r_product_batch_ingredient_batch_ingredient_batch_id_ingredient_batch_id_fk",
+					"tableFrom": "r_product_batch_ingredient_batch",
+					"tableTo": "ingredient_batch",
+					"columnsFrom": ["ingredient_batch_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {
+				"r_product_batch_ingredient_batch_product_batch_id_ingredient_batch_id_pk": {
+					"name": "r_product_batch_ingredient_batch_product_batch_id_ingredient_batch_id_pk",
+					"columns": ["product_batch_id", "ingredient_batch_id"]
+				}
+			},
+			"uniqueConstraints": {}
+		},
+		"r_supplier_ingredient": {
+			"name": "r_supplier_ingredient",
+			"schema": "",
+			"columns": {
+				"id": {
+					"name": "id",
+					"type": "serial",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"supplier_id": {
+					"name": "supplier_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"ingredient_id": {
+					"name": "ingredient_id",
+					"type": "integer",
+					"primaryKey": false,
+					"notNull": true
+				},
+				"disabled": {
+					"name": "disabled",
+					"type": "boolean",
+					"primaryKey": false,
+					"notNull": true,
+					"default": false
+				}
+			},
+			"indexes": {},
+			"foreignKeys": {
+				"r_supplier_ingredient_supplier_id_supplier_id_fk": {
+					"name": "r_supplier_ingredient_supplier_id_supplier_id_fk",
+					"tableFrom": "r_supplier_ingredient",
+					"tableTo": "supplier",
+					"columnsFrom": ["supplier_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				},
+				"r_supplier_ingredient_ingredient_id_ingredient_id_fk": {
+					"name": "r_supplier_ingredient_ingredient_id_ingredient_id_fk",
+					"tableFrom": "r_supplier_ingredient",
+					"tableTo": "ingredient",
+					"columnsFrom": ["ingredient_id"],
+					"columnsTo": ["id"],
+					"onDelete": "no action",
+					"onUpdate": "no action"
+				}
+			},
+			"compositePrimaryKeys": {
+				"r_supplier_ingredient_supplier_id_ingredient_id_pk": {
+					"name": "r_supplier_ingredient_supplier_id_ingredient_id_pk",
+					"columns": ["supplier_id", "ingredient_id"]
+				}
+			},
+			"uniqueConstraints": {}
+		}
+	},
+	"enums": {},
+	"schemas": {},
+	"_meta": {
+		"schemas": {},
+		"tables": {
+			"\"user\"": "\"app_user\""
+		},
+		"columns": {}
+	}
 }

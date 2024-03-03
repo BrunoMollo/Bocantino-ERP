@@ -114,4 +114,3 @@ class SuppliersService {
 }
 
 export const suppliers_service = new SuppliersService();
-

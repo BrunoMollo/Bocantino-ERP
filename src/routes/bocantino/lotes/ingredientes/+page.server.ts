@@ -15,4 +15,3 @@ export const load: PageServerLoad = async ({ url }) => {
 
 	return { batches, count_batches, page_size };
 };
-

@@ -374,4 +374,3 @@ describe.sequential('start production of product', async () => {
 		}
 	});
 });
-

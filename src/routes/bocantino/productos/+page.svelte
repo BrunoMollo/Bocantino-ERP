@@ -56,4 +56,3 @@
 		vertical-align: middle;
 	}
 </style>
-

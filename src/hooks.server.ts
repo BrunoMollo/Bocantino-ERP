@@ -35,4 +35,3 @@ function hook_redirect(location: string) {
 		headers: { location }
 	});
 }
-

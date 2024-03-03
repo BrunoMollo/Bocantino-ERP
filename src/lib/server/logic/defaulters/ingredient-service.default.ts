@@ -68,4 +68,3 @@ class IngredientServiceDefaulter {
 }
 
 export const ingredient_defaulter_service = new IngredientServiceDefaulter();
-

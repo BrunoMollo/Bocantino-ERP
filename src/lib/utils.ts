@@ -146,4 +146,3 @@ export function only_unique<T>(arr: T[]) {
 export function is_not_nullish<T>(item: T | undefined): item is NonNullable<T> {
 	return !!item;
 }
-
