@@ -1,8 +1,8 @@
+import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 import type { PageServerLoad, RouteParams } from './$types';
-import { superValidate } from 'sveltekit-superforms/client';
 import { error, type Actions, redirect } from '@sveltejs/kit';
-import { product_service } from '$logic/product-service';
+import { ingredient_production_service } from '$logic/ingredient-production-service';
 import { should_not_reach } from '$lib/utils';
 
 const close_production_schema = z.object({
@@ -16,10 +16,14 @@ const cancel_production_schema = z.object({
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = parse_id_param(params);
-	const batch = product_service.getBatchById(id);
+	const batch = await ingredient_production_service.getBatchById(id);
+	const used_batch = await ingredient_production_service.getUsedBatchOf({ id });
+	if (!batch || !used_batch) {
+		throw error(404, 'lote derivado no existe');
+	}
 	const form = superValidate({ batch_id: id, adjustment: 0 }, close_production_schema);
 	const cancel_form = superValidate({ batch_id: id }, cancel_production_schema);
-	return { form, cancel_form, batch };
+	return { batch, used_batch, form, cancel_form };
 };
 
 function parse_id_param(params: RouteParams) {
@@ -36,11 +40,15 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return { form };
 		}
-		const res = await product_service.closeProduction(form.data);
-		if (res.type == 'LOGIC_ERROR') {
-			throw error(400, res.message);
+		const res = await ingredient_production_service.closeProduction(form.data);
+		switch (res.type) {
+			case 'LOGIC_ERROR':
+				throw error(400, res.message);
+			case 'SUCCESS':
+				throw redirect(302, '/bocantino/lotes/ingredientes');
+			default:
+				should_not_reach(res);
 		}
-		throw redirect(302, '/bocantino/lotes/productos');
 	},
 
 	cancel: async ({ request }) => {
@@ -49,13 +57,13 @@ export const actions: Actions = {
 			return { form };
 		}
 		const { batch_id } = form.data;
-		const res = await product_service.deleteBatchById(batch_id);
+		const res = await ingredient_production_service.deleteBatchById(batch_id);
 
 		switch (res.type) {
 			case 'LOGIC_ERROR':
 				throw error(400, res.message);
 			case 'SUCCESS':
-				throw redirect(302, '/bocantino/solicitudes-pendientes/productos');
+				throw redirect(302, '/bocantino/solicitudes-pendientes/ingredientes');
 			default:
 				should_not_reach(res);
 		}

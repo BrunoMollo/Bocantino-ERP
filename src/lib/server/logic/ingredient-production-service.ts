@@ -54,7 +54,13 @@ class IngredientProductionService {
 		return await (tx ?? database)
 			.with(sq_stock)
 			.select({
-				batch: pick_columns(t_ingredient_batch, 'id', 'batch_code', 'expiration_date'),
+				batch: pick_columns(
+					t_ingredient_batch,
+					'id',
+					'batch_code',
+					'expiration_date',
+					'initial_amount'
+				),
 				ingredient: pick_columns(t_ingredient, 'id', 'name', 'unit'),
 				stock: { current_amount: sq_stock.currently_available }
 			})
@@ -402,6 +408,26 @@ class IngredientProductionService {
 				.where(eq(t_ingredient_batch.id, batch_id));
 			return is_ok(null);
 		});
+	}
+	async getUsedBatchOf({ id }: { id: number }) {
+		return await this.db
+			.select({
+				batch: pick_merge()
+					.table(t_ingredient_batch, 'id', 'batch_code')
+					.table(tr_ingredient_batch_ingredient_batch, 'amount_used_to_produce_batch')
+					.aliased(t_ingredient, 'name', 'ingredient_name')
+					.aliased(t_ingredient, 'unit', 'ingredient_unit')
+					.build()
+			})
+			.from(tr_ingredient_batch_ingredient_batch)
+			.innerJoin(
+				t_ingredient_batch,
+				eq(tr_ingredient_batch_ingredient_batch.used_batch_id, t_ingredient_batch.id)
+			)
+			.innerJoin(t_ingredient, eq(t_ingredient_batch.ingredient_id, t_ingredient.id))
+			.where(eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, id))
+			.then(drizzle_map({ one: 'batch', with_many: [], with_one: [] }))
+			.then(getFirstIfPosible);
 	}
 }
 
