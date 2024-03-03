@@ -32,3 +32,4 @@ export async function __DELETE_ALL_DATABASE() {
 		await tx.delete(t_document_type);
 	});
 }
+

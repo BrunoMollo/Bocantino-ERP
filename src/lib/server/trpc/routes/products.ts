@@ -28,3 +28,4 @@ export const products = router({
 			return nutritional_information_service.calculateNutricionalInformation(input);
 		})
 });
+

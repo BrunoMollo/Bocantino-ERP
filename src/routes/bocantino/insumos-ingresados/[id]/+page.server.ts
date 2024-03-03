@@ -13,3 +13,4 @@ export const load: PageServerLoad = async (url) => {
 	}
 	return { entry };
 };
+

@@ -165,3 +165,4 @@ describe('close production of product', () => {
 		expect(res2.type).toBe('LOGIC_ERROR');
 	});
 });
+

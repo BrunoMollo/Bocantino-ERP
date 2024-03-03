@@ -16,3 +16,4 @@ export default {
 		connectionString: NEON_DATABASE_URL
 	}
 } satisfies Config;
+

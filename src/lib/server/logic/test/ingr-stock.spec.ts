@@ -526,3 +526,4 @@ describe.sequential('stock ingredients', () => {
 		expect(res).toEqual([{ batch_id: first_batch_id, currently_available: 1_550 }]);
 	});
 });
+

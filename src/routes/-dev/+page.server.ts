@@ -212,3 +212,4 @@ async function seed() {
 	// leave it last, cache might bring up an error
 	await auth_service.createUser({ username: 'admin', password: 'admin' });
 }
+

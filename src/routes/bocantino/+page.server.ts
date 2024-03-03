@@ -9,3 +9,4 @@ export const load: PageServerLoad = async () => {
 	const entries = purchases_service.getLastEntries();
 	return { ingredients, entries, pending_productions };
 };
+

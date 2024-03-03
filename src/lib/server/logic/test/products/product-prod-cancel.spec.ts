@@ -118,3 +118,4 @@ describe('close production of product', () => {
 		expect(batches.length).toBe(2);
 	});
 });
+

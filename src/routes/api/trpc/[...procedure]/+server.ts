@@ -18,3 +18,4 @@ export const POST = ((event) =>
 		endpoint: '/api/trpc',
 		createContext: createSvelteKitContext(event.locals)
 	})) satisfies RequestHandler;
+

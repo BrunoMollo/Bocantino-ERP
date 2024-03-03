@@ -16,3 +16,4 @@ class SuppliersServiceDefulter {
 }
 
 export const suppliers_defaulter_service = new SuppliersServiceDefulter();
+

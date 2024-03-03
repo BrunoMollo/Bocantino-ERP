@@ -347,6 +347,7 @@ class ProductService {
 			.where(eq(t_product_batch.id, id))
 			.then(drizzle_map({ one: 'batch', with_one: ['product'], with_many: ['used_batches'] }))
 			.then(getFirstIfPosible);
+
 	}
 
 	async getBatchesInProduction() {
@@ -444,3 +445,4 @@ class ProductService {
 }
 
 export const product_service = new ProductService(db);
+

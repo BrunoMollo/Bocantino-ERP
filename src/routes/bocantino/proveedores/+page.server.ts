@@ -5,3 +5,4 @@ export const load: PageServerLoad = async () => {
 	const suppliers = await suppliers_service.getAll();
 	return { suppliers };
 };
+

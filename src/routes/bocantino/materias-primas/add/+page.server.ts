@@ -23,3 +23,4 @@ export const actions: Actions = {
 		throw redirect(302, '/bocantino/materias-primas?toast=Materia prima agregada con exito');
 	}
 };
+

@@ -34,3 +34,4 @@ export const sq_stock = db.$with('stock').as(
 		)
 		.groupBy(t_ingredient_batch.id)
 );
+

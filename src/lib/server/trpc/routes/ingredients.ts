@@ -23,3 +23,4 @@ export const ingredient = router({
 		return await ingredient_production_service.getBatchesByingredient_id(input);
 	})
 });
+
