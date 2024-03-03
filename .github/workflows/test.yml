@@ -29,7 +29,7 @@ jobs:
       - name: Install Docker
         uses: docker-practice/actions-setup-docker@master
       - name: Pull docker images
-        uses: docker compose pull
+        run: docker compose pull
       - name: Run Vitest
         run: npm test:ci
 
