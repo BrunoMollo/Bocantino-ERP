@@ -26,7 +26,7 @@
 				<td style="padding-left: 16px;">{item.ingredient.name}</td>
 				<td style="padding-left: 16px;">{item.initial_amount} {item.ingredient.unit}</td>
 				<td style="padding-left: 16px;" class="gap-5 flex">
-					<a href="#">ver</a>
+					<a href="/bocantino/solicitudes-pendientes/ingredientes/{item.id}">ver</a>
 					<button
 						class="rounded-full bg-white px-3 py-2"
 						on:click={generarPDF(item.ingredient.name, item)}

@@ -26,9 +26,12 @@
 </script>
 
 <div class="card w-9/12 md:w-2/4 m-auto mt-14 shadow-lg rounded-lg">
-	<button class="bg-black m-3 p-3 rounded-full h-12 w-12 align-middle shadow-md">
+	<a
+		href="/bocantino/solicitudes-pendientes/ingredientes"
+		class="block bg-black m-3 p-3 rounded-full h-12 w-12 align-middle shadow-md"
+	>
 		<i class="bx bx-arrow-back text-2xl"></i>
-	</button>
+	</a>
 	<div class="px-10">
 		<h2 class="h2 text-primary-200">Solicitud pendiente {data.batch.id}</h2>
 		<p>
