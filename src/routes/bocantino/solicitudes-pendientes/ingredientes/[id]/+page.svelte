@@ -33,14 +33,12 @@
 		<h2 class="h2 text-primary-200">Solicitud pendiente {data.batch.id}</h2>
 		<p>
 			Cantidad producida: {data.batch.initial_amount}
-			{data.batch.ingredient?.unit} de {data.batch.ingredient.name}.
+			{data.batch.ingredient.unit} de {data.batch.ingredient.name}.
 		</p>
-		{#each data.batch.used_batches ?? [] as used_batch}
-			<p>
-				Uso {used_batch?.amount_used_to_produce_batch}
-				{data.batch.used_ingredient.unit} del lote {used_batch?.batch_code}
-			</p>
-		{/each}
+		<p>
+			Uso {data.used_batch.amount_used_to_produce_batch}
+			{data.used_batch.ingredient_unit} del lote {data.used_batch.batch_code}
+		</p>
 
 		<h3 class="h3 pt-4">Finalizar produccion</h3>
 		<form class="flex flex-col" method="post" action="?/finish" use:enhance>

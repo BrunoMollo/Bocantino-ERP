@@ -16,12 +16,13 @@ const cancel_production_schema = z.object({
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = parse_id_param(params);
 	const batch = await ingredient_production_service.getBatchById(id);
-	if (!batch) {
-		throw error(404, 'lote no existe');
+	const used_batch = await ingredient_production_service.getUsedBatchOf({ id });
+	if (!batch || !used_batch) {
+		throw error(404, 'lote derivado no existe');
 	}
 	const form = superValidate(close_production_schema);
 	const cancel_form = superValidate(cancel_production_schema);
-	return { batch, form, cancel_form };
+	return { batch, used_batch, form, cancel_form };
 };
 
 function parse_id_param(params: RouteParams) {
