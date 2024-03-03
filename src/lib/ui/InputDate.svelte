@@ -4,7 +4,7 @@
 	export let id = '';
 	export let delimiter = '-';
 	export let className = '';
-	export let value = '';
+	export let value = '' as Date | string; //SuperForms deals wearly whit this types
 
 	const valueStore = writable('');
 	let prevValue = '';

@@ -77,7 +77,7 @@ beforeEach(async () => {
 		})
 		.then((x) => x.batchesId[0]);
 
-	SECOND_LIVER_BATCH_ID = await purchases_service
+	await purchases_service
 		.registerBoughtIngrediets({
 			supplier_id: SUPPLIER_ID,
 			withdrawal_tax_amount: 10,
@@ -102,7 +102,7 @@ beforeEach(async () => {
 		})
 		.then((x) => x.batchesId[0]);
 
-	BANANA_BATCH_ID = await purchases_service
+	await purchases_service
 		.registerBoughtIngrediets({
 			withdrawal_tax_amount: 10,
 			iva_tax_percentage: 21,

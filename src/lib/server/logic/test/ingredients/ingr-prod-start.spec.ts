@@ -267,7 +267,6 @@ describe.sequential('ingredient produciton start', () => {
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 110 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
-		//@ts-expect-error PENDING: explain
 		expect(res.type).toBe('SUCCESS');
 
 		const stock_first = await db
@@ -313,7 +312,6 @@ describe.sequential('ingredient produciton start', () => {
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
 
-		//@ts-expect-error PENDING: explain
 		expect(res.type).toBe('SUCCESS');
 		const liver_batch_stock = await db
 			.with(sq_stock)

@@ -35,7 +35,7 @@ beforeAll(async () => {
 
 	LIVER_ID = await ingredient_defaulter_service.add_simple();
 	BANANA_ID = await ingredient_defaulter_service.add_simple();
-	REDUCED_LIVER_ID = await ingredient_defaulter_service.add_derived({ from: LIVER_ID, amount: 2 });
+	await ingredient_defaulter_service.add_derived({ from: LIVER_ID, amount: 2 });
 
 	SUPPLIER_ID = await suppliers_defaulter_service.add({ ingredientsIds: [LIVER_ID, BANANA_ID] });
 

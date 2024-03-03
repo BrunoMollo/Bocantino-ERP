@@ -84,7 +84,8 @@ export function makeOptions<T>(arr: T[], fields: { label: keyof T; value: keyof 
 			prev.labels.push(curr[label]);
 			return prev;
 		},
-		{ labels: [] as unknown[], values: [] as unknown[] }
+		// eslint-disable-next-line @typescript-eslint/no-explicit-any
+		{ labels: [] as any[], values: [] as any[] }
 	);
 }
 
