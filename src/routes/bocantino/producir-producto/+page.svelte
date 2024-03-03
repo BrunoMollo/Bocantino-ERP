@@ -6,6 +6,7 @@
 	import IngredientLine from './_compoenets/ingredient-line.svelte';
 	import RecipeDiffGraph from './_compoenets/recipie-diff-graph.svelte';
 	import Spinner from '$lib/ui/Spinner.svelte';
+	import type { NutritionalInfo } from '$logic/nutricional-information-service';
 
 	export let data;
 	const { ingredients_all } = data;
@@ -45,7 +46,7 @@
 		return res.data;
 	});
 
-	let prev: any;
+	let prev: NutritionalInfo;
 	const modified_nutritional_info = derived(current_nutritional_info, (x) => {
 		if (x == undefined) return prev;
 		if (x == 'WAITING') return prev;
@@ -54,11 +55,11 @@
 	});
 
 	$: $form.recipe = $recipe as Exclude<typeof $recipe, string | undefined>;
-	const insuficient_arr = writable<any[]>([]);
+	const insuficient_arr = writable<number[]>([]);
 	$: can_send =
 		!$form.produced_amount ||
 		!($recipe instanceof Object) ||
-		$insuficient_arr.reduce((a, b) => a + b, 0);
+		!!$insuficient_arr.reduce((a, b) => a + b, 0);
 
 	let dialog: HTMLDialogElement;
 </script>

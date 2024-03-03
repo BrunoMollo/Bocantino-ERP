@@ -258,7 +258,7 @@ describe.sequential('ingredient produciton start', () => {
 		expect(r_batches.length).toBe(3);
 		expect(r_batches[2].used_batch_id).toBe(LIVER_BATCH_ID);
 		expect(r_batches[2].amount_used_to_produce_batch).toBe(2 * 10);
-		//@ts-ignore
+		//@ts-expect-error PENDING: explain
 		expect(r_batches[2].produced_batch_id).toBe(inserted.id);
 	});
 
@@ -267,7 +267,6 @@ describe.sequential('ingredient produciton start', () => {
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 110 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
-		//@ts-ignore
 		expect(res.type).toBe('SUCCESS');
 
 		const stock_first = await db
@@ -292,12 +291,12 @@ describe.sequential('ingredient produciton start', () => {
 		const r_batches = await db.select().from(tr_ingredient_batch_ingredient_batch);
 		expect(r_batches.length).toBe(2);
 		expect(r_batches[0].used_batch_id).toBe(LIVER_BATCH_ID);
-		//@ts-ignore
+		//@ts-expect-error PENDING: explain
 		expect(r_batches[0].produced_batch_id).toBe(res.id);
 		expect(r_batches[0].amount_used_to_produce_batch).toBe(LIVER_BATCH_INTIAL_AMOUNT);
 
 		expect(r_batches[1].used_batch_id).toBe(SECOND_LIVER_BATCH_ID);
-		//@ts-ignore
+		//@ts-expect-error PENDING: explain
 		expect(r_batches[1].produced_batch_id).toBe(res.id);
 		expect(r_batches[1].amount_used_to_produce_batch).toBe(110 * 2 - LIVER_BATCH_INTIAL_AMOUNT);
 	});
@@ -313,7 +312,6 @@ describe.sequential('ingredient produciton start', () => {
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
 
-		//@ts-ignore
 		expect(res.type).toBe('SUCCESS');
 		const liver_batch_stock = await db
 			.with(sq_stock)
@@ -339,10 +337,10 @@ describe.sequential('ingredient produciton start', () => {
 		expect(r_batches.length).toBe(3);
 		expect(r_batches[1].used_batch_id).toBe(LIVER_BATCH_ID);
 		expect(r_batches[1].amount_used_to_produce_batch).toBe(LIVER_BATCH_INTIAL_AMOUNT - 40);
-		//@ts-ignore
+		//@ts-expect-error PENDING: explain
 		expect(r_batches[1].produced_batch_id).toBe(res.id);
 		expect(r_batches[2].used_batch_id).toBe(SECOND_LIVER_BATCH_ID);
-		//@ts-ignore
+		//@ts-expect-error PENDING: explain
 		expect(r_batches[2].produced_batch_id).toBe(res.id);
 		expect(r_batches[2].amount_used_to_produce_batch).toBe(
 			2 * 110 - LIVER_BATCH_INTIAL_AMOUNT + 40
@@ -356,7 +354,7 @@ describe.sequential('ingredient produciton start', () => {
 			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 110 },
 			[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]
 		);
-		//@ts-ignore
+		//@ts-expect-error PENDING: explain
 		const { id, type } = res;
 		expect(type).toBe('SUCCESS');
 		expect(id).toBeTruthy();
@@ -382,11 +380,11 @@ describe.sequential('ingredient produciton start', () => {
 		const r_batches = await db.select().from(tr_ingredient_batch_ingredient_batch);
 		expect(r_batches.length).toBe(2);
 		expect(r_batches[0].used_batch_id).toBe(LIVER_BATCH_ID);
-		//@ts-ignore
+		//@ts-expect-error PENDING: explain
 		expect(r_batches[0].produced_batch_id).toBe(res.id);
 		expect(r_batches[0].amount_used_to_produce_batch).toBe(LIVER_BATCH_INTIAL_AMOUNT);
 		expect(r_batches[1].used_batch_id).toBe(SECOND_LIVER_BATCH_ID);
-		//@ts-ignore
+		//@ts-expect-error PENDING: explain
 		expect(r_batches[1].produced_batch_id).toBe(res.id);
 		expect(r_batches[1].amount_used_to_produce_batch).toBe(2 * 110 - LIVER_BATCH_INTIAL_AMOUNT);
 	});

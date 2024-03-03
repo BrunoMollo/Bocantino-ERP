@@ -1,5 +1,4 @@
-import type { Actions, PageServerLoad } from './$types';
-import { superValidate } from 'sveltekit-superforms/client';
+import type { PageServerLoad } from './$types';
 import { product_service } from '$logic/product-service';
 
 export const load: PageServerLoad = async () => {

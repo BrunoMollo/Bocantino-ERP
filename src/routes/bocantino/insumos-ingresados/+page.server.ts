@@ -1,5 +1,4 @@
 import { purchases_service } from '$logic/ingredient-purchase-service';
-import { count } from 'console';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ url }) => {
@@ -8,13 +7,15 @@ export const load: PageServerLoad = async ({ url }) => {
 	const documentNumber = url.searchParams.get('number') ?? '';
 	const dateInitial = url.searchParams.get('dateInitial') || undefined;
 	const dateFinal = url.searchParams.get('dateFinal') || undefined;
-	const count_entries = await purchases_service.getCountOfAvailableEntries({
-		supplierName,
-		page,
-		documentNumber,
-		dateInitial,
-		dateFinal
-	}).then((x) => x[0]?.value);
+	const count_entries = await purchases_service
+		.getCountOfAvailableEntries({
+			supplierName,
+			page,
+			documentNumber,
+			dateInitial,
+			dateFinal
+		})
+		.then((x) => x[0]?.value);
 	const entries = await purchases_service.getEntries({
 		supplierName,
 		page,

@@ -21,7 +21,6 @@ let SUPPLIER_ID = -1;
 let LIVER_PRODUCT_ID = -1;
 
 let LIVER_BATCH_ID = -1;
-let BANANA_BATCH_ID = -1;
 let LIVER_PRODUCT_BATCH_ID = -1;
 
 beforeAll(async () => {
@@ -40,7 +39,7 @@ beforeAll(async () => {
 		})
 		.then((x) => x.id);
 
-	[LIVER_BATCH_ID, BANANA_BATCH_ID] = await purchases_service
+	[LIVER_BATCH_ID] = await purchases_service
 		.registerBoughtIngrediets({
 			withdrawal_tax_amount: 10,
 			iva_tax_percentage: 21,
@@ -137,7 +136,7 @@ describe('close production of product', () => {
 			.from(t_product_batch)
 			.where(ne(t_product_batch.id, LIVER_PRODUCT_BATCH_ID));
 
-		for (let b of batches) {
+		for (const b of batches) {
 			expect(b.adjustment).toBe(null);
 			expect(b.state).toBe('IN_PRODUCTION');
 			expect(b.production_date).toBe(null);

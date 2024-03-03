@@ -9,6 +9,7 @@
 		| { desc: string; ingredients: Array<{ ingredient_id: number; amount: number }> }
 		| undefined = undefined;
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	export let data: { form: any };
 	const { form, enhance, errors, delayed } = superForm<ProductSchema>(data.form, {
 		dataType: 'json',
@@ -23,7 +24,7 @@
 
 	function addLine() {
 		form.update((f) => {
-			//@ts-ignore
+			//@ts-expect-error PENDING: explain
 			f.ingredients.push({});
 			return f;
 		});
@@ -32,7 +33,7 @@
 	function removeLine(index: number) {
 		form.update((f) => {
 			if (f.ingredients.length > 1) {
-				//@ts-ignore
+				//@ts-expect-error PENDING: explain
 				f.ingredients = f.ingredients.filter((_, i) => i !== index);
 			}
 			return f;

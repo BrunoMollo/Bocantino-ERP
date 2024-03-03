@@ -8,11 +8,13 @@
 		"preview": "vite preview",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"test:compose-up": "docker compose up -d && sleep 1 && drizzle-kit push:pg",
-		"test:vitest": "vitest --single-thread ",
+		"test:compose-up": "docker compose up --wait && sleep 1 && drizzle-kit push:pg",
+		"test:vitest": "vitest --single-thread",
+		"test:vitest-run": "vitest --single-thread --run",
 		"test:compose-down": "docker compose down",
 		"test": "npm run test:compose-up && npm run test:vitest && npm run test:compose-down",
-		"lint": "prettier --check . && eslint .",
+		"test:ci": "npm run test:compose-up && npm run test:vitest-run && npm run test:compose-down",
+		"lint": " eslint .",
 		"format": "prettier --write .",
 		"db-migrate": "drizzle-kit generate:pg",
 		"db-shell": "docker compose exec postgres psql -U postgres -d db"
@@ -29,6 +31,7 @@
 		"@types/bcrypt": "^5.0.2",
 		"@types/better-sqlite3": "^7.6.8",
 		"@types/node": "20.10.2",
+		"@types/ws": "^8.5.10",
 		"@typescript-eslint/eslint-plugin": "^6.0.0",
 		"@typescript-eslint/parser": "^6.0.0",
 		"apexcharts": "^3.45.2",
@@ -70,3 +73,4 @@
 		"zod": "^3.22.4"
 	}
 }
+

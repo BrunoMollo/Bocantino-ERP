@@ -29,7 +29,7 @@ export async function create_docker_db_client() {
 }
 
 export type Db = Awaited<ReturnType<typeof create_neon_db_client>>;
-//@ts-ignore
+//@ts-expect-error PENDING: explain
 export const db: Db = dev ? await create_docker_db_client() : await create_neon_db_client();
 
 export type Tx = PgTransaction<

@@ -6,7 +6,7 @@ import {
 	t_ingredient_batch,
 	tr_ingredient_batch_ingredient_batch
 } from '../db/schema';
-import { eq, and, asc, desc, ne, count, inArray, sql, like, ilike } from 'drizzle-orm';
+import { eq, and, asc, desc, ne, count, inArray, sql, ilike } from 'drizzle-orm';
 import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
 import { sq_stock } from './_ingredient-stock';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
@@ -134,7 +134,7 @@ class IngredientProductionService {
 		const result = await this.db.transaction(async (tx) => {
 			const batches = [] as Exclude<Awaited<ReturnType<typeof this.getBatchById>>, undefined>[];
 
-			for (let id of batches_ids) {
+			for (const id of batches_ids) {
 				const batch = await this.getBatchById(id, tx);
 				if (!batch) {
 					return logic_error(`El lote con id ${id} no existe`);
@@ -174,7 +174,7 @@ class IngredientProductionService {
 
 			let asigned_amount = 0;
 			const still_needed_amount = () => needed_amount - asigned_amount;
-			for (let batch of batches) {
+			for (const batch of batches) {
 				const used_in_batch =
 					still_needed_amount() > batch.current_amount
 						? batch.current_amount

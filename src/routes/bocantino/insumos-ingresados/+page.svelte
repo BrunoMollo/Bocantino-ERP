@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { trpc } from '$lib/trpc-client';
 	import { popup, type PaginationSettings, type PopupSettings } from '@skeletonlabs/skeleton';
 	import { Paginator } from '@skeletonlabs/skeleton';
 	import CompleteTable from '../_components/complete-table.svelte';
@@ -30,7 +29,7 @@
 
 	async function filtrar() {
 		for (let key in filtros) {
-			//@ts-ignore
+			//@ts-expect-error PENDING: explain
 			const value = filtros[key];
 			if (value) {
 				query.set(key, value);
@@ -129,3 +128,4 @@
 		showPreviousNextButtons={true}
 	/>
 </div>
+

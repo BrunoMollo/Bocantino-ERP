@@ -60,7 +60,7 @@ export class IngredientPurchaseService {
 
 			const { supplier_id, iva_tax_percentage, withdrawal_tax_amount } = data;
 			const batchesId = [] as number[];
-			for (let batch of data.batches) {
+			for (const batch of data.batches) {
 				const inserted = await tx
 					.insert(t_ingredient_batch)
 					.values({

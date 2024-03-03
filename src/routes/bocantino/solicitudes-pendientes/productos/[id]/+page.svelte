@@ -1,12 +1,11 @@
 <script lang="ts">
-	import { page } from '$app/stores';
 	import { IconPaperBag } from '@tabler/icons-svelte';
 	import { superForm } from 'sveltekit-superforms/client';
 
 	export let data;
 	const current = data.batch;
 
-	const { form: cancel_form, enhance: cancel_enhance } = superForm(data.cancel_form, {
+	const { enhance: cancel_enhance } = superForm(data.cancel_form, {
 		taintedMessage: null,
 		defaultValidator: 'clear',
 		dataType: 'json', // needed for id

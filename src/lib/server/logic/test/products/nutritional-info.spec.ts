@@ -25,7 +25,7 @@ describe('nutritional information of a product', () => {
 			{ ingredient_id: LIVER_ID, amount: 2 },
 			{ ingredient_id: RICE_ID, amount: 10 }
 		]);
-		//@ts-ignore
+		//@ts-expect-error PENDING: explain
 		expect(info.data).toEqual({
 			nutrient_protein: 10 * 2 + 2 * 10,
 			nutrient_fat: 8 * 2 + 1 * 10,
@@ -60,7 +60,7 @@ describe('nutritional information of a product', () => {
 			{ ingredient_id: RICE_ID, amount: 10 },
 			{ ingredient_id: POTATOE_ID, amount: 10 }
 		]);
-		//@ts-ignore
+		//@ts-expect-error PENDING: explain
 		expect(info.data).toEqual({
 			nutrient_protein: 1 * 3 * 10,
 			nutrient_fat: 2 * 3 * 10,
@@ -96,7 +96,7 @@ describe('nutritional information of a product', () => {
 			{ ingredient_id: RICE_ID, amount: 1 }
 		]);
 
-		//@ts-ignore
+		//@ts-expect-error PENDING: explain
 		expect(info.data).toEqual({
 			nutrient_protein: 2 + 2,
 			nutrient_fat: 2 + 2,
@@ -119,7 +119,7 @@ describe('nutritional information of a product', () => {
 		const info = await nutritional_information_service.calculateNutricionalInformation([
 			{ ingredient_id: LIVER_ID, amount: 1 }
 		]);
-		//@ts-ignore
+		//@ts-expect-error PENDING: explain
 		expect(info.data).toEqual({
 			nutrient_protein: 4,
 			nutrient_fat: 5,

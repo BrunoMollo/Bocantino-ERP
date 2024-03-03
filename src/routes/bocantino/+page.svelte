@@ -6,7 +6,7 @@
 
 	$: ingredientes = data.ingredients;
 
-	function mostrarIngreso(id: any) {
+	function mostrarIngreso(id: number) {
 		window.location.href = 'bocantino/insumos-ingresados/' + id;
 		return null;
 	}

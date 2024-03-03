@@ -4,7 +4,6 @@
 
 	import { Paginator, type PaginationSettings } from '@skeletonlabs/skeleton';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
-	import CompleteTable from '../../_components/complete-table.svelte';
 	export let data;
 
 	const popupClick: PopupSettings = {
@@ -35,7 +34,7 @@
 
 	async function filtrar() {
 		for (let key in filters) {
-			//@ts-ignore
+			//@ts-expect-error PENDING: explain
 			const value = filters[key];
 			if (value) {
 				query.set(key, value);
@@ -46,7 +45,7 @@
 		goto(`?${query.toString()}`);
 	}
 	function closeOnEnterKeyPress({ key }: { key: string }) {
-		//@ts-ignore
+		//@ts-expect-error PENDING: explain
 		if (key == 'Enter') document.querySelector('#filter-btn')?.click();
 	}
 	async function clear_filters() {
@@ -162,3 +161,4 @@
 		/>
 	</div>
 </main>
+

@@ -163,7 +163,7 @@ async function seed() {
 	});
 
 	const liver_batch_id = second_entry.batchesId[0];
-	const reduced_liver_batch_id = await ingredient_production_service.startIngredientProduction(
+	await ingredient_production_service.startIngredientProduction(
 		{ ingedient_id: higado_desidatado.id, produced_amount: 2 },
 		[liver_batch_id]
 	);

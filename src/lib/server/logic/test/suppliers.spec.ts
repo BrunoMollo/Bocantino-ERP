@@ -94,7 +94,7 @@ describe.sequential('supplier crud', () => {
 
 			const list_relations = await db.select().from(tr_supplier_ingredient);
 			expect(list_relations.length).toBe(2);
-			for (let i of [0, 1]) {
+			for (const i of [0, 1]) {
 				expect(list_relations[i].supplier_id).toBe(list_suppliers[0].id);
 				expect(list_relations[i].ingredient_id).toBe(data.ingredientsIds[i]);
 			}

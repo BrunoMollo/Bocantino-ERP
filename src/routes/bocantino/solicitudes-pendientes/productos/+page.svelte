@@ -20,7 +20,7 @@
 		</tr>
 	</thead>
 	<tbody>
-		{#each data.pending_productions as item, i}
+		{#each data.pending_productions as item}
 			<tr out:fade>
 				<td class="p-4">{item.id}</td>
 				<td class="p-4">{item.product.desc}</td>

@@ -6,6 +6,7 @@
 	import type { suppliers_service } from '$logic/suppliers-service';
 	import { startAs } from '$lib/utils';
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	export let data: { form: any };
 	export let supplier: Awaited<ReturnType<typeof suppliers_service.getById>> = undefined;
 	export let ingridientsAvailables: { id: number; name: string }[];
