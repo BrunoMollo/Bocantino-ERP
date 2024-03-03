@@ -1,8 +1,9 @@
 import { superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 import type { PageServerLoad, RouteParams } from './$types';
-import { error, type Actions } from '@sveltejs/kit';
+import { error, type Actions, redirect } from '@sveltejs/kit';
 import { ingredient_production_service } from '$logic/ingredient-production-service';
+import { should_not_reach } from '$lib/utils';
 
 const close_production_schema = z.object({
 	batch_id: z.coerce.number().int().positive(),
@@ -20,8 +21,8 @@ export const load: PageServerLoad = async ({ params }) => {
 	if (!batch || !used_batch) {
 		throw error(404, 'lote derivado no existe');
 	}
-	const form = superValidate(close_production_schema);
-	const cancel_form = superValidate(cancel_production_schema);
+	const form = superValidate({ batch_id: id, adjustment: 0 }, close_production_schema);
+	const cancel_form = superValidate({ batch_id: id }, cancel_production_schema);
 	return { batch, used_batch, form, cancel_form };
 };
 
@@ -40,10 +41,14 @@ export const actions: Actions = {
 			return { form };
 		}
 		const res = await ingredient_production_service.closeProduction(form.data);
-		if (res.type == 'LOGIC_ERROR') {
-			throw error(400, res.message);
+		switch (res.type) {
+			case 'LOGIC_ERROR':
+				throw error(400, res.message);
+			case 'SUCCESS':
+				throw redirect(302, '/bocantino/lotes/ingredientes');
+			default:
+				should_not_reach(res);
 		}
-		return { form };
 	},
 
 	cancel: async ({ request }) => {
@@ -54,10 +59,13 @@ export const actions: Actions = {
 		const { batch_id } = form.data;
 		const res = await ingredient_production_service.deleteBatchById(batch_id);
 
-		if (res.type == 'LOGIC_ERROR') {
-			throw error(400, res.message);
+		switch (res.type) {
+			case 'LOGIC_ERROR':
+				throw error(400, res.message);
+			case 'SUCCESS':
+				throw redirect(302, '/bocantino/solicitudes-pendientes/ingredientes');
+			default:
+				should_not_reach(res);
 		}
-
-		return { form };
 	}
 };

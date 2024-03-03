@@ -16,12 +16,9 @@ const cancel_production_schema = z.object({
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = parse_id_param(params);
-
 	const batch = product_service.getBatchById(id);
-
 	const form = superValidate({ batch_id: id, adjustment: 0 }, close_production_schema);
 	const cancel_form = superValidate({ batch_id: id }, cancel_production_schema);
-
 	return { form, cancel_form, batch };
 };
 
@@ -43,7 +40,7 @@ export const actions: Actions = {
 		if (res.type == 'LOGIC_ERROR') {
 			throw error(400, res.message);
 		}
-		throw redirect(302, '/bocantino/solicitudes-pendientes/productos');
+		throw redirect(302, '/bocantino/lotes/productos');
 	},
 
 	cancel: async ({ request }) => {
