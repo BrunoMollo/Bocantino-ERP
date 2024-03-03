@@ -31,5 +31,5 @@ jobs:
       - name: Pull docker images
         run: docker compose pull
       - name: Run Vitest
-        run: npm test:ci
+        run: npm run test:ci
 
