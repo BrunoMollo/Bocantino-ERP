@@ -21,7 +21,6 @@ vi.mock('$lib/server/db/index.ts');
 let LIVER_ID = -1;
 let BANANA_ID = -1;
 let SUPPLIER_ID = -1;
-let REDUCED_LIVER_ID = -1;
 let LIVER_BATCH_ID = -1;
 let SECOND_LIVER_BATCH_ID = -1;
 let BANANA_BATCH_ID = -1;

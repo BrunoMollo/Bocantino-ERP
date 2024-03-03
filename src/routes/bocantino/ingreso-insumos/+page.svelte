@@ -24,7 +24,7 @@
 
 	function addLine() {
 		form.update((f) => {
-			//@ts-ignore
+			//@ts-expect-error PENDING: explain
 			f.batches.push({});
 			return f;
 		});
@@ -34,7 +34,7 @@
 		form.update((f) => {
 			if (f.batches.length > 1) {
 				const newBatches = f.batches.filter((_, i) => i !== index);
-				//@ts-ignore
+				//@ts-expect-error PENDING: explain
 				f.batches = newBatches;
 			}
 			return f;

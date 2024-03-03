@@ -7,6 +7,7 @@
 
 	export let ingredients: { id: number; name: string; unit: string }[];
 
+	// eslint-disable-next-line @typescript-eslint/no-explicit-any
 	export let data: { form: any };
 	const { form, enhance, errors, delayed } = superForm<IngredientSchema>(data.form, {
 		onError: ({ result }) => alert(`ERROR: ${result.error.message}`),
@@ -15,7 +16,7 @@
 	});
 	function toggleIsDerived() {
 		if ($form.source == null) {
-			//@ts-ignore
+			//@ts-expect-error PENDING: explain
 			$form.source = {};
 		} else {
 			$form.source = null;

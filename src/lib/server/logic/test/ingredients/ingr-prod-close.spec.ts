@@ -28,8 +28,6 @@ let BANANA_ID = -1;
 let SUPPLIER_ID = -1;
 let REDUCED_LIVER_ID = -1;
 let LIVER_BATCH_ID = -1;
-let SECOND_LIVER_BATCH_ID = -1;
-let BANANA_BATCH_ID = -1;
 let BATCH_IN_PROD_ID = -1;
 
 const LIVER_BATCH_INTIAL_AMOUNT = 100 as const;
@@ -133,7 +131,7 @@ beforeEach(async () => {
 		{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 		[LIVER_BATCH_ID]
 	);
-	//@ts-ignore
+	//@ts-expect-error PENDING: explain
 	BATCH_IN_PROD_ID = batch.id;
 });
 

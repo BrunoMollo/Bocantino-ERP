@@ -26,7 +26,7 @@ class ProductService {
 		await this.db.transaction(async (tx) => {
 			await tx.update(t_product).set({ desc: data.desc }).where(eq(t_product.id, product_id));
 			await tx.delete(tr_ingredient_product).where(eq(tr_ingredient_product.productId, product_id));
-			for (let { ingredient_id, amount } of data.ingredients) {
+			for (const { ingredient_id, amount } of data.ingredients) {
 				await tx.insert(tr_ingredient_product).values({
 					productId: product_id,
 					ingredient_id,
@@ -230,7 +230,7 @@ class ProductService {
 			type Batch = Awaited<ReturnType<typeof ingredient_production_service.getBatchesByIds>>;
 			const all_batches = [] as Batch[];
 
-			for (let batches_ids_with_same_ingredient of batches_ids) {
+			for (const batches_ids_with_same_ingredient of batches_ids) {
 				const batches = await ingredient_production_service.getBatchesByIds(
 					batches_ids_with_same_ingredient,
 					tx
@@ -297,10 +297,10 @@ class ProductService {
 				.set({ batch_code })
 				.where(eq(t_product_batch.id, inserted.id));
 
-			for (let batch_group of all_batches) {
+			for (const batch_group of all_batches) {
 				let asigned_amount = 0;
 				const missing = () => get_needed_amount(batch_group[0].ingredient.id) - asigned_amount;
-				for (let { id: ingredient_batch_id, stock } of batch_group) {
+				for (const { id: ingredient_batch_id, stock } of batch_group) {
 					const amount_used_to_produce_batch = missing() > stock ? stock : missing();
 					asigned_amount += amount_used_to_produce_batch;
 

@@ -8,7 +8,6 @@
 	import { derived } from 'svelte/store';
 	import { routes } from './_components/routes';
 	import Navigation from './_components/Navigation.svelte';
-	import Spinner from '$lib/ui/Spinner.svelte';
 	import { fade } from 'svelte/transition';
 	import Loader from './_components/Loader.svelte';
 
@@ -38,7 +37,7 @@
 		return '';
 	});
 
-	let debounce_flag = null as any;
+	let debounce_flag = null as object | null;
 	navigating.subscribe((x) => {
 		setTimeout(() => (debounce_flag = x), 360);
 	});

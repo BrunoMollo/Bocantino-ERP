@@ -19,7 +19,6 @@ let SUPPLIER_ID = -1;
 let LIVER_PRODUCT_ID = -1;
 
 let LIVER_BATCH_ID = -1;
-let BANANA_BATCH_ID = -1;
 let LIVER_PRODUCT_BATCH_ID = -1;
 
 beforeAll(async () => {

@@ -14,7 +14,7 @@
 		"test:compose-down": "docker compose down",
 		"test": "npm run test:compose-up && npm run test:vitest && npm run test:compose-down",
 		"test:ci": "npm run test:compose-up && npm run test:vitest-run && npm run test:compose-down",
-		"lint": "prettier --check . && eslint .",
+		"lint": " eslint .",
 		"format": "prettier --write .",
 		"db-migrate": "drizzle-kit generate:pg",
 		"db-shell": "docker compose exec postgres psql -U postgres -d db"

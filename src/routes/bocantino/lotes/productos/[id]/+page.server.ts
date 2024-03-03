@@ -3,7 +3,7 @@ import { error } from "@sveltejs/kit";
 import type { PageServerLoad } from "../$types";
 
 export const load: PageServerLoad = async (url) => {
-    //@ts-ignore
+    //@ts-expect-error PENDING: explain
     const id = url.params.id;
     const productBatch = await product_service.getProductBatchByID(id);
     if (!productBatch) {

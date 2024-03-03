@@ -115,7 +115,7 @@ beforeAll(async () => {
 		{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
 		[LIVER_BATCH_ID]
 	);
-	//@ts-ignore
+	//@ts-expect-error PENDING: explain
 	BATCH_IN_PROD_ID = batch.id;
 
 	const finished_batch = await ingredient_production_service.startIngredientProduction(
@@ -123,7 +123,7 @@ beforeAll(async () => {
 		[LIVER_BATCH_ID]
 	);
 
-	//@ts-ignore
+	//@ts-expect-error PENDING: explain
 	const batch_id: number = finished_batch.id;
 	await ingredient_production_service.closeProduction({
 		batch_id,

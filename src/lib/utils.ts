@@ -48,7 +48,7 @@ export function parseStringToDate(str: DateString) {
 }
 
 export const by =
-	<T extends Object>(k: keyof T) =>
+	<T extends object>(k: keyof T) =>
 	(a: T, b: T) =>
 		Number(a[k]) - Number(b[k]);
 /**
@@ -57,7 +57,7 @@ export const by =
  **/
 export type Prettify<T> = {
 	[K in keyof T]: T[K];
-} & {};
+} & object;
 
 /**
  * Type Helper to creates dtos from tables of the drizzle schema
@@ -84,7 +84,7 @@ export function makeOptions<T>(arr: T[], fields: { label: keyof T; value: keyof 
 			prev.labels.push(curr[label]);
 			return prev;
 		},
-		{ labels: [] as any[], values: [] as any[] }
+		{ labels: [] as unknown[], values: [] as unknown[] }
 	);
 }
 
@@ -96,11 +96,11 @@ type SuperFormData<T extends ZodValidation<AnyZodObject>> = SuperForm<T>['form']
 export function startAs<T extends ZodValidation<AnyZodObject>>(
 	form: SuperFormData<T>,
 	key: keyof T['_type'],
-	value: any
+	value: unknown
 ) {
 	form.update(
 		($form) => {
-			//@ts-ignore
+			//@ts-expect-error PENDING: explain
 			$form[key] = value;
 			return $form;
 		},

@@ -189,7 +189,7 @@ describe.sequential('buy ingredients', async () => {
 			const result = await purchases_service.registerBoughtIngrediets(VALID_INPUT_2B);
 			const list = await db.select().from(t_ingredient_batch);
 			expect(list.length).toBe(VALID_INPUT_2B.batches.length);
-			for (let i of [0, 1]) {
+			for (const i of [0, 1]) {
 				expect(list[i].id).toBeTruthy();
 				expect(list[i].ingredient_id).toBe(BANANA.id);
 				expect(list[i].supplier_id).toBe(JUAN.id);

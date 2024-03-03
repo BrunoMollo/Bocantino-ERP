@@ -30,7 +30,7 @@ class SuppliersService {
 				.where(eq(tr_supplier_ingredient.supplier_id, supplier_id));
 
 			// add ingredients
-			for (let ingredient_id of data.ingredientsIds) {
+			for (const ingredient_id of data.ingredientsIds) {
 				const match = current_ingredients.find((x) => x.ingredient_id == ingredient_id);
 				if (!match) {
 					await db.insert(tr_supplier_ingredient).values({ supplier_id, ingredient_id });
@@ -43,7 +43,7 @@ class SuppliersService {
 			}
 
 			// remove ingredients
-			for (let curr_ingr of current_ingredients) {
+			for (const curr_ingr of current_ingredients) {
 				const should_remove = !data.ingredientsIds.includes(curr_ingr.ingredient_id);
 				if (should_remove) {
 					await db

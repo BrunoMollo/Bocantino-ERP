@@ -1,5 +1,5 @@
 <script lang="ts">
-	export let list: any[];
+	export let list: object[];
 	export let rows: number;
 </script>
 

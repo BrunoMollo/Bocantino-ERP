@@ -80,7 +80,7 @@ class IngredientService {
 		ingredient: Omit<typeof t_ingredient.$inferInsert, 'id'>,
 		source?: { id: number; amount: number } | undefined | null
 	) {
-		//@ts-ignore
+		//@ts-expect-error PENDING: explain
 		delete ingredient.source;
 		return await this.db.transaction(async (tx) => {
 			await tx
