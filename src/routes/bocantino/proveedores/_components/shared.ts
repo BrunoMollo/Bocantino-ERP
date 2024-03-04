@@ -19,6 +19,5 @@ export function createForm(value?: { name: string; email: string; ingredients: {
 		return superValidate(value, supplier_schema);
 	} else {
 		return superValidate(supplier_schema);
-
 	}
 }

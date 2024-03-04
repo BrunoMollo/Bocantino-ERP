@@ -80,7 +80,8 @@ class SuppliersService {
 			ingredientsIds: number[];
 		}
 	) {
-		const { name, email, contact_person, comment, cuit, phone_number, address, ingredientsIds } = data;
+		const { name, email, contact_person, comment, cuit, phone_number, address, ingredientsIds } =
+			data;
 
 		const id = await db.transaction(async (tx) => {
 			const { generatedId } = await tx
