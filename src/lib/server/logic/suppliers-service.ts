@@ -80,12 +80,13 @@ class SuppliersService {
 			ingredientsIds: number[];
 		}
 	) {
-		const { name, email, cuit, phone_number, address, ingredientsIds } = data;
+		const { name, email, contact_person, comment, cuit, phone_number, address, ingredientsIds } =
+			data;
 
 		const id = await db.transaction(async (tx) => {
 			const { generatedId } = await tx
 				.insert(t_supplier)
-				.values({ name, email, cuit, phone_number, address })
+				.values({ name, email, contact_person, comment, cuit, phone_number, address })
 				.returning({ generatedId: t_supplier.id })
 				.then(getFirst);
 			for (const ingredient_id of ingredientsIds) {
@@ -93,7 +94,6 @@ class SuppliersService {
 			}
 			return generatedId;
 		});
-
 		return { id };
 	}
 

@@ -19,7 +19,6 @@ export const actions: Actions = {
 		}
 
 		await suppliers_service.add(form.data);
-
 		throw redirect(302, '/bocantino/proveedores?toast=Proveedor registrado');
 	}
 };

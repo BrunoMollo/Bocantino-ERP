@@ -84,6 +84,8 @@ export const t_supplier = pgTable('supplier', {
 	id: serial('id').primaryKey(),
 	name: text('name').notNull(),
 	email: text('email').notNull(),
+	contact_person: text('contact_person'),
+	comment: text('comment'),
 	cuit: text('cuit').notNull(),
 	phone_number: text('phone_number').notNull(),
 	address: text('address').notNull()
