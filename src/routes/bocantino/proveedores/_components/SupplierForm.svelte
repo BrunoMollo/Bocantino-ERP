@@ -20,6 +20,8 @@
 		startAs(form, 'name', supplier.name);
 		startAs(form, 'cuit', supplier.cuit);
 		startAs(form, 'phone_number', supplier.phone_number);
+		startAs(form, 'contact_person', supplier.contact_person);
+		startAs(form, 'comment', supplier.comment);
 		startAs(form, 'address', supplier.address);
 		startAs(form, 'email', supplier.email);
 		startAs(
@@ -35,7 +37,7 @@
 <form class="flex flex-col gap-4 p-9" action="" method="post" use:enhance>
 	<label for="name" class="label">
 		<span>
-			Nombre:
+			Razon social:
 			{#if $errors.name}
 				<b class=" text-error-400" transition:fade>{$errors.name}</b>
 			{/if}
@@ -46,6 +48,21 @@
 			type="text"
 			id="name"
 			bind:value={$form.name}
+		/>
+	</label>
+	<label for="contact_person" class="label">
+		<span>
+			Persona de contacto:
+			{#if $errors.contact_person}
+				<b class=" text-error-400" transition:fade>{$errors.contact_person}</b>
+			{/if}
+		</span>
+		<input
+			class="input {$errors.contact_person ? 'input-error' : ''}"
+			name="contact_person"
+			type="text"
+			id="contact_person"
+			bind:value={$form.contact_person}
 		/>
 	</label>
 	<!--Cuit-->
@@ -62,7 +79,7 @@
 	<!--phone_number(Opcional)-->
 	<label for="phone_number" class="label">
 		<span>
-			phone_number:
+			Teléfono:
 			{#if $errors.phone_number}
 				<b class=" text-error-400" transition:fade>{$errors.phone_number}</b>
 			{/if}
@@ -76,7 +93,7 @@
 	<!--address-->
 	<label for="address" class="label">
 		<span>
-			direccion:
+			Dirección:
 			{#if $errors.address}
 				<b class=" text-error-400" transition:fade>{$errors.address}</b>
 			{/if}
@@ -92,6 +109,21 @@
 			{/if}
 		</span>
 		<input class="input {$errors.email ? 'input-error' : ''}" bind:value={$form.email} />
+	</label>
+	<label for="comment" class="label">
+		<span>
+			Comentario:
+			{#if $errors.comment}
+				<b class=" text-error-400" transition:fade>{$errors.comment}</b>
+			{/if}
+		</span>
+		<textarea
+			rows="4"
+			cols="40"
+			style="resize: none"
+			class=" input {$errors.comment ? 'input-error' : ''}"
+			bind:value={$form.comment}
+		/>
 	</label>
 
 	<div class="space-y-1">
