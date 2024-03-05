@@ -1,8 +1,9 @@
-import type { PageServerLoad, RouteParams, Actions } from './$types';
+import type { PageServerLoad, Actions } from './$types';
 import { error, redirect } from '@sveltejs/kit';
 import { createForm, ingredient_schema } from '../../_components/shared';
 import { superValidate } from 'sveltekit-superforms/server';
 import { ingredients_service } from '$logic/ingredient-service';
+import { parse_id_param } from '$lib/utils';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = parse_id_param(params);
@@ -38,11 +39,3 @@ export const actions: Actions = {
 		throw redirect(302, '/bocantino/materias-primas?toast=Editado con exito');
 	}
 };
-
-function parse_id_param(params: RouteParams) {
-	const id = Number(params.id);
-	if (isNaN(id) || id < 0) {
-		throw error(400, { message: 'invalid id' });
-	}
-	return { id };
-}

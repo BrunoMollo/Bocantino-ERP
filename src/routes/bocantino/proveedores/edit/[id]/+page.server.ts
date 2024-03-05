@@ -1,10 +1,10 @@
 import { redirect, error } from '@sveltejs/kit';
-import type { Actions, PageServerLoad, RouteParams } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { createForm, supplier_schema } from '../../_components/shared';
 import { superValidate } from 'sveltekit-superforms/server';
 import { suppliers_service } from '$logic/suppliers-service';
 import { ingredients_service } from '$logic/ingredient-service';
-import { should_not_reach } from '$lib/utils';
+import { parse_id_param, should_not_reach } from '$lib/utils';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = parse_id_param(params);
@@ -42,11 +42,3 @@ export const actions: Actions = {
 		}
 	}
 };
-
-function parse_id_param(params: RouteParams) {
-	const id = Number(params.id);
-	if (isNaN(id) || id < 0) {
-		throw error(400, { message: 'invalid id' });
-	}
-	return { id };
-}

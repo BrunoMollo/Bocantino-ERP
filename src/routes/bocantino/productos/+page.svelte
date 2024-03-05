@@ -14,6 +14,7 @@
 				<th>Producto</th>
 				<th>Ingredientes</th>
 				<th></th>
+				<th></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -39,14 +40,22 @@
 					<td class="w-1/12">
 						<a
 							class="my-2 mr-5 btn-icon btn-icon-md variant-soft-secondary"
-							href="/bocantino/productos/edit/{id}"
+							href="/bocantino/productos/{id}/edit"
 						>
 							<i class="bx bx-edit place-self-center text-2xl"></i>
 						</a>
 					</td>
+					<td class="w-1/12">
+						<a
+							class="my-2 mr-5 btn-icon btn-icon-md variant-soft-secondary"
+							href="/bocantino/productos/{id}/nutrients"
+						>
+							<i class="bx bx-info-circle place-self-center text-2xl"></i>
+						</a>
+					</td>
 				</tr>
 			{/each}
-			<CompleteTable list={products} rows={4} />
+			<CompleteTable list={products} rows={5} />
 		</tbody>
 	</table>
 </div>
