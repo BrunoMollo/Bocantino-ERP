@@ -3,7 +3,7 @@
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { VALID_UNITS, type IngredientSchema } from './shared';
-	import { should_not_reach, startAs } from '$lib/utils';
+	import { name_nutrient, startAs } from '$lib/utils';
 
 	export let ingredients: { id: number; name: string; unit: string }[];
 
@@ -39,31 +39,6 @@
 		nutrients.forEach((x) => startAs(form, x, null));
 	}
 	export let btnMsj = 'Agregar';
-
-	function name_nutrient(name: (typeof nutrients)[number]) {
-		switch (name) {
-			case 'nutrient_protein':
-				return 'Proteina';
-			case 'nutrient_carb':
-				return 'Carbohidratos';
-			case 'nutrient_fat':
-				return 'Grasas';
-			case 'nutrient_ashes':
-				return 'Cenizas';
-			case 'nutrient_fiber':
-				return 'Fibra';
-			case 'nutrient_calcium':
-				return 'Calcio';
-			case 'nutrient_sodium':
-				return 'Sodio';
-			case 'nutrient_humidity':
-				return 'Humedad';
-			case 'nutrient_phosphorus':
-				return 'Fosoforo';
-			default:
-				should_not_reach(name);
-		}
-	}
 </script>
 
 <form class="flex flex-col gap-4 p-9 w-full" action="" method="post" use:enhance>
@@ -195,3 +170,4 @@
 		<Spinner showIf={$delayed} size={4} />
 	</button>
 </form>
+
