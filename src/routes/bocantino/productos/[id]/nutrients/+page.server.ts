@@ -23,7 +23,7 @@ export const load: PageServerLoad = async ({ params }) => {
 
 	const nutritional_info = Object.entries(res.data).map(([identifier, amount]) => ({
 		identifier: identifier as Nutrients,
-		amount
+		amount: Math.round(amount * 10_000) / 10_000
 	}));
 
 	return { product, nutritional_info };
