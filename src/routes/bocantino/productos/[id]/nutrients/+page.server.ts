@@ -6,6 +6,10 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = parse_id_param(params);
+	const product = await product_service.getById(id);
+	if (!product) {
+		throw error(404, 'producto no existe');
+	}
 	const recipe = await product_service.getRecipie(id);
 	const res = await nutritional_information_service.calculateNutricionalInformation(recipe);
 	switch (res.type) {
@@ -22,5 +26,5 @@ export const load: PageServerLoad = async ({ params }) => {
 		amount
 	}));
 
-	return { nutritional_info };
+	return { product, nutritional_info };
 };
