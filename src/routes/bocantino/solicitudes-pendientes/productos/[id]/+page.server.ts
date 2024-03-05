@@ -1,9 +1,9 @@
 import { z } from 'zod';
-import type { PageServerLoad, RouteParams } from './$types';
+import type { PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms/client';
 import { error, type Actions, redirect } from '@sveltejs/kit';
 import { product_service } from '$logic/product-service';
-import { should_not_reach } from '$lib/utils';
+import { parse_id_param, should_not_reach } from '$lib/utils';
 
 const close_production_schema = z.object({
 	batch_id: z.coerce.number().int().positive(),
@@ -21,14 +21,6 @@ export const load: PageServerLoad = async ({ params }) => {
 	const cancel_form = superValidate({ batch_id: id }, cancel_production_schema);
 	return { form, cancel_form, batch };
 };
-
-function parse_id_param(params: RouteParams) {
-	const id = Number(params.id);
-	if (isNaN(id) || id < 0) {
-		throw error(400, { message: 'invalid id' });
-	}
-	return { id };
-}
 
 export const actions: Actions = {
 	finish: async ({ request }) => {
