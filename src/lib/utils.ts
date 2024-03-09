@@ -161,6 +161,14 @@ export function is_not_nullish<T>(item: T | undefined): item is NonNullable<T> {
 }
 
 export type Nutrients = keyof typeof t_ingredient.$inferInsert & `nutrient_${string}`;
+export type NutritionalInfo = Record<Nutrients, number>;
+
+export const arraify_nutritional_info = (nutritional_info: NutritionalInfo) =>
+	Object.entries(nutritional_info).map(([identifier, amount]) => ({
+		identifier: identifier as Nutrients,
+		amount: Math.round(amount * 10_000) / 10_000
+	}));
+
 export function name_nutrient(name: Nutrients) {
 	switch (name) {
 		case 'nutrient_protein':

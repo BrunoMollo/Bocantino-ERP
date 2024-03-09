@@ -7,6 +7,7 @@
 	import RecipeDiffGraph from './_compoenets/recipie-diff-graph.svelte';
 	import Spinner from '$lib/ui/Spinner.svelte';
 	import type { NutritionalInfo } from '$logic/nutricional-information-service';
+	import RecipieDiffTable from './_compoenets/recipie-diff-table.svelte';
 
 	export let data;
 	const { ingredients_all } = data;
@@ -182,7 +183,8 @@
 
 			<div class="p-5 w-8/12">
 				{#if $modified_nutritional_info instanceof Object && $base_nutritional_info instanceof Object}
-					<RecipeDiffGraph modified={$modified_nutritional_info} base={$base_nutritional_info} />
+					<!-- <RecipeDiffGraph modified={$modified_nutritional_info} base={$base_nutritional_info} /> -->
+					<RecipieDiffTable modified={$modified_nutritional_info} base={$base_nutritional_info} />
 				{/if}
 			</div>
 		</div>
