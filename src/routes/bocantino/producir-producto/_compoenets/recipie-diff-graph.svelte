@@ -2,10 +2,16 @@
 	import type { NutritionalInfo } from '$logic/nutricional-information-service';
 	import { onMount } from 'svelte';
 	import ApexCharts, { type ApexOptions } from 'apexcharts';
+	import { arraify_nutritional_info, name_nutrient } from '$lib/utils';
 
 	export let base: NutritionalInfo;
 	export let modified: NutritionalInfo;
-	var options: ApexOptions = {
+
+	$: data = arraify_nutritional_info(base).map(({ identifier, amount }) => ({
+		x: name_nutrient(identifier),
+		y: [amount, modified[identifier]]
+	}));
+	const options: ApexOptions = {
 		series: [],
 		chart: {
 			height: 500,
@@ -53,20 +59,7 @@
 				[
 					{
 						type: 'rangeBar',
-						data: [
-							{
-								x: 'grasa',
-								y: [base.nutrient_fat, modified.nutrient_fat]
-							},
-							{
-								x: 'proteina',
-								y: [base.nutrient_protein, modified.nutrient_protein]
-							},
-							{
-								x: 'carboidratos',
-								y: [base.nutrient_carb, modified.nutrient_carb]
-							}
-						]
+						data
 					}
 				],
 				false
