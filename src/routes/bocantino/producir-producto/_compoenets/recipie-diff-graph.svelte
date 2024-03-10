@@ -16,7 +16,7 @@
 	const options: ApexOptions = {
 		series: [],
 		chart: {
-			height: 500,
+			height: 600,
 			type: 'rangeBar',
 			zoom: {
 				enabled: false
@@ -62,9 +62,6 @@
 					show: false
 				}
 			}
-		},
-		xaxis: {
-			tickPlacement: 'on'
 		}
 	};
 
@@ -92,4 +89,4 @@
 	}
 </script>
 
-<div id="chart" class="bg-white" />
+<div id="chart" class="bg-white text-[#666666]" />
