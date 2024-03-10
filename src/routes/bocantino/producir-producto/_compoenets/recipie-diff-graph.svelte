@@ -11,20 +11,44 @@
 		x: name_nutrient(identifier),
 		y: [amount, modified[identifier]]
 	}));
+
+	const colorsPoints = ['#444444', '#0044ee'];
 	const options: ApexOptions = {
 		series: [],
 		chart: {
 			height: 500,
 			type: 'rangeBar',
 			zoom: {
-				enabled: true
+				enabled: false
 			}
 		},
 		plotOptions: {
 			bar: {
 				isDumbbell: true,
 				columnWidth: 6,
-				dumbbellColors: [['#ff0000', '#00bb00']]
+				dumbbellColors: [colorsPoints]
+			}
+		},
+		fill: {
+			type: 'gradient',
+			gradient: {
+				type: 'vertical',
+				gradientToColors: colorsPoints,
+				inverseColors: false
+			}
+		},
+		legend: {
+			show: true,
+			showForSingleSeries: true,
+			position: 'top',
+			horizontalAlign: 'left',
+			customLegendItems: ['Original', 'Modificado'],
+			labels: {
+				colors: colorsPoints,
+				useSeriesColors: false
+			},
+			markers: {
+				fillColors: colorsPoints
 			}
 		},
 		grid: {
