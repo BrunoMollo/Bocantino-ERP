@@ -1,9 +1,4 @@
-import {
-	parse_id_param,
-	should_not_reach,
-	type Nutrients,
-	arraify_nutritional_info
-} from '$lib/utils';
+import { parse_id_param, should_not_reach, arraify_nutritional_info } from '$lib/utils';
 import { nutritional_information_service } from '$logic/nutricional-information-service';
 import { product_service } from '$logic/product-service';
 import { error } from '@sveltejs/kit';
