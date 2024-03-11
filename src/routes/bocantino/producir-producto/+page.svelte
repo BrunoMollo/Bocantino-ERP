@@ -7,6 +7,7 @@
 	import RecipeDiffGraph from './_compoenets/recipie-diff-graph.svelte';
 	import Spinner from '$lib/ui/Spinner.svelte';
 	import type { NutritionalInfo } from '$logic/nutricional-information-service';
+	import RecipieDiffTable from './_compoenets/recipie-diff-table.svelte';
 
 	export let data;
 	const { ingredients_all } = data;
@@ -62,6 +63,8 @@
 		!!$insuficient_arr.reduce((a, b) => a + b, 0);
 
 	let dialog: HTMLDialogElement;
+	let showTable = true;
+	$: msjViewChange = showTable ? 'Mostrar grafico' : 'Mostrar tabla';
 </script>
 
 <div class="flex justify-between w-11/12 mx-auto">
@@ -178,11 +181,16 @@
 				<button class="btn variant-filled-primary m-5 rounded" on:click={() => dialog.close()}>
 					Aceptar
 				</button>
+				<button on:click={() => (showTable = !showTable)}>{msjViewChange}</button>
 			</div>
 
-			<div class="p-5 w-8/12">
+			<div class="h-[700px] p-5 w-8/12">
 				{#if $modified_nutritional_info instanceof Object && $base_nutritional_info instanceof Object}
-					<RecipeDiffGraph modified={$modified_nutritional_info} base={$base_nutritional_info} />
+					{#if showTable}
+						<RecipieDiffTable modified={$modified_nutritional_info} base={$base_nutritional_info} />
+					{:else}
+						<RecipeDiffGraph modified={$modified_nutritional_info} base={$base_nutritional_info} />
+					{/if}
 				{/if}
 			</div>
 		</div>

@@ -106,6 +106,7 @@ import type { ZodValidation } from 'sveltekit-superforms';
 import type { SuperForm } from 'sveltekit-superforms/client';
 import type { AnyZodObject } from 'zod';
 import type { t_ingredient } from './server/db/schema';
+import type { w } from 'vitest/dist/reporters-5f784f42';
 type SuperFormData<T extends ZodValidation<AnyZodObject>> = SuperForm<T>['form'];
 export function startAs<T extends ZodValidation<AnyZodObject>>(
 	form: SuperFormData<T>,
@@ -191,5 +192,28 @@ export function name_nutrient(name: Nutrients) {
 			return 'Fosoforo';
 		default:
 			should_not_reach(name);
+	}
+}
+
+export function shallowEqual(object1: Record<string, unknown>, object2: Record<string, unknown>) {
+	const keys1 = Object.keys(object1);
+	const keys2 = Object.keys(object2);
+
+	if (keys1.length !== keys2.length) {
+		return false;
+	}
+
+	for (const key of keys1) {
+		if (object1[key] !== object2[key]) {
+			return false;
+		}
+	}
+	return true;
+}
+
+export function arrayEqual<T extends Record<string, unknown>>(arr1: [], arr2: T[]) {
+	if (arr1.length !== arr2.length) return false;
+	for (let i = 0; i < arr1.length; i++) {
+		if (!shallowEqual(arr1[i], arr2[i])) return false;
 	}
 }

@@ -2,23 +2,53 @@
 	import type { NutritionalInfo } from '$logic/nutricional-information-service';
 	import { onMount } from 'svelte';
 	import ApexCharts, { type ApexOptions } from 'apexcharts';
+	import { arraify_nutritional_info, name_nutrient } from '$lib/utils';
 
 	export let base: NutritionalInfo;
 	export let modified: NutritionalInfo;
-	var options: ApexOptions = {
+
+	$: data = arraify_nutritional_info(base).map(({ identifier, amount }) => ({
+		x: name_nutrient(identifier),
+		y: [amount, modified[identifier]]
+	}));
+
+	const colorsPoints = ['#444444', '#0044ee'];
+	const options: ApexOptions = {
 		series: [],
 		chart: {
-			height: 500,
+			height: 600,
 			type: 'rangeBar',
 			zoom: {
-				enabled: true
+				enabled: false
 			}
 		},
 		plotOptions: {
 			bar: {
 				isDumbbell: true,
 				columnWidth: 6,
-				dumbbellColors: [['#ff0000', '#00bb00']]
+				dumbbellColors: [colorsPoints]
+			}
+		},
+		fill: {
+			type: 'gradient',
+			gradient: {
+				type: 'vertical',
+				gradientToColors: colorsPoints,
+				inverseColors: false
+			}
+		},
+		legend: {
+			show: true,
+			showForSingleSeries: true,
+			position: 'top',
+			horizontalAlign: 'left',
+			customLegendItems: ['Original', 'Modificado'],
+			labels: {
+				colors: colorsPoints,
+				useSeriesColors: false
+			},
+			markers: {
+				fillColors: colorsPoints
 			}
 		},
 		grid: {
@@ -32,9 +62,6 @@
 					show: false
 				}
 			}
-		},
-		xaxis: {
-			tickPlacement: 'on'
 		}
 	};
 
@@ -53,20 +80,7 @@
 				[
 					{
 						type: 'rangeBar',
-						data: [
-							{
-								x: 'grasa',
-								y: [base.nutrient_fat, modified.nutrient_fat]
-							},
-							{
-								x: 'proteina',
-								y: [base.nutrient_protein, modified.nutrient_protein]
-							},
-							{
-								x: 'carboidratos',
-								y: [base.nutrient_carb, modified.nutrient_carb]
-							}
-						]
+						data
 					}
 				],
 				false
@@ -75,4 +89,4 @@
 	}
 </script>
 
-<div id="chart" class="bg-white" />
+<div id="chart" class="bg-white text-[#666666]" />

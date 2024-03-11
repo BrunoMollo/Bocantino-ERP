@@ -1,4 +1,4 @@
-import { parse_id_param, should_not_reach, type Nutrients } from '$lib/utils';
+import { parse_id_param, should_not_reach, arraify_nutritional_info } from '$lib/utils';
 import { nutritional_information_service } from '$logic/nutricional-information-service';
 import { product_service } from '$logic/product-service';
 import { error } from '@sveltejs/kit';
@@ -21,10 +21,7 @@ export const load: PageServerLoad = async ({ params }) => {
 			should_not_reach(res);
 	}
 
-	const nutritional_info = Object.entries(res.data).map(([identifier, amount]) => ({
-		identifier: identifier as Nutrients,
-		amount: Math.round(amount * 10_000) / 10_000
-	}));
+	const nutritional_info = arraify_nutritional_info(res.data);
 
 	return { product, nutritional_info };
 };
