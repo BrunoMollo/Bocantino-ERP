@@ -13,7 +13,7 @@
 				<th>ID</th>
 				<th>Proveedor</th>
 				<th>Cuit</th>
-				<th>Direccion</th>
+				<th>Teléfono</th>
 				<th>Email</th>
 				<th>Materias primas</th>
 				<th></th>

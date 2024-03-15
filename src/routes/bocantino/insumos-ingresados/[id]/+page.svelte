@@ -21,7 +21,7 @@
 				<i class="bx bx-arrow-back text-2xl"></i>
 			</a>
 		</div>
-		<h1 class="h3">Detalle de entrade de ingrediente</h1>
+		<h1 class="h3">Detalle ingreso de Materia Prima</h1>
 		<div class="pt-4 pl-4 grid grid-cols-2 text-lg">
 			<div class="grid">
 				<span>Id: {selected_entry.id}</span>
