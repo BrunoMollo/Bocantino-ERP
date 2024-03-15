@@ -24,6 +24,14 @@
 			return trpc.products.recipe.query(id);
 		}
 	});
+
+	let modified_recipe = false;
+	function restore_recipe() {
+		const aux = $form.product_id;
+		$form.product_id = 0; // change toa different value to trigger update
+		$form.product_id = aux; // trigger update of base_nutritional_info
+		modified_recipe = false;
+	}
 	const base_nutritional_info = derivedAsync(product_id, async (id) => {
 		if (id) {
 			const res = await trpc.products.nutritional_info.query(id);
@@ -69,6 +77,16 @@
 
 <div class="flex justify-between w-11/12 mx-auto">
 	<h1 class="uppercase text-2xl my-5">Orden de produccion de producto final</h1>
+	{#if modified_recipe}
+		<aside class="mt-3 alert variant-ghost-warning">
+			<div class="alert-message">
+				<p class="p-0">La receta ha cambiado</p>
+			</div>
+			<div class="alert-actions">
+				<button class="btn variant-soft-warning" on:click={restore_recipe}>Reiniciar</button>
+			</div>
+		</aside>
+	{/if}
 </div>
 
 <form action="" class="mx-auto w-11/12" use:enhance method="post">
@@ -147,7 +165,14 @@
 </form>
 <div class="pt-4 pl-10 w-full flex justify-start">
 	{#if $recipe instanceof Object}
-		<button type="button" class="btn" on:click={() => dialog.showModal()}>Cambiar Receta</button>
+		<button
+			type="button"
+			class="btn"
+			on:click={() => {
+				dialog.showModal();
+				modified_recipe = true;
+			}}>Cambiar Receta</button
+		>
 	{/if}
 </div>
 
