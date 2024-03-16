@@ -1,22 +1,11 @@
 import { inArray } from 'drizzle-orm';
 import { db } from '../db';
 import { t_ingredient } from '../db/schema';
-import { has_repeted } from '$lib/utils';
+import { has_repeted, type NutritionalInfo } from '$lib/utils';
 import { is_ok, logic_error } from '$logic';
 
-export type NutritionalInfo = {
-	nutrient_fat: number;
-	nutrient_carb: number;
-	nutrient_protein: number;
-	nutrient_ashes: number;
-	nutrient_fiber: number;
-	nutrient_calcium: number;
-	nutrient_sodium: number;
-	nutrient_humidity: number;
-	nutrient_phosphorus: number;
-};
-
 const empty_nutritional_info = {
+	nutrient_calories: 0,
 	nutrient_fat: 0,
 	nutrient_carb: 0,
 	nutrient_protein: 0,
@@ -45,11 +34,19 @@ export class NutricionalInformationserivce {
 		const info = used_ingredients
 			.map((ingredient) => {
 				const amount = recipe.find((x) => x.ingredient_id === ingredient.id)?.amount || 0;
-				ingredient.nutrient_protein;
+
+				const nutrient_fat = ingredient.nutrient_fat * amount;
+				const nutrient_carb = ingredient.nutrient_carb * amount;
+				const nutrient_protein = ingredient.nutrient_protein * amount;
 				return {
-					nutrient_fat: ingredient.nutrient_fat * amount,
-					nutrient_carb: ingredient.nutrient_carb * amount,
-					nutrient_protein: ingredient.nutrient_protein * amount,
+					nutrient_calories: this.calculate_calories({
+						nutrient_carb,
+						nutrient_protein,
+						nutrient_fat
+					}),
+					nutrient_carb,
+					nutrient_protein,
+					nutrient_fat,
 					nutrient_ashes: ingredient.nutrient_ashes * amount,
 					nutrient_fiber: ingredient.nutrient_fiber * amount,
 					nutrient_calcium: ingredient.nutrient_calcium * amount,
@@ -60,6 +57,7 @@ export class NutricionalInformationserivce {
 			})
 			.reduce((acum, next) => {
 				return {
+					nutrient_calories: sum(acum, next, 'nutrient_calories'),
 					nutrient_fat: sum(acum, next, 'nutrient_fat'),
 					nutrient_protein: sum(acum, next, 'nutrient_protein'),
 					nutrient_carb: sum(acum, next, 'nutrient_carb'),
@@ -72,6 +70,16 @@ export class NutricionalInformationserivce {
 				};
 			}, empty_nutritional_info);
 		return is_ok(info);
+	}
+
+	private calculate_calories(macros: {
+		nutrient_carb: number;
+		nutrient_protein: number;
+		nutrient_fat: number;
+	}) {
+		const { nutrient_carb, nutrient_protein, nutrient_fat } = macros;
+		const calories = nutrient_carb * 3.5 + nutrient_protein * 3.5 + nutrient_fat * 8.5;
+		return calories;
 	}
 }
 export const nutritional_information_service = new NutricionalInformationserivce();

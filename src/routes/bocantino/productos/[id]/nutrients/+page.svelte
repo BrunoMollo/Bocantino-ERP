@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { name_nutrient } from '$lib/utils.js';
+	import { name_nutrient, unit_nutrient } from '$lib/utils.js';
 
 	export let data;
 </script>
@@ -11,7 +11,7 @@
 		{#each data.nutritional_info as { identifier, amount }}
 			<div class="flex justify-between border-t py-1 px-3 h-14">
 				<span class="text-center my-auto">{name_nutrient(identifier)}</span>
-				<span class="text-center my-auto">{amount} gr/100gr</span>
+				<span class="text-center my-auto">{amount} {unit_nutrient(identifier)}/100gr</span>
 			</div>
 		{/each}
 	</div>
