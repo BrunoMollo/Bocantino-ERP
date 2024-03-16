@@ -36,6 +36,7 @@ export const actions: Actions = {
 		const { batch_id, real_production } = form.data;
 
 		const batch = await ingredient_production_service.getBatchById(batch_id);
+
 		if (!batch) {
 			throw error(404, 'lote derivado no existe');
 		}
