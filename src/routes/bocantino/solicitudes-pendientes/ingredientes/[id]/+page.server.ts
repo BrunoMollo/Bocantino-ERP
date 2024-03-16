@@ -7,7 +7,7 @@ import { parse_id_param, should_not_reach } from '$lib/utils';
 
 const close_production_schema = z.object({
 	batch_id: z.coerce.number().int().positive(),
-	adjustment: z.number()
+	real_production: z.number().positive()
 });
 
 const cancel_production_schema = z.object({
@@ -21,7 +21,7 @@ export const load: PageServerLoad = async ({ params }) => {
 	if (!batch || !used_batch) {
 		throw error(404, 'lote derivado no existe');
 	}
-	const form = superValidate({ batch_id: id, adjustment: 0 }, close_production_schema);
+	const form = superValidate({ batch_id: id }, close_production_schema, { errors: false });
 	const cancel_form = superValidate({ batch_id: id }, cancel_production_schema);
 	return { batch, used_batch, form, cancel_form };
 };
@@ -32,7 +32,19 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return { form };
 		}
-		const res = await ingredient_production_service.closeProduction(form.data);
+
+		const { batch_id, real_production } = form.data;
+
+		const batch = await ingredient_production_service.getBatchById(batch_id);
+		if (!batch) {
+			throw error(404, 'lote derivado no existe');
+		}
+
+		const res = await ingredient_production_service.closeProduction({
+			batch_id,
+			adjustment: real_production - batch.initial_amount
+		});
+
 		switch (res.type) {
 			case 'LOGIC_ERROR':
 				throw error(400, res.message);

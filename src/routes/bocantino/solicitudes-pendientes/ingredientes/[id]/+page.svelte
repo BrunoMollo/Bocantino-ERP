@@ -35,7 +35,7 @@
 	<div class="px-10">
 		<h2 class="h2 text-primary-200">Solicitud pendiente {data.batch.id}</h2>
 		<p>
-			Cantidad producida: {data.batch.initial_amount}
+			Producción estimada: {data.batch.initial_amount}
 			{data.batch.ingredient.unit} de {data.batch.ingredient.name}.
 		</p>
 		<p>
@@ -46,15 +46,15 @@
 		<h3 class="h3 pt-4">Finalizar produccion</h3>
 		<form class="flex flex-col" method="post" action="?/finish" use:enhance>
 			<div class="mb-4">
-				<label class="label" for="adjustment">Ajuste:</label>
+				<label class="label" for="adjustment">Cantidad real producida:</label>
 				<div>
 					<input
 						type="number"
 						step=".01"
 						class="input w-40 mr-2"
 						id="adjustment"
-						bind:value={$form.adjustment}
-						class:error_border={$errors.adjustment}
+						bind:value={$form.real_production}
+						class:error_border={$errors.real_production}
 					/>
 					<span>{data.batch.ingredient?.unit}</span>
 				</div>
@@ -65,7 +65,7 @@
 					{#if $delayed}
 						Cerrando...
 					{:else}
-						Cerrar produccion
+						Ingresar a Stock
 					{/if}
 				</button>
 
@@ -81,7 +81,7 @@
 							}
 						}}
 					>
-						Eliminar solicitud
+						Eliminar Solicitud
 					</button>
 				</form>
 			</div>
