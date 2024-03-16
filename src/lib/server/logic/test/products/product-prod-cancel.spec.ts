@@ -7,9 +7,9 @@ import {
 } from '$lib/server/db/schema';
 import { product_service } from '$logic/product-service';
 import { __DELETE_ALL_DATABASE } from '../utils';
-import { purchases_service } from '$logic/ingredient-purchase-service';
 import { ingredient_defaulter_service } from '$logic/defaulters/ingredient-service.default';
 import { suppliers_defaulter_service } from '$logic/defaulters/supplier-service.default';
+import { purchases_defaulter_service } from '$logic/defaulters/purchase-service.default';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -37,39 +37,13 @@ beforeAll(async () => {
 		})
 		.then((x) => x.id);
 
-	[LIVER_BATCH_ID] = await purchases_service
-		.registerBoughtIngrediets({
-			withdrawal_tax_amount: 10,
-			iva_tax_percentage: 21,
-			supplier_id: SUPPLIER_ID,
-			document: {
-				number: '1234',
-				typeId: INVOICE_TYPE.id,
-				issue_date: new Date(),
-				due_date: new Date()
-			},
-			batches: [
-				{
-					ingredient_id: LIVER_ID,
-					batch_code: 'SOME OTHER CODE FOR BANANA',
-					initial_amount: 20_000,
-					number_of_bags: 1,
-					cost: 1000,
-					production_date: new Date(),
-					expiration_date: new Date()
-				},
-				{
-					ingredient_id: BANANA_ID,
-					batch_code: 'SOME OTHER CODE FOR BANANA',
-					initial_amount: 10_000,
-					number_of_bags: 1,
-					cost: 1000,
-					production_date: new Date(),
-					expiration_date: new Date()
-				}
-			]
-		})
-		.then((x) => x.batchesId);
+	[LIVER_BATCH_ID] = await purchases_defaulter_service.buy({
+		supplier_id: SUPPLIER_ID,
+		bought: [
+			{ ingredient_id: LIVER_ID, initial_amount: 20_000 },
+			{ ingredient_id: BANANA_ID, initial_amount: 10_000 }
+		]
+	});
 });
 
 beforeEach(async () => {
