@@ -39,7 +39,7 @@ export function nutrient_name(name: Nutrients) {
 	}
 }
 
-export function unit_nutrient(name: Nutrients) {
+export function nutrient_unit(name: Nutrients) {
 	switch (name) {
 		case 'nutrient_calories':
 			return 'cal';
