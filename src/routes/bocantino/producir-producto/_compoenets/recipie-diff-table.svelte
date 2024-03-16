@@ -1,6 +1,9 @@
 <script lang="ts">
-	import { arraify_nutritional_info, name_nutrient } from '$lib/utils';
-	import type { NutritionalInfo } from '$logic/nutricional-information-service';
+	import {
+		type NutritionalInfo,
+		arraify_nutritional_info,
+		name_nutrient
+	} from '$lib/nutrients-utils';
 
 	export let base: NutritionalInfo;
 	export let modified: NutritionalInfo;

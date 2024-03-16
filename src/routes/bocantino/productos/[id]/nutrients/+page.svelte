@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { name_nutrient, unit_nutrient } from '$lib/utils.js';
+	import { name_nutrient, unit_nutrient } from '$lib/nutrients-utils.js';
 
 	export let data;
 </script>

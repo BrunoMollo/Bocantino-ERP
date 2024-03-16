@@ -1,8 +1,9 @@
 import { inArray } from 'drizzle-orm';
 import { db } from '../db';
 import { t_ingredient } from '../db/schema';
-import { has_repeted, type NutritionalInfo } from '$lib/utils';
+import { has_repeted } from '$lib/utils';
 import { is_ok, logic_error } from '$logic';
+import type { NutritionalInfo } from '$lib/nutrients-utils';
 
 const empty_nutritional_info = {
 	nutrient_calories: 0,

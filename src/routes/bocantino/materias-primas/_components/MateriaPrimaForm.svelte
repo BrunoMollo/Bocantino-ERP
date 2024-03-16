@@ -3,7 +3,8 @@
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { VALID_UNITS, type IngredientSchema } from './shared';
-	import { name_nutrient, startAs } from '$lib/utils';
+	import { startAs } from '$lib/utils';
+	import { name_nutrient } from '$lib/nutrients-utils';
 
 	export let ingredients: { id: number; name: string; unit: string }[];
 
@@ -170,3 +171,4 @@
 		<Spinner showIf={$delayed} size={4} />
 	</button>
 </form>
+

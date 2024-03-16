@@ -1,8 +1,11 @@
 <script lang="ts">
-	import type { NutritionalInfo } from '$logic/nutricional-information-service';
 	import { onMount } from 'svelte';
 	import ApexCharts, { type ApexOptions } from 'apexcharts';
-	import { arraify_nutritional_info, name_nutrient } from '$lib/utils';
+	import {
+		arraify_nutritional_info,
+		name_nutrient,
+		type NutritionalInfo
+	} from '$lib/nutrients-utils';
 
 	export let base: NutritionalInfo;
 	export let modified: NutritionalInfo;
