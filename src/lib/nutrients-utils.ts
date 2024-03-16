@@ -12,7 +12,7 @@ export const arraify_nutritional_info = (nutritional_info: NutritionalInfo) =>
 		amount: Math.round(amount * 10_000) / 10_000
 	}));
 
-export function name_nutrient(name: Nutrients) {
+export function nutrient_name(name: Nutrients) {
 	switch (name) {
 		case 'nutrient_calories':
 			return 'Calorias';

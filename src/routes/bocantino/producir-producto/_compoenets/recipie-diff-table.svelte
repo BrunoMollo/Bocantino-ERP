@@ -2,7 +2,7 @@
 	import {
 		type NutritionalInfo,
 		arraify_nutritional_info,
-		name_nutrient
+		nutrient_name
 	} from '$lib/nutrients-utils';
 
 	export let base: NutritionalInfo;
@@ -28,7 +28,7 @@
 		{@const current_amount = Math.round(modified[identifier] * 10_000) / 10_000}
 		{@const diff = Math.round((current_amount - expected_amount) * 10_000) / 10_000}
 		<div class="flex justify-between border-t py-1 h-14">
-			<span class="my-auto w-3/12 text-start">{name_nutrient(identifier)}</span>
+			<span class="my-auto w-3/12 text-start">{nutrient_name(identifier)}</span>
 			<span class="my-auto w-1/12">{expected_amount} </span>
 			<span class="my-auto w-1/12">{current_amount} </span>
 			<span class="my-auto w-2/12 font-black" style:color={getColor(diff)}>{diff} </span>

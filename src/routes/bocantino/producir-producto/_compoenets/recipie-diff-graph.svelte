@@ -3,7 +3,7 @@
 	import ApexCharts, { type ApexOptions } from 'apexcharts';
 	import {
 		arraify_nutritional_info,
-		name_nutrient,
+		nutrient_name,
 		type NutritionalInfo
 	} from '$lib/nutrients-utils';
 
@@ -11,7 +11,7 @@
 	export let modified: NutritionalInfo;
 
 	$: data = arraify_nutritional_info(base).map(({ identifier, amount }) => ({
-		x: name_nutrient(identifier),
+		x: nutrient_name(identifier),
 		y: [amount, modified[identifier]]
 	}));
 
