@@ -95,7 +95,7 @@
 
 <main class="container h-full mx-auto flex justify-center items-center">
 	<form action="" method="post" use:enhance>
-		<div class="grid grid-cols-5 gap-3 w-11/12 mx-auto">
+		<div class="grid grid-cols-5 gap-3 mx-auto">
 			<div>
 				<label class="label" for="supplier_id">
 					<small class="my-auto mr-1 font-black text-lg">Proveedor</small>
@@ -159,7 +159,7 @@
 				/>
 			</div>
 		</div>
-		<div class="table-container w-11/12 mx-auto my-5 shadow-lg rounded-lg" style="">
+		<div class="table-container mx-auto my-5 shadow-lg rounded-lg" style="">
 			<table class="table">
 				<thead>
 					<tr>
@@ -257,8 +257,7 @@
 										class="group variant-filled-surface"
 										on:click={() => genearteCode(i)}
 									>
-										<span class=" group-hover:hidden">G</span>
-										<span class=" group-hover:inline hidden">Generar</span>
+										<span class="">Generar</span>
 									</button>
 								</div>
 							</td>
@@ -285,7 +284,7 @@
 				>
 			</div>
 		</div>
-		<div class="flex w-11/12 mx-auto justify-between">
+		<div class="flex mx-auto justify-between">
 			<div class="flex">
 				<h2 class="p-2">Subtotal:</h2>
 				<div class="relative inline-block">
@@ -310,7 +309,7 @@
 			</div>
 			<div class="w-1/2"></div>
 		</div>
-		<div class="w-11/12 mx-auto flex justify-end">
+		<div class=" mx-auto flex justify-end">
 			<div class="flex mr-10">
 				<h1 class="p-2">Total:</h1>
 				<div class="input w-32 p-2 rounded">
