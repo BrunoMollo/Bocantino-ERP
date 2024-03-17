@@ -1,4 +1,6 @@
-export type Route = { name: string; href: string; icon: string };
+import type { LayoutRouteId } from '../$types';
+
+export type Route = { name: string; href: LayoutRouteId; icon: string };
 
 export const routes = [
 	{
