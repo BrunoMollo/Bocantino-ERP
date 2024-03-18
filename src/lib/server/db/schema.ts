@@ -187,7 +187,6 @@ export const t_ingridient_entry = pgTable('ingridient_entry', {
 	currency_alpha_code: varchar('currency_alpha_code', { length: 4 })
 		.notNull()
 		.$defaultFn(() => 'ARG'),
-	document_id: integer('document_id').references(() => t_entry_document.id),
 	supplier_id: integer('supplier_id')
 		.notNull()
 		.references(() => t_supplier.id)
@@ -199,7 +198,10 @@ export const t_entry_document = pgTable('entry_document', {
 	due_date: date('due_date', { mode: 'date' }).notNull(),
 	typeId: integer('type_id')
 		.notNull()
-		.references(() => t_document_type.id)
+		.references(() => t_document_type.id),
+	entry_id: integer('entry_id')
+		.notNull()
+		.references(() => t_ingridient_entry.id)
 });
 //-------------------------------------------------------------------------------------////
 //
