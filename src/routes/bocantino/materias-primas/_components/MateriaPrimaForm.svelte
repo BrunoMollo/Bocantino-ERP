@@ -3,7 +3,8 @@
 	import { fade } from 'svelte/transition';
 	import { superForm } from 'sveltekit-superforms/client';
 	import { VALID_UNITS, type IngredientSchema } from './shared';
-	import { name_nutrient, startAs } from '$lib/utils';
+	import { startAs } from '$lib/utils';
+	import { nutrient_name } from '$lib/nutrients-utils';
 
 	export let ingredients: { id: number; name: string; unit: string }[];
 
@@ -144,7 +145,7 @@
 		{#each nutrients as n}
 			<div>
 				<label class="label" transition:fade for={n}>
-					<span>{name_nutrient(n)}</span>
+					<span>{nutrient_name(n)}</span>
 					{#if $errors[n]}
 						<b class=" text-error-400" transition:fade>Ingrese un valor valido</b>
 					{/if}
