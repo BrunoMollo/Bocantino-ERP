@@ -92,7 +92,7 @@ export function makeOptions<T>(arr: T[], fields: { label: keyof T; value: keyof 
 /**
  * helper to pares id from a param
  **/
-export function parse_id_param(params: { id: string }) {
+export function parse_id_param(params: { id?: string }) {
 	const id = Number(params.id);
 	if (isNaN(id) || id < 0) {
 		throw error(400, { message: 'invalid id' });
