@@ -122,7 +122,6 @@ beforeEach(async () => {
 			]
 		})
 		.then((x) => x.batchesId[0]);
-
 });
 
 describe.sequential('ingredient produciton start', () => {
