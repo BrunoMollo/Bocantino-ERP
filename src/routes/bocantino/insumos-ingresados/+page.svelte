@@ -112,7 +112,7 @@
 					>
 					<td style="vertical-align:middle" class="text-center w-2/12">
 						<a
-							class="btn variant-filled-secondary"
+							class="btn variant-filled-secondary rounded"
 							href={'/bocantino/insumos-ingresados/' + entrada.id}>ver detalle</a
 						>
 					</td></tr

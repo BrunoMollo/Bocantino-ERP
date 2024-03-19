@@ -106,6 +106,28 @@ async function seed() {
 		ingredientsIds: [higado.id, banana.id]
 	});
 
+	await purchases_service.registerBoughtIngrediets({
+		withdrawal_tax_amount: 10,
+		iva_tax_percentage: 21,
+		supplier_id: julian.id,
+		document: {
+			number: 'R-00000000',
+			issue_date: new Date(2023, 12, 31),
+			due_date: new Date(2023, 4, 1),
+			typeId: remito.id
+		},
+		batches: [
+			{
+				batch_code: 'PPPP_1234',
+				initial_amount: 200,
+				production_date: new Date(2023, 12, 30),
+				expiration_date: new Date(2023, 1, 30),
+				ingredient_id: banana.id,
+				number_of_bags: 10,
+				cost: 2000
+			}
+		]
+	});
 	const first_entry = await purchases_service.registerBoughtIngrediets({
 		withdrawal_tax_amount: 10,
 		iva_tax_percentage: 21,

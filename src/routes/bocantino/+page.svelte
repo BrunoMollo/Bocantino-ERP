@@ -27,7 +27,7 @@
 					<h1 class="text-center inset-36 absolute">No hay solicitudes pendientes</h1>
 				{/if}
 				{#each data.pending_productions as pendiente}
-					<div class="flex justify-between border py-1 px-3 h-14">
+					<div class="flex justify-between py-1 px-3 h-14">
 						<span class="text-center my-auto">{pendiente.id}</span>
 						<span class="text-center my-auto">{pendiente.product.desc}</span>
 						<span class="text-center my-auto">{pendiente.initial_amount} kg</span>
@@ -40,7 +40,7 @@
 				{/each}
 				{#if 5 - data.pending_productions.length > 0 && data.pending_productions.length != 0}
 					{#each Array(5 - data.pending_productions.length) as _}
-						<div class="flex justify-between border py-1 px-3 h-14">...</div>
+						<div class="flex justify-between py-1 px-3 h-14">...</div>
 					{/each}
 				{/if}
 			</div>
@@ -50,7 +50,7 @@
 
 			<div class="">
 				{#each data.entries as entrada}
-					<div class="flex justify-between border py-1 px-3 h-14">
+					<div class="flex justify-between py-1 px-3 h-14">
 						<span class="text-center my-auto">{entrada.id}</span>
 						<span class="text-center my-auto">{entrada.supplier}</span>
 						<span class="text-center my-auto">
@@ -65,7 +65,7 @@
 				{/each}
 				{#if 5 - data.entries.length > 0}
 					{#each Array(5 - data.entries.length) as _}
-						<div class="flex justify-between border py-1 px-3 h-14">...</div>
+						<div class="flex justify-between py-1 px-3 h-14">...</div>
 					{/each}
 				{/if}
 			</div>
