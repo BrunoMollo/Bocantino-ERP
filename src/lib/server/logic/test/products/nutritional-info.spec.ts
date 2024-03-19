@@ -27,6 +27,7 @@ describe('nutritional information of a product', () => {
 		]);
 		//@ts-expect-error PENDING: explain
 		expect(info.data).toEqual({
+			nutrient_calories: 718,
 			nutrient_protein: 10 * 2 + 2 * 10,
 			nutrient_fat: 8 * 2 + 1 * 10,
 			nutrient_carb: 1 * 2 + 10 * 10,
@@ -62,6 +63,7 @@ describe('nutritional information of a product', () => {
 		]);
 		//@ts-expect-error PENDING: explain
 		expect(info.data).toEqual({
+			nutrient_calories: 930,
 			nutrient_protein: 1 * 3 * 10,
 			nutrient_fat: 2 * 3 * 10,
 			nutrient_carb: 3 * 3 * 10,
@@ -98,6 +100,7 @@ describe('nutritional information of a product', () => {
 
 		//@ts-expect-error PENDING: explain
 		expect(info.data).toEqual({
+			nutrient_calories: 69,
 			nutrient_protein: 2 + 2,
 			nutrient_fat: 2 + 2,
 			nutrient_carb: 3 + 3,
@@ -121,6 +124,7 @@ describe('nutritional information of a product', () => {
 		]);
 		//@ts-expect-error PENDING: explain
 		expect(info.data).toEqual({
+			nutrient_calories: 77.5,
 			nutrient_protein: 4,
 			nutrient_fat: 5,
 			nutrient_carb: 6,
