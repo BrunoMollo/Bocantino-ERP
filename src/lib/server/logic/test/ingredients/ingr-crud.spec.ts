@@ -1,7 +1,6 @@
 import { describe, expect, vi, test, beforeEach } from 'vitest';
 import { db } from '$lib/server/db/__mocks__';
 import {
-	t_entry_document,
 	t_ingredient,
 	t_ingredient_batch,
 	t_ingridient_entry,
@@ -44,7 +43,6 @@ describe.sequential('ingredients crud', () => {
 			await db.delete(tr_ingredient_ingredient);
 			await db.delete(t_ingredient_batch);
 			await db.delete(tr_supplier_ingredient);
-			await db.delete(t_entry_document);
 			await db.delete(t_ingridient_entry);
 			await db.delete(t_supplier);
 			await db.delete(t_ingredient);

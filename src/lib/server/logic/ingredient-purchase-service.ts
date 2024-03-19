@@ -25,14 +25,14 @@ export class IngredientPurchaseService {
 			})
 			.from(t_ingridient_entry)
 			.innerJoin(t_supplier, eq(t_supplier.id, t_ingridient_entry.supplier_id))
-			.innerJoin(t_entry_document, eq(t_entry_document.entry_id, t_ingridient_entry.id))
+			.innerJoin(t_entry_document, eq(t_entry_document.id, t_ingridient_entry.document_id))
 			.innerJoin(t_document_type, eq(t_document_type.id, t_entry_document.typeId))
 			.where(eq(t_ingridient_entry.id, entry_id))
 			.then(getFirstIfPosible);
 	}
 	registerBoughtIngrediets(data: {
 		supplier_id: number;
-		document: TableInsert<typeof t_entry_document.$inferInsert, 'id' | 'entry_id'>;
+		document: TableInsert<typeof t_entry_document.$inferInsert, 'id'>;
 		withdrawal_tax_amount: number;
 		iva_tax_percentage: number;
 		batches: {
@@ -46,16 +46,16 @@ export class IngredientPurchaseService {
 		}[];
 	}) {
 		return db.transaction(async (tx) => {
-			const { entry_id } = await tx
-				.insert(t_ingridient_entry)
-				.values({ total_cost: null, supplier_id: data.supplier_id })
-				.returning({ entry_id: t_ingridient_entry.id })
+			const { document_id } = await tx
+				.insert(t_entry_document)
+				.values(data.document)
+				.returning({ document_id: t_entry_document.id })
 				.then(getFirst);
 
-			await tx
-				.insert(t_entry_document)
-				.values({ ...data.document, entry_id })
-				.returning({ document_id: t_entry_document.id })
+			const { entry_id } = await tx
+				.insert(t_ingridient_entry)
+				.values({ total_cost: null, document_id, supplier_id: data.supplier_id })
+				.returning({ entry_id: t_ingridient_entry.id })
 				.then(getFirst);
 
 			const { supplier_id, iva_tax_percentage, withdrawal_tax_amount } = data;
@@ -93,7 +93,7 @@ export class IngredientPurchaseService {
 			})
 			.from(t_ingridient_entry)
 			.innerJoin(t_supplier, eq(t_ingridient_entry.supplier_id, t_supplier.id))
-			.innerJoin(t_entry_document, eq(t_entry_document.entry_id, t_ingridient_entry.id))
+			.innerJoin(t_entry_document, eq(t_entry_document.id, t_ingridient_entry.document_id))
 			.innerJoin(t_document_type, eq(t_entry_document.typeId, t_document_type.id))
 			.limit(5);
 		return entries;
@@ -111,7 +111,7 @@ export class IngredientPurchaseService {
 			})
 			.from(t_ingridient_entry)
 			.innerJoin(t_supplier, eq(t_ingridient_entry.supplier_id, t_supplier.id))
-			.innerJoin(t_entry_document, eq(t_entry_document.entry_id, t_ingridient_entry.id))
+			.innerJoin(t_entry_document, eq(t_entry_document.id, t_ingridient_entry.document_id))
 			.innerJoin(t_document_type, eq(t_entry_document.typeId, t_document_type.id))
 			.where(
 				and(
@@ -147,7 +147,7 @@ export class IngredientPurchaseService {
 			})
 			.from(t_ingridient_entry)
 			.innerJoin(t_supplier, eq(t_ingridient_entry.supplier_id, t_supplier.id))
-			.innerJoin(t_entry_document, eq(t_entry_document.entry_id, t_ingridient_entry.id))
+			.innerJoin(t_entry_document, eq(t_entry_document.id, t_ingridient_entry.document_id))
 			.innerJoin(t_document_type, eq(t_entry_document.typeId, t_document_type.id))
 			.where(
 				and(

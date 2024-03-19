@@ -29,8 +29,8 @@ describe.sequential('supplier crud', () => {
 		beforeEach(async () => {
 			await db.delete(tr_ingredient_batch_ingredient_batch);
 			await db.delete(t_ingredient_batch);
-			await db.delete(t_entry_document);
 			await db.delete(t_ingridient_entry);
+			await db.delete(t_entry_document);
 			await db.delete(tr_supplier_ingredient);
 			await db.delete(t_supplier);
 		});
