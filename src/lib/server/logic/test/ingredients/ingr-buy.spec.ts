@@ -26,8 +26,8 @@ beforeAll(async () => {
 
 beforeEach(async () => {
 	await db.delete(t_ingredient_batch);
-	await db.delete(t_ingridient_entry);
 	await db.delete(t_entry_document);
+	await db.delete(t_ingridient_entry);
 });
 
 describe.sequential('buy ingredients', async () => {
@@ -81,13 +81,13 @@ describe.sequential('buy ingredients', async () => {
 			expect(entryList[0].id).toBeTruthy();
 			expect(entryList[0].currency_alpha_code).toBe('ARG');
 			expect(entryList[0].total_cost).toBe(null);
-			expect(entryList[0].document_id).toBeTruthy();
 			const referencedDoc = await db
 				.select()
 				.from(t_entry_document)
-				.where(eq(t_entry_document.id, entryList[0].document_id ?? -1));
+				.where(eq(t_entry_document.entry_id, entryList[0].id ?? -1));
 			expect(referencedDoc.length).toBe(1);
 			expect(referencedDoc[0].typeId).toBe(INVOICE_TYPE.id);
+			expect(referencedDoc[0].entry_id).toBe(entryList[0].id);
 		});
 
 		test('save the batch', async () => {
@@ -176,13 +176,13 @@ describe.sequential('buy ingredients', async () => {
 			expect(entryList[0].id).toBeTruthy();
 			expect(entryList[0].currency_alpha_code).toBe('ARG');
 			expect(entryList[0].total_cost).toBe(null);
-			expect(entryList[0].document_id).toBeTruthy();
 			const referencedDoc = await db
 				.select()
 				.from(t_entry_document)
-				.where(eq(t_entry_document.id, entryList[0].document_id ?? -1));
+				.where(eq(t_entry_document.entry_id, entryList[0].id ?? -1));
 			expect(referencedDoc.length).toBe(1);
 			expect(referencedDoc[0].typeId).toBe(INVOICE_TYPE.id);
+			expect(referencedDoc[0].entry_id).toBe(entryList[0].id);
 		});
 
 		test('save the two batches', async () => {
