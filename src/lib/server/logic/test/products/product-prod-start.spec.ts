@@ -50,9 +50,10 @@ beforeAll(async () => {
 beforeEach(async () => {
 	await db.delete(tr_product_batch_ingredient_batch);
 	await db.delete(t_product_batch);
+
 	await db.delete(t_ingredient_batch);
-	await db.delete(t_entry_document);
 	await db.delete(t_ingridient_entry);
+	await db.delete(t_entry_document);
 
 	[LIVER_BATCH_ID] = await purchases_defaulter_service.buy({
 		supplier_id: SUPPLIER_ID,

@@ -43,13 +43,6 @@
 			"when": 1709490714143,
 			"tag": "0005_cloudy_dagger",
 			"breakpoints": true
-		},
-		{
-			"idx": 6,
-			"version": "5",
-			"when": 1710801315574,
-			"tag": "0006_giant_morlocks",
-			"breakpoints": true
 		}
 	]
 }
