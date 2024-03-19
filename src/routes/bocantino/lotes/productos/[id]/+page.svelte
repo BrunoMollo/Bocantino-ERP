@@ -7,7 +7,9 @@
 		<h1 class="text-2xl pb-3">Resumen lote numero: {data.productBatch.id}</h1>
 		<p class="text-xl">Codigo: {data.productBatch.batch_code}</p>
 		<p class="text-xl">Producto: {data.productBatch.product.desc}</p>
-		<p class="text-xl">Cantidad producida: {data.productBatch.initial_amount.toString()} Kg</p>
+		<p class="text-xl">
+			Cantidad producida: {data.productBatch.initial_amount + (data.productBatch.adjustment ?? 0)} Kg
+		</p>
 		<table class="table rounded my-3">
 			<thead>
 				<tr>

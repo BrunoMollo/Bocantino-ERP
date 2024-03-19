@@ -324,7 +324,8 @@ class ProductService {
 					'state',
 					'production_date',
 					'expiration_date',
-					'initial_amount'
+					'initial_amount',
+					'adjustment'
 				),
 				product: pick_columns(t_product, 'id', 'desc'),
 				used_batches: pick_merge()
