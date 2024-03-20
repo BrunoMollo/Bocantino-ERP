@@ -1,8 +1,9 @@
-import { parse_id_param, should_not_reach, arraify_nutritional_info } from '$lib/utils';
+import { parse_id_param, should_not_reach } from '$lib/utils';
 import { nutritional_information_service } from '$logic/nutricional-information-service';
 import { product_service } from '$logic/product-service';
 import { error } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
+import { arraify_nutritional_info } from '$lib/nutrients-utils';
 
 export const load: PageServerLoad = async ({ params }) => {
 	const { id } = parse_id_param(params);

@@ -41,7 +41,7 @@
 			Producto: {current?.product.desc}
 		</p>
 		<p class="text-xl">
-			Cantidad producida: {current?.initial_amount} Kg de
+			Producción estimada: {current?.initial_amount} Kg
 		</p>
 		<dl class="list-dl">
 			{#each current?.used_batches ?? [] as { ingredient_name, ingredient_unit, amount_used_to_produce_batch, batch_code }}
@@ -61,15 +61,15 @@
 		<h3 class="h3 pt-4">Finalizar produccion</h3>
 		<form class="flex flex-col" method="post" action="?/finish" use:enhance>
 			<div class="mb-4">
-				<label class="label" for="adjustment">Ajuste:</label>
+				<label class="label" for="adjustment">Cantidad real producida:</label>
 				<div>
 					<input
 						type="number"
 						step=".01"
 						class="input w-40 mr-2"
 						id="adjustment"
-						bind:value={$form.adjustment}
-						class:error_border={$errors.adjustment}
+						bind:value={$form.real_production}
+						class:error_border={$errors.real_production}
 					/>
 					<span>Kg</span>
 				</div>
@@ -80,7 +80,7 @@
 					{#if $delayed}
 						Cerrando...
 					{:else}
-						Cerrar produccion
+						Ingresar a Stock
 					{/if}
 				</button>
 
@@ -96,7 +96,7 @@
 							}
 						}}
 					>
-						Eliminar solicitud
+						Eliminar Solicitud
 					</button>
 				</form>
 			</div>

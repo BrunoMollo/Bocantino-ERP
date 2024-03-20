@@ -6,8 +6,8 @@
 	import IngredientLine from './_compoenets/ingredient-line.svelte';
 	import RecipeDiffGraph from './_compoenets/recipie-diff-graph.svelte';
 	import Spinner from '$lib/ui/Spinner.svelte';
-	import type { NutritionalInfo } from '$logic/nutricional-information-service';
 	import RecipieDiffTable from './_compoenets/recipie-diff-table.svelte';
+	import type { NutritionalInfo } from '$lib/nutrients-utils';
 
 	export let data;
 	const { ingredients_all } = data;
