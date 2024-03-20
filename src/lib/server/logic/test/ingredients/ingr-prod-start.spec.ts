@@ -47,7 +47,7 @@ beforeEach(async () => {
 	await db.delete(t_ingredient_batch);
 	await db.delete(t_entry_document);
 	await db.delete(t_ingridient_entry);
-	await db.delete(t_entry_document);
+	await db.delete(t_ingridient_entry);
 	LIVER_BATCH_ID = await purchases_service
 		.registerBoughtIngrediets({
 			withdrawal_tax_amount: 10,
