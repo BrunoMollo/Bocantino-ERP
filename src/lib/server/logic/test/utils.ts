@@ -21,8 +21,8 @@ export async function __DELETE_ALL_DATABASE() {
 		await tx.delete(t_product_batch);
 		await tx.delete(tr_ingredient_batch_ingredient_batch);
 		await tx.delete(t_ingredient_batch);
-		await tx.delete(t_ingridient_entry);
 		await tx.delete(t_entry_document);
+		await tx.delete(t_ingridient_entry);
 		await tx.delete(tr_supplier_ingredient);
 		await tx.delete(t_supplier);
 		await tx.delete(tr_ingredient_product);

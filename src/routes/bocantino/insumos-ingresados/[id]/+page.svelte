@@ -33,7 +33,7 @@
 					Numero de {selected_entry.document.type}: {selected_entry.document.number}
 				</span>
 				<span>
-					Fecha de emision:{selected_entry.date.toLocaleDateString('es')}
+					Fecha de emision:{selected_entry.document.issue_date.toLocaleDateString('es')}
 				</span>
 				<span class="invisible">this is a css hack</span>
 			</div>
