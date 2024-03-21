@@ -16,10 +16,10 @@ import { eq } from 'drizzle-orm';
 import { getFirst } from '$lib/utils';
 import { pick_columns } from 'drizzle-tools';
 import { __DELETE_ALL_DATABASE } from '../utils';
-import { purchases_service } from '$logic/ingredient-purchase-service';
 import { ingredient_production_service } from '$logic/ingredient-production-service';
 import { ingredient_defaulter_service } from '$logic/defaulters/ingredient-service.default';
 import { suppliers_defaulter_service } from '$logic/defaulters/supplier-service.default';
+import { purchases_defaulter_service } from '$logic/defaulters/purchase-service.default';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -52,80 +52,20 @@ beforeEach(async () => {
 	await db.delete(t_entry_document);
 	await db.delete(t_ingridient_entry);
 
-	LIVER_BATCH_ID = await purchases_service
-		.registerBoughtIngrediets({
-			supplier_id: SUPPLIER_ID,
-			withdrawal_tax_amount: 10,
-			iva_tax_percentage: 21,
-			document: {
-				number: '1234',
-				typeId: INVOICE_TYPE.id,
-				issue_date: new Date(),
-				due_date: new Date()
-			},
-			batches: [
-				{
-					ingredient_id: LIVER_ID,
-					batch_code: 'SOME CODE',
-					initial_amount: LIVER_BATCH_INTIAL_AMOUNT,
-					number_of_bags: 10,
-					cost: 1000,
-					production_date: new Date(),
-					expiration_date: new Date()
-				}
-			]
-		})
-		.then((x) => x.batchesId[0]);
+	[LIVER_BATCH_ID] = await purchases_defaulter_service.buy({
+		supplier_id: SUPPLIER_ID,
+		bought: [{ ingredient_id: LIVER_ID, initial_amount: LIVER_BATCH_INTIAL_AMOUNT }]
+	});
 
-	await purchases_service
-		.registerBoughtIngrediets({
-			supplier_id: SUPPLIER_ID,
-			withdrawal_tax_amount: 10,
-			iva_tax_percentage: 21,
-			document: {
-				number: '1234',
-				typeId: INVOICE_TYPE.id,
-				issue_date: new Date(),
-				due_date: new Date()
-			},
-			batches: [
-				{
-					ingredient_id: LIVER_ID,
-					batch_code: 'SOME OTHER CODE',
-					initial_amount: SECOND_LIVER_BATCH_INITIAL_AMOUNT,
-					number_of_bags: 12,
-					cost: 1000,
-					production_date: new Date(),
-					expiration_date: new Date()
-				}
-			]
-		})
-		.then((x) => x.batchesId[0]);
+	await purchases_defaulter_service.buy({
+		supplier_id: SUPPLIER_ID,
+		bought: [{ ingredient_id: LIVER_ID, initial_amount: SECOND_LIVER_BATCH_INITIAL_AMOUNT }]
+	});
 
-	await purchases_service
-		.registerBoughtIngrediets({
-			withdrawal_tax_amount: 10,
-			iva_tax_percentage: 21,
-			supplier_id: SUPPLIER_ID,
-			document: {
-				number: '1234',
-				typeId: INVOICE_TYPE.id,
-				issue_date: new Date(),
-				due_date: new Date()
-			},
-			batches: [
-				{
-					ingredient_id: BANANA_ID,
-					batch_code: 'SOME OTHER CODE FOR BANANA',
-					initial_amount: 20,
-					number_of_bags: 1,
-					cost: 1000,
-					production_date: new Date(),
-					expiration_date: new Date()
-				}
-			]
-		})
-		.then((x) => x.batchesId[0]);
+	await purchases_defaulter_service.buy({
+		supplier_id: SUPPLIER_ID,
+		bought: [{ ingredient_id: BANANA_ID, initial_amount: 20 }]
+	});
 
 	const batch = await ingredient_production_service.startIngredientProduction(
 		{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 10 },
