@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Loader from '../../_components/Loader.svelte';
 	import { trpc } from '$lib/trpc-client';
+	import { page } from '$app/stores';
 
 	export let data;
 
@@ -82,5 +83,6 @@
 				<Loader --scale="2" />
 			</div>
 		{/if}
+		<a href={$page.url.pathname + '/edit'}>editar</a>
 	</div>
 </main>

@@ -1,8 +1,8 @@
 import { purchases_service } from '$logic/ingredient-purchase-service';
 import { error } from '@sveltejs/kit';
-import type { PageServerLoad } from './$types';
+import type { LayoutServerLoad } from './$types';
 
-export const load: PageServerLoad = async (url) => {
+export const load: LayoutServerLoad = async (url) => {
 	const id = Number(url.params.id);
 	if (!id) {
 		throw error(400, 'id invalido');
