@@ -5,7 +5,7 @@ import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async () => {
 	const ingredients = ingredients_service.getAllWithStock();
-	const pending_productions = await product_service.getLastBatchesInProduction();
+	const pending_productions = product_service.getLastBatchesInProduction();
 	const entries = purchases_service.getLastEntries();
 	return { ingredients, entries, pending_productions };
 };
