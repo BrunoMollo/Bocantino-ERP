@@ -12,7 +12,7 @@ class IngredientService {
 	}
 
 	async getAllWithStock() {
-		return await db
+		const list = await db
 			.with(sq_stock)
 			.select({
 				ingredient: pick_columns(t_ingredient, 'id', 'name', 'unit', 'reorder_point'),
@@ -31,8 +31,9 @@ class IngredientService {
 			.leftJoin(sq_stock, eq(sq_stock.batch_id, t_ingredient_batch.id))
 			.groupBy(t_ingredient.id)
 			.then(copy_column({ from: 'stock', field: 'stock', to: 'ingredient' }))
-			.then(drizzle_map({ one: 'ingredient', with_one: [], with_many: [] }))
-			.then((arr) => arr.toSorted((x) => x.stock - x.reorder_point));
+			.then(drizzle_map({ one: 'ingredient', with_one: [], with_many: [] }));
+		list.sort((x) => x.stock - x.reorder_point);
+		return list;
 	}
 
 	async deletebyID(id: number) {

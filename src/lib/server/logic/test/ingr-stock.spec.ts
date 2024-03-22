@@ -321,7 +321,7 @@ describe.sequential('stock ingredients', () => {
 		expect(res).toEqual([{ batch_id: first_batch_id, currently_available: 1_550 }]);
 	});
 
-	test('sum bathes of the same ingredient', async () => {
+	test('sum batches of the same ingredient', async () => {
 		await purchases_defaulter_service.buy({
 			supplier_id: SUPPLIER_ID,
 			bought: [{ ingredient_id: LIVER_ID, initial_amount: 2_000 }]
