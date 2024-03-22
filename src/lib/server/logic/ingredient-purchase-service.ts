@@ -10,7 +10,7 @@ import {
 import { db } from '$lib/server/db';
 import { and, between, count, eq, like } from 'drizzle-orm';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
-import { is_ok, logic_error } from '$logic';
+import { is_ok } from '$logic';
 
 export class IngredientPurchaseService {
 	async getEntryById(entry_id: number) {
@@ -189,21 +189,14 @@ export class IngredientPurchaseService {
 			.delete(t_ingredient_batch)
 			.where(eq(t_ingredient_batch.entry_id, entry_id))
 			.then(() => console.log('entry deleted'));
-		const obj = await db
-			.select()
-			.from(t_ingridient_entry)
-			.where(eq(t_ingridient_entry.id, entry_id))
-			.then(getFirstIfPosible)
-		console.log(obj);
-		if (!obj) return logic_error('entry not found');
+		await db
+			.delete(t_entry_document)
+			.where(eq(t_entry_document.entry_id, entry_id));
+
 		await db
 			.delete(t_ingridient_entry)
-			.where(eq(t_ingridient_entry.id, entry_id)).then((y) => console.log(y));
-		if (obj.document_id) {
-			await db
-				.delete(t_entry_document)
-				.where(eq(t_entry_document.id, obj.document_id)).then((x) => console.log(x));
-		}
+			.where(eq(t_ingridient_entry.id, entry_id));
+
 		return (is_ok(null));
 	}
 

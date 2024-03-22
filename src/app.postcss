@@ -14,6 +14,7 @@ body {
 	src: url('/fonts/SpaceGrotesk.ttf');
 	font-display: swap;
 }
+
 .error_border {
 	outline: 2px solid red;
 }
@@ -30,9 +31,16 @@ td {
 }
 
 @layer base {
+
 	input[type='number']::-webkit-inner-spin-button,
 	input[type='number']::-webkit-outer-spin-button {
 		-webkit-appearance: none;
 		margin: 0;
+	}
+}
+
+@media(max-width: 620px) {
+	.invisible_movil {
+		display: none;
 	}
 }

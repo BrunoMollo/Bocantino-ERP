@@ -9,9 +9,8 @@
 
 <nav class="list-nav p-4">
 	<!-- fist one is styled wierdly -->
-	<a class="invisible" href={$page.url.href} on:click={drawerStore.close}>volver</a>
-
-	<ul class="px-4">
+	<a class="invisible" href={$page.url.href} on:click={drawerStore.close}>ok</a>
+	<ul class="md:px-4">
 		{#each routes as group}
 			<li class="pb-5">
 				<div class="px-4 pb-1 w-full flex justify-between uppercase h-full">

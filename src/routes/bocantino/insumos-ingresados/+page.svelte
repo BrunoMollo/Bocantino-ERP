@@ -42,7 +42,7 @@
 </script>
 
 <div
-	class="rounded-full bg-slate-950 w-64 flex justify-between py-2 px-5 mt-10 mx-auto"
+	class="rounded-full bg-slate-950 w-64 flex justify-between py-2 px-5 md:mt-10 mt-4 mx-auto"
 	use:popup={popupClick}
 >
 	<p>Filtrar...</p>
@@ -88,29 +88,29 @@
 	>
 	<div class="arrow variant-filled-secondary" />
 </div>
-<div class="w-11/12 mx-auto mt-10">
+<div class="md:w-11/12 md:mx-auto md:mt-10 mt-3">
 	<table class="table mb-4 rounded">
 		<thead>
 			<tr>
-				<th class="text-center w-2/12">ID:</th>
-				<th class="text-center w2/12">Proveedor:</th>
-				<th class="text-center w-2/12">Fecha alta:</th>
-				<th class="text-center w-2/12">Comprobante:</th>
-				<th class="text-center w-2/12"></th>
+				<th class="text-center">ID:</th>
+				<th class="text-center">Proveedor:</th>
+				<th class="text-center">Fecha alta:</th>
+				<th class="text-center invisible_movil">Comprobante:</th>
+				<th class="text-center"></th>
 			</tr>
 		</thead>
 		<tbody class="">
 			{#each data.entries as entrada}
 				<tr class="align-middle my-auto">
-					<td style="vertical-align:middle" class="text-center w-2/12">{entrada.id}</td>
-					<td style="vertical-align:middle" class="text-center w-2/12">{entrada.supplier}</td>
-					<td style="vertical-align:middle" class="text-center w-2/12">
+					<td class="text-center">{entrada.id}</td>
+					<td class="text-center">{entrada.supplier}</td>
+					<td class="text-center">
 						{entrada.date.toLocaleDateString('es')}
 					</td>
-					<td style="vertical-align:middle" class="text-center w-2/12 my-auto"
+					<td class="text-center invisible_movil"
 						>{entrada.document.number} ({entrada.document.type})</td
 					>
-					<td style="vertical-align:middle" class="text-center w-2/12">
+					<td class="text-center">
 						<a
 							class="btn variant-filled-secondary rounded"
 							href={'/bocantino/insumos-ingresados/' + entrada.id}>ver detalle</a

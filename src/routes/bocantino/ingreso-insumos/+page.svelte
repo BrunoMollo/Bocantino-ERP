@@ -104,7 +104,7 @@
 					id="supplier_id"
 					name="supplier_id"
 					bind:value={$form.supplier_id}
-					className="input {$errors.supplier_id ? 'error_border' : ''}"
+					className="input truncate {$errors.supplier_id ? 'error_border' : ''}"
 					{...optionsSuppliers}
 				/>
 			</div>
