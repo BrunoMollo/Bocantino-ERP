@@ -17,6 +17,7 @@ import { ingredient_production_service } from '$logic/ingredient-production-serv
 import { ingredient_defaulter_service } from '$logic/defaulters/ingredient-service.default';
 import { suppliers_defaulter_service } from '$logic/defaulters/supplier-service.default';
 import { purchases_defaulter_service } from '$logic/defaulters/purchase-service.default';
+import { ingredients_service } from '$logic/ingredient-service';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -318,5 +319,27 @@ describe.sequential('stock ingredients', () => {
 		const res = await db.with(sq_stock).select().from(sq_stock);
 		expect(res.length).toBe(1);
 		expect(res).toEqual([{ batch_id: first_batch_id, currently_available: 1_550 }]);
+	});
+
+	test('sum bathes of the same ingredient', async () => {
+		await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 2_000 }]
+		});
+
+		await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 1_000 }]
+		});
+
+		await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: REDUCED_LIVER_ID, initial_amount: 30_000 }]
+		});
+
+		const res = await ingredients_service.getAllWithStock();
+
+		expect(res[0].id).toEqual(LIVER_ID);
+		expect(res[0].stock).toEqual(3_000);
 	});
 });
