@@ -1,4 +1,4 @@
-import { getFirst, getFirstIfPosible, is_not_nullish, only_unique } from '$lib/utils';
+import { generateUUID, getFirst, getFirstIfPosible, is_not_nullish, only_unique } from '$lib/utils';
 import { eq, and, ilike } from 'drizzle-orm';
 import { db, type Db } from '../db';
 import {
@@ -281,7 +281,7 @@ class ProductService {
 			const inserted = await tx
 				.insert(t_product_batch)
 				.values({
-					batch_code: crypto.randomUUID(), //defualt
+					batch_code: generateUUID(), //defualt
 					initial_amount: produced_amount,
 					expiration_date: get_expiration_date(),
 					production_date: null,

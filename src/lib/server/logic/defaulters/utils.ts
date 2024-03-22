@@ -1,5 +1,5 @@
-import crypto from 'crypto';
+import { generateUUID } from '$lib/utils';
 
 export function some_string() {
-	return crypto.randomBytes(4).toString('hex');
+	return generateUUID();
 }
