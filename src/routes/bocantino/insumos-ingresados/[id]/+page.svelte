@@ -83,6 +83,8 @@
 				<Loader --scale="2" />
 			</div>
 		{/if}
-		<a href={$page.url.pathname + '/edit'}>editar</a>
+		<div class="flex justify-end pr-10">
+			<a class="btn variant-ghost" href={$page.url.pathname + '/edit'}>editar</a>
+		</div>
 	</div>
 </main>
