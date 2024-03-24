@@ -6,8 +6,17 @@
 	export let className = '';
 	export let value = '' as Date | string; //SuperForms deals wearly whit this types
 
-	const valueStore = writable('');
-	let prevValue = '';
+	function reorder_iso_date(str: string | Date) {
+		if (str instanceof Date) {
+			const [year, month, day] = str.toISOString().split('T')[0].split('-');
+			return `${day}-${month}-${year}`;
+		}
+		return '';
+	}
+
+	const str_value = reorder_iso_date(value);
+	const valueStore = writable(str_value);
+	let prevValue = str_value;
 	valueStore.subscribe((val) => {
 		if (val.length < 10) {
 			value = '';
@@ -63,3 +72,4 @@
 		if (Number.isNaN(num)) e.preventDefault();
 	}}
 />
+

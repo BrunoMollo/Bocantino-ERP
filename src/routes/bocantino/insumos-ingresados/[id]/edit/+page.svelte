@@ -15,12 +15,17 @@
 	const { entry } = data;
 	const doc_type_current = data.document_types.find((x) => x.desc === entry.document.type);
 	startAs(form, 'idDocumentType', doc_type_current?.id);
+	startAs(form, 'invoiceNumber', entry.document.number);
+	startAs(form, 'issueDate', entry.document.issue_date);
+	startAs(form, 'due_date', entry.document.due_date);
+	startAs(form, 'entry_id', entry.id);
 </script>
 
 <main class="container h-full mx-auto flex justify-center items-center">
 	<div class="card p-6 w-4/6">
 		<h2 class="h2">Editar Ingreso de Materia Prima {entry.id}</h2>
 		<form class="flex flex-col gap-4 p-9 w-full" action="" method="post" use:enhance>
+			<input hidden name="entry_id" value={$form.entry_id} />
 			<label class="label" for="document_type">
 				<small class="my-auto mr-1 font-black text-lg">Tipo de documento</small>
 				<select

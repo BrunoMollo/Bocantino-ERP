@@ -15,7 +15,7 @@
 	}
 </script>
 
-<main class=" container mx-auto mt-12">
+<main class=" container mx-auto mt-12 pb-10">
 	<div class="absolute rounded-md bg-surface-100-800-token p-4 pb-10">
 		<div>
 			<a href="/bocantino/insumos-ingresados" class="align-middle hover:text-secondary-400">

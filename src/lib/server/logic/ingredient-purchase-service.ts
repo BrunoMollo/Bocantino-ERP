@@ -19,7 +19,7 @@ export class IngredientPurchaseService {
 				supplier: t_supplier.name,
 				date: t_ingridient_entry.creation_date,
 				document: pick_merge()
-					.table(t_entry_document, 'number', 'issue_date')
+					.table(t_entry_document, 'number', 'issue_date', 'due_date')
 					.aliased(t_document_type, 'desc', 'type')
 					.build()
 			})

@@ -1,11 +1,12 @@
 import { z } from 'zod';
-import type { PageServerLoad } from './$types';
+import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms/client';
 import { isValidDateBackend, parseStringToDate } from '$lib/utils';
 import { db } from '$lib/server/db';
 import { t_document_type } from '$lib/server/db/schema';
 
 const edit_entry_schema = z.object({
+	entry_id: z.number().positive().int(),
 	idDocumentType: z.coerce.number().int().min(1, ''),
 	invoiceNumber: z.string().min(4, 'Requerido').max(255),
 	issueDate: z.string().refine(isValidDateBackend).transform(parseStringToDate),
