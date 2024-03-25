@@ -69,7 +69,8 @@ describe.sequential('stock ingredients', () => {
 		});
 
 		const res = await db.with(sq_stock).select().from(sq_stock);
-		expect(res.toSorted(by('batch_id'))).toEqual([
+
+		expect(res.sort(by('batch_id'))).toEqual([
 			{ batch_id: first_batch_id, currently_available: 20_000 },
 			{ batch_id: second_batch_id, currently_available: 10_000 }
 		]);

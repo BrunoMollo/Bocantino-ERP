@@ -158,3 +158,20 @@ export function only_unique<T>(arr: T[]) {
 export function is_not_nullish<T>(item: T | undefined): item is NonNullable<T> {
 	return !!item;
 }
+
+/**
+ * This functions is needed becasue Vercel does not suport Node 20 yet, so we do not have the crypto module
+ **/
+export function generateUUID() {
+	const randomHex = () => Math.floor(Math.random() * 16).toString(16);
+
+	let uuid = '';
+	for (let i = 0; i < 32; i++) {
+		if (i === 8 || i === 12 || i === 16 || i === 20) {
+			uuid += '-';
+		}
+		uuid += randomHex();
+	}
+
+	return uuid;
+}
