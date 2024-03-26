@@ -23,7 +23,7 @@
 
 <main class="container h-full mx-auto flex justify-center items-center">
 	<div class="card p-6 w-4/6">
-		<h2 class="h2">Editar Ingreso de Materia Prima {entry.id}</h2>
+		<h2 class="h2">Agregar documento a Ingreso {entry.id}</h2>
 		<form class="flex flex-col gap-4 p-9 w-full" action="" method="post" use:enhance>
 			<input hidden name="entry_id" value={$form.entry_id} />
 			<label class="label" for="document_type">
@@ -54,7 +54,7 @@
 			</label>
 
 			<label class="label" for="issue_date">
-				<small class="my-auto mr-1 font-black text-lg"> Fecha factura</small>
+				<small class="my-auto mr-1 font-black text-lg"> Fecha Emisión</small>
 				<InputDate
 					id="issue_date"
 					className={`input ${$errors.issueDate ? 'error_border' : ''}`}
@@ -63,7 +63,7 @@
 			</label>
 
 			<label class="label" for="due_date">
-				<small class="my-auto mr-1 font-black text-lg">Vencimiento factura</small>
+				<small class="my-auto mr-1 font-black text-lg">Fecha Vencimiento</small>
 				<InputDate
 					id="due_date"
 					className={`input ${$errors.due_date ? 'error_border' : ''}`}
@@ -73,13 +73,13 @@
 
 			<div class="flex justify-end pt-4 gap-4">
 				<a class="btn variant-ghost-surface" href={`/bocantino/insumos-ingresados/${entry.id}`}>
-					<b>No editar</b>
+					<b>Cancelar</b>
 				</a>
 				<button class="btn variant-filled-primary" type="submit">
 					{#if $delayed}
 						<Loader />
 					{:else}
-						<b>Editar</b>
+						<b>Agregar {selected_doc_type?.desc}</b>
 					{/if}
 				</button>
 			</div>

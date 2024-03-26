@@ -84,7 +84,7 @@
 			</div>
 		{/if}
 		<div class="flex justify-end pr-10">
-			<a class="btn variant-ghost" href={$page.url.pathname + '/edit'}>editar</a>
+			<a class="btn variant-ghost" href={$page.url.pathname + '/add-doc'}>Agregar documento</a>
 		</div>
 	</div>
 </main>
