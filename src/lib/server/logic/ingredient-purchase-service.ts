@@ -10,6 +10,7 @@ import {
 import { db } from '$lib/server/db';
 import { and, between, count, eq, like } from 'drizzle-orm';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
+import { logic_error } from '$logic';
 
 export class IngredientPurchaseService {
 	async getEntryById(entry_id: number) {
@@ -181,6 +182,37 @@ export class IngredientPurchaseService {
 			.from(t_ingredient_batch)
 			.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredient_id))
 			.where(eq(t_ingredient_batch.entry_id, entry_id));
+	}
+
+	async addDocument(data: {
+		entry_id: number;
+		idDocumentType: number;
+		invoiceNumber: string;
+		issueDate: Date;
+		due_date: Date;
+	}) {
+		const { entry_id } = data;
+		const entry = await db
+			.select()
+			.from(t_entry_document)
+			.where(eq(t_entry_document.id, entry_id))
+			.then(getFirstIfPosible);
+		if (!entry) {
+			return logic_error('Ingreso no existe');
+		}
+		const { id } = await db
+			.insert(t_entry_document)
+			.values({
+				number: data.invoiceNumber,
+				issue_date: data.issueDate,
+				due_date: data.due_date,
+				entry_id: data.entry_id,
+				typeId: data.idDocumentType
+			})
+			.returning({ id: t_entry_document.id })
+			.then(getFirst);
+
+		return { id };
 	}
 }
 
