@@ -185,6 +185,15 @@ export class IngredientPurchaseService {
 	}
 
 	async deleteEntryById(entry_id: number) {
+		const entry = await db
+			.select()
+			.from(t_ingridient_entry)
+			.where(eq(t_ingridient_entry.id, entry_id))
+			.then(getFirstIfPosible);
+
+		if (!entry) {
+			return logic_error('Entrada no existe');
+		}
 		try {
 			return await db.transaction(async (tx) => {
 				await tx.delete(t_ingredient_batch).where(eq(t_ingredient_batch.entry_id, entry_id));
