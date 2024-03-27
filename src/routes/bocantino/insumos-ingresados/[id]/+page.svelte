@@ -3,7 +3,6 @@
 	import Modal from '../../_components/Modal.svelte';
 	import { trpc } from '$lib/trpc-client';
 	import { enhance } from '$app/forms';
-	import { Result } from 'postcss';
 	import { goto } from '$app/navigation';
 
 	export let data;
