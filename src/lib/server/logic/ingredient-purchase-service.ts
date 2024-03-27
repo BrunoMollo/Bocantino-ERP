@@ -10,7 +10,7 @@ import {
 import { db } from '$lib/server/db';
 import { and, between, count, eq, like } from 'drizzle-orm';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
-import { is_ok } from '$logic';
+import { is_ok, logic_error } from '$logic';
 
 export class IngredientPurchaseService {
 	async getEntryById(entry_id: number) {
@@ -184,20 +184,24 @@ export class IngredientPurchaseService {
 			.where(eq(t_ingredient_batch.entry_id, entry_id));
 	}
 
-	async DeleteEntryById(entry_id: number) {
-		await db
-			.delete(t_ingredient_batch)
-			.where(eq(t_ingredient_batch.entry_id, entry_id))
-			.then(() => console.log('entry deleted'));
-		await db
-			.delete(t_entry_document)
-			.where(eq(t_entry_document.entry_id, entry_id));
+	async deleteEntryById(entry_id: number) {
+		try {
+			await db
+				.delete(t_ingredient_batch)
+				.where(eq(t_ingredient_batch.entry_id, entry_id));
 
-		await db
-			.delete(t_ingridient_entry)
-			.where(eq(t_ingridient_entry.id, entry_id));
+			await db
+				.delete(t_entry_document)
+				.where(eq(t_entry_document.entry_id, entry_id));
 
-		return (is_ok(null));
+			await db
+				.delete(t_ingridient_entry)
+				.where(eq(t_ingridient_entry.id, entry_id));
+			return (is_ok(null));
+		} catch (error) {
+			return logic_error('No se puede borrar el ingreso seleccionado porque alguno de los lotes ya fue asignado a una producción');
+		}
+
 	}
 
 }

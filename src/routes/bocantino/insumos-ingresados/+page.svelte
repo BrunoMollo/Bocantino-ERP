@@ -103,7 +103,7 @@
 			{#each data.entries as entrada}
 				<tr class="align-middle my-auto">
 					<td class="text-center">{entrada.id}</td>
-					<td class="text-center">{entrada.supplier}</td>
+					<td class="text-center truncate" style="max-width: 80px;">{entrada.supplier}</td>
 					<td class="text-center">
 						{entrada.date.toLocaleDateString('es')}
 					</td>
