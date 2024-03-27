@@ -11,12 +11,13 @@ import {
 	tr_product_batch_ingredient_batch
 } from '$lib/server/db/schema';
 import { product_service } from '$logic/product-service';
-import { purchases_service } from '$logic/ingredient-purchase-service';
 import { sq_stock } from '$logic/_ingredient-stock';
 import { by } from '$lib/utils';
 import { ingredient_production_service } from '$logic/ingredient-production-service';
 import { ingredient_defaulter_service } from '$logic/defaulters/ingredient-service.default';
 import { suppliers_defaulter_service } from '$logic/defaulters/supplier-service.default';
+import { purchases_defaulter_service } from '$logic/defaulters/purchase-service.default';
+import { ingredients_service } from '$logic/ingredient-service';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -59,72 +60,27 @@ describe.sequential('stock ingredients', () => {
 		expect(res).toEqual([]);
 	});
 	test('after buying two ingredients batches, stock increase', async () => {
-		const [first_batch_id, second_batch_id] = await purchases_service
-			.registerBoughtIngrediets({
-				withdrawal_tax_amount: 10,
-				iva_tax_percentage: 21,
-				supplier_id: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredient_id: LIVER_ID,
-						batch_code: 'SOME OTHER CODE FOR BANANA',
-						initial_amount: 20_000,
-						number_of_bags: 1,
-						cost: 1000,
-						production_date: new Date(),
-						expiration_date: new Date()
-					},
-					{
-						ingredient_id: REDUCED_LIVER_ID,
-						batch_code: 'SOME OTHER CODE FOR BANANA',
-						initial_amount: 10_000,
-						number_of_bags: 1,
-						cost: 1000,
-						production_date: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId);
+		const [first_batch_id, second_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [
+				{ ingredient_id: LIVER_ID, initial_amount: 20_000 },
+				{ ingredient_id: REDUCED_LIVER_ID, initial_amount: 10_000 }
+			]
+		});
 
 		const res = await db.with(sq_stock).select().from(sq_stock);
-		expect(res.toSorted(by('batch_id'))).toEqual([
+
+		expect(res.sort(by('batch_id'))).toEqual([
 			{ batch_id: first_batch_id, currently_available: 20_000 },
 			{ batch_id: second_batch_id, currently_available: 10_000 }
 		]);
 	});
 
 	test('when start producing product,substract stock', async () => {
-		const [first_batch_id] = await purchases_service
-			.registerBoughtIngrediets({
-				withdrawal_tax_amount: 10,
-				iva_tax_percentage: 21,
-				supplier_id: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredient_id: LIVER_ID,
-						batch_code: 'SOME OTHER CODE FOR BANANA',
-						initial_amount: 2_000,
-						number_of_bags: 1,
-						cost: 1000,
-						production_date: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId);
+		const [first_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 2_000 }]
+		});
 		{
 			const res = await product_service.startProduction({
 				product_id: FOOD_DOG_ID,
@@ -150,30 +106,10 @@ describe.sequential('stock ingredients', () => {
 	});
 
 	test('when close product production, mantain substracted stock and djunstent does not affect (+10)', async () => {
-		const [first_batch_id] = await purchases_service
-			.registerBoughtIngrediets({
-				withdrawal_tax_amount: 10,
-				iva_tax_percentage: 21,
-				supplier_id: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredient_id: LIVER_ID,
-						batch_code: 'SOME OTHER CODE FOR BANANA',
-						initial_amount: 2_000,
-						number_of_bags: 1,
-						cost: 1000,
-						production_date: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId);
+		const [first_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 2_000 }]
+		});
 		{
 			const res = await product_service.startProduction({
 				product_id: FOOD_DOG_ID,
@@ -202,30 +138,10 @@ describe.sequential('stock ingredients', () => {
 	});
 
 	test('when cancel produciton of product, stoke is resotred', async () => {
-		const [first_batch_id] = await purchases_service
-			.registerBoughtIngrediets({
-				withdrawal_tax_amount: 10,
-				iva_tax_percentage: 21,
-				supplier_id: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredient_id: LIVER_ID,
-						batch_code: 'SOME OTHER CODE FOR BANANA',
-						initial_amount: 2_000,
-						number_of_bags: 1,
-						cost: 1000,
-						production_date: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId);
+		const [first_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 2_000 }]
+		});
 		{
 			const res = await product_service.startProduction({
 				product_id: FOOD_DOG_ID,
@@ -244,30 +160,10 @@ describe.sequential('stock ingredients', () => {
 	});
 
 	test('while producing ingredient, stock is reduced used & produced batch does not appear', async () => {
-		const [first_batch_id] = await purchases_service
-			.registerBoughtIngrediets({
-				withdrawal_tax_amount: 10,
-				iva_tax_percentage: 21,
-				supplier_id: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredient_id: LIVER_ID,
-						batch_code: 'SOME OTHER CODE FOR BANANA',
-						initial_amount: 2_000,
-						number_of_bags: 1,
-						cost: 1000,
-						production_date: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId);
+		const [first_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 2_000 }]
+		});
 		await ingredient_production_service
 			.startIngredientProduction({ ingedient_id: REDUCED_LIVER_ID, produced_amount: 100 }, [
 				first_batch_id
@@ -281,30 +177,10 @@ describe.sequential('stock ingredients', () => {
 	});
 
 	test('after producing ingredient, stock is reduced used & produced batch appear (adjusntment=0)', async () => {
-		const [first_batch_id] = await purchases_service
-			.registerBoughtIngrediets({
-				withdrawal_tax_amount: 10,
-				iva_tax_percentage: 21,
-				supplier_id: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredient_id: LIVER_ID,
-						batch_code: 'SOME OTHER CODE FOR BANANA',
-						initial_amount: 2_000,
-						number_of_bags: 1,
-						cost: 1000,
-						production_date: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId);
+		const [first_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 2_000 }]
+		});
 		const producrd_id = await ingredient_production_service
 			.startIngredientProduction({ ingedient_id: REDUCED_LIVER_ID, produced_amount: 100 }, [
 				first_batch_id
@@ -324,30 +200,10 @@ describe.sequential('stock ingredients', () => {
 	});
 
 	test('after producing ingredient, stock is reduced used & produced batch appear (adjusntment=+10)', async () => {
-		const [first_batch_id] = await purchases_service
-			.registerBoughtIngrediets({
-				withdrawal_tax_amount: 10,
-				iva_tax_percentage: 21,
-				supplier_id: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredient_id: LIVER_ID,
-						batch_code: 'SOME OTHER CODE FOR BANANA',
-						initial_amount: 2_000,
-						number_of_bags: 1,
-						cost: 1000,
-						production_date: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId);
+		const [first_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 2_000 }]
+		});
 		const producrd_id = await ingredient_production_service
 			.startIngredientProduction({ ingedient_id: REDUCED_LIVER_ID, produced_amount: 100 }, [
 				first_batch_id
@@ -367,30 +223,10 @@ describe.sequential('stock ingredients', () => {
 	});
 
 	test('after producing ingredient, stock is reduced used & produced batch appear (adjusntment=-15)', async () => {
-		const [first_batch_id] = await purchases_service
-			.registerBoughtIngrediets({
-				withdrawal_tax_amount: 10,
-				iva_tax_percentage: 21,
-				supplier_id: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredient_id: LIVER_ID,
-						batch_code: 'SOME OTHER CODE FOR BANANA',
-						initial_amount: 2_000,
-						number_of_bags: 1,
-						cost: 1000,
-						production_date: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId);
+		const [first_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 2_000 }]
+		});
 		const producrd_id = await ingredient_production_service
 			.startIngredientProduction({ ingedient_id: REDUCED_LIVER_ID, produced_amount: 100 }, [
 				first_batch_id
@@ -410,30 +246,10 @@ describe.sequential('stock ingredients', () => {
 	});
 
 	test('cancel producing ingredient, stock is restored used & produced batch does not appear', async () => {
-		const [first_batch_id] = await purchases_service
-			.registerBoughtIngrediets({
-				withdrawal_tax_amount: 10,
-				iva_tax_percentage: 21,
-				supplier_id: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredient_id: LIVER_ID,
-						batch_code: 'SOME OTHER CODE FOR BANANA',
-						initial_amount: 2_000,
-						number_of_bags: 1,
-						cost: 1000,
-						production_date: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId);
+		const [first_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 2_000 }]
+		});
 		const producrd_id = await ingredient_production_service
 			.startIngredientProduction({ ingedient_id: REDUCED_LIVER_ID, produced_amount: 100 }, [
 				first_batch_id
@@ -452,30 +268,10 @@ describe.sequential('stock ingredients', () => {
 	});
 
 	test('a lot of stuff', async () => {
-		const [first_batch_id] = await purchases_service
-			.registerBoughtIngrediets({
-				withdrawal_tax_amount: 10,
-				iva_tax_percentage: 21,
-				supplier_id: SUPPLIER_ID,
-				document: {
-					number: '1234',
-					typeId: INVOICE_TYPE.id,
-					issue_date: new Date(),
-					due_date: new Date()
-				},
-				batches: [
-					{
-						ingredient_id: LIVER_ID,
-						batch_code: 'SOME OTHER CODE FOR BANANA',
-						initial_amount: 2_000,
-						number_of_bags: 1,
-						cost: 1000,
-						production_date: new Date(),
-						expiration_date: new Date()
-					}
-				]
-			})
-			.then((x) => x.batchesId);
+		const [first_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 2_000 }]
+		});
 		{
 			//product product -250
 			const res = await product_service.startProduction({
@@ -524,5 +320,27 @@ describe.sequential('stock ingredients', () => {
 		const res = await db.with(sq_stock).select().from(sq_stock);
 		expect(res.length).toBe(1);
 		expect(res).toEqual([{ batch_id: first_batch_id, currently_available: 1_550 }]);
+	});
+
+	test('sum bathes of the same ingredient', async () => {
+		await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 2_000 }]
+		});
+
+		await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 1_000 }]
+		});
+
+		await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: REDUCED_LIVER_ID, initial_amount: 30_000 }]
+		});
+
+		const res = await ingredients_service.getAllWithStock();
+
+		expect(res[0].id).toEqual(LIVER_ID);
+		expect(res[0].stock).toEqual(3_000);
 	});
 });
