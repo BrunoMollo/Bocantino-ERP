@@ -10,6 +10,7 @@ import {
 import { db } from '$lib/server/db';
 import { and, between, count, eq, like } from 'drizzle-orm';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
+import { is_ok, logic_error } from '$logic';
 
 export class IngredientPurchaseService {
 	async getEntryById(entry_id: number) {
@@ -181,6 +182,30 @@ export class IngredientPurchaseService {
 			.from(t_ingredient_batch)
 			.innerJoin(t_ingredient, eq(t_ingredient.id, t_ingredient_batch.ingredient_id))
 			.where(eq(t_ingredient_batch.entry_id, entry_id));
+	}
+
+	async deleteEntryById(entry_id: number) {
+		const entry = await db
+			.select()
+			.from(t_ingridient_entry)
+			.where(eq(t_ingridient_entry.id, entry_id))
+			.then(getFirstIfPosible);
+
+		if (!entry) {
+			return logic_error('Entrada no existe');
+		}
+		try {
+			return await db.transaction(async (tx) => {
+				await tx.delete(t_ingredient_batch).where(eq(t_ingredient_batch.entry_id, entry_id));
+				await tx.delete(t_entry_document).where(eq(t_entry_document.entry_id, entry_id));
+				await tx.delete(t_ingridient_entry).where(eq(t_ingridient_entry.id, entry_id));
+				return is_ok(null);
+			});
+		} catch (error) {
+			return logic_error(
+				'No se puede borrar el ingreso seleccionado porque alguno de los lotes ya fue asignado a una producción'
+			);
+		}
 	}
 }
 

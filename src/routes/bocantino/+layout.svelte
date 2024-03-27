@@ -44,8 +44,13 @@
 </script>
 
 <Drawer>
-	<div class="pt-4 w-96">
-		<strong class="p-4 text-xl uppercase">Bocantino</strong>
+	<div class="pt-4 md:w-96 w-70">
+		<div class="w-full flex justify-between align-middle">
+			<strong class="p-4 text-xl uppercase">Bocantino</strong>
+			<button on:click={drawerStore.close}
+				><i class="md:invisible bx text-2xl bx-x my-auto mx-3 px-2"></i></button
+			>
+		</div>
 		<Navigation />
 	</div>
 </Drawer>

@@ -18,16 +18,16 @@
 	}
 </script>
 
-<main class="container h-full mx-auto flex gap-10 items-start">
-	<div class="flex gap-4 w-8/12 py-5">
-		<div class="container glass rounded p-3 w-1/2 relative">
-			<h1 class="text-2xl mb-2 text-center">Producciones pendientes:</h1>
-			<div class="">
+<main class="md:container h-full mx-auto md:flex lg:gap-10 gap-3">
+	<div class="flex gap-5 justify-between lg:w-8/12 md:w-6/12 py-5 lg:flex-row flex-col">
+		<div class="container glass rounded p-1 lg:w-1/2 md:1/3 relative lg:m-0 max-h-80">
+			<h1 class="md:text-2xl mb-2 text-center">Producciones pendientes:</h1>
+			<div>
 				{#if data.pending_productions.length == 0}
 					<h1 class="text-center inset-36 absolute">No hay solicitudes pendientes</h1>
 				{/if}
 				{#each data.pending_productions as pendiente}
-					<div class="flex justify-between border py-1 px-3 h-14">
+					<div class="flex justify-between py-1 px-3 h-14">
 						<span class="text-center my-auto">{pendiente.id}</span>
 						<span class="text-center my-auto">{pendiente.product.desc}</span>
 						<span class="text-center my-auto">{pendiente.initial_amount} kg</span>
@@ -40,19 +40,19 @@
 				{/each}
 				{#if 5 - data.pending_productions.length > 0 && data.pending_productions.length != 0}
 					{#each Array(5 - data.pending_productions.length) as _}
-						<div class="flex justify-between border py-1 px-3 h-14">...</div>
+						<div class="flex justify-between py-1 px-3 h-14">...</div>
 					{/each}
 				{/if}
 			</div>
 		</div>
-		<div class="container rounded w-1/2 p-3 glass">
+		<div class="container rounded lg:w-1/2 md:1/3 p-3 glass max-h-80">
 			<h1 class="text-2xl mb-2 text-center">Ultimos ingresos:</h1>
 
 			<div class="">
 				{#each data.entries as entrada}
-					<div class="flex justify-between border py-1 px-3 h-14">
+					<div class="flex justify-between py-1 px-3 h-14">
 						<span class="text-center my-auto">{entrada.id}</span>
-						<span class="text-center my-auto">{entrada.supplier}</span>
+						<span class="text-center my-auto truncate w-1/3">{entrada.supplier}</span>
 						<span class="text-center my-auto">
 							{entrada.date.toLocaleDateString('es')}
 						</span>
@@ -65,14 +65,14 @@
 				{/each}
 				{#if 5 - data.entries.length > 0}
 					{#each Array(5 - data.entries.length) as _}
-						<div class="flex justify-between border py-1 px-3 h-14">...</div>
+						<div class="flex justify-between py-1 px-3 h-14">...</div>
 					{/each}
 				{/if}
 			</div>
 		</div>
 	</div>
 	<div
-		class="gap-4 p-5 mt-5 rounded glass flex flex-col overflow-y-auto"
+		class="gap-4 lg:p-5 p-2 mt-5 rounded glass flex flex-col overflow-y-auto w-full lg:w-auto"
 		style="height: calc(100vh - 100px)"
 	>
 		<input
@@ -82,13 +82,13 @@
 			on:input={filtrar}
 		/>
 		{#if ingredientes.length === 0}
-			<div class="card w-96 p-3 shadow-lg rounded-lg">
+			<div class="card p-2 w-96 shadow-lg rounded-lg">
 				<h1>No se encontraron materias primas...</h1>
 			</div>
 		{/if}
 		{#each ingredientes as { id, name, stock, reorder_point }}
 			<div
-				class="shrink-0 card p-3 w-96 rounded-lg shadow-lg relative"
+				class="shrink-0 card lg:w-96 w-full p-2 rounded-lg shadow-lg relative"
 				style:background-color={stock < reorder_point ? 'rgba(127, 29, 29, 0.4)' : ''}
 				style:box-shadow={stock < reorder_point ? '0 1px 25px 1px rgba(255, 0, 0, 0.8)' : ''}
 			>

@@ -1,5 +1,5 @@
 import { purchases_service } from '$logic/ingredient-purchase-service';
-import { error } from '@sveltejs/kit';
+import { error, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (url) => {
@@ -12,4 +12,16 @@ export const load: PageServerLoad = async (url) => {
 		throw error(404, 'entrada no encontrada');
 	}
 	return { entry };
+};
+
+export const actions: Actions = {
+	remove: async ({ params }) => {
+		const id = Number(params.id);
+		const res = await purchases_service.deleteEntryById(id);
+		if (res.type == 'SUCCESS') {
+			throw redirect(302, `/bocantino/insumos-ingresados?toast=Ingreso id: ${id} Eliminado`);
+		} else {
+			throw error(400, res.message);
+		}
+	}
 };
