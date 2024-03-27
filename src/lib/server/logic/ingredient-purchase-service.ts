@@ -186,24 +186,18 @@ export class IngredientPurchaseService {
 
 	async deleteEntryById(entry_id: number) {
 		try {
-			await db
-				.delete(t_ingredient_batch)
-				.where(eq(t_ingredient_batch.entry_id, entry_id));
+			await db.delete(t_ingredient_batch).where(eq(t_ingredient_batch.entry_id, entry_id));
 
-			await db
-				.delete(t_entry_document)
-				.where(eq(t_entry_document.entry_id, entry_id));
+			await db.delete(t_entry_document).where(eq(t_entry_document.entry_id, entry_id));
 
-			await db
-				.delete(t_ingridient_entry)
-				.where(eq(t_ingridient_entry.id, entry_id));
-			return (is_ok(null));
+			await db.delete(t_ingridient_entry).where(eq(t_ingridient_entry.id, entry_id));
+			return is_ok(null);
 		} catch (error) {
-			return logic_error('No se puede borrar el ingreso seleccionado porque alguno de los lotes ya fue asignado a una producción');
+			return logic_error(
+				'No se puede borrar el ingreso seleccionado porque alguno de los lotes ya fue asignado a una producción'
+			);
 		}
-
 	}
-
 }
 
 export const purchases_service = new IngredientPurchaseService();

@@ -2,8 +2,6 @@ import { purchases_service } from '$logic/ingredient-purchase-service';
 import { error, redirect } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
-
-
 export const load: PageServerLoad = async (url) => {
 	const id = Number(url.params.id);
 	if (!id) {
@@ -24,6 +22,6 @@ export const actions = {
 			throw redirect(302, '/bocantino/insumos-ingresados');
 		} else {
 			throw error(400, res.message);
-		};
+		}
 	}
-}
+};
