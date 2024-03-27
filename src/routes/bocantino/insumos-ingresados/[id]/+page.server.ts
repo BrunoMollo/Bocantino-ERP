@@ -1,5 +1,5 @@
 import { purchases_service } from '$logic/ingredient-purchase-service';
-import { error, redirect } from '@sveltejs/kit';
+import { error, redirect, type Actions } from '@sveltejs/kit';
 import type { PageServerLoad } from './$types';
 
 export const load: PageServerLoad = async (url) => {
@@ -14,12 +14,12 @@ export const load: PageServerLoad = async (url) => {
 	return { entry };
 };
 
-export const actions = {
+export const actions: Actions = {
 	remove: async ({ params }) => {
 		const id = Number(params.id);
 		const res = await purchases_service.deleteEntryById(id);
 		if (res.type == 'SUCCESS') {
-			throw redirect(302, '/bocantino/insumos-ingresados');
+			throw redirect(302, `/bocantino/insumos-ingresados?toast=Ingreso id: ${id} Eliminado`);
 		} else {
 			throw error(400, res.message);
 		}
