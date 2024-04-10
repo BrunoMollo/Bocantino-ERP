@@ -91,6 +91,10 @@
 		});
 		subtotal = variable;
 	}
+	function letDocumentName(id: Number): string {
+		return data.documentTypes.find((x) => x.id == id)?.desc ?? '';
+	}
+	$: tipoDocumento = letDocumentName($form.idDocumentType);
 </script>
 
 <main class="container h-full mx-auto flex justify-center items-center">
@@ -123,9 +127,9 @@
 					{/each}
 				</select>
 			</div>
-			<div>
+			<div class:hidden={tipoDocumento == 'Orden de compra'}>
 				<label class="label ml-auto" for="invoice_number">
-					<small class="my-auto mr-1 font-black text-lg">Numero de factura</small>
+					<small class="my-auto mr-1 font-black text-lg">Numero de {tipoDocumento}</small>
 				</label>
 				<input
 					id="invoice_number"
@@ -137,7 +141,7 @@
 					aria-invalid={$errors.invoiceNumber ? 'true' : undefined}
 				/>
 			</div>
-			<div>
+			<div class:hidden={tipoDocumento === 'Remito' || tipoDocumento == 'Orden de compra'}>
 				<label class="label" for="issue_date">
 					<small class="my-auto mr-1 font-black text-lg"> Fecha factura</small>
 				</label>
@@ -168,7 +172,7 @@
 						<th class="text-center">Bolsas</th>
 						<th class="text-center w-32">Fecha produccion</th>
 						<th class="text-center w-32">Fecha vencimiento</th>
-						<th class="text-center w-24">Importe</th>
+						<th class="text-center w-24" class:hidden={tipoDocumento === 'Remito'}>Importe</th>
 						<th class="text-center">Lote</th>
 						<th class="text-center"></th>
 					</tr>
@@ -232,7 +236,8 @@
 									></InputDate>
 								</div>
 							</td>
-							<td class="w-24">
+
+							<td class="w-24" class:hidden={tipoDocumento === 'Remito'}>
 								<div class="relative inline-block">
 									<input
 										class="input w-24"
@@ -249,6 +254,7 @@
 									<input
 										type="text"
 										class="input"
+										style="min-width: 50px;!important"
 										class:error_border={$batchesError(i, 'batch_code')}
 										bind:value={$form.batches[i].batch_code}
 									/>
@@ -284,7 +290,10 @@
 				>
 			</div>
 		</div>
-		<div class="flex mx-auto justify-between">
+		<div
+			class="flex mx-auto justify-between"
+			class:invisible={tipoDocumento === 'Remito' || tipoDocumento == 'Orden de compra'}
+		>
 			<div class="flex">
 				<h2 class="p-2">Subtotal:</h2>
 				<div class="relative inline-block">
@@ -292,7 +301,10 @@
 					<span class="suffix absolute right-3 top-[20%]">$</span>
 				</div>
 			</div>
-			<div class="flex">
+			<div
+				class="flex"
+				class:invisible={tipoDocumento === 'Remito' || tipoDocumento == 'Orden de compra'}
+			>
 				<h2 class="p-2">Iva:</h2>
 				<select id="opciones" class="select w-24" bind:value={$form.iva_tax_percentage}>
 					<option value="0.21">21%</option>
@@ -300,7 +312,10 @@
 					<option value="0">0%</option>
 				</select>
 			</div>
-			<div class="flex align-middle">
+			<div
+				class="flex align-middle"
+				class:invisible={tipoDocumento === 'Remito' || tipoDocumento == 'Orden de compra'}
+			>
 				<h2 class="p-2">Percepciones:</h2>
 				<div class="relative inline-block">
 					<input type="text" class="input rounded w-28" bind:value={$form.withdrawal_tax_amount} />
@@ -310,13 +325,13 @@
 			<div class="w-1/2"></div>
 		</div>
 		<div class=" mx-auto flex justify-end">
-			<div class="flex mr-10">
+			<div class="flex mr-10" class:invisible={tipoDocumento === 'Remito'}>
+				<!-- <div class={isActive ? 'active' : ''}>...</div> -->
 				<h1 class="p-2">Total:</h1>
 				<div class="input w-32 p-2 rounded">
 					{Math.round(total * 100) / 100}
 				</div>
 			</div>
-
 			<div class="w-1/5 h-0 grid place-items-center">
 				{#if $delayed}
 					<Loader />
