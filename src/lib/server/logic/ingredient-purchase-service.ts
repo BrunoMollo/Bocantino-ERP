@@ -1,4 +1,4 @@
-import { getFirst, getFirstIfPosible, type TableInsert } from '$lib/utils';
+import { getFirst, getFirstIfPosible, should_not_reach, type TableInsert } from '$lib/utils';
 import {
 	t_document_type,
 	t_entry_document,
@@ -12,6 +12,21 @@ import { and, between, count, eq, like } from 'drizzle-orm';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
 import { is_ok, logic_error } from '$logic';
 
+type BuyIngredients_Dto = {
+	supplier_id: number;
+	document: TableInsert<typeof t_entry_document.$inferInsert, 'id' | 'entry_id'>;
+	withdrawal_tax_amount: number;
+	iva_tax_percentage: number;
+	batches: {
+		ingredient_id: number;
+		batch_code: string;
+		initial_amount: number;
+		production_date: Date;
+		expiration_date: Date;
+		number_of_bags: number;
+		cost: number;
+	}[];
+};
 export class IngredientPurchaseService {
 	async getEntryById(entry_id: number) {
 		return await db
@@ -31,21 +46,49 @@ export class IngredientPurchaseService {
 			.where(eq(t_ingridient_entry.id, entry_id))
 			.then(getFirstIfPosible);
 	}
-	registerBoughtIngrediets(data: {
-		supplier_id: number;
-		document: TableInsert<typeof t_entry_document.$inferInsert, 'id' | 'entry_id'>;
-		withdrawal_tax_amount: number;
-		iva_tax_percentage: number;
-		batches: {
-			ingredient_id: number;
-			batch_code: string;
-			initial_amount: number;
-			production_date: Date;
-			expiration_date: Date;
-			number_of_bags: number;
-			cost: number;
-		}[];
-	}) {
+
+	async findDocumentTypeName(id: number) {
+		const type = await db
+			.select()
+			.from(t_document_type)
+			.where(eq(t_document_type.id, id))
+			.then(getFirstIfPosible);
+		return type?.desc;
+	}
+
+	async buyIngredientsBasedOnDocuemntType(data: BuyIngredients_Dto) {
+		const doc_desc = await purchases_service.findDocumentTypeName(data.document.typeId);
+		switch (doc_desc) {
+			case 'Factura':
+				return await this.buyIngredients_Factura(data);
+			case 'Remito':
+				return logic_error('TIPO DE DOCUMENTO NO IMPLMENTADO');
+			case 'Nota de Ingreso':
+				return logic_error('TIPO DE DOCUMENTO NO IMPLMENTADO');
+			case undefined:
+				return logic_error('Tipo de documento no especificado');
+			default:
+				should_not_reach(doc_desc);
+				return logic_error('Tipo de documento no especificado (should_not_reach)');
+		}
+	}
+
+	async buyIngredients_Factura(data: BuyIngredients_Dto) {
+		const doc_type_name = await this.findDocumentTypeName(data.document.typeId);
+		if (doc_type_name !== 'Factura') return logic_error('No es un ingreso por factura');
+
+		if (!data.iva_tax_percentage) return logic_error('Falta IVA');
+		if (!data.withdrawal_tax_amount) return logic_error('Falta percepciones');
+		if (!data.document.number) return logic_error('Falta numero de Factura');
+		if (!data.document.issue_date) return logic_error('Falta fecha de emision de Factura');
+		if (!data.document.due_date) return logic_error('Falta fecha de vencimiento de Factura');
+		if (data.batches.some((x) => !x.cost)) return logic_error('Falta el costo de un lote');
+
+		const returned = await this.registerBoughtIngrediets(data);
+		return is_ok(returned);
+	}
+
+	private registerBoughtIngrediets(data: BuyIngredients_Dto) {
 		return db.transaction(async (tx) => {
 			const { entry_id } = await tx
 				.insert(t_ingridient_entry)

@@ -1,13 +1,12 @@
 import type { PageServerLoad } from './$types';
-import { redirect, type Actions } from '@sveltejs/kit';
+import { redirect, type Actions, error } from '@sveltejs/kit';
 import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';
 import { db } from '$lib/server/db';
 import { t_document_type } from '$lib/server/db/schema';
-import { isValidDateBackend, parseStringToDate } from '$lib/utils';
+import { isValidDateBackend, parseStringToDate, should_not_reach } from '$lib/utils';
 import { purchases_service } from '$logic/ingredient-purchase-service';
 import { suppliers_service } from '$logic/suppliers-service';
-
 const boughBatchSchema = z.object({
 	supplier_id: z.coerce.number().int().min(1, 'Requerido'),
 	idDocumentType: z.coerce.number().int().min(1, ''),
@@ -45,7 +44,8 @@ export const actions: Actions = {
 		}
 
 		const { batches, supplier_id, withdrawal_tax_amount, iva_tax_percentage } = form.data;
-		await purchases_service.registerBoughtIngrediets({
+
+		const res = await purchases_service.buyIngredientsBasedOnDocuemntType({
 			withdrawal_tax_amount,
 			iva_tax_percentage,
 			supplier_id,
@@ -58,9 +58,15 @@ export const actions: Actions = {
 			}
 		});
 
-		throw redirect(
-			302,
-			`/bocantino/insumos-ingresados?toast=Se registraron los ${batches.length} lotes`
-		);
+		switch (res.type) {
+			case 'SUCCESS': {
+				const url = `/bocantino/insumos-ingresados?toast=Se registraron los ${batches.length} lotes`;
+				throw redirect(302, url);
+			}
+			case 'LOGIC_ERROR':
+				throw error(400, res.message);
+			default:
+				should_not_reach(res);
+		}
 	}
 };
