@@ -210,7 +210,7 @@ export const t_entry_document = pgTable('entry_document', {
 // DOCUMENT TYPE
 export const t_document_type = pgTable('document_type', {
 	id: serial('id').primaryKey(),
-	desc: text('description').notNull().$type<'Factura' | 'Remito' | 'Nota de Ingreso'>()
+	desc: text('description').notNull()
 });
 //-------------------------------------------------------------------------------------////
 //
