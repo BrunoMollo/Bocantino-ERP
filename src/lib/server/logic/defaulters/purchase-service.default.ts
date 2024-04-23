@@ -17,7 +17,7 @@ class PurchaseServiceDefaulter {
 			expiration_date: new Date()
 		}));
 		return await purchases_service
-			.registerBoughtIngrediets({
+			.registerBoughtIngrediets_Invoice({
 				withdrawal_tax_amount: 10,
 				iva_tax_percentage: 21,
 				supplier_id,
@@ -48,7 +48,7 @@ class PurchaseServiceDefaulter {
 			expiration_date: new Date()
 		}));
 		return await purchases_service
-			.registerBoughtIngrediets({
+			.registerBoughtIngrediets_Invoice({
 				withdrawal_tax_amount: 10,
 				iva_tax_percentage: 21,
 				supplier_id,

@@ -11,6 +11,20 @@ import { and, between, count, eq, like } from 'drizzle-orm';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
 import { is_ok, logic_error } from '$logic';
 
+export type InvoiceData = TableInsert<
+	typeof t_entry_document.$inferInsert,
+	'id' | 'entry_id' | 'typeId' | 'type'
+>;
+
+type BatchFromInvoice = {
+	ingredient_id: number;
+	batch_code: string;
+	initial_amount: number;
+	production_date: Date;
+	expiration_date: Date;
+	number_of_bags: number;
+	cost: number;
+};
 export class IngredientPurchaseService {
 	async getEntryById(entry_id: number) {
 		return await db
@@ -26,21 +40,21 @@ export class IngredientPurchaseService {
 			.where(eq(t_ingridient_entry.id, entry_id))
 			.then(getFirstIfPosible);
 	}
-	registerBoughtIngrediets(data: {
-		supplier_id: number;
-		document: TableInsert<typeof t_entry_document.$inferInsert, 'id' | 'entry_id' | 'typeId'>;
-		withdrawal_tax_amount: number;
-		iva_tax_percentage: number;
-		batches: {
-			ingredient_id: number;
-			batch_code: string;
-			initial_amount: number;
-			production_date: Date;
-			expiration_date: Date;
-			number_of_bags: number;
-			cost: number;
-		}[];
-	}) {
+
+	/*
+	 * We thought that the entry of ingredient always was by Invoice, we were wrong as hell.
+	 * We left this as a generic implemetation for entering ingredients with diferent process
+	 * */
+	private registerBoughtIngrediets(
+		data: {
+			supplier_id: number;
+			document: InvoiceData;
+			withdrawal_tax_amount: number;
+			iva_tax_percentage: number;
+			batches: BatchFromInvoice[];
+		},
+		doc_type: DocumentType
+	) {
 		return db.transaction(async (tx) => {
 			const { entry_id } = await tx
 				.insert(t_ingridient_entry)
@@ -48,9 +62,10 @@ export class IngredientPurchaseService {
 				.returning({ entry_id: t_ingridient_entry.id })
 				.then(getFirst);
 
+			const doc = { ...data.document, type: doc_type, entry_id };
 			await tx
 				.insert(t_entry_document)
-				.values({ ...data.document, entry_id })
+				.values(doc)
 				.returning({ document_id: t_entry_document.id })
 				.then(getFirst);
 
@@ -75,6 +90,16 @@ export class IngredientPurchaseService {
 		});
 	}
 
+	registerBoughtIngrediets_Invoice(data: {
+		supplier_id: number;
+		document: InvoiceData;
+		withdrawal_tax_amount: number;
+		iva_tax_percentage: number;
+		batches: BatchFromInvoice[];
+	}) {
+		return this.registerBoughtIngrediets(data, 'Factura');
+	}
+
 	public async getLastEntries() {
 		const entries = await db
 			.select({
@@ -93,6 +118,7 @@ export class IngredientPurchaseService {
 			.limit(5);
 		return entries;
 	}
+
 	async getCountOfAvailableEntries(input: {
 		supplierName?: string;
 		page: number;
@@ -208,9 +234,11 @@ export class IngredientPurchaseService {
 		id: number;
 		desc: DocumentType;
 	}[];
+
 	getDocumentTypes() {
 		return this.docs;
 	}
+
 	getDocById(id: number) {
 		return this.docs.find((x) => x.id == id);
 	}

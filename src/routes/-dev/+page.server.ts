@@ -95,7 +95,7 @@ async function seed() {
 		ingredientsIds: [higado.id, banana.id]
 	});
 
-	await purchases_service.registerBoughtIngrediets({
+	await purchases_service.registerBoughtIngrediets_Invoice({
 		withdrawal_tax_amount: 10,
 		iva_tax_percentage: 21,
 		supplier_id: julian.id,
@@ -117,7 +117,7 @@ async function seed() {
 			}
 		]
 	});
-	const first_entry = await purchases_service.registerBoughtIngrediets({
+	const first_entry = await purchases_service.registerBoughtIngrediets_Invoice({
 		withdrawal_tax_amount: 10,
 		iva_tax_percentage: 21,
 		supplier_id: julian.id,
@@ -141,7 +141,7 @@ async function seed() {
 	});
 	const banana_batch_id = first_entry.batchesId[0];
 
-	const second_entry = await purchases_service.registerBoughtIngrediets({
+	const second_entry = await purchases_service.registerBoughtIngrediets_Invoice({
 		withdrawal_tax_amount: 10,
 		iva_tax_percentage: 21,
 		supplier_id: julian.id,

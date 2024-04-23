@@ -49,7 +49,7 @@ export const actions: Actions = {
 		}
 
 		const { batches, supplier_id, withdrawal_tax_amount, iva_tax_percentage } = form.data;
-		await purchases_service.registerBoughtIngrediets({
+		await purchases_service.registerBoughtIngrediets_Invoice({
 			withdrawal_tax_amount,
 			iva_tax_percentage,
 			supplier_id,

@@ -24,7 +24,7 @@ beforeEach(async () => {
 });
 
 describe.sequential('buy ingredients', async () => {
-	let VAILD_INPUT_1B: Parameters<typeof purchases_service.registerBoughtIngrediets>[0];
+	let VAILD_INPUT_1B: Parameters<typeof purchases_service.registerBoughtIngrediets_Invoice>[0];
 	beforeAll(() => {
 		VAILD_INPUT_1B = {
 			supplier_id: JUAN.id,
@@ -51,7 +51,7 @@ describe.sequential('buy ingredients', async () => {
 	});
 	describe.sequential('valid case, one batches', () => {
 		test('creates new document row', async () => {
-			await purchases_service.registerBoughtIngrediets(VAILD_INPUT_1B);
+			await purchases_service.registerBoughtIngrediets_Invoice(VAILD_INPUT_1B);
 			const listDocs = await db.select().from(t_entry_document);
 			expect(listDocs.length).toBe(1);
 			const newDoc = listDocs[0];
@@ -68,7 +68,7 @@ describe.sequential('buy ingredients', async () => {
 			);
 		});
 		test('creates new entry row', async () => {
-			await purchases_service.registerBoughtIngrediets(VAILD_INPUT_1B);
+			await purchases_service.registerBoughtIngrediets_Invoice(VAILD_INPUT_1B);
 			const entryList = await db.select().from(t_ingridient_entry);
 			expect(entryList.length).toBe(1);
 			expect(entryList[0]).toBeTruthy();
@@ -86,7 +86,7 @@ describe.sequential('buy ingredients', async () => {
 		});
 
 		test('save the batch', async () => {
-			await purchases_service.registerBoughtIngrediets(VAILD_INPUT_1B);
+			await purchases_service.registerBoughtIngrediets_Invoice(VAILD_INPUT_1B);
 			const list = await db.select().from(t_ingredient_batch);
 			expect(list.length).toBe(VAILD_INPUT_1B.batches.length);
 			expect(list[0].id).toBeTruthy();
@@ -111,7 +111,7 @@ describe.sequential('buy ingredients', async () => {
 	});
 
 	describe.sequential('valid case, two batches', () => {
-		let VALID_INPUT_2B: Parameters<typeof purchases_service.registerBoughtIngrediets>[0];
+		let VALID_INPUT_2B: Parameters<typeof purchases_service.registerBoughtIngrediets_Invoice>[0];
 
 		beforeAll(() => {
 			VALID_INPUT_2B = {
@@ -148,7 +148,7 @@ describe.sequential('buy ingredients', async () => {
 			};
 		});
 		test('creates new document row', async () => {
-			await purchases_service.registerBoughtIngrediets(VALID_INPUT_2B);
+			await purchases_service.registerBoughtIngrediets_Invoice(VALID_INPUT_2B);
 			const listDocs = await db.select().from(t_entry_document);
 			expect(listDocs.length).toBe(1);
 			const newDoc = listDocs[0];
@@ -164,7 +164,7 @@ describe.sequential('buy ingredients', async () => {
 			);
 		});
 		test('creates new entry row', async () => {
-			await purchases_service.registerBoughtIngrediets(VALID_INPUT_2B);
+			await purchases_service.registerBoughtIngrediets_Invoice(VALID_INPUT_2B);
 			const entryList = await db.select().from(t_ingridient_entry);
 			expect(entryList.length).toBe(1);
 			expect(entryList[0]).toBeTruthy();
@@ -181,7 +181,7 @@ describe.sequential('buy ingredients', async () => {
 		});
 
 		test('save the two batches', async () => {
-			const result = await purchases_service.registerBoughtIngrediets(VALID_INPUT_2B);
+			const result = await purchases_service.registerBoughtIngrediets_Invoice(VALID_INPUT_2B);
 			const list = await db.select().from(t_ingredient_batch);
 			expect(list.length).toBe(VALID_INPUT_2B.batches.length);
 			for (const i of [0, 1]) {
@@ -210,7 +210,7 @@ describe.sequential('buy ingredients', async () => {
 	});
 
 	describe.sequential('valid case, two batches with decimal cost', () => {
-		let VALID_INPUT_2B: Parameters<typeof purchases_service.registerBoughtIngrediets>[0];
+		let VALID_INPUT_2B: Parameters<typeof purchases_service.registerBoughtIngrediets_Invoice>[0];
 
 		beforeAll(() => {
 			VALID_INPUT_2B = {
@@ -247,7 +247,7 @@ describe.sequential('buy ingredients', async () => {
 			};
 		});
 		test('creates new document row', async () => {
-			await purchases_service.registerBoughtIngrediets(VALID_INPUT_2B);
+			await purchases_service.registerBoughtIngrediets_Invoice(VALID_INPUT_2B);
 			const listDocs = await db.select().from(t_entry_document);
 			expect(listDocs.length).toBe(1);
 			const newDoc = listDocs[0];
@@ -263,7 +263,7 @@ describe.sequential('buy ingredients', async () => {
 			);
 		});
 		test('creates new entry row', async () => {
-			await purchases_service.registerBoughtIngrediets(VALID_INPUT_2B);
+			await purchases_service.registerBoughtIngrediets_Invoice(VALID_INPUT_2B);
 			const entryList = await db.select().from(t_ingridient_entry);
 			expect(entryList.length).toBe(1);
 			expect(entryList[0]).toBeTruthy();
@@ -280,7 +280,7 @@ describe.sequential('buy ingredients', async () => {
 		});
 
 		test('save the two batches', async () => {
-			const result = await purchases_service.registerBoughtIngrediets(VALID_INPUT_2B);
+			const result = await purchases_service.registerBoughtIngrediets_Invoice(VALID_INPUT_2B);
 			const list = await db.select().from(t_ingredient_batch);
 			expect(list.length).toBe(VALID_INPUT_2B.batches.length);
 			for (const i of [0, 1]) {
