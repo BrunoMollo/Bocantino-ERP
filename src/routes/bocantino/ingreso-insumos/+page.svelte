@@ -236,7 +236,8 @@
 								<div class="relative inline-block">
 									<input
 										class="input w-24"
-										type="text"
+										type="number"
+										step="0.01"
 										class:error_border={$batchesError(i, 'cost')}
 										bind:value={$form.batches[i].cost}
 										on:input={actualizarCosto}
@@ -329,3 +330,4 @@
 		</div>
 	</form>
 </main>
+
