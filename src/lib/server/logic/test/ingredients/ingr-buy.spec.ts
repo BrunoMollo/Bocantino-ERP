@@ -57,7 +57,7 @@ describe.sequential('buy ingredients', async () => {
 			const newDoc = listDocs[0];
 			expect(newDoc).toBeTruthy();
 			expect(newDoc.id).toBeTruthy();
-			expect(newDoc.typeId).toBe(undefined);
+			expect(newDoc.typeId).toBe(null);
 			expect(newDoc.type).toBe('Factura');
 			expect(newDoc.number).toBe(VAILD_INPUT_1B.document.number);
 			expect(newDoc.issue_date.toISOString().split('T')[0]).toBe(
@@ -80,7 +80,7 @@ describe.sequential('buy ingredients', async () => {
 				.from(t_entry_document)
 				.where(eq(t_entry_document.entry_id, entryList[0].id ?? -1));
 			expect(referencedDoc.length).toBe(1);
-			expect(referencedDoc[0].typeId).toBe(undefined);
+			expect(referencedDoc[0].typeId).toBe(null);
 			expect(referencedDoc[0].type).toBe('Factura');
 			expect(referencedDoc[0].entry_id).toBe(entryList[0].id);
 		});
@@ -154,7 +154,7 @@ describe.sequential('buy ingredients', async () => {
 			const newDoc = listDocs[0];
 			expect(newDoc).toBeTruthy();
 			expect(newDoc.id).toBeTruthy();
-			expect(newDoc.type).toBe("Factura");
+			expect(newDoc.type).toBe('Factura');
 			expect(newDoc.number).toBe(VALID_INPUT_2B.document.number);
 			expect(newDoc.issue_date.toISOString().split('T')[0]).toBe(
 				VALID_INPUT_2B.document.issue_date.toISOString().split('T')[0]
@@ -176,7 +176,7 @@ describe.sequential('buy ingredients', async () => {
 				.from(t_entry_document)
 				.where(eq(t_entry_document.entry_id, entryList[0].id ?? -1));
 			expect(referencedDoc.length).toBe(1);
-			expect(referencedDoc[0].type).toBe("Factura");
+			expect(referencedDoc[0].type).toBe('Factura');
 			expect(referencedDoc[0].entry_id).toBe(entryList[0].id);
 		});
 
@@ -253,7 +253,7 @@ describe.sequential('buy ingredients', async () => {
 			const newDoc = listDocs[0];
 			expect(newDoc).toBeTruthy();
 			expect(newDoc.id).toBeTruthy();
-			expect(newDoc.type).toBe("Factura");
+			expect(newDoc.type).toBe('Factura');
 			expect(newDoc.number).toBe(VALID_INPUT_2B.document.number);
 			expect(newDoc.issue_date.toISOString().split('T')[0]).toBe(
 				VALID_INPUT_2B.document.issue_date.toISOString().split('T')[0]
@@ -275,7 +275,7 @@ describe.sequential('buy ingredients', async () => {
 				.from(t_entry_document)
 				.where(eq(t_entry_document.entry_id, entryList[0].id ?? -1));
 			expect(referencedDoc.length).toBe(1);
-			expect(referencedDoc[0].type).toBe("Factura");
+			expect(referencedDoc[0].type).toBe('Factura');
 			expect(referencedDoc[0].entry_id).toBe(entryList[0].id);
 		});
 
