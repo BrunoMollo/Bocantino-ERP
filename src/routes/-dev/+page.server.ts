@@ -183,6 +183,39 @@ async function seed() {
 			}
 		]
 	});
+	for (let i = 0; i < 10; i++) {
+		await purchases_service.registerBoughtIngrediets({
+			withdrawal_tax_amount: 10,
+			iva_tax_percentage: 21,
+			supplier_id: julian.id,
+			document: {
+				number: 'F-11111',
+				issue_date: new Date(),
+				due_date: new Date(2023, 5, 2),
+				typeId: factura.id
+			},
+			batches: [
+				{
+					batch_code: 'ABCEDE_1234',
+					initial_amount: 300,
+					production_date: new Date(2023, 12, 12),
+					expiration_date: new Date(2023, 2, 30),
+					ingredient_id: higado.id,
+					number_of_bags: 10,
+					cost: 4000
+				},
+				{
+					batch_code: 'XYZP_1234',
+					initial_amount: 200,
+					production_date: new Date(2023, 12, 30),
+					expiration_date: new Date(2023, 2, 30),
+					ingredient_id: higado.id,
+					number_of_bags: 10,
+					cost: 4500
+				}
+			]
+		});
+	}
 
 	const liver_batch_id = second_entry.batchesId[0];
 	await ingredient_production_service.startIngredientProduction(
