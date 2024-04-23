@@ -109,21 +109,6 @@
 				/>
 			</div>
 			<div>
-				<label class="label" for="document_type">
-					<small class="my-auto mr-1 font-black text-lg">Tipo de documento</small>
-				</label>
-				<select
-					id="document_type"
-					bind:value={$form.idDocumentType}
-					class="select"
-					class:error_border={$errors.idDocumentType}
-				>
-					{#each data.documentTypes as { id, desc }}
-						<option value={id}>{desc}</option>
-					{/each}
-				</select>
-			</div>
-			<div>
 				<label class="label ml-auto" for="invoice_number">
 					<small class="my-auto mr-1 font-black text-lg">Numero de factura</small>
 				</label>

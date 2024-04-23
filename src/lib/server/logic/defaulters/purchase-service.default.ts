@@ -23,7 +23,6 @@ class PurchaseServiceDefaulter {
 				supplier_id,
 				document: {
 					number: '1234',
-					type: 'Factura',
 					issue_date: new Date(),
 					due_date: new Date()
 				},
@@ -54,7 +53,6 @@ class PurchaseServiceDefaulter {
 				supplier_id,
 				document: {
 					number: '1234',
-					type: 'Factura',
 					issue_date: new Date(),
 					due_date: new Date()
 				},

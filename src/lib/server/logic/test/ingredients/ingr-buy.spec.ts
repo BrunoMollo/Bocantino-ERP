@@ -31,7 +31,6 @@ describe.sequential('buy ingredients', async () => {
 			withdrawal_tax_amount: 10,
 			iva_tax_percentage: 21,
 			document: {
-				type: 'Factura',
 				number: 'FACTURA-12345',
 				issue_date: new Date(2023, 1, 1),
 				due_date: new Date(2023, 2, 2)
@@ -119,7 +118,6 @@ describe.sequential('buy ingredients', async () => {
 				iva_tax_percentage: 21,
 				supplier_id: JUAN.id,
 				document: {
-					type: 'Factura',
 					number: 'FACTURA-12345',
 					issue_date: new Date(2023, 1, 1),
 					due_date: new Date(2023, 2, 2)
@@ -218,7 +216,6 @@ describe.sequential('buy ingredients', async () => {
 				iva_tax_percentage: 21,
 				supplier_id: JUAN.id,
 				document: {
-					type: 'Factura',
 					number: 'FACTURA-12345',
 					issue_date: new Date(2023, 1, 1),
 					due_date: new Date(2023, 2, 2)

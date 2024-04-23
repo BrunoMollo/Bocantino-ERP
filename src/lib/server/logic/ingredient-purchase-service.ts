@@ -1,4 +1,4 @@
-import { getFirst, getFirstIfPosible, type TableInsert } from '$lib/utils';
+import { getFirst, getFirstIfPosible } from '$lib/utils';
 import {
 	t_entry_document,
 	t_ingredient,
@@ -11,10 +11,11 @@ import { and, between, count, eq, like } from 'drizzle-orm';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
 import { is_ok, logic_error } from '$logic';
 
-export type InvoiceData = TableInsert<
-	typeof t_entry_document.$inferInsert,
-	'id' | 'entry_id' | 'typeId' | 'type'
->;
+export type InvoiceData = {
+	number: string;
+	issue_date: Date;
+	due_date: Date;
+};
 
 type BatchFromInvoice = {
 	ingredient_id: number;

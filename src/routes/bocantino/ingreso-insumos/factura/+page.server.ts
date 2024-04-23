@@ -5,11 +5,9 @@ import { superValidate } from 'sveltekit-superforms/server';
 import { isValidDateBackend, parseStringToDate } from '$lib/utils';
 import { purchases_service } from '$logic/ingredient-purchase-service';
 import { suppliers_service } from '$logic/suppliers-service';
-import { error } from 'console';
 
 const boughBatchSchema = z.object({
 	supplier_id: z.coerce.number().int().min(1, 'Requerido'),
-	idDocumentType: z.coerce.number().int().min(1, ''),
 	invoiceNumber: z.string().min(4, 'Requerido').max(255),
 	issueDate: z.string().refine(isValidDateBackend).transform(parseStringToDate),
 	due_date: z.string().refine(isValidDateBackend).transform(parseStringToDate),
@@ -43,11 +41,6 @@ export const actions: Actions = {
 			return { form };
 		}
 
-		const doc_type = purchases_service.getDocById(form.data.idDocumentType);
-		if (!doc_type) {
-			throw error('Tipo de document no existe con id ' + form.data.idDocumentType);
-		}
-
 		const { batches, supplier_id, withdrawal_tax_amount, iva_tax_percentage } = form.data;
 		await purchases_service.registerBoughtIngrediets_Invoice({
 			withdrawal_tax_amount,
@@ -56,7 +49,6 @@ export const actions: Actions = {
 			batches,
 			document: {
 				number: form.data.invoiceNumber,
-				type: doc_type.desc,
 				issue_date: form.data.issueDate,
 				due_date: form.data.due_date
 			}

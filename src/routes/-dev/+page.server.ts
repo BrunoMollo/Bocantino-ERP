@@ -102,8 +102,7 @@ async function seed() {
 		document: {
 			number: 'R-00000000',
 			issue_date: new Date(2023, 12, 31),
-			due_date: new Date(2023, 4, 1),
-			type: 'Remito'
+			due_date: new Date(2023, 4, 1)
 		},
 		batches: [
 			{
@@ -124,8 +123,7 @@ async function seed() {
 		document: {
 			number: 'R-22121',
 			issue_date: new Date(2023, 12, 31),
-			due_date: new Date(2023, 4, 1),
-			type: 'Remito'
+			due_date: new Date(2023, 4, 1)
 		},
 		batches: [
 			{
@@ -148,8 +146,7 @@ async function seed() {
 		document: {
 			number: 'F-11111',
 			issue_date: new Date(),
-			due_date: new Date(2023, 5, 2),
-			type: 'Factura'
+			due_date: new Date(2023, 5, 2)
 		},
 		batches: [
 			{
