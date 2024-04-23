@@ -50,6 +50,13 @@
 			"when": 1710801315574,
 			"tag": "0006_giant_morlocks",
 			"breakpoints": true
+		},
+		{
+			"idx": 7,
+			"version": "5",
+			"when": 1713888428273,
+			"tag": "0007_equal_hardball",
+			"breakpoints": true
 		}
 	]
 }

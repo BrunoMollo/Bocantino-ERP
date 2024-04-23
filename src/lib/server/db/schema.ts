@@ -135,7 +135,7 @@ export const t_ingredient_batch = pgTable(
 		//external only
 		supplier_id: integer('supplier_id'),
 		expiration_date: date('expiration_date', { mode: 'date' }),
-		cost: integer('cost'),
+		cost: real('cost'),
 		currency_alpha_code: varchar('currency_alpha_code', { length: 4 })
 			.notNull()
 			.$defaultFn(() => 'ARG'),
