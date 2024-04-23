@@ -1,6 +1,5 @@
 import { getFirst, getFirstIfPosible, type TableInsert } from '$lib/utils';
 import {
-	t_document_type,
 	t_entry_document,
 	t_ingredient,
 	t_ingredient_batch,
@@ -19,21 +18,17 @@ export class IngredientPurchaseService {
 				id: t_ingridient_entry.id,
 				supplier: t_supplier.name,
 				date: t_ingridient_entry.creation_date,
-				document: pick_merge()
-					.table(t_entry_document, 'number', 'issue_date')
-					.aliased(t_document_type, 'desc', 'type')
-					.build()
+				document: pick_merge().table(t_entry_document, 'number', 'issue_date', 'type').build()
 			})
 			.from(t_ingridient_entry)
 			.innerJoin(t_supplier, eq(t_supplier.id, t_ingridient_entry.supplier_id))
 			.innerJoin(t_entry_document, eq(t_entry_document.entry_id, t_ingridient_entry.id))
-			.innerJoin(t_document_type, eq(t_document_type.id, t_entry_document.typeId))
 			.where(eq(t_ingridient_entry.id, entry_id))
 			.then(getFirstIfPosible);
 	}
 	registerBoughtIngrediets(data: {
 		supplier_id: number;
-		document: TableInsert<typeof t_entry_document.$inferInsert, 'id' | 'entry_id'>;
+		document: TableInsert<typeof t_entry_document.$inferInsert, 'id' | 'entry_id' | 'typeId'>;
 		withdrawal_tax_amount: number;
 		iva_tax_percentage: number;
 		batches: {
@@ -89,13 +84,12 @@ export class IngredientPurchaseService {
 				document: {
 					number: t_entry_document.number,
 					issue_date: t_entry_document.issue_date,
-					type: t_document_type.desc
+					type: t_entry_document.type
 				}
 			})
 			.from(t_ingridient_entry)
 			.innerJoin(t_supplier, eq(t_ingridient_entry.supplier_id, t_supplier.id))
 			.innerJoin(t_entry_document, eq(t_entry_document.entry_id, t_ingridient_entry.id))
-			.innerJoin(t_document_type, eq(t_entry_document.typeId, t_document_type.id))
 			.limit(5);
 		return entries;
 	}
@@ -113,7 +107,6 @@ export class IngredientPurchaseService {
 			.from(t_ingridient_entry)
 			.innerJoin(t_supplier, eq(t_ingridient_entry.supplier_id, t_supplier.id))
 			.innerJoin(t_entry_document, eq(t_entry_document.entry_id, t_ingridient_entry.id))
-			.innerJoin(t_document_type, eq(t_entry_document.typeId, t_document_type.id))
 			.where(
 				and(
 					like(t_supplier.name, `${input.supplierName ?? ''}%`),
@@ -143,13 +136,12 @@ export class IngredientPurchaseService {
 				document: {
 					number: t_entry_document.number,
 					issue_date: t_entry_document.issue_date,
-					type: t_document_type.desc
+					type: t_entry_document.type
 				}
 			})
 			.from(t_ingridient_entry)
 			.innerJoin(t_supplier, eq(t_ingridient_entry.supplier_id, t_supplier.id))
 			.innerJoin(t_entry_document, eq(t_entry_document.entry_id, t_ingridient_entry.id))
-			.innerJoin(t_document_type, eq(t_entry_document.typeId, t_document_type.id))
 			.where(
 				and(
 					like(t_supplier.name, `${input.supplierName ?? ''}%`),
@@ -207,6 +199,22 @@ export class IngredientPurchaseService {
 			);
 		}
 	}
+
+	private docs = [
+		{ id: 1, desc: 'Factura' },
+		{ id: 2, desc: 'Remito' },
+		{ id: 3, desc: 'Nota de Ingreso' }
+	] as const satisfies {
+		id: number;
+		desc: DocumentType;
+	}[];
+	getDocumentTypes() {
+		return this.docs;
+	}
+	getDocById(id: number) {
+		return this.docs.find((x) => x.id == id);
+	}
 }
+import type { DocumentType } from '$lib/server/db/schema';
 
 export const purchases_service = new IngredientPurchaseService();

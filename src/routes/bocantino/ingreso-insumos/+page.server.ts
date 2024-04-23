@@ -2,11 +2,10 @@ import type { PageServerLoad } from './$types';
 import { redirect, type Actions } from '@sveltejs/kit';
 import { z } from 'zod';
 import { superValidate } from 'sveltekit-superforms/server';
-import { db } from '$lib/server/db';
-import { t_document_type } from '$lib/server/db/schema';
 import { isValidDateBackend, parseStringToDate } from '$lib/utils';
 import { purchases_service } from '$logic/ingredient-purchase-service';
 import { suppliers_service } from '$logic/suppliers-service';
+import { error } from 'console';
 
 const boughBatchSchema = z.object({
 	supplier_id: z.coerce.number().int().min(1, 'Requerido'),
@@ -31,7 +30,7 @@ const boughBatchSchema = z.object({
 });
 
 export const load: PageServerLoad = async () => {
-	const documentTypes = await db.select().from(t_document_type);
+	const documentTypes = purchases_service.getDocumentTypes();
 	const suppliers = await suppliers_service.getAll();
 	const form = superValidate(boughBatchSchema, { errors: false });
 	return { form, documentTypes, suppliers };
@@ -44,6 +43,11 @@ export const actions: Actions = {
 			return { form };
 		}
 
+		const doc_type = purchases_service.getDocById(form.data.idDocumentType);
+		if (!doc_type) {
+			throw error('Tipo de document no existe con id ' + form.data.idDocumentType);
+		}
+
 		const { batches, supplier_id, withdrawal_tax_amount, iva_tax_percentage } = form.data;
 		await purchases_service.registerBoughtIngrediets({
 			withdrawal_tax_amount,
@@ -52,7 +56,7 @@ export const actions: Actions = {
 			batches,
 			document: {
 				number: form.data.invoiceNumber,
-				typeId: form.data.idDocumentType,
+				type: doc_type.desc,
 				issue_date: form.data.issueDate,
 				due_date: form.data.due_date
 			}

@@ -1,4 +1,3 @@
-import { INVOICE_TYPE } from '$lib/server/db/__mocks__';
 import { purchases_service } from '$logic/ingredient-purchase-service';
 
 class PurchaseServiceDefaulter {
@@ -24,7 +23,7 @@ class PurchaseServiceDefaulter {
 				supplier_id,
 				document: {
 					number: '1234',
-					typeId: INVOICE_TYPE.id,
+					type: 'Factura',
 					issue_date: new Date(),
 					due_date: new Date()
 				},
@@ -55,7 +54,7 @@ class PurchaseServiceDefaulter {
 				supplier_id,
 				document: {
 					number: '1234',
-					typeId: INVOICE_TYPE.id,
+					type: 'Factura',
 					issue_date: new Date(),
 					due_date: new Date()
 				},

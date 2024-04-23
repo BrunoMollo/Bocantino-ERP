@@ -1,6 +1,4 @@
 import { dev } from '$app/environment';
-import { db } from '$lib/server/db';
-import { t_document_type } from '$lib/server/db/schema';
 import { auth_service } from '$logic/auth-service';
 import { ingredient_production_service } from '$logic/ingredient-production-service';
 import { purchases_service } from '$logic/ingredient-purchase-service';
@@ -39,15 +37,6 @@ async function seed() {
 	if (!dev) {
 		return;
 	}
-
-	const factura = { id: 1, desc: 'Factura' };
-	const remito = { id: 2, desc: 'Remito' };
-	const orden_de_compra = { id: 3, desc: 'Orden de compra' };
-	await Promise.all([
-		db.insert(t_document_type).values(factura),
-		db.insert(t_document_type).values(remito),
-		db.insert(t_document_type).values(orden_de_compra)
-	]);
 
 	const banana = await ingredients_service.add({
 		name: 'Banana',
@@ -114,7 +103,7 @@ async function seed() {
 			number: 'R-00000000',
 			issue_date: new Date(2023, 12, 31),
 			due_date: new Date(2023, 4, 1),
-			typeId: remito.id
+			type: 'Remito'
 		},
 		batches: [
 			{
@@ -136,7 +125,7 @@ async function seed() {
 			number: 'R-22121',
 			issue_date: new Date(2023, 12, 31),
 			due_date: new Date(2023, 4, 1),
-			typeId: remito.id
+			type: 'Remito'
 		},
 		batches: [
 			{
@@ -160,7 +149,7 @@ async function seed() {
 			number: 'F-11111',
 			issue_date: new Date(),
 			due_date: new Date(2023, 5, 2),
-			typeId: factura.id
+			type: 'Factura'
 		},
 		batches: [
 			{
