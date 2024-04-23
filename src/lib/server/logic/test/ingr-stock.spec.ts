@@ -340,7 +340,13 @@ describe.sequential('stock ingredients', () => {
 
 		const res = await ingredients_service.getAllWithStock();
 
-		expect(res[0].id).toEqual(LIVER_ID);
-		expect(res[0].stock).toEqual(3_000);
+		{
+			const batch = res.find((x) => x.id === LIVER_ID);
+			expect(batch?.stock).toEqual(3_000);
+		}
+		{
+			const batch = res.find((x) => x.id === REDUCED_LIVER_ID);
+			expect(batch?.stock).toEqual(30_000);
+		}
 	});
 });
