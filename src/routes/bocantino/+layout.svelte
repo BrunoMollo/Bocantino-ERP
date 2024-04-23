@@ -24,12 +24,7 @@
 	const title = derived(page, ({ url }) => {
 		for (let group of routes) {
 			for (let { href, name } of group.routes) {
-				const match = url.pathname
-					.split('/')
-					.filter((_, i) => i < 3)
-					.join('/');
-
-				if (match === href) {
+				if (href.match(url.pathname) !== null) {
 					return name;
 				}
 			}
@@ -102,3 +97,4 @@
 		<slot />
 	{/if}
 </AppShell>
+

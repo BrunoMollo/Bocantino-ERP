@@ -8,11 +8,11 @@
 		},
 		{
 			name: 'Ingreso por Remito',
-			href: '/bocantino/ingreso-insumos/factura' // TODO: Change
+			href: '/bocantino/ingreso-insumos/remito'
 		},
 		{
 			name: 'Ingreso por Nota de Ingreso',
-			href: '/bocantino/ingreso-insumos/factura' //TODO: Change
+			href: '/bocantino/ingreso-insumos/nota-de-ingreso'
 		}
 	] satisfies { name: string; href: LayoutRouteId }[];
 </script>
