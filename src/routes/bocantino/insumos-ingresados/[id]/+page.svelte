@@ -38,9 +38,9 @@
 				{selected_entry.document.number}
 			</p>
 			<p class="mb-5">
-				<span class="font-bold">Fecha de emision: </span>{selected_entry.date.toLocaleDateString(
-					'es'
-				)}
+				<span class="font-bold"
+					>Fecha de emision:
+				</span>{selected_entry.document.issue_date.toLocaleDateString('es')}
 			</p>
 		</div>
 		<h2 class="h3 mt-5 mb-1">Lotes ingresados</h2>
