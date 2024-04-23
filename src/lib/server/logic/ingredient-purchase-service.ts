@@ -85,7 +85,7 @@ export class IngredientPurchaseService {
 			.select({
 				id: t_ingridient_entry.id,
 				supplier: t_supplier.name,
-				date: t_ingridient_entry.creation_date,
+				creation_date: t_ingridient_entry.creation_date,
 				document: {
 					number: t_entry_document.number,
 					issue_date: t_entry_document.issue_date,
