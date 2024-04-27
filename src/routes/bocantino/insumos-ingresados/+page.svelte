@@ -23,11 +23,15 @@
 		supplier: $page.url.searchParams.get('supplier'),
 		dateInitial: $page.url.searchParams.get('initial_date'),
 		dateFinal: $page.url.searchParams.get('final_date'),
-		number: $page.url.searchParams.get('number')
+		number: $page.url.searchParams.get('number'),
+		page: $page.url.searchParams.get('page')
 	};
 	const query = new URLSearchParams($page.url.searchParams.toString());
 
-	async function filtrar() {
+	async function filtrar(page?: { detail: number }) {
+		if (page) {
+			filtros.page = page.detail.toString();
+		}
 		for (let key in filtros) {
 			//@ts-expect-error PENDING: explain
 			const value = filtros[key];

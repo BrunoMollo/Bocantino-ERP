@@ -54,7 +54,7 @@
 						<span class="text-center my-auto">{entrada.id}</span>
 						<span class="text-center my-auto truncate w-1/3">{entrada.supplier}</span>
 						<span class="text-center my-auto">
-							{entrada.date.toLocaleDateString('es')}
+							{entrada.creation_date.toLocaleDateString('es')}
 						</span>
 						<button
 							type="button"
