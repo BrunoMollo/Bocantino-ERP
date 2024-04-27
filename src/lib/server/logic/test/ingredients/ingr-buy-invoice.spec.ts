@@ -23,7 +23,7 @@ beforeEach(async () => {
 	await db.delete(t_ingridient_entry);
 });
 
-describe.sequential('buy ingredients', async () => {
+describe.sequential('buy ingredients with invoice', async () => {
 	let VAILD_INPUT_1B: Parameters<typeof purchases_service.registerBoughtIngrediets_Invoice>[0];
 	beforeAll(() => {
 		VAILD_INPUT_1B = {
