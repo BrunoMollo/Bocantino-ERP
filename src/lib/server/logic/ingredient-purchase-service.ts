@@ -17,6 +17,10 @@ export type InvoiceData = {
 	due_date: Date;
 };
 
+export type EntryNoteData = {
+	number: string;
+};
+
 type BatchFromInvoice = {
 	ingredient_id: number;
 	batch_code: string;
@@ -26,6 +30,9 @@ type BatchFromInvoice = {
 	number_of_bags: number;
 	cost: number;
 };
+
+type BatchFromEntryNote = BatchFromInvoice;
+
 export class IngredientPurchaseService {
 	async getEntryById(entry_id: number) {
 		return await db
@@ -49,10 +56,10 @@ export class IngredientPurchaseService {
 	private registerBoughtIngrediets(
 		data: {
 			supplier_id: number;
-			document: InvoiceData;
+			document: InvoiceData | EntryNoteData;
 			withdrawal_tax_amount: number;
 			iva_tax_percentage: number;
-			batches: BatchFromInvoice[];
+			batches: (BatchFromInvoice | BatchFromEntryNote)[];
 		},
 		doc_type: DocumentType
 	) {
@@ -99,6 +106,24 @@ export class IngredientPurchaseService {
 		batches: BatchFromInvoice[];
 	}) {
 		return this.registerBoughtIngrediets(data, 'Factura');
+	}
+
+	registerBoughtIngrediets_EntryNote(data: {
+		supplier_id: number;
+		document: EntryNoteData;
+		batches: BatchFromEntryNote[];
+	}) {
+		const { supplier_id, document, batches } = data;
+		return this.registerBoughtIngrediets(
+			{
+				supplier_id,
+				document,
+				batches,
+				withdrawal_tax_amount: 0,
+				iva_tax_percentage: 0
+			},
+			'Nota de Ingreso'
+		);
 	}
 
 	public async getLastEntries() {
