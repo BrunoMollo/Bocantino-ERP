@@ -59,10 +59,10 @@ describe.sequential('buy ingredients with invoice', async () => {
 			expect(newDoc.typeId).toBe(null);
 			expect(newDoc.type).toBe('Factura');
 			expect(newDoc.number).toBe(VAILD_INPUT_1B.document.number);
-			expect(newDoc.issue_date.toISOString().split('T')[0]).toBe(
+			expect(newDoc.issue_date?.toISOString().split('T')[0]).toBe(
 				VAILD_INPUT_1B.document.issue_date.toISOString().split('T')[0]
 			);
-			expect(newDoc.due_date.toISOString().split('T')[0]).toBe(
+			expect(newDoc.due_date?.toISOString().split('T')[0]).toBe(
 				VAILD_INPUT_1B.document.due_date.toISOString().split('T')[0]
 			);
 		});
@@ -154,10 +154,10 @@ describe.sequential('buy ingredients with invoice', async () => {
 			expect(newDoc.id).toBeTruthy();
 			expect(newDoc.type).toBe('Factura');
 			expect(newDoc.number).toBe(VALID_INPUT_2B.document.number);
-			expect(newDoc.issue_date.toISOString().split('T')[0]).toBe(
+			expect(newDoc.issue_date?.toISOString().split('T')[0]).toBe(
 				VALID_INPUT_2B.document.issue_date.toISOString().split('T')[0]
 			);
-			expect(newDoc.due_date.toISOString().split('T')[0]).toBe(
+			expect(newDoc.due_date?.toISOString().split('T')[0]).toBe(
 				VALID_INPUT_2B.document.due_date.toISOString().split('T')[0]
 			);
 		});
@@ -252,10 +252,10 @@ describe.sequential('buy ingredients with invoice', async () => {
 			expect(newDoc.id).toBeTruthy();
 			expect(newDoc.type).toBe('Factura');
 			expect(newDoc.number).toBe(VALID_INPUT_2B.document.number);
-			expect(newDoc.issue_date.toISOString().split('T')[0]).toBe(
+			expect(newDoc.issue_date?.toISOString().split('T')[0]).toBe(
 				VALID_INPUT_2B.document.issue_date.toISOString().split('T')[0]
 			);
-			expect(newDoc.due_date.toISOString().split('T')[0]).toBe(
+			expect(newDoc.due_date?.toISOString().split('T')[0]).toBe(
 				VALID_INPUT_2B.document.due_date.toISOString().split('T')[0]
 			);
 		});
