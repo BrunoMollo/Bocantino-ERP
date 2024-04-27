@@ -1,7 +1,6 @@
 import { describe, expect, vi, test, beforeEach, beforeAll } from 'vitest';
 import { db } from '$lib/server/db/__mocks__';
 import {
-	
 	t_entry_document,
 	t_ingredient_batch,
 	t_ingridient_entry,
@@ -31,8 +30,6 @@ const SECOND_LIVER_BATCH_INITIAL_AMOUNT = 200 as const;
 
 beforeAll(async () => {
 	await __DELETE_ALL_DATABASE();
-	;
-
 	LIVER_ID = await ingredient_defaulter_service.add_simple();
 	BANANA_ID = await ingredient_defaulter_service.add_simple();
 	await ingredient_defaulter_service.add_derived({ from: LIVER_ID, amount: 2 });

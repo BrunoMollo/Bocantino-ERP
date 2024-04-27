@@ -1,10 +1,6 @@
 import { describe, expect, vi, test, beforeEach, beforeAll } from 'vitest';
 import { db } from '$lib/server/db/__mocks__';
-import {
-	
-	t_product_batch,
-	tr_product_batch_ingredient_batch
-} from '$lib/server/db/schema';
+import { t_product_batch, tr_product_batch_ingredient_batch } from '$lib/server/db/schema';
 import { product_service } from '$logic/product-service';
 import { __DELETE_ALL_DATABASE } from '../utils';
 import { ingredient_defaulter_service } from '$logic/defaulters/ingredient-service.default';
@@ -23,8 +19,6 @@ let LIVER_PRODUCT_BATCH_ID = -1;
 
 beforeAll(async () => {
 	await __DELETE_ALL_DATABASE();
-	;
-
 	LIVER_ID = await ingredient_defaulter_service.add_simple();
 	BANANA_ID = await ingredient_defaulter_service.add_simple();
 

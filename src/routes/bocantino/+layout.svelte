@@ -97,4 +97,3 @@
 		<slot />
 	{/if}
 </AppShell>
-
