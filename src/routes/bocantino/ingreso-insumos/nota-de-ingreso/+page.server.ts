@@ -3,6 +3,8 @@ import { z } from 'zod';
 import type { Actions, PageServerLoad } from './$types';
 import { superValidate } from 'sveltekit-superforms/client';
 import { suppliers_service } from '$logic/suppliers-service';
+import { purchases_service } from '$logic/ingredient-purchase-service';
+import { redirect } from '@sveltejs/kit';
 
 const boughBatchDto_entryNote = z.object({
 	supplier_id: z.coerce.number().int().min(1, 'Requerido'),
@@ -32,7 +34,20 @@ export const actions: Actions = {
 		if (!form.valid) {
 			return { form };
 		}
-		console.log(form.data);
-		return { form };
+
+		const entry_note_number = `EN-${new Date().getTime()}`;
+		const { batches, supplier_id } = form.data;
+		await purchases_service.registerBoughtIngrediets_EntryNote({
+			supplier_id,
+			batches,
+			document: {
+				number: entry_note_number
+			}
+		});
+
+		throw redirect(
+			302,
+			`/bocantino/insumos-ingresados?toast=Se registraron los ${batches.length} lotes`
+		);
 	}
 };
