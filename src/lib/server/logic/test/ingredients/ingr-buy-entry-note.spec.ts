@@ -1,6 +1,12 @@
 import { describe, expect, vi, test, beforeEach, beforeAll } from 'vitest';
 import { db } from '$lib/server/db/__mocks__';
-import { t_entry_document, t_ingredient_batch, t_ingridient_entry } from '$lib/server/db/schema';
+import {
+	t_entry_document,
+	t_ingredient_batch,
+	t_ingridient_entry,
+	t_product_batch,
+	tr_product_batch_ingredient_batch
+} from '$lib/server/db/schema';
 import { purchases_service } from '$logic/ingredient-purchase-service';
 import { ingredient_defaulter_service } from '$logic/defaulters/ingredient-service.default';
 import { suppliers_defaulter_service } from '$logic/defaulters/supplier-service.default';
@@ -19,7 +25,10 @@ beforeAll(async () => {
 		ingredientsIds: [BANANA_ID, APPLE_ID]
 	});
 });
+
 beforeEach(async () => {
+	await db.delete(t_product_batch);
+	await db.delete(tr_product_batch_ingredient_batch);
 	await db.delete(t_ingredient_batch);
 	await db.delete(t_entry_document);
 	await db.delete(t_ingridient_entry);
