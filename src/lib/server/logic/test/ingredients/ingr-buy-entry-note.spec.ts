@@ -27,8 +27,8 @@ beforeAll(async () => {
 });
 
 beforeEach(async () => {
-	await db.delete(t_product_batch);
 	await db.delete(tr_product_batch_ingredient_batch);
+	await db.delete(t_product_batch);
 	await db.delete(t_ingredient_batch);
 	await db.delete(t_entry_document);
 	await db.delete(t_ingridient_entry);
