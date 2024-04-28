@@ -25,7 +25,7 @@ beforeEach(async () => {
 	await db.delete(t_ingridient_entry);
 });
 
-describe.sequential('buy ingredients with entry note', async () => {
+describe.sequential('buy ingredients with entry note, one batch', async () => {
 	test.each([
 		{
 			initial_amount: 10,
@@ -99,7 +99,9 @@ describe.sequential('buy ingredients with entry note', async () => {
 			expect(batch.ingredient_id).toBe(APPLE_ID);
 		}
 	);
+});
 
+describe.sequential('buy ingredients with entry note, two batches', async () => {
 	test.each([
 		{
 			case: 1,
