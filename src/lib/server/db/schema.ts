@@ -13,19 +13,19 @@ import {
 } from 'drizzle-orm/pg-core';
 
 const recipe_amount = customType<{ data: number }>({
-	dataType: () => 'decimal(100, 10)',
+	dataType: () => 'numeric(100, 10)',
 	fromDriver: (value) => Number(value)
 });
 const stock_amount = customType<{ data: number }>({
-	dataType: () => 'decimal(100, 3)',
+	dataType: () => 'numeric(90, 3)',
 	fromDriver: (value) => Number(value)
 });
 const money_amount = customType<{ data: number }>({
-	dataType: () => 'decimal(100, 2)',
+	dataType: () => 'numeric(100, 2)',
 	fromDriver: (value) => Number(value)
 });
 const tax_amount = customType<{ data: number }>({
-	dataType: () => 'decimal(10, 2)',
+	dataType: () => 'numeric(10, 2)',
 	fromDriver: (value) => Number(value)
 });
 
