@@ -17,10 +17,12 @@
 		"lint": "eslint .",
 		"format": "prettier --write .",
 		"db-migrate": "drizzle-kit generate:pg",
-		"db-shell": "docker compose exec postgres psql -U postgres -d db"
+		"db-shell": "docker compose exec postgres psql -U postgres -d db",
+		"e2e": "playwright test"
 	},
 	"devDependencies": {
 		"@floating-ui/dom": "^1.5.3",
+		"@playwright/test": "^1.43.1",
 		"@skeletonlabs/skeleton": "2.5.1",
 		"@skeletonlabs/tw-plugin": "0.2.4",
 		"@sveltejs/adapter-vercel": "^2.1.0",
