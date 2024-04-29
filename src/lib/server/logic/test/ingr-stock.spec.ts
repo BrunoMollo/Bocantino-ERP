@@ -349,4 +349,59 @@ describe.sequential('stock ingredients', () => {
 			expect(batch?.stock).toEqual(30_000);
 		}
 	});
+
+	test('ignore decimals after 3rd position, simple case', async () => {
+		const [first_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 20_000.123456789 }]
+		});
+
+		const res = await db.with(sq_stock).select().from(sq_stock);
+
+		expect(res.sort(by('batch_id'))).toEqual([
+			{ batch_id: first_batch_id, currently_available: 20_000.123 }
+		]);
+	});
+
+	test('ignore decimals after 3rd position, simple case', async () => {
+		const [first_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 20_000.123456 }]
+		});
+
+		const res = await db.with(sq_stock).select().from(sq_stock);
+
+		expect(res.sort(by('batch_id'))).toEqual([
+			{ batch_id: first_batch_id, currently_available: 20_000.123 }
+		]);
+	});
+
+	test('ignore decimals after 3rd position, after one modification ', async () => {
+		const [batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 20_000.111111 }]
+		});
+		await ingredient_production_service.modifyStock({ batch_id, adjustment: 1.55555 });
+
+		const res = await db.with(sq_stock).select().from(sq_stock);
+
+		expect(res.sort(by('batch_id'))).toEqual([
+			{ batch_id: batch_id, currently_available: 20_001.667 }
+		]);
+	});
+
+	test('ignore decimals after 3rd position, after two modification ', async () => {
+		const [batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 20_000.111111 }]
+		});
+		await ingredient_production_service.modifyStock({ batch_id, adjustment: 1.222222 });
+		await ingredient_production_service.modifyStock({ batch_id, adjustment: 1.333333333 });
+
+		const res = await db.with(sq_stock).select().from(sq_stock);
+
+		expect(res.sort(by('batch_id'))).toEqual([
+			{ batch_id: batch_id, currently_available: 20_002.666 }
+		]);
+	});
 });
