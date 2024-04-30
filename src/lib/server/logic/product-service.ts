@@ -259,19 +259,6 @@ class ProductService {
 							JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
 					);
 				}
-
-				const stock_without_last = batches
-					.slice(0, batches.length - 1)
-					.map((x) => x.stock)
-					.reduce((x, y) => x + y, 0);
-
-				if (needed_amount < stock_without_last) {
-					return logic_error(
-						'se indicaron mas batches de los necesarios, ids' +
-							JSON.stringify(batches_ids_with_same_ingredient) +
-							JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
-					);
-				}
 			}
 			const get_expiration_date = () => {
 				const today = moment();
@@ -296,6 +283,9 @@ class ProductService {
 				.update(t_product_batch)
 				.set({ batch_code })
 				.where(eq(t_product_batch.id, inserted.id));
+
+			//use first the one that have less stock
+			all_batches.forEach((arr) => arr.sort((a, b) => a.stock - b.stock));
 
 			for (const batch_group of all_batches) {
 				let asigned_amount = 0;
