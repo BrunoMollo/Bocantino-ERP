@@ -1,11 +1,6 @@
 import { describe, expect, vi, test, beforeEach, beforeAll } from 'vitest';
-import { INVOICE_TYPE, db } from '$lib/server/db/__mocks__';
-import {
-	t_document_type,
-	t_entry_document,
-	t_ingredient_batch,
-	t_ingridient_entry
-} from '$lib/server/db/schema';
+import { db } from '$lib/server/db/__mocks__';
+import { t_entry_document, t_ingredient_batch, t_ingridient_entry } from '$lib/server/db/schema';
 import { eq } from 'drizzle-orm';
 import { __DELETE_ALL_DATABASE } from '../utils';
 import { purchases_service } from '$logic/ingredient-purchase-service';
@@ -18,8 +13,6 @@ let BANANA: { id: number };
 let JUAN: { id: number };
 beforeAll(async () => {
 	await __DELETE_ALL_DATABASE();
-	await db.insert(t_document_type).values(INVOICE_TYPE);
-
 	BANANA = { id: await ingredient_defaulter_service.add_simple() };
 	JUAN = { id: await suppliers_defaulter_service.add({ ingredientsIds: [BANANA.id] }) };
 });
@@ -30,15 +23,14 @@ beforeEach(async () => {
 	await db.delete(t_ingridient_entry);
 });
 
-describe.sequential('buy ingredients', async () => {
-	let VAILD_INPUT_1B: Parameters<typeof purchases_service.registerBoughtIngrediets>[0];
+describe.sequential('buy ingredients with invoice', async () => {
+	let VAILD_INPUT_1B: Parameters<typeof purchases_service.registerBoughtIngrediets_Invoice>[0];
 	beforeAll(() => {
 		VAILD_INPUT_1B = {
 			supplier_id: JUAN.id,
 			withdrawal_tax_amount: 10,
 			iva_tax_percentage: 21,
 			document: {
-				typeId: INVOICE_TYPE.id,
 				number: 'FACTURA-12345',
 				issue_date: new Date(2023, 1, 1),
 				due_date: new Date(2023, 2, 2)
@@ -58,23 +50,24 @@ describe.sequential('buy ingredients', async () => {
 	});
 	describe.sequential('valid case, one batches', () => {
 		test('creates new document row', async () => {
-			await purchases_service.registerBoughtIngrediets(VAILD_INPUT_1B);
+			await purchases_service.registerBoughtIngrediets_Invoice(VAILD_INPUT_1B);
 			const listDocs = await db.select().from(t_entry_document);
 			expect(listDocs.length).toBe(1);
 			const newDoc = listDocs[0];
 			expect(newDoc).toBeTruthy();
 			expect(newDoc.id).toBeTruthy();
-			expect(newDoc.typeId).toBe(INVOICE_TYPE.id);
+			expect(newDoc.typeId).toBe(null);
+			expect(newDoc.type).toBe('Factura');
 			expect(newDoc.number).toBe(VAILD_INPUT_1B.document.number);
-			expect(newDoc.issue_date.toISOString().split('T')[0]).toBe(
+			expect(newDoc.issue_date?.toISOString().split('T')[0]).toBe(
 				VAILD_INPUT_1B.document.issue_date.toISOString().split('T')[0]
 			);
-			expect(newDoc.due_date.toISOString().split('T')[0]).toBe(
+			expect(newDoc.due_date?.toISOString().split('T')[0]).toBe(
 				VAILD_INPUT_1B.document.due_date.toISOString().split('T')[0]
 			);
 		});
 		test('creates new entry row', async () => {
-			await purchases_service.registerBoughtIngrediets(VAILD_INPUT_1B);
+			await purchases_service.registerBoughtIngrediets_Invoice(VAILD_INPUT_1B);
 			const entryList = await db.select().from(t_ingridient_entry);
 			expect(entryList.length).toBe(1);
 			expect(entryList[0]).toBeTruthy();
@@ -86,12 +79,13 @@ describe.sequential('buy ingredients', async () => {
 				.from(t_entry_document)
 				.where(eq(t_entry_document.entry_id, entryList[0].id ?? -1));
 			expect(referencedDoc.length).toBe(1);
-			expect(referencedDoc[0].typeId).toBe(INVOICE_TYPE.id);
+			expect(referencedDoc[0].typeId).toBe(null);
+			expect(referencedDoc[0].type).toBe('Factura');
 			expect(referencedDoc[0].entry_id).toBe(entryList[0].id);
 		});
 
 		test('save the batch', async () => {
-			await purchases_service.registerBoughtIngrediets(VAILD_INPUT_1B);
+			await purchases_service.registerBoughtIngrediets_Invoice(VAILD_INPUT_1B);
 			const list = await db.select().from(t_ingredient_batch);
 			expect(list.length).toBe(VAILD_INPUT_1B.batches.length);
 			expect(list[0].id).toBeTruthy();
@@ -116,7 +110,7 @@ describe.sequential('buy ingredients', async () => {
 	});
 
 	describe.sequential('valid case, two batches', () => {
-		let VALID_INPUT_2B: Parameters<typeof purchases_service.registerBoughtIngrediets>[0];
+		let VALID_INPUT_2B: Parameters<typeof purchases_service.registerBoughtIngrediets_Invoice>[0];
 
 		beforeAll(() => {
 			VALID_INPUT_2B = {
@@ -124,7 +118,6 @@ describe.sequential('buy ingredients', async () => {
 				iva_tax_percentage: 21,
 				supplier_id: JUAN.id,
 				document: {
-					typeId: INVOICE_TYPE.id,
 					number: 'FACTURA-12345',
 					issue_date: new Date(2023, 1, 1),
 					due_date: new Date(2023, 2, 2)
@@ -153,23 +146,23 @@ describe.sequential('buy ingredients', async () => {
 			};
 		});
 		test('creates new document row', async () => {
-			await purchases_service.registerBoughtIngrediets(VALID_INPUT_2B);
+			await purchases_service.registerBoughtIngrediets_Invoice(VALID_INPUT_2B);
 			const listDocs = await db.select().from(t_entry_document);
 			expect(listDocs.length).toBe(1);
 			const newDoc = listDocs[0];
 			expect(newDoc).toBeTruthy();
 			expect(newDoc.id).toBeTruthy();
-			expect(newDoc.typeId).toBe(INVOICE_TYPE.id);
+			expect(newDoc.type).toBe('Factura');
 			expect(newDoc.number).toBe(VALID_INPUT_2B.document.number);
-			expect(newDoc.issue_date.toISOString().split('T')[0]).toBe(
+			expect(newDoc.issue_date?.toISOString().split('T')[0]).toBe(
 				VALID_INPUT_2B.document.issue_date.toISOString().split('T')[0]
 			);
-			expect(newDoc.due_date.toISOString().split('T')[0]).toBe(
+			expect(newDoc.due_date?.toISOString().split('T')[0]).toBe(
 				VALID_INPUT_2B.document.due_date.toISOString().split('T')[0]
 			);
 		});
 		test('creates new entry row', async () => {
-			await purchases_service.registerBoughtIngrediets(VALID_INPUT_2B);
+			await purchases_service.registerBoughtIngrediets_Invoice(VALID_INPUT_2B);
 			const entryList = await db.select().from(t_ingridient_entry);
 			expect(entryList.length).toBe(1);
 			expect(entryList[0]).toBeTruthy();
@@ -181,12 +174,12 @@ describe.sequential('buy ingredients', async () => {
 				.from(t_entry_document)
 				.where(eq(t_entry_document.entry_id, entryList[0].id ?? -1));
 			expect(referencedDoc.length).toBe(1);
-			expect(referencedDoc[0].typeId).toBe(INVOICE_TYPE.id);
+			expect(referencedDoc[0].type).toBe('Factura');
 			expect(referencedDoc[0].entry_id).toBe(entryList[0].id);
 		});
 
 		test('save the two batches', async () => {
-			const result = await purchases_service.registerBoughtIngrediets(VALID_INPUT_2B);
+			const result = await purchases_service.registerBoughtIngrediets_Invoice(VALID_INPUT_2B);
 			const list = await db.select().from(t_ingredient_batch);
 			expect(list.length).toBe(VALID_INPUT_2B.batches.length);
 			for (const i of [0, 1]) {
@@ -215,7 +208,7 @@ describe.sequential('buy ingredients', async () => {
 	});
 
 	describe.sequential('valid case, two batches with decimal cost', () => {
-		let VALID_INPUT_2B: Parameters<typeof purchases_service.registerBoughtIngrediets>[0];
+		let VALID_INPUT_2B: Parameters<typeof purchases_service.registerBoughtIngrediets_Invoice>[0];
 
 		beforeAll(() => {
 			VALID_INPUT_2B = {
@@ -223,7 +216,6 @@ describe.sequential('buy ingredients', async () => {
 				iva_tax_percentage: 21,
 				supplier_id: JUAN.id,
 				document: {
-					typeId: INVOICE_TYPE.id,
 					number: 'FACTURA-12345',
 					issue_date: new Date(2023, 1, 1),
 					due_date: new Date(2023, 2, 2)
@@ -252,23 +244,23 @@ describe.sequential('buy ingredients', async () => {
 			};
 		});
 		test('creates new document row', async () => {
-			await purchases_service.registerBoughtIngrediets(VALID_INPUT_2B);
+			await purchases_service.registerBoughtIngrediets_Invoice(VALID_INPUT_2B);
 			const listDocs = await db.select().from(t_entry_document);
 			expect(listDocs.length).toBe(1);
 			const newDoc = listDocs[0];
 			expect(newDoc).toBeTruthy();
 			expect(newDoc.id).toBeTruthy();
-			expect(newDoc.typeId).toBe(INVOICE_TYPE.id);
+			expect(newDoc.type).toBe('Factura');
 			expect(newDoc.number).toBe(VALID_INPUT_2B.document.number);
-			expect(newDoc.issue_date.toISOString().split('T')[0]).toBe(
+			expect(newDoc.issue_date?.toISOString().split('T')[0]).toBe(
 				VALID_INPUT_2B.document.issue_date.toISOString().split('T')[0]
 			);
-			expect(newDoc.due_date.toISOString().split('T')[0]).toBe(
+			expect(newDoc.due_date?.toISOString().split('T')[0]).toBe(
 				VALID_INPUT_2B.document.due_date.toISOString().split('T')[0]
 			);
 		});
 		test('creates new entry row', async () => {
-			await purchases_service.registerBoughtIngrediets(VALID_INPUT_2B);
+			await purchases_service.registerBoughtIngrediets_Invoice(VALID_INPUT_2B);
 			const entryList = await db.select().from(t_ingridient_entry);
 			expect(entryList.length).toBe(1);
 			expect(entryList[0]).toBeTruthy();
@@ -280,12 +272,12 @@ describe.sequential('buy ingredients', async () => {
 				.from(t_entry_document)
 				.where(eq(t_entry_document.entry_id, entryList[0].id ?? -1));
 			expect(referencedDoc.length).toBe(1);
-			expect(referencedDoc[0].typeId).toBe(INVOICE_TYPE.id);
+			expect(referencedDoc[0].type).toBe('Factura');
 			expect(referencedDoc[0].entry_id).toBe(entryList[0].id);
 		});
 
 		test('save the two batches', async () => {
-			const result = await purchases_service.registerBoughtIngrediets(VALID_INPUT_2B);
+			const result = await purchases_service.registerBoughtIngrediets_Invoice(VALID_INPUT_2B);
 			const list = await db.select().from(t_ingredient_batch);
 			expect(list.length).toBe(VALID_INPUT_2B.batches.length);
 			for (const i of [0, 1]) {

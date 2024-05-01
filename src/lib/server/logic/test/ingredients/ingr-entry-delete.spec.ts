@@ -1,7 +1,6 @@
 import { describe, vi, test, expect, beforeEach, beforeAll } from 'vitest';
-import { INVOICE_TYPE, db } from '$lib/server/db/__mocks__';
+import { db } from '$lib/server/db/__mocks__';
 import {
-	t_document_type,
 	t_entry_document,
 	t_ingredient_batch,
 	t_ingridient_entry,
@@ -30,8 +29,6 @@ let FINAL_PRODUCT_ID = -1;
 
 beforeAll(async () => {
 	await __DELETE_ALL_DATABASE();
-	await db.insert(t_document_type).values(INVOICE_TYPE);
-
 	BANANA_ID = await ingredient_defaulter_service.add_simple();
 	REDUCED_BANANA_ID = await ingredient_defaulter_service.add_derived({
 		from: BANANA_ID,

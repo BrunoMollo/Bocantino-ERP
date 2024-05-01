@@ -1,6 +1,5 @@
-import { getFirst, getFirstIfPosible, type TableInsert } from '$lib/utils';
+import { getFirst, getFirstIfPosible } from '$lib/utils';
 import {
-	t_document_type,
 	t_entry_document,
 	t_ingredient,
 	t_ingredient_batch,
@@ -12,6 +11,28 @@ import { and, between, count, eq, like } from 'drizzle-orm';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
 import { is_ok, logic_error } from '$logic';
 
+export type InvoiceData = {
+	number: string;
+	issue_date: Date;
+	due_date: Date;
+};
+
+export type EntryNoteData = {
+	number: string;
+};
+
+type BatchFromInvoice = {
+	ingredient_id: number;
+	batch_code: string;
+	initial_amount: number;
+	production_date: Date;
+	expiration_date: Date;
+	number_of_bags: number;
+	cost: number;
+};
+
+type BatchFromEntryNote = BatchFromInvoice;
+
 export class IngredientPurchaseService {
 	async getEntryById(entry_id: number) {
 		return await db
@@ -19,33 +40,29 @@ export class IngredientPurchaseService {
 				id: t_ingridient_entry.id,
 				supplier: t_supplier.name,
 				date: t_ingridient_entry.creation_date,
-				document: pick_merge()
-					.table(t_entry_document, 'number', 'issue_date')
-					.aliased(t_document_type, 'desc', 'type')
-					.build()
+				document: pick_merge().table(t_entry_document, 'number', 'issue_date', 'type').build()
 			})
 			.from(t_ingridient_entry)
 			.innerJoin(t_supplier, eq(t_supplier.id, t_ingridient_entry.supplier_id))
 			.innerJoin(t_entry_document, eq(t_entry_document.entry_id, t_ingridient_entry.id))
-			.innerJoin(t_document_type, eq(t_document_type.id, t_entry_document.typeId))
 			.where(eq(t_ingridient_entry.id, entry_id))
 			.then(getFirstIfPosible);
 	}
-	registerBoughtIngrediets(data: {
-		supplier_id: number;
-		document: TableInsert<typeof t_entry_document.$inferInsert, 'id' | 'entry_id'>;
-		withdrawal_tax_amount: number;
-		iva_tax_percentage: number;
-		batches: {
-			ingredient_id: number;
-			batch_code: string;
-			initial_amount: number;
-			production_date: Date;
-			expiration_date: Date;
-			number_of_bags: number;
-			cost: number;
-		}[];
-	}) {
+
+	/*
+	 * We thought that the entry of ingredient always was by Invoice, we were wrong as hell.
+	 * We left this as a generic implemetation for entering ingredients with diferent process
+	 * */
+	private registerBoughtIngrediets(
+		data: {
+			supplier_id: number;
+			document: InvoiceData | EntryNoteData;
+			withdrawal_tax_amount: number;
+			iva_tax_percentage: number;
+			batches: (BatchFromInvoice | BatchFromEntryNote)[];
+		},
+		doc_type: DocumentType
+	) {
 		return db.transaction(async (tx) => {
 			const { entry_id } = await tx
 				.insert(t_ingridient_entry)
@@ -53,9 +70,10 @@ export class IngredientPurchaseService {
 				.returning({ entry_id: t_ingridient_entry.id })
 				.then(getFirst);
 
+			const doc = { ...data.document, type: doc_type, entry_id };
 			await tx
 				.insert(t_entry_document)
-				.values({ ...data.document, entry_id })
+				.values(doc)
 				.returning({ document_id: t_entry_document.id })
 				.then(getFirst);
 
@@ -80,6 +98,34 @@ export class IngredientPurchaseService {
 		});
 	}
 
+	registerBoughtIngrediets_Invoice(data: {
+		supplier_id: number;
+		document: InvoiceData;
+		withdrawal_tax_amount: number;
+		iva_tax_percentage: number;
+		batches: BatchFromInvoice[];
+	}) {
+		return this.registerBoughtIngrediets(data, 'Factura');
+	}
+
+	registerBoughtIngrediets_EntryNote(data: {
+		supplier_id: number;
+		document: EntryNoteData;
+		batches: BatchFromEntryNote[];
+	}) {
+		const { supplier_id, document, batches } = data;
+		return this.registerBoughtIngrediets(
+			{
+				supplier_id,
+				document,
+				batches,
+				withdrawal_tax_amount: 0,
+				iva_tax_percentage: 0
+			},
+			'Nota de Ingreso'
+		);
+	}
+
 	public async getLastEntries() {
 		const entries = await db
 			.select({
@@ -89,16 +135,16 @@ export class IngredientPurchaseService {
 				document: {
 					number: t_entry_document.number,
 					issue_date: t_entry_document.issue_date,
-					type: t_document_type.desc
+					type: t_entry_document.type
 				}
 			})
 			.from(t_ingridient_entry)
 			.innerJoin(t_supplier, eq(t_ingridient_entry.supplier_id, t_supplier.id))
 			.innerJoin(t_entry_document, eq(t_entry_document.entry_id, t_ingridient_entry.id))
-			.innerJoin(t_document_type, eq(t_entry_document.typeId, t_document_type.id))
 			.limit(5);
 		return entries;
 	}
+
 	async getCountOfAvailableEntries(input: {
 		supplierName?: string;
 		page: number;
@@ -113,7 +159,6 @@ export class IngredientPurchaseService {
 			.from(t_ingridient_entry)
 			.innerJoin(t_supplier, eq(t_ingridient_entry.supplier_id, t_supplier.id))
 			.innerJoin(t_entry_document, eq(t_entry_document.entry_id, t_ingridient_entry.id))
-			.innerJoin(t_document_type, eq(t_entry_document.typeId, t_document_type.id))
 			.where(
 				and(
 					like(t_supplier.name, `${input.supplierName ?? ''}%`),
@@ -143,13 +188,12 @@ export class IngredientPurchaseService {
 				document: {
 					number: t_entry_document.number,
 					issue_date: t_entry_document.issue_date,
-					type: t_document_type.desc
+					type: t_entry_document.type
 				}
 			})
 			.from(t_ingridient_entry)
 			.innerJoin(t_supplier, eq(t_ingridient_entry.supplier_id, t_supplier.id))
 			.innerJoin(t_entry_document, eq(t_entry_document.entry_id, t_ingridient_entry.id))
-			.innerJoin(t_document_type, eq(t_entry_document.typeId, t_document_type.id))
 			.where(
 				and(
 					like(t_supplier.name, `${input.supplierName ?? ''}%`),
@@ -207,6 +251,24 @@ export class IngredientPurchaseService {
 			);
 		}
 	}
+
+	private docs = [
+		{ id: 1, desc: 'Factura' },
+		{ id: 2, desc: 'Remito' },
+		{ id: 3, desc: 'Nota de Ingreso' }
+	] as const satisfies {
+		id: number;
+		desc: DocumentType;
+	}[];
+
+	getDocumentTypes() {
+		return this.docs;
+	}
+
+	getDocById(id: number) {
+		return this.docs.find((x) => x.id == id);
+	}
 }
+import type { DocumentType } from '$lib/server/db/schema';
 
 export const purchases_service = new IngredientPurchaseService();
