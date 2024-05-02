@@ -12,7 +12,7 @@ WHERE "entry_document"."type_id" = "document_type"."id";
 SELECT ed.id, ed.type_id, ed.document_type, dt.description FROM 
 entry_document ed
 INNER JOIN document_type dt
-ON ed.type_id=dt.id
+ON ed.type_id=dt.id;
 
 ALTER TABLE "entry_document" ALTER COLUMN "document_type" SET NOT NULL;
 
