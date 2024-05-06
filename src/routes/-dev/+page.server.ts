@@ -208,19 +208,39 @@ async function seed() {
 				{ ingredient_id: higado.id, amount: 2 }
 			]
 		});
-		const product_batch_id = await product_service
-			.startProduction({
+
+		for (let i = 0; i < 7; i++) {
+			const res = await product_service.startProduction({
 				product_id,
-				produced_amount: 10,
+				produced_amount: 1,
 				recipe: [
 					{ ingredient_id: banana.id, amount: 1 },
 					{ ingredient_id: higado.id, amount: 2 }
 				],
 				batches_ids: [[banana_batch_id], [liver_batch_id]]
-			})
-			.then((x) => (x.type === 'SUCCESS' ? x.data.id : -1));
+			});
+			if (res.type == 'LOGIC_ERROR') {
+				console.log('Couldn produce bartch: ' + i);
+				continue;
+			}
 
-		await product_service.closeProduction({ batch_id: product_batch_id, adjustment: 0 });
+			await product_service.closeProduction({ batch_id: res.data.id, adjustment: 0 });
+		}
+
+		for (let i = 0; i < 5; i++) {
+			const res = await product_service.startProduction({
+				product_id,
+				produced_amount: 1,
+				recipe: [{ ingredient_id: banana.id, amount: 1 }],
+				batches_ids: [[banana_batch_id]]
+			});
+			if (res.type == 'LOGIC_ERROR') {
+				console.log('Couldn produce bartch: ' + i);
+				continue;
+			}
+
+			await product_service.closeProduction({ batch_id: res.data.id, adjustment: 0 });
+		}
 
 		await product_service
 			.startProduction({
