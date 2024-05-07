@@ -5,6 +5,7 @@
 	import Autocomplete from '$lib/ui/Autocomplete.svelte';
 	import { makeOptions } from '$lib/utils.js';
 	import { derived } from 'svelte/store';
+	import { printAutogenerateCode } from '../ingreso-insumos/_shared/imprimit_codigo_autogenerado.js';
 	import Loader from '../_components/Loader.svelte';
 
 	export let data;
@@ -270,6 +271,13 @@
 									on:click={() => removeLine(i)}
 								>
 									<i class="bx bxs-trash place-self-center text-xl" />
+								</button>
+								<button
+									type="button"
+									class="btn-icon btn-icon-sm variant-soft-secondary mx-3"
+									on:click={printAutogenerateCode($form.batches[i])}
+								>
+									<i class="bx bxs-printer place-self-center text-xl" />
 								</button>
 							</td>
 						</tr>
