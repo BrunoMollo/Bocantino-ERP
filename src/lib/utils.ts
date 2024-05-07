@@ -100,7 +100,8 @@ export function parse_id_param(params: { id?: string }) {
 	return { id };
 }
 
-import { error } from '@sveltejs/kit';
+import { goto } from '$app/navigation';
+import { error, type Page } from '@sveltejs/kit';
 import { writable, type Readable } from 'svelte/store';
 import type { ZodValidation } from 'sveltekit-superforms';
 import type { SuperForm } from 'sveltekit-superforms/client';
@@ -174,4 +175,41 @@ export function generateUUID() {
 	}
 
 	return uuid;
+}
+
+/*
+ * This function gives an object with the filters and a function to execute
+ * the filteirng (interface adapted to be used with Skeleton's Paginator).
+ * */
+export function make_filter_by_url<K extends string>(
+	fields: K[],
+	$page: Page<Record<string, string>, string | null>
+) {
+	const query = new URLSearchParams($page.url.searchParams.toString());
+
+	const filters = {} as Record<K | 'page', string | null>;
+
+	for (const key of fields) {
+		filters[key] = $page.url.searchParams.get(key);
+	}
+
+	filters['page'] = $page.url.searchParams.get('page');
+
+	const filter = async (page?: { detail: number }) => {
+		for (const key of fields) {
+			const value = filters[key];
+			if (value) {
+				query.set(key, value);
+			} else {
+				query.delete(key);
+			}
+		}
+		if (page) {
+			filters.page = page.detail.toString();
+			query.set('page', filters.page);
+		}
+		await goto(`?${query.toString()}`);
+	};
+
+	return { filters, filter };
 }
