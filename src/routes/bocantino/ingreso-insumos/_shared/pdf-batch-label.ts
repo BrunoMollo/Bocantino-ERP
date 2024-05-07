@@ -1,4 +1,5 @@
 import { jsPDF } from 'jspdf';
+import { derived, type Writable } from 'svelte/store';
 
 export function printBatchLabel(
 	batch: {
@@ -44,4 +45,24 @@ export function printBatchLabel(
 
 function format_date(date: Date | string) {
 	return new Date(date).toLocaleDateString('es');
+}
+
+/*
+ * This function builds a store that returns a function that takes an index and returns true/false
+ * whether the batch[index] has all the data to print a label
+ * */
+export function derive_if_can_print_label(form: Writable<{ batches: Record<string, unknown>[] }>) {
+	return derived(
+		derived(form, (f) => f.batches),
+		($batches) => (index: number) => {
+			return (
+				!$batches[index].ingredient_id ||
+				!$batches[index].initial_amount ||
+				!$batches[index].number_of_bags ||
+				!$batches[index].production_date ||
+				!$batches[index].expiration_date ||
+				!$batches[index].batch_code
+			);
+		}
+	);
 }

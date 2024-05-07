@@ -6,7 +6,7 @@
 	import { makeOptions } from '$lib/utils.js';
 	import { derived } from 'svelte/store';
 	import Loader from '../../_components/Loader.svelte';
-	import { printBatchLabel } from '../_shared/pdf-batch-label';
+	import { derive_if_can_print_label, printBatchLabel } from '../_shared/pdf-batch-label';
 
 	export let data;
 	const { form, enhance, errors, delayed } = superForm(data.form, {
@@ -88,6 +88,8 @@
 			return $batches.map((x) => x.cost || 0).reduce((a, b) => a + b, 0);
 		}
 	);
+
+	const can_print_label = derive_if_can_print_label(form);
 </script>
 
 <main class="container h-full mx-auto flex justify-center items-center">
@@ -221,6 +223,7 @@
 									type="button"
 									class="btn-icon btn-icon-sm variant-soft-secondary mx-3"
 									on:click={() => printBatchLabel($form.batches[i], $optionsIngredients)}
+									disabled={$can_print_label(i)}
 								>
 									<i class="bx bxs-printer place-self-center text-xl" />
 								</button>
