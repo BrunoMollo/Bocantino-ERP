@@ -27,8 +27,8 @@ export function printAutogenerateCode(
 	doc.text('Fechas:', 5, 11);
 	doc.text('Produccion: ' + information.production_date, 25, 11);
 	doc.text('Vencimiento: ' + information.expiration_date, 25, 15);
-	doc.setFontSize(14);
-	doc.text('Codigo Lote ' + information.batch_code, 5, 31);
+	doc.setFontSize(13);
+	doc.text('Codigo Lote ' + information.batch_code, 3, 30);
 	doc.setFontSize(8);
 	doc.text('Cantidad: ' + information.initial_amount / information.number_of_bags + 'Kg', 5, 37);
 	doc.line(5, 40, 75, 40);
