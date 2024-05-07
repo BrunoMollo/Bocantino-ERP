@@ -1,4 +1,3 @@
-import { ingredient_production_service } from '$logic/ingredient-production-service';
 import { product_service } from '$logic/product-service';
 import type { PageServerLoad } from './$types';
 
@@ -11,7 +10,7 @@ export const load: PageServerLoad = async ({ url }) => {
 		batch_code,
 		ingredient_name
 	});
-	const count_batches = await ingredient_production_service.getCountOfAvailableBatches();
-	const page_size = ingredient_production_service.PAGE_SIZE;
+	const count_batches = await product_service.getCountOfAvailableBatches();
+	const page_size = product_service.PAGE_SIZE;
 	return { product_batches, count_batches, page_size };
 };

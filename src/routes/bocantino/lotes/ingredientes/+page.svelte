@@ -1,10 +1,9 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
-
 	import { Paginator, type PaginationSettings } from '@skeletonlabs/skeleton';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import CompleteTable from '../../_components/complete-table.svelte';
+	import { make_filter_by_url } from '$lib/utils';
 	export let data;
 
 	const popupClick: PopupSettings = {
@@ -20,39 +19,17 @@
 		amounts: []
 	} satisfies PaginationSettings;
 
-	function changePage({ detail }: { detail: number }) {
-		let query = new URLSearchParams($page.url.searchParams.toString());
-		query.set('page', detail.toString());
-		goto(`?${query.toString()}`);
-	}
+	const { filters, filter } = make_filter_by_url(['batch_code', 'ingredient_name'], $page);
 
-	const query = new URLSearchParams($page.url.searchParams.toString());
-
-	const filters = {
-		batch_code: $page.url.searchParams.get('batch_code'),
-		ingredient_name: $page.url.searchParams.get('ingredient_name')
-	};
-
-	async function filtrar() {
-		for (let key in filters) {
-			//@ts-expect-error PENDING: explain
-			const value = filters[key];
-			if (value) {
-				query.set(key, value);
-			} else {
-				query.delete(key);
-			}
-		}
-		goto(`?${query.toString()}`);
-	}
 	function closeOnEnterKeyPress({ key }: { key: string }) {
 		//@ts-expect-error PENDING: explain
 		if (key == 'Enter') document.querySelector('#filter-btn')?.click();
 	}
+
 	async function clear_filters() {
 		filters.batch_code = '';
 		filters.ingredient_name = '';
-		await filtrar();
+		await filter();
 	}
 </script>
 
@@ -101,7 +78,7 @@
 			id="filter-btn"
 			type="button"
 			class="btn rounded variant-filled mt-5 float-right"
-			on:click={() => filtrar()}
+			on:click={() => filter()}
 		>
 			Filtrar
 		</button>
@@ -137,13 +114,10 @@
 	</table>
 	<div class="pt-4 mx-auto">
 		<Paginator
-			buttonClasses="p-4 bg-surface-400"
 			settings={paginationSettings}
 			showFirstLastButtons={true}
+			on:page={filter}
 			showPreviousNextButtons={true}
-			showNumerals
-			maxNumerals={1}
-			on:page={changePage}
 		/>
 	</div>
 </main>
