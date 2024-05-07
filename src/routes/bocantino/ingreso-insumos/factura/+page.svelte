@@ -6,7 +6,7 @@
 	import { makeOptions } from '$lib/utils.js';
 	import { derived } from 'svelte/store';
 	import Loader from '../../_components/Loader.svelte';
-	import { printAutogenerateCode } from '../../ingreso-insumos/_shared/imprimit_codigo_autogenerado.js';
+	import { printBatchLabel } from '../../ingreso-insumos/_shared/pdf-batch-label';
 
 	export let data;
 	const { form, enhance, errors, delayed } = superForm(data.form, {
@@ -260,7 +260,7 @@
 								<button
 									type="button"
 									class="btn-icon btn-icon-sm variant-soft-secondary mx-3"
-									on:click={() => printAutogenerateCode($form.batches[i], $optionsIngredients)}
+									on:click={() => printBatchLabel($form.batches[i], $optionsIngredients)}
 								>
 									<i class="bx bxs-printer place-self-center text-xl" />
 								</button>

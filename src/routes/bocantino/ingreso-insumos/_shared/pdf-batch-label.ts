@@ -25,8 +25,8 @@ export function printBatchLabel(
 	const ingredient_name = ingredients.find((x) => x.id === information.ingredient_id)?.name;
 	doc.text('Materia prima: ' + ingredient_name ?? '[[ERROR: Ingrediente no encontrado]]', 5, 5);
 	doc.text('Fechas:', 5, 11);
-	doc.text('Produccion: ' + information.production_date, 25, 11);
-	doc.text('Vencimiento: ' + information.expiration_date, 25, 15);
+	doc.text('Produccion: ' + information.production_date.toLocaleDateString('es'), 25, 11);
+	doc.text('Vencimiento: ' + information.expiration_date.toLocaleDateString('es'), 25, 15);
 	doc.setFontSize(13);
 	doc.text('Codigo Lote ' + information.batch_code, 3, 30);
 	doc.setFontSize(8);

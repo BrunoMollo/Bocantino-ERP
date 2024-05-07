@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fade } from 'svelte/transition';
-	import { generarPDF } from '../_shared/generar_orden_produccion.js';
 	import CompleteTable from '../../_components/complete-table.svelte';
+	import { printProductionOrder } from '../_shared/pdf-production-order';
 
 	export let data;
 </script>
@@ -29,7 +29,7 @@
 					<a href="/bocantino/solicitudes-pendientes/ingredientes/{item.id}">ver</a>
 					<button
 						class="rounded-full bg-white px-3 py-2"
-						on:click={generarPDF(item.ingredient.name, item)}
+						on:click={printProductionOrder(item.ingredient.name, item)}
 						><i class="bx bx-printer text-xl text-black h-5 w-5"></i></button
 					>
 				</td>
