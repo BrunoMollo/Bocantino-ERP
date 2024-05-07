@@ -1,6 +1,6 @@
 import { jsPDF } from 'jspdf';
 
-export function printAutogenerateCode(
+export function printBatchLabel(
 	information: {
 		batch_code: string;
 		initial_amount: number;
