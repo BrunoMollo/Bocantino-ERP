@@ -1,4 +1,4 @@
-import { describe, expect, vi, test, beforeAll } from 'vitest';
+import { describe, expect, vi, test, beforeAll, afterAll } from 'vitest';
 import { product_service } from '$logic/product-service';
 import { __DELETE_ALL_DATABASE } from '../utils';
 import { ingredient_defaulter_service } from '$logic/defaulters/ingredient-service.default';
@@ -29,6 +29,10 @@ beforeAll(async () => {
 		supplier_id: SUPPLIER_ID,
 		bought: [{ ingredient_id: LIVER_ID, initial_amount: 2_000_000 }]
 	});
+});
+
+afterAll(async () => {
+	await __DELETE_ALL_DATABASE();
 });
 
 describe('get available product batches', () => {
