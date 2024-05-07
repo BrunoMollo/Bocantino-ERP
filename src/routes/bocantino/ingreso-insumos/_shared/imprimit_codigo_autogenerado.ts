@@ -28,5 +28,4 @@ export function printAutogenerateCode(information: {
 	doc.text('©' + fechaHoy.getFullYear() + 'BOCANTINO. Todos los derechos reservados.', 5, 45);
 	doc.autoPrint({ variant: 'non-conform' });
 	doc.save('Etiqueta' + information.batch_code);
-	return null;
 }
