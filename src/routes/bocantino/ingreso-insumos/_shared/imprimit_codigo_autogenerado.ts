@@ -1,14 +1,20 @@
 import { jsPDF } from 'jspdf';
 
-export function printAutogenerateCode(information: {
-	batch_code: string;
-	initial_amount: number;
-	production_date: Date;
-	expiration_date: Date;
-	ingredient_id: number;
-	cost: number;
-	number_of_bags: number;
-}) {
+export function printAutogenerateCode(
+	information: {
+		batch_code: string;
+		initial_amount: number;
+		production_date: Date;
+		expiration_date: Date;
+		ingredient_id: number;
+		cost: number;
+		number_of_bags: number;
+	},
+	ingredients: Array<{
+		id: number;
+		name: string;
+	}>
+) {
 	const fechaHoy = new Date();
 	const doc = new jsPDF({
 		orientation: 'landscape',
@@ -16,7 +22,8 @@ export function printAutogenerateCode(information: {
 		format: [80, 50]
 	});
 	doc.setFontSize(8);
-	doc.text('Materia prima: ' + information.ingredient_id, 5, 5);
+	const ingredient_name = ingredients.find((x) => x.id === information.ingredient_id)?.name;
+	doc.text('Materia prima: ' + ingredient_name ?? '[[ERROR: Ingrediente no encontrado]]', 5, 5);
 	doc.text('Fechas:', 5, 11);
 	doc.text('Produccion: ' + information.production_date, 25, 11);
 	doc.text('Vencimiento: ' + information.expiration_date, 25, 15);

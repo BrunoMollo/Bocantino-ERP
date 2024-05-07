@@ -220,7 +220,7 @@
 								<button
 									type="button"
 									class="btn-icon btn-icon-sm variant-soft-secondary mx-3"
-									on:click={() => printAutogenerateCode($form.batches[i])}
+									on:click={() => printAutogenerateCode($form.batches[i], $optionsIngredients)}
 								>
 									<i class="bx bxs-printer place-self-center text-xl" />
 								</button>
