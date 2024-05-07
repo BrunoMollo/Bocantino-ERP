@@ -1,5 +1,5 @@
 import { generateUUID, getFirst, getFirstIfPosible } from '$lib/utils';
-import { eq, and, ilike } from 'drizzle-orm';
+import { eq, and, ilike, count } from 'drizzle-orm';
 import { db, type Db } from '../db';
 import {
 	t_ingredient,
@@ -422,6 +422,16 @@ class ProductService {
 			.where(eq(t_product_batch.id, id))
 			.then(drizzle_map({ one: 'batch', with_one: ['product'], with_many: ['used_batches'] }))
 			.then(getFirstIfPosible);
+	}
+
+	async getCountOfAvailableBatches() {
+		return await db
+			.select({
+				value: count(t_product_batch.id)
+			})
+			.from(t_product_batch)
+			.where(eq(t_product_batch.state, 'AVAILABLE'))
+			.then((x) => x[0]?.value);
 	}
 }
 

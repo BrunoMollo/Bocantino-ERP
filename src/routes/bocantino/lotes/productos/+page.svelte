@@ -19,20 +19,18 @@
 		amounts: []
 	} satisfies PaginationSettings;
 
-	function changePage({ detail }: { detail: number }) {
-		let query = new URLSearchParams($page.url.searchParams.toString());
-		query.set('page', detail.toString());
-		goto(`?${query.toString()}`);
-	}
-
 	const query = new URLSearchParams($page.url.searchParams.toString());
 
 	const filters = {
 		batch_code: $page.url.searchParams.get('batch_code'),
-		ingredient_name: $page.url.searchParams.get('ingredient_name')
+		ingredient_name: $page.url.searchParams.get('ingredient_name'),
+		page: $page.url.searchParams.get('page')
 	};
 
-	async function filtrar() {
+	async function filter(page?: { detail: number }) {
+		if (page) {
+			filters.page = page.detail.toString();
+		}
 		for (let key in filters) {
 			//@ts-expect-error PENDING: explain
 			const value = filters[key];
@@ -51,7 +49,7 @@
 	async function clear_filters() {
 		filters.batch_code = '';
 		filters.ingredient_name = '';
-		await filtrar();
+		await filter();
 	}
 
 	type States = (typeof data.product_batches)[0]['state'];
@@ -112,7 +110,7 @@
 			id="filter-btn"
 			type="button"
 			class="btn rounded variant-filled mt-5 float-right"
-			on:click={() => filtrar()}
+			on:click={() => filter()}
 		>
 			Filtrar
 		</button>
@@ -151,13 +149,10 @@
 	</table>
 	<div class="pt-4 mx-auto">
 		<Paginator
-			buttonClasses="p-4 bg-surface-400"
 			settings={paginationSettings}
 			showFirstLastButtons={true}
+			on:page={filter}
 			showPreviousNextButtons={true}
-			showNumerals
-			maxNumerals={1}
-			on:page={changePage}
 		/>
 	</div>
 </main>
