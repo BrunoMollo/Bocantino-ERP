@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { goto } from '$app/navigation';
 	import { page } from '$app/stores';
+	import { make_filter_by_url } from '$lib/utils.js';
 
 	import { Paginator, type PaginationSettings } from '@skeletonlabs/skeleton';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
@@ -19,33 +19,13 @@
 		amounts: []
 	} satisfies PaginationSettings;
 
-	const query = new URLSearchParams($page.url.searchParams.toString());
+	const { filter, filters } = make_filter_by_url(['batch_code', 'ingredient_name'], $page);
 
-	const filters = {
-		batch_code: $page.url.searchParams.get('batch_code'),
-		ingredient_name: $page.url.searchParams.get('ingredient_name'),
-		page: $page.url.searchParams.get('page')
-	};
-
-	async function filter(page?: { detail: number }) {
-		if (page) {
-			filters.page = page.detail.toString();
-		}
-		for (let key in filters) {
-			//@ts-expect-error PENDING: explain
-			const value = filters[key];
-			if (value) {
-				query.set(key, value);
-			} else {
-				query.delete(key);
-			}
-		}
-		goto(`?${query.toString()}`);
-	}
 	function closeOnEnterKeyPress({ key }: { key: string }) {
 		//@ts-expect-error PENDING: explain
 		if (key == 'Enter') document.querySelector('#filter-btn')?.click();
 	}
+
 	async function clear_filters() {
 		filters.batch_code = '';
 		filters.ingredient_name = '';
