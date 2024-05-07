@@ -18,7 +18,7 @@
 					<p class="align-middle my-auto">{group.name}</p>
 				</div>
 				<ul>
-					{#each group.routes as { name, href, icon }}
+					{#each group.routes.filter((x) => !x.omit_from_menu) as { name, href, icon }}
 						<li>
 							<a
 								class="btn variant-filled w-full flex justify-between hover:text-slate-50 uppercase"

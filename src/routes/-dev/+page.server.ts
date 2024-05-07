@@ -1,6 +1,4 @@
 import { dev } from '$app/environment';
-import { db } from '$lib/server/db';
-import { t_document_type } from '$lib/server/db/schema';
 import { auth_service } from '$logic/auth-service';
 import { ingredient_production_service } from '$logic/ingredient-production-service';
 import { purchases_service } from '$logic/ingredient-purchase-service';
@@ -39,15 +37,6 @@ async function seed() {
 	if (!dev) {
 		return;
 	}
-
-	const factura = { id: 1, desc: 'Factura' };
-	const remito = { id: 2, desc: 'Remito' };
-	const orden_de_compra = { id: 3, desc: 'Orden de compra' };
-	await Promise.all([
-		db.insert(t_document_type).values(factura),
-		db.insert(t_document_type).values(remito),
-		db.insert(t_document_type).values(orden_de_compra)
-	]);
 
 	const banana = await ingredients_service.add({
 		name: 'Banana',
@@ -106,15 +95,14 @@ async function seed() {
 		ingredientsIds: [higado.id, banana.id]
 	});
 
-	await purchases_service.registerBoughtIngrediets({
+	await purchases_service.registerBoughtIngrediets_Invoice({
 		withdrawal_tax_amount: 10,
 		iva_tax_percentage: 21,
 		supplier_id: julian.id,
 		document: {
 			number: 'R-00000000',
 			issue_date: new Date(2023, 12, 31),
-			due_date: new Date(2023, 4, 1),
-			typeId: remito.id
+			due_date: new Date(2023, 4, 1)
 		},
 		batches: [
 			{
@@ -128,15 +116,14 @@ async function seed() {
 			}
 		]
 	});
-	const first_entry = await purchases_service.registerBoughtIngrediets({
+	const first_entry = await purchases_service.registerBoughtIngrediets_Invoice({
 		withdrawal_tax_amount: 10,
 		iva_tax_percentage: 21,
 		supplier_id: julian.id,
 		document: {
 			number: 'R-22121',
 			issue_date: new Date(2023, 12, 31),
-			due_date: new Date(2023, 4, 1),
-			typeId: remito.id
+			due_date: new Date(2023, 4, 1)
 		},
 		batches: [
 			{
@@ -152,15 +139,14 @@ async function seed() {
 	});
 	const banana_batch_id = first_entry.batchesId[0];
 
-	const second_entry = await purchases_service.registerBoughtIngrediets({
+	const second_entry = await purchases_service.registerBoughtIngrediets_Invoice({
 		withdrawal_tax_amount: 10,
 		iva_tax_percentage: 21,
 		supplier_id: julian.id,
 		document: {
 			number: 'F-11111',
 			issue_date: new Date(),
-			due_date: new Date(2023, 5, 2),
-			typeId: factura.id
+			due_date: new Date(2023, 5, 2)
 		},
 		batches: [
 			{
@@ -183,39 +169,24 @@ async function seed() {
 			}
 		]
 	});
-	for (let i = 0; i < 10; i++) {
-		await purchases_service.registerBoughtIngrediets({
-			withdrawal_tax_amount: 10,
-			iva_tax_percentage: 21,
-			supplier_id: julian.id,
-			document: {
-				number: 'F-11111',
-				issue_date: new Date(),
-				due_date: new Date(2023, 5, 2),
-				typeId: factura.id
-			},
-			batches: [
-				{
-					batch_code: 'ABCEDE_1234',
-					initial_amount: 300,
-					production_date: new Date(2023, 12, 12),
-					expiration_date: new Date(2023, 2, 30),
-					ingredient_id: higado.id,
-					number_of_bags: 10,
-					cost: 4000
-				},
-				{
-					batch_code: 'XYZP_1234',
-					initial_amount: 200,
-					production_date: new Date(2023, 12, 30),
-					expiration_date: new Date(2023, 2, 30),
-					ingredient_id: higado.id,
-					number_of_bags: 10,
-					cost: 4500
-				}
-			]
-		});
-	}
+
+	await purchases_service.registerBoughtIngrediets_EntryNote({
+		supplier_id: julian.id,
+		document: {
+			number: 'EN-11111'
+		},
+		batches: [
+			{
+				batch_code: 'EXYZP_567',
+				initial_amount: 300,
+				production_date: new Date(2023, 12, 12),
+				expiration_date: new Date(2023, 2, 30),
+				ingredient_id: higado.id,
+				number_of_bags: 10,
+				cost: 4000
+			}
+		]
+	});
 
 	const liver_batch_id = second_entry.batchesId[0];
 	await ingredient_production_service.startIngredientProduction(

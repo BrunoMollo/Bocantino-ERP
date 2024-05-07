@@ -1,6 +1,5 @@
 import { db } from '$lib/server/db';
 import {
-	t_document_type,
 	t_entry_document,
 	t_ingredient,
 	t_ingredient_batch,
@@ -29,6 +28,5 @@ export async function __DELETE_ALL_DATABASE() {
 		await tx.delete(t_product);
 		await tx.delete(tr_ingredient_ingredient);
 		await tx.delete(t_ingredient);
-		await tx.delete(t_document_type);
 	});
 }
