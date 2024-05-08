@@ -13,19 +13,19 @@ import {
 } from 'drizzle-orm/pg-core';
 
 const recipe_amount = customType<{ data: number }>({
-	dataType: () => 'numeric(100, 10)',
+	dataType: () => 'numeric(17, 10)', // eg: 1111111.1111111111
 	fromDriver: (value) => Number(value)
 });
 const stock_amount = customType<{ data: number }>({
-	dataType: () => 'numeric(90, 3)',
+	dataType: () => 'numeric(20, 4)', // eg: 1111111111111111.1111
 	fromDriver: (value) => Number(value)
 });
 const money_amount = customType<{ data: number }>({
-	dataType: () => 'numeric(100, 2)',
+	dataType: () => 'numeric(30, 2)', // eg: 1111111111111111111111111111.11
 	fromDriver: (value) => Number(value)
 });
-const tax_amount = customType<{ data: number }>({
-	dataType: () => 'numeric(10, 2)',
+const tax_percentage = customType<{ data: number }>({
+	dataType: () => 'numeric(10, 4)', // eg: 111111.1111
 	fromDriver: (value) => Number(value)
 });
 
@@ -157,8 +157,8 @@ export const t_ingredient_batch = pgTable(
 			.notNull()
 			.$defaultFn(() => 'ARG'),
 		entry_id: integer('entry_id').references(() => t_ingridient_entry.id),
-		iva_tax_percentage: tax_amount('iva_tax_percentage').notNull(),
-		withdrawal_tax_amount: tax_amount('withdrawal_tax_amount').notNull(),
+		iva_tax_percentage: tax_percentage('iva_tax_percentage').notNull(),
+		withdrawal_tax_amount: money_amount('withdrawal_tax_amount').notNull(),
 		//internal only
 		adjustment: stock_amount('adjustment')
 	},
