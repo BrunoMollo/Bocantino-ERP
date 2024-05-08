@@ -1,5 +1,7 @@
 # Data Type Migration Checks
 
+[SpreadSheet Comparison](https://docs.google.com/spreadsheets/d/1oZT2C3eaiX5y5Lq6ftsNwgEr6WQfdfHoGtDHTLbmfVg/edit#gid=1318481175)
+
 ## Ingredients
 ```sql
 SELECT reorder_point, protein,carbs,fats,humidity,fiber,ashes,calcium,sodium,phosphorus FROM ingredient;
