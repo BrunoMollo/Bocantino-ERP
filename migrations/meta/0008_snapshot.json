@@ -1,6 +1,6 @@
 {
-	"id": "8645c304-c4b8-44fd-aa79-fa46948b01ae",
-	"prevId": "6805a2d5-d78e-453a-8b32-b3da1c7bc061",
+	"id": "6805a2d5-d78e-453a-8b32-b3da1c7bc061",
+	"prevId": "136ab566-e3b7-40a9-9d67-e66857486907",
 	"version": "5",
 	"dialect": "pg",
 	"tables": {
@@ -24,13 +24,13 @@
 					"name": "issue_date",
 					"type": "date",
 					"primaryKey": false,
-					"notNull": false
+					"notNull": true
 				},
 				"due_date": {
 					"name": "due_date",
 					"type": "date",
 					"primaryKey": false,
-					"notNull": false
+					"notNull": true
 				},
 				"type_id": {
 					"name": "type_id",

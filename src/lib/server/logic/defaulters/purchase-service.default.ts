@@ -1,4 +1,3 @@
-import { INVOICE_TYPE } from '$lib/server/db/__mocks__';
 import { purchases_service } from '$logic/ingredient-purchase-service';
 
 class PurchaseServiceDefaulter {
@@ -18,13 +17,12 @@ class PurchaseServiceDefaulter {
 			expiration_date: new Date()
 		}));
 		return await purchases_service
-			.registerBoughtIngrediets({
+			.registerBoughtIngrediets_Invoice({
 				withdrawal_tax_amount: 10,
 				iva_tax_percentage: 21,
 				supplier_id,
 				document: {
 					number: '1234',
-					typeId: INVOICE_TYPE.id,
 					issue_date: new Date(),
 					due_date: new Date()
 				},
@@ -49,13 +47,12 @@ class PurchaseServiceDefaulter {
 			expiration_date: new Date()
 		}));
 		return await purchases_service
-			.registerBoughtIngrediets({
+			.registerBoughtIngrediets_Invoice({
 				withdrawal_tax_amount: 10,
 				iva_tax_percentage: 21,
 				supplier_id,
 				document: {
 					number: '1234',
-					typeId: INVOICE_TYPE.id,
 					issue_date: new Date(),
 					due_date: new Date()
 				},

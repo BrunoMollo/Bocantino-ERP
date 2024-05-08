@@ -1,5 +1,5 @@
-import { generateUUID, getFirst, getFirstIfPosible, is_not_nullish, only_unique } from '$lib/utils';
-import { eq, and, ilike } from 'drizzle-orm';
+import { generateUUID, getFirst, getFirstIfPosible } from '$lib/utils';
+import { eq, and, ilike, count } from 'drizzle-orm';
 import { db, type Db } from '../db';
 import {
 	t_ingredient,
@@ -61,7 +61,7 @@ class ProductService {
 			db
 				.select()
 				.from(t_product_batch)
-				.where(and(eq(t_product_batch.state, 'AVAILABLE')))
+				.where(eq(t_product_batch.state, 'AVAILABLE'))
 				.limit(this.PAGE_SIZE)
 				.offset(page * this.PAGE_SIZE)
 		);
@@ -76,12 +76,7 @@ class ProductService {
 					'production_date',
 					'expiration_date'
 				),
-				product: pick_columns(t_product, 'id', 'desc'),
-				used_batches: pick_merge()
-					.table(t_ingredient_batch, 'id', 'batch_code')
-					.table(tr_product_batch_ingredient_batch, 'amount_used_to_produce_batch')
-					.aliased(t_ingredient, 'name', 'ingredient_name')
-					.build()
+				product: pick_columns(t_product, 'id', 'desc')
 			})
 			.from(limited_batches)
 			.innerJoin(t_product, eq(limited_batches.product_id, t_product.id))
@@ -94,18 +89,14 @@ class ProductService {
 				eq(tr_product_batch_ingredient_batch.ingredient_batch_id, t_ingredient_batch.id)
 			)
 			.innerJoin(t_ingredient, eq(t_ingredient_batch.ingredient_id, t_ingredient.id))
-			.where(ilike(t_product.desc, `%${ingredient_name}%`))
-			.limit(this.PAGE_SIZE)
-			.offset(page * this.PAGE_SIZE)
-			.then(drizzle_map({ one: 'batch', with_one: ['product'], with_many: ['used_batches'] }))
-			.then((arr) =>
-				arr
-					.flatMap((obj) => obj.used_batches)
-					.filter((used_batch) => used_batch.batch_code.includes(batch_code))
-					.map((found_batches) => arr.find((obj) => obj.used_batches.includes(found_batches)))
-					.filter(is_not_nullish)
+			.where(
+				and(
+					eq(limited_batches.state, 'AVAILABLE'),
+					ilike(t_product.desc, `%${ingredient_name}%`),
+					ilike(t_ingredient_batch.batch_code, `%${batch_code}%`)
+				)
 			)
-			.then(only_unique);
+			.then(drizzle_map({ one: 'batch', with_one: ['product'], with_many: [] }));
 	}
 
 	async deleteBatchById(batch_id: number) {
@@ -259,19 +250,6 @@ class ProductService {
 							JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
 					);
 				}
-
-				const stock_without_last = batches
-					.slice(0, batches.length - 1)
-					.map((x) => x.stock)
-					.reduce((x, y) => x + y, 0);
-
-				if (needed_amount < stock_without_last) {
-					return logic_error(
-						'se indicaron mas batches de los necesarios, ids' +
-							JSON.stringify(batches_ids_with_same_ingredient) +
-							JSON.stringify({ needed_amount, given: batches.map((x) => x.stock) })
-					);
-				}
 			}
 			const get_expiration_date = () => {
 				const today = moment();
@@ -296,6 +274,9 @@ class ProductService {
 				.update(t_product_batch)
 				.set({ batch_code })
 				.where(eq(t_product_batch.id, inserted.id));
+
+			//use first the one that have less stock
+			all_batches.forEach((arr) => arr.sort((a, b) => a.stock - b.stock));
 
 			for (const batch_group of all_batches) {
 				let asigned_amount = 0;
@@ -441,6 +422,16 @@ class ProductService {
 			.where(eq(t_product_batch.id, id))
 			.then(drizzle_map({ one: 'batch', with_one: ['product'], with_many: ['used_batches'] }))
 			.then(getFirstIfPosible);
+	}
+
+	async getCountOfAvailableBatches() {
+		return await db
+			.select({
+				value: count(t_product_batch.id)
+			})
+			.from(t_product_batch)
+			.where(eq(t_product_batch.state, 'AVAILABLE'))
+			.then((x) => x[0]?.value);
 	}
 }
 

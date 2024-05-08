@@ -208,26 +208,19 @@ export const t_ingridient_entry = pgTable('ingridient_entry', {
 		.notNull()
 		.references(() => t_supplier.id)
 });
+
+export type DocumentType = 'Factura' | 'Remito' | 'Nota de Ingreso';
+
 export const t_entry_document = pgTable('entry_document', {
 	id: serial('id').primaryKey(),
 	number: text('document_identifier').notNull(),
-	issue_date: date('issue_date', { mode: 'date' }).notNull(),
-	due_date: date('due_date', { mode: 'date' }).notNull(),
-	typeId: integer('type_id')
-		.notNull()
-		.references(() => t_document_type.id),
+	issue_date: date('issue_date', { mode: 'date' }),
+	due_date: date('due_date', { mode: 'date' }),
+	typeId: integer('type_id'), // TODO: rm later
+	type: text('document_type').$type<DocumentType>().notNull(),
 	entry_id: integer('entry_id')
 		.notNull()
 		.references(() => t_ingridient_entry.id)
-});
-//-------------------------------------------------------------------------------------////
-//
-
-////-------------------------------------------------------------------------------------//
-// DOCUMENT TYPE
-export const t_document_type = pgTable('document_type', {
-	id: serial('id').primaryKey(),
-	desc: text('description').notNull()
 });
 //-------------------------------------------------------------------------------------////
 //

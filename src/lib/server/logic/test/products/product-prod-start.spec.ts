@@ -1,7 +1,6 @@
 import { describe, expect, vi, test, beforeEach, beforeAll } from 'vitest';
-import { INVOICE_TYPE, db } from '$lib/server/db/__mocks__';
+import { db } from '$lib/server/db/__mocks__';
 import {
-	t_document_type,
 	t_entry_document,
 	t_ingredient_batch,
 	t_ingridient_entry,
@@ -15,6 +14,7 @@ import { getFirst } from '$lib/utils';
 import { ingredient_defaulter_service } from '$logic/defaulters/ingredient-service.default';
 import { suppliers_defaulter_service } from '$logic/defaulters/supplier-service.default';
 import { purchases_defaulter_service } from '$logic/defaulters/purchase-service.default';
+import { ingredient_production_service } from '$logic/ingredient-production-service';
 
 vi.mock('$lib/server/db/index.ts');
 
@@ -31,8 +31,6 @@ const SECOND_LIVER_BATCH_INITIAL_AMOUNT = 200 as const;
 
 beforeAll(async () => {
 	await __DELETE_ALL_DATABASE();
-	await db.insert(t_document_type).values(INVOICE_TYPE);
-
 	LIVER_ID = await ingredient_defaulter_service.add_simple();
 	BANANA_ID = await ingredient_defaulter_service.add_simple();
 	await ingredient_defaulter_service.add_derived({ from: LIVER_ID, amount: 2 });
@@ -131,6 +129,106 @@ describe.sequential('start production of product', async () => {
 			batches_ids: [[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]]
 		});
 		expect(res.type).toBe('LOGIC_ERROR');
+	});
+
+	test('use baches in the correct order, use the one that have less first (case 1, input)', async () => {
+		const res = await product_service.startProduction({
+			product_id: FINAL_PRODUCT_ID,
+			produced_amount: 1,
+			recipe: [
+				{
+					amount: LIVER_BATCH_INTIAL_AMOUNT + SECOND_LIVER_BATCH_INITIAL_AMOUNT / 2, //100 + 200/2 = 200
+					ingredient_id: LIVER_ID
+				}
+			],
+			batches_ids: [[LIVER_BATCH_ID, SECOND_LIVER_BATCH_ID]] // order case 1
+		});
+		expect(res.type).toBe('SUCCESS');
+		const b1 = await ingredient_production_service.getBatchById(LIVER_BATCH_ID);
+		expect(b1?.current_amount).toBe(0); // from 100 to 0
+
+		const b2 = await ingredient_production_service.getBatchById(SECOND_LIVER_BATCH_ID);
+		expect(b2?.current_amount).toBe(100); // from 200 to 100
+	});
+
+	test('use baches in the correct order, use the one that have less first (case 2, input)', async () => {
+		const res = await product_service.startProduction({
+			product_id: FINAL_PRODUCT_ID,
+			produced_amount: 1,
+			recipe: [
+				{
+					amount: LIVER_BATCH_INTIAL_AMOUNT + SECOND_LIVER_BATCH_INITIAL_AMOUNT / 2, //100 + 200/2 = 200
+					ingredient_id: LIVER_ID
+				}
+			],
+			batches_ids: [[SECOND_LIVER_BATCH_ID, LIVER_BATCH_ID]] // order case 2
+		});
+		expect(res.type).toBe('SUCCESS');
+		const b1 = await ingredient_production_service.getBatchById(LIVER_BATCH_ID);
+		expect(b1?.current_amount).toBe(0); // from 100 to 0
+
+		const b2 = await ingredient_production_service.getBatchById(SECOND_LIVER_BATCH_ID);
+		expect(b2?.current_amount).toBe(100); // from 200 to 100
+	});
+
+	test('use baches in the correct order, use the one that have less first (case 1, db)', async () => {
+		const [liver_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 400 }]
+		});
+
+		const [second_liver_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 200 }]
+		});
+		const res = await product_service.startProduction({
+			product_id: FINAL_PRODUCT_ID,
+			produced_amount: 1,
+			recipe: [
+				{
+					amount: 200 + 400 / 2, // = 400
+					ingredient_id: LIVER_ID
+				}
+			],
+			batches_ids: [[second_liver_batch_id, liver_batch_id]]
+		});
+		expect(res.type).toBe('SUCCESS');
+
+		const b2 = await ingredient_production_service.getBatchById(second_liver_batch_id);
+		expect(b2?.current_amount).toBe(0); // from 200 to 0
+
+		const b1 = await ingredient_production_service.getBatchById(liver_batch_id);
+		expect(b1?.current_amount).toBe(200); // from 400 to 200
+	});
+
+	test('use baches in the correct order, use the one that have less first (case 2, db)', async () => {
+		const [second_liver_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 200 }]
+		});
+
+		const [liver_batch_id] = await purchases_defaulter_service.buy({
+			supplier_id: SUPPLIER_ID,
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 400 }]
+		});
+		const res = await product_service.startProduction({
+			product_id: FINAL_PRODUCT_ID,
+			produced_amount: 1,
+			recipe: [
+				{
+					amount: 200 + 400 / 2, // = 400
+					ingredient_id: LIVER_ID
+				}
+			],
+			batches_ids: [[second_liver_batch_id, liver_batch_id]]
+		});
+		expect(res.type).toBe('SUCCESS');
+
+		const b2 = await ingredient_production_service.getBatchById(second_liver_batch_id);
+		expect(b2?.current_amount).toBe(0); // from 200 to 0
+
+		const b1 = await ingredient_production_service.getBatchById(liver_batch_id);
+		expect(b1?.current_amount).toBe(200); // from 400 to 200
 	});
 
 	test('error when insuficient stock, one batch one ingredient an two batches another, insuficient one', async () => {
