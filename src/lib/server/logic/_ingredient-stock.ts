@@ -16,7 +16,9 @@ export const sq_stock = db.$with('stock').as(
           + ${t_ingredient_batch.initial_amount}
           - COALESCE(${sum(tr_ingredient_batch_ingredient_batch.amount_used_to_produce_batch)} ,0) 
           - COALESCE(${sum(tr_product_batch_ingredient_batch.amount_used_to_produce_batch)} ,0) 
-          + COALESCE(${t_ingredient_batch.adjustment}, 0)`.as('currently_available')
+          + COALESCE(${t_ingredient_batch.adjustment}, 0)`
+				.mapWith(Number)
+				.as('currently_available')
 		})
 		.from(t_ingredient_batch)
 		.where(eq(t_ingredient_batch.state, 'AVAILABLE'))
