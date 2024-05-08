@@ -17,7 +17,7 @@ const recipe_amount = customType<{ data: number }>({
 	fromDriver: (value) => Number(value)
 });
 const stock_amount = customType<{ data: number }>({
-	dataType: () => 'numeric(20, 4)', // eg: 1111111111111111.1111
+	dataType: () => 'numeric(20, 6)', // eg: 11111111111111.111111
 	fromDriver: (value) => Number(value)
 });
 const money_amount = customType<{ data: number }>({
