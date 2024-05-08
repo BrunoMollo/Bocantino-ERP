@@ -357,34 +357,34 @@ describe.sequential('stock ingredients', () => {
 		const res = await db.with(sq_stock).select().from(sq_stock);
 
 		expect(res.sort(by('batch_id'))).toEqual([
-			{ batch_id: first_batch_id, currently_available: 20_000.123 }
+			{ batch_id: first_batch_id, currently_available: 20_000.123457 }
 		]);
 	});
 
 	test('ignore decimals after 3rd position, simple case', async () => {
 		const [first_batch_id] = await purchases_defaulter_service.buy({
 			supplier_id: SUPPLIER_ID,
-			bought: [{ ingredient_id: LIVER_ID, initial_amount: 20_000.123456 }]
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 20_000.1234561234 }]
 		});
 
 		const res = await db.with(sq_stock).select().from(sq_stock);
 
 		expect(res.sort(by('batch_id'))).toEqual([
-			{ batch_id: first_batch_id, currently_available: 20_000.123 }
+			{ batch_id: first_batch_id, currently_available: 20_000.123456 }
 		]);
 	});
 
 	test('ignore decimals after 3rd position, after one modification ', async () => {
 		const [batch_id] = await purchases_defaulter_service.buy({
 			supplier_id: SUPPLIER_ID,
-			bought: [{ ingredient_id: LIVER_ID, initial_amount: 20_000.111111 }]
+			bought: [{ ingredient_id: LIVER_ID, initial_amount: 20_000.11111111111 }]
 		});
-		await ingredient_production_service.modifyStock({ batch_id, adjustment: 1.55555 });
+		await ingredient_production_service.modifyStock({ batch_id, adjustment: 1.55555555 });
 
 		const res = await db.with(sq_stock).select().from(sq_stock);
 
 		expect(res.sort(by('batch_id'))).toEqual([
-			{ batch_id: batch_id, currently_available: 20_001.667 }
+			{ batch_id: batch_id, currently_available: 20_001.666667 }
 		]);
 	});
 
@@ -393,13 +393,13 @@ describe.sequential('stock ingredients', () => {
 			supplier_id: SUPPLIER_ID,
 			bought: [{ ingredient_id: LIVER_ID, initial_amount: 20_000.111111 }]
 		});
-		await ingredient_production_service.modifyStock({ batch_id, adjustment: 1.222222 });
+		await ingredient_production_service.modifyStock({ batch_id, adjustment: 1.22222222222 });
 		await ingredient_production_service.modifyStock({ batch_id, adjustment: 1.333333333 });
 
 		const res = await db.with(sq_stock).select().from(sq_stock);
 
 		expect(res.sort(by('batch_id'))).toEqual([
-			{ batch_id: batch_id, currently_available: 20_002.666 }
+			{ batch_id: batch_id, currently_available: 20_002.666666 }
 		]);
 	});
 });
