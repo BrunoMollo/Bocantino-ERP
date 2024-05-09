@@ -14,3 +14,5 @@ services:
       interval: 1s
       timeout: 1s
       retries: 7
+    # volumes:
+    #   - ./bocantino-20240508_084429.sql:/docker-entrypoint-initdb.d/data.sql

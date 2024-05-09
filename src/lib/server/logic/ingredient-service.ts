@@ -17,7 +17,7 @@ class IngredientService {
 			.select({
 				ingredient: pick_columns(t_ingredient, 'id', 'name', 'unit', 'reorder_point'),
 				stock: {
-					stock: sql<number>`COALESCE(sum(${sq_stock.currently_available}), 0)`
+					stock: sql`COALESCE(sum(${sq_stock.currently_available}), 0)`.mapWith(Number)
 				}
 			})
 			.from(t_ingredient)

@@ -30,6 +30,8 @@ pg_dump --inserts --column-inserts --username=$username \
 	--host=$host \
 	--port=5432 bocantino |
 	sed "/INSERT INTO public.app_user/d" |
+	sed '/OWNER TO "BrunoMollo"/d' |
+	sed '/neon_superuser/d' |
 	sed "\$a$test_user_sql" |
 	cat >"$file_name"
 echo ">> Backup done: ./$file_name (hopefully)"
