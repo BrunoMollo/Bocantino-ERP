@@ -1,7 +1,7 @@
 import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
-export function generarPDF(
+export function printProductionOrder(
 	name: string,
 	item: {
 		id: number;
@@ -45,7 +45,7 @@ export function generarPDF(
 	doc.line(31, 270, 70, 270);
 	doc.text('Firma responsable:', 120, 270);
 	doc.line(170, 270, 200, 270);
-	doc.text('©' + fechaHoy.getFullYear() + 'BOCANTINO. PENDINGs los derechos reservados.', 10, 290);
+	doc.text('©' + fechaHoy.getFullYear() + 'BOCANTINO. Todos los derechos reservados.', 10, 290);
 	doc.autoPrint({ variant: 'non-conform' });
 	doc.save('Solicitud' + item.id + '.pdf');
 	return null;

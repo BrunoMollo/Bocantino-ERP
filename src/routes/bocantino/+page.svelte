@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { ProgressRadial } from '@skeletonlabs/skeleton';
-	import { generarPDF } from './solicitudes-pendientes/_shared/generar_orden_produccion.js';
+	import { printProductionOrder } from './solicitudes-pendientes/_shared/pdf-production-order.js';
 	export let data;
 	let buscados = '';
 
@@ -33,7 +33,7 @@
 						<span class="text-center my-auto">{pendiente.initial_amount} kg</span>
 						<button
 							class="px-5 py-2 my-auto btn variant-filled-primary rounded"
-							on:click={generarPDF(pendiente.product.desc, pendiente)}
+							on:click={printProductionOrder(pendiente.product.desc, pendiente)}
 							><i class="bx bx-printer text-xl text-black h-5 w-5"></i></button
 						>
 					</div>
