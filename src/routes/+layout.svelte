@@ -8,11 +8,13 @@
 	initializeStores();
 
 	const toastStore = getToastStore();
-	page.subscribe(({ url }) => {
+	page.subscribe(async ({ url }) => {
 		const message = url.searchParams.get('toast');
 		if (message) {
 			toastStore.trigger({ message, timeout: 1500, classes: 'end-0' });
-			goto(url.href.split('?')[0]); // to avoid multple triggers
+			url.searchParams.delete('toast'); // remove searchParam to avoid multiple triggers
+			const query = new URLSearchParams(url.searchParams.toString());
+			await goto(`${url.pathname}?${query.toString()}`);
 		}
 	});
 
