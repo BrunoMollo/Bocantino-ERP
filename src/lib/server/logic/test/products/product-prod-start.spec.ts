@@ -281,6 +281,7 @@ describe.sequential('start production of product', async () => {
 				new Date(2000, 7, 1).toISOString().split('T')[0]
 			); //plus 6 months
 			expect(new_batch.production_date).toBe(null);
+			expect(new_batch.creation_date).toBeTruthy();
 			expect(new_batch.state).toBe('IN_PRODUCTION');
 			expect(new_batch.adjustment).toBe(null);
 			expect(new_batch.initial_amount).toBe(2);
@@ -293,6 +294,7 @@ describe.sequential('start production of product', async () => {
 			expect(relation.length).toBe(1);
 			expect(relation[0].ingredient_batch_id).toBe(BANANA_BATCH_ID);
 			expect(relation[0].amount_used_to_produce_batch).toBe(2 * 10);
+			expect(relation[0].creation_date).toBeTruthy();
 		}
 	});
 
