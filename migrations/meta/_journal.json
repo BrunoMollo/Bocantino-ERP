@@ -78,6 +78,13 @@
       "when": 1715174898195,
       "tag": "0010_regular_madripoor",
       "breakpoints": true
+    },
+    {
+      "idx": 11,
+      "version": "5",
+      "when": 1716069229540,
+      "tag": "0011_woozy_juggernaut",
+      "breakpoints": true
     }
   ]
 }
