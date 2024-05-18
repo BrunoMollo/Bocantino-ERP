@@ -184,6 +184,7 @@ export const tr_ingredient_batch_ingredient_batch = pgTable(
 		used_batch_id: integer('used_batch_id')
 			.notNull()
 			.references(() => t_ingredient_batch.id),
+		creation_date: timestamp('creation_date', { mode: 'date' }).$defaultFn(() => new Date()),
 		amount_used_to_produce_batch: stock_amount('amount_used').notNull()
 	},
 	({ produced_batch_id, used_batch_id }) => ({
@@ -218,6 +219,7 @@ export const t_entry_document = pgTable('entry_document', {
 	due_date: date('due_date', { mode: 'date' }),
 	typeId: integer('type_id'), // TODO: rm later
 	type: text('document_type').$type<DocumentType>().notNull(),
+	creation_date: timestamp('creation_date', { mode: 'date' }).$defaultFn(() => new Date()),
 	entry_id: integer('entry_id')
 		.notNull()
 		.references(() => t_ingridient_entry.id)
@@ -243,6 +245,7 @@ export const t_product_batch = pgTable('product_batch', {
 	initial_amount: stock_amount('full_amount').notNull(),
 	expiration_date: date('expiration_date', { mode: 'date' }).notNull(),
 	production_date: date('production_date', { mode: 'date' }), // is null when is IN_PRODUCTION
+	creation_date: timestamp('creation_date', { mode: 'date' }).$defaultFn(() => new Date()),
 	product_id: integer('product_id')
 		.references(() => t_product.id)
 		.notNull()
@@ -268,6 +271,7 @@ export const tr_product_batch_ingredient_batch = pgTable(
 		ingredient_batch_id: integer('ingredient_batch_id')
 			.notNull()
 			.references(() => t_ingredient_batch.id),
+		creation_date: timestamp('creation_date', { mode: 'date' }).$defaultFn(() => new Date()),
 		amount_used_to_produce_batch: stock_amount('amount_used').notNull()
 	},
 	({ produced_batch_id, ingredient_batch_id }) => ({
