@@ -57,6 +57,7 @@ describe.sequential('buy ingredients with invoice', async () => {
 			expect(newDoc).toBeTruthy();
 			expect(newDoc.id).toBeTruthy();
 			expect(newDoc.typeId).toBe(null);
+			expect(newDoc.creation_date).toBeTruthy();
 			expect(newDoc.type).toBe('Factura');
 			expect(newDoc.number).toBe(VAILD_INPUT_1B.document.number);
 			expect(newDoc.issue_date?.toISOString().split('T')[0]).toBe(

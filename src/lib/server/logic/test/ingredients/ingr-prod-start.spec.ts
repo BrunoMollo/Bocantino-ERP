@@ -319,10 +319,12 @@ describe.sequential('ingredient produciton start', () => {
 		const r_batches = await db.select().from(tr_ingredient_batch_ingredient_batch);
 		expect(r_batches.length).toBe(2);
 		expect(r_batches[0].used_batch_id).toBe(LIVER_BATCH_ID);
+		expect(r_batches[0].creation_date).toBeTruthy();
 		//@ts-expect-error PENDING: explain
 		expect(r_batches[0].produced_batch_id).toBe(res.id);
 		expect(r_batches[0].amount_used_to_produce_batch).toBe(LIVER_BATCH_INTIAL_AMOUNT);
 		expect(r_batches[1].used_batch_id).toBe(SECOND_LIVER_BATCH_ID);
+		expect(r_batches[1].creation_date).toBeTruthy();
 		//@ts-expect-error PENDING: explain
 		expect(r_batches[1].produced_batch_id).toBe(res.id);
 		expect(r_batches[1].amount_used_to_produce_batch).toBe(2 * 110 - LIVER_BATCH_INTIAL_AMOUNT);
