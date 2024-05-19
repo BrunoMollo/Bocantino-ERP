@@ -8,7 +8,6 @@ export function printBatchLabel(
 		production_date: Date;
 		expiration_date: Date;
 		ingredient_id: number;
-		cost: number;
 		number_of_bags: number;
 	},
 	ingredients: Array<{
