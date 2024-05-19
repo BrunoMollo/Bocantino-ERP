@@ -48,7 +48,8 @@ beforeEach(async () => {
 
 	ENTRY_ID = await purchases_defaulter_service.buy_return_entry_id({
 		supplier_id: SUPPLIER_ID,
-		bought: [{ ingredient_id: BANANA_ID, initial_amount: 20 }]
+		bought: [{ ingredient_id: BANANA_ID, initial_amount: 20 }],
+		type: 'Factura'
 	});
 
 	ENTRY_ID_2 = await purchases_defaulter_service.buy_return_entry_id({
@@ -56,12 +57,14 @@ beforeEach(async () => {
 		bought: [
 			{ ingredient_id: BANANA_ID, initial_amount: 100 },
 			{ ingredient_id: BANANA_ID, initial_amount: 200 }
-		]
+		],
+		type: 'Factura'
 	});
 
 	await purchases_defaulter_service.buy_return_entry_id({
 		supplier_id: SUPPLIER_ID,
-		bought: [{ ingredient_id: BANANA_ID, initial_amount: 55 }]
+		bought: [{ ingredient_id: BANANA_ID, initial_amount: 55 }],
+		type: 'Factura'
 	});
 });
 

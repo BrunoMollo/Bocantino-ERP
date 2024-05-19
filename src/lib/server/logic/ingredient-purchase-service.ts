@@ -7,9 +7,11 @@ import {
 	t_supplier
 } from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
-import { and, between, count, eq, like } from 'drizzle-orm';
+import { and, between, count, eq, inArray, like } from 'drizzle-orm';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
 import { is_ok, logic_error } from '$logic';
+import type { DocumentType } from '$lib/server/db/schema';
+import { drizzle_map } from 'drizzle-tools';
 
 export type InvoiceData = {
 	number: string;
@@ -21,6 +23,10 @@ export type EntryNoteData = {
 	number: string;
 };
 
+export type ReferData = {
+	number: string;
+};
+
 type BatchFromInvoice = {
 	ingredient_id: number;
 	batch_code: string;
@@ -29,6 +35,15 @@ type BatchFromInvoice = {
 	expiration_date: Date;
 	number_of_bags: number;
 	cost: number;
+};
+
+type BatchFromRefer = {
+	ingredient_id: number;
+	batch_code: string;
+	initial_amount: number;
+	production_date: Date;
+	expiration_date: Date;
+	number_of_bags: number;
 };
 
 type BatchFromEntryNote = BatchFromInvoice;
@@ -56,10 +71,10 @@ export class IngredientPurchaseService {
 	private registerBoughtIngrediets(
 		data: {
 			supplier_id: number;
-			document: InvoiceData | EntryNoteData;
+			document: InvoiceData | EntryNoteData | ReferData;
 			withdrawal_tax_amount: number;
 			iva_tax_percentage: number;
-			batches: (BatchFromInvoice | BatchFromEntryNote)[];
+			batches: BatchFromInvoice[] | BatchFromEntryNote[] | BatchFromRefer[];
 		},
 		doc_type: DocumentType
 	) {
@@ -124,6 +139,89 @@ export class IngredientPurchaseService {
 			},
 			'Nota de Ingreso'
 		);
+	}
+
+	registerBoughtIngrediets_Refer(data: {
+		supplier_id: number;
+		document: ReferData;
+		batches: BatchFromRefer[];
+	}) {
+		const { supplier_id, document, batches } = data;
+		return this.registerBoughtIngrediets(
+			{
+				supplier_id,
+				document,
+				batches,
+				withdrawal_tax_amount: 0,
+				iva_tax_percentage: 0
+			},
+			'Remito'
+		);
+	}
+
+	/*
+	 * Returns the entries with a refer that don't have a invoice yet
+	 * Omits the ones with Entry Note.
+	 * */
+	async get_entries_without_invoice() {
+		const entries = await db
+			.select()
+			.from(t_ingridient_entry)
+			.innerJoin(t_entry_document, eq(t_ingridient_entry.id, t_entry_document.entry_id))
+			.where(inArray(t_entry_document.type, ['Remito', 'Factura']))
+			.then(drizzle_map({ one: 'ingridient_entry', with_one: [], with_many: ['entry_document'] }));
+
+		return entries.filter((x) => !x.entry_document.some((doc) => doc.type == 'Factura'));
+	}
+
+	/*
+	 * Assign an invoice tho an entry that arrieved with just a refer.
+	 * This happens betewn sometines the supplier send the invoice later
+	 * */
+	public async asign_invoice(obj: {
+		entry_id: number;
+		invoice_number: string;
+		issue_date: Date;
+		due_date: Date;
+		withdrawal_tax_amount: number;
+		iva_tax_percentage: number;
+	}) {
+		const {
+			entry_id,
+			invoice_number,
+			issue_date,
+			due_date,
+			withdrawal_tax_amount,
+			iva_tax_percentage
+		} = obj;
+		const entry = await this.getEntryById(entry_id);
+		if (!entry) {
+			return logic_error('No se encontro al entrada de insumos');
+		}
+
+		const afected_batches = await this.getBatchesByEntryId(entry_id);
+		const afected_batches_id = afected_batches.map((x) => Number(x.id));
+
+		return db.transaction(async (tx) => {
+			const invoice = {
+				entry_id,
+				number: invoice_number,
+				due_date,
+				issue_date,
+				type: 'Factura' as const
+			};
+			const ret = await tx
+				.insert(t_entry_document)
+				.values(invoice)
+				.returning({ invoice_id: t_entry_document.id });
+
+			await tx
+				.update(t_ingredient_batch)
+				.set({ withdrawal_tax_amount, iva_tax_percentage })
+				.where(inArray(t_ingredient_batch.id, afected_batches_id));
+
+			return is_ok(ret[0]);
+		});
 	}
 
 	public async getLastEntries() {
@@ -213,6 +311,7 @@ export class IngredientPurchaseService {
 	async getBatchesByEntryId(entry_id: number) {
 		return await db
 			.select({
+				id: t_ingredient_batch.id,
 				code: t_ingredient_batch.batch_code,
 				ingredient: t_ingredient.name,
 				initial_amount: t_ingredient_batch.initial_amount,
@@ -269,6 +368,5 @@ export class IngredientPurchaseService {
 		return this.docs.find((x) => x.id == id);
 	}
 }
-import type { DocumentType } from '$lib/server/db/schema';
 
 export const purchases_service = new IngredientPurchaseService();
