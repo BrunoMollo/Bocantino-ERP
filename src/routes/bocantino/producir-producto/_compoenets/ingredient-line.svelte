@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { trpc } from '$lib/trpc-client';
+	import { round } from '$lib/utils';
 	import { createEventDispatcher, onMount } from 'svelte';
 	import { fade, fly } from 'svelte/transition';
 
@@ -18,7 +19,10 @@
 
 	$: needed_amount = Number(amount * produced_amount);
 
-	$: current_amount = selected_batches.reduce((acc, item) => acc + item.current_amount, 0);
+	$: current_amount = selected_batches.reduce(
+		(acc, item) => round(acc + item.current_amount, 7),
+		0
+	);
 	$: insuffiecient = !!selected_batches.length && needed_amount > current_amount;
 	const dispach = createEventDispatcher();
 	onMount(() => {
