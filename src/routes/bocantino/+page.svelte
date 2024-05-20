@@ -20,7 +20,10 @@
 
 <main class="md:container h-full mx-auto md:flex lg:gap-10 gap-3">
 	<div class="flex gap-5 justify-between lg:w-8/12 md:w-6/12 py-5 lg:flex-row flex-col">
-		<div class="container glass rounded p-1 lg:w-1/2 md:1/3 relative lg:m-0 max-h-80">
+		<div
+			class="container glass rounded p-1 lg:w-1/2 md:1/3 relative lg:m-0"
+			style="height: fit-content; min-height: 354px"
+		>
 			<h1 class="md:text-2xl mb-2 text-center">Producciones pendientes:</h1>
 			<div>
 				{#if data.pending_productions.length == 0}
@@ -45,7 +48,10 @@
 				{/if}
 			</div>
 		</div>
-		<div class="container rounded lg:w-1/2 md:1/3 p-3 glass max-h-80">
+		<div
+			class="container rounded lg:w-1/2 md:1/3 p-3 pb-5 glass"
+			style="height: fit-content; min-height: 354px"
+		>
 			<h1 class="text-2xl mb-2 text-center">Ultimos ingresos:</h1>
 
 			<div class="">
@@ -73,7 +79,7 @@
 	</div>
 	<div
 		class="gap-4 lg:p-5 p-2 mt-5 rounded glass flex flex-col overflow-y-auto w-full lg:w-auto"
-		style="height: calc(100vh - 100px)"
+		style="height: calc(100vh - 100px); min-width: 400px;"
 	>
 		<input
 			class="input w-full h-14 p-4 rounded"
@@ -88,7 +94,7 @@
 		{/if}
 		{#each ingredientes as { id, name, stock, reorder_point }}
 			<div
-				class="shrink-0 card lg:w-96 w-full p-2 rounded-lg shadow-lg relative"
+				class="shrink-0 card w-full p-2 rounded-lg shadow-lg relative"
 				style:background-color={stock < reorder_point ? 'rgba(127, 29, 29, 0.4)' : ''}
 				style:box-shadow={stock < reorder_point ? '0 1px 25px 1px rgba(255, 0, 0, 0.8)' : ''}
 			>
