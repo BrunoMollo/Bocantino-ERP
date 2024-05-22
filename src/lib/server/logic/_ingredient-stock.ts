@@ -3,9 +3,10 @@ import {
 	tr_ingredient_batch_ingredient_batch,
 	tr_product_batch_ingredient_batch
 } from '../db/schema';
-import { db } from '../db';
+import { db, type Tx } from '../db';
 import { eq, sql, sum } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
+import { getFirstIfPosible } from '$lib/utils';
 
 const batches_in_production = alias(t_ingredient_batch, 'batches_in_production');
 export const sq_stock = db.$with('stock').as(
@@ -36,3 +37,17 @@ export const sq_stock = db.$with('stock').as(
 		)
 		.groupBy(t_ingredient_batch.id)
 );
+
+export async function check_if_empry_and_mark(batch_id: number, tx?: Tx) {
+	const batch = await (tx ?? db)
+		.with(sq_stock)
+		.select()
+		.from(sq_stock)
+		.where(eq(sq_stock.batch_id, batch_id))
+		.then(getFirstIfPosible);
+
+	if (!batch) return;
+	if (batch.currently_available != 0) return;
+
+	await (tx ?? db).update(t_ingredient_batch).set({ state: 'EMPTY' });
+}

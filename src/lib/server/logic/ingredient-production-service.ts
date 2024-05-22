@@ -59,7 +59,8 @@ class IngredientProductionService {
 					'id',
 					'batch_code',
 					'expiration_date',
-					'initial_amount'
+					'initial_amount',
+					'state'
 				),
 				ingredient: pick_columns(t_ingredient, 'id', 'name', 'unit'),
 				stock: { current_amount: sq_stock.currently_available }
