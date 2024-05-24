@@ -417,6 +417,8 @@ class IngredientProductionService {
 				.update(t_ingredient_batch)
 				.set({ adjustment: Number(batch.adjustment) + adjustment })
 				.where(eq(t_ingredient_batch.id, batch_id));
+
+			await check_if_empry_and_mark(batch_id, tx);
 			return is_ok(null);
 		});
 	}

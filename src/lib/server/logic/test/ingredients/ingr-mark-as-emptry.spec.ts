@@ -439,3 +439,41 @@ describe.sequential('check_if_empry_and_mark: ingreidient production', () => {
 		});
 	});
 });
+
+describe.sequential('check_if_empry_and_mark: adjustment', () => {
+	test('mark as EMPTY when stock adjusted (once)', async () => {
+		const batch_id = await purchases_defaulter_service
+			.buy({
+				supplier_id: SUPPLIER_ID,
+				bought: [{ ingredient_id: LIVER_ID, initial_amount: 10 }]
+			})
+			.then(getFirst);
+
+		await ingredient_production_service.modifyStock({ batch_id, adjustment: -10 });
+
+		await ingredient_production_service.getBatchById(batch_id).then((x) => {
+			expect(x?.state).toBe('EMPTY');
+		});
+	});
+
+	test('mark as EMPTY when stock adjusted (twice)', async () => {
+		const batch_id = await purchases_defaulter_service
+			.buy({
+				supplier_id: SUPPLIER_ID,
+				bought: [{ ingredient_id: LIVER_ID, initial_amount: 10 }]
+			})
+			.then(getFirst);
+
+		await ingredient_production_service.modifyStock({ batch_id, adjustment: -5 });
+
+		await ingredient_production_service.getBatchById(batch_id).then((x) => {
+			expect(x?.state).toBe('AVAILABLE');
+		});
+
+		await ingredient_production_service.modifyStock({ batch_id, adjustment: -5 });
+
+		await ingredient_production_service.getBatchById(batch_id).then((x) => {
+			expect(x?.state).toBe('EMPTY');
+		});
+	});
+});
