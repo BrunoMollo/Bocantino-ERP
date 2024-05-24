@@ -14,6 +14,7 @@ import { is_ok, logic_error } from '$logic';
 import moment from 'moment';
 import { drizzle_map } from 'drizzle-tools';
 import { ingredient_production_service } from './ingredient-production-service';
+import { check_if_empry_and_mark } from './_ingredient-stock';
 
 class ProductService {
 	async edit(
@@ -136,6 +137,16 @@ class ProductService {
 				.update(t_product_batch)
 				.set({ state: 'AVAILABLE', adjustment, production_date: new Date() })
 				.where(eq(t_product_batch.id, batch_id));
+
+			const ingredeitn_batch_used_ids = await tx
+				.select()
+				.from(tr_product_batch_ingredient_batch)
+				.where(eq(tr_product_batch_ingredient_batch.produced_batch_id, batch_id))
+				.then((x) => x.map((y) => y.ingredient_batch_id));
+
+			for (const id of ingredeitn_batch_used_ids) {
+				await check_if_empry_and_mark(id, tx);
+			}
 		});
 
 		return is_ok(null);
