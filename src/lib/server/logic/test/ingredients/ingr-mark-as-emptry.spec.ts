@@ -327,9 +327,115 @@ describe.sequential('check_if_empry_and_mark: ingreidient production', () => {
 		});
 	});
 
-	// test('dont change state to EMPTY when production ends and stock>0', async () => {});
-	//
-	// test('production of product, EMPYT the first batch but not the second', async () => {});
-	//
-	// test('production of product, EMPYT both batches', async () => {});
+	test('dont change state to EMPTY when production ends and stock>0', async () => {
+		const batch_id = await purchases_defaulter_service
+			.buy({
+				supplier_id: SUPPLIER_ID,
+				bought: [{ ingredient_id: LIVER_ID, initial_amount: 100 }]
+			})
+			.then(getFirst);
+
+		// eslint-disable-next-line @typescript-eslint/no-unused-vars
+		for (const _ of [1, 2]) {
+			const res1 = await ingredient_production_service
+				.startIngredientProduction({ ingedient_id: REDUCED_LIVER_ID, produced_amount: 40 }, [
+					batch_id
+				])
+				.then((x) => {
+					expect(x.type).toBe('SUCCESS');
+					return x;
+				});
+
+			await ingredient_production_service.getBatchById(batch_id).then((x) => {
+				expect(x?.state).toBe('AVAILABLE');
+			});
+
+			if (res1.type != 'SUCCESS') return;
+			await ingredient_production_service
+				.closeProduction({ batch_id: res1.id, adjustment: 1 })
+				.then((x) => expect(x.type).toBe('SUCCESS'));
+
+			await ingredient_production_service.getBatchById(batch_id).then((x) => {
+				expect(x?.state).toBe('AVAILABLE');
+			});
+		}
+	});
+
+	test('mark EMPYT the first batch but not the second', async () => {
+		const batch_id_1 = await purchases_defaulter_service
+			.buy({
+				supplier_id: SUPPLIER_ID,
+				bought: [{ ingredient_id: LIVER_ID, initial_amount: 10 }]
+			})
+			.then(getFirst);
+
+		const batch_id_2 = await purchases_defaulter_service
+			.buy({
+				supplier_id: SUPPLIER_ID,
+				bought: [{ ingredient_id: LIVER_ID, initial_amount: 10 }]
+			})
+			.then(getFirst);
+
+		const res1 = await ingredient_production_service
+			.startIngredientProduction({ ingedient_id: REDUCED_LIVER_ID, produced_amount: 15 }, [
+				batch_id_1,
+				batch_id_2
+			])
+			.then((x) => {
+				expect(x.type).toBe('SUCCESS');
+				return x;
+			});
+		if (res1.type != 'SUCCESS') return;
+
+		await ingredient_production_service
+			.closeProduction({ batch_id: res1.id, adjustment: 4 })
+			.then((x) => expect(x.type).toBe('SUCCESS'));
+
+		await ingredient_production_service.getBatchById(batch_id_1).then((x) => {
+			expect(x?.state).toBe('EMPTY');
+		});
+
+		await ingredient_production_service.getBatchById(batch_id_2).then((x) => {
+			expect(x?.state).toBe('AVAILABLE');
+		});
+	});
+
+	test('mark EMPYT both batches', async () => {
+		const batch_id_1 = await purchases_defaulter_service
+			.buy({
+				supplier_id: SUPPLIER_ID,
+				bought: [{ ingredient_id: LIVER_ID, initial_amount: 10 }]
+			})
+			.then(getFirst);
+
+		const batch_id_2 = await purchases_defaulter_service
+			.buy({
+				supplier_id: SUPPLIER_ID,
+				bought: [{ ingredient_id: LIVER_ID, initial_amount: 10 }]
+			})
+			.then(getFirst);
+
+		const res1 = await ingredient_production_service
+			.startIngredientProduction({ ingedient_id: REDUCED_LIVER_ID, produced_amount: 20 }, [
+				batch_id_1,
+				batch_id_2
+			])
+			.then((x) => {
+				expect(x.type).toBe('SUCCESS');
+				return x;
+			});
+		if (res1.type != 'SUCCESS') return;
+
+		await ingredient_production_service
+			.closeProduction({ batch_id: res1.id, adjustment: 4 })
+			.then((x) => expect(x.type).toBe('SUCCESS'));
+
+		await ingredient_production_service.getBatchById(batch_id_1).then((x) => {
+			expect(x?.state).toBe('EMPTY');
+		});
+
+		await ingredient_production_service.getBatchById(batch_id_2).then((x) => {
+			expect(x?.state).toBe('EMPTY');
+		});
+	});
 });
