@@ -12,7 +12,7 @@ import { getFirstIfPosible } from '$lib/utils';
 const batches_in_production = alias(t_ingredient_batch, 'batches_in_production');
 
 /*
- * This show the availale amount of a batch sonidering that the amouns that are alredy
+ * This show the availale amount of a batch considering that the amounts that are already
  * assigned to a production are not available, even if the production is not finished
  * */
 export const sq_stock = db.$with('stock').as(

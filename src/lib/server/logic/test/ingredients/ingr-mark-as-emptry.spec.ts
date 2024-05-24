@@ -70,7 +70,7 @@ describe.sequential('check_if_empry_and_mark: product production', () => {
 		expect(mod_batch?.state).toBe('EMPTY');
 	});
 
-	test('change state to EMPYT when production ends (2 productions)', async () => {
+	test('change state to EMPTY when production ends (2 productions)', async () => {
 		const batch_id = await purchases_defaulter_service
 			.buy({
 				supplier_id: SUPPLIER_ID,
@@ -121,7 +121,7 @@ describe.sequential('check_if_empry_and_mark: product production', () => {
 		});
 	});
 
-	test('dont change state to EMPYT when production ends and stock>0', async () => {
+	test('do not change state to EMPTY when production ends and stock>0', async () => {
 		const batch_id = await purchases_defaulter_service
 			.buy({
 				supplier_id: SUPPLIER_ID,
@@ -150,7 +150,7 @@ describe.sequential('check_if_empry_and_mark: product production', () => {
 		expect(mod_batch?.state).toBe('AVAILABLE');
 	});
 
-	test('production of product, empty the first batch but not the second', async () => {
+	test('production of product, EMPTY the first batch but not the second', async () => {
 		const batch_id_1 = await purchases_defaulter_service
 			.buy({
 				supplier_id: SUPPLIER_ID,
@@ -261,7 +261,7 @@ describe.sequential('check_if_empry_and_mark: ingreidient production', () => {
 		expect(mod_batch?.state).toBe('EMPTY');
 	});
 
-	test('change state to EMPYT when production ends (2 productions)', async () => {
+	test('change state to EMPTY when production ends (2 productions)', async () => {
 		const batch_id = await purchases_defaulter_service
 			.buy({
 				supplier_id: SUPPLIER_ID,
@@ -327,7 +327,7 @@ describe.sequential('check_if_empry_and_mark: ingreidient production', () => {
 		});
 	});
 
-	test('dont change state to EMPTY when production ends and stock>0', async () => {
+	test('do not change state to EMPTY when production ends and stock>0', async () => {
 		const batch_id = await purchases_defaulter_service
 			.buy({
 				supplier_id: SUPPLIER_ID,
@@ -361,7 +361,7 @@ describe.sequential('check_if_empry_and_mark: ingreidient production', () => {
 		}
 	});
 
-	test('mark EMPYT the first batch but not the second', async () => {
+	test('mark EMPTY the first batch but not the second', async () => {
 		const batch_id_1 = await purchases_defaulter_service
 			.buy({
 				supplier_id: SUPPLIER_ID,
@@ -400,7 +400,7 @@ describe.sequential('check_if_empry_and_mark: ingreidient production', () => {
 		});
 	});
 
-	test('mark EMPYT both batches', async () => {
+	test('mark EMPTY both batches', async () => {
 		const batch_id_1 = await purchases_defaulter_service
 			.buy({
 				supplier_id: SUPPLIER_ID,
