@@ -46,8 +46,14 @@ export async function check_if_empry_and_mark(batch_id: number, tx?: Tx) {
 		.where(eq(sq_stock.batch_id, batch_id))
 		.then(getFirstIfPosible);
 
-	if (!batch) return;
-	if (batch.currently_available != 0) return;
+	if (!batch) return 'batch not found';
 
-	await (tx ?? db).update(t_ingredient_batch).set({ state: 'EMPTY' });
+	if (batch.currently_available !== 0) return 'stock is OK';
+
+	await (tx ?? db)
+		.update(t_ingredient_batch)
+		.set({ state: 'EMPTY' })
+		.where(eq(t_ingredient_batch.id, batch_id));
+
+	return 'marked as EMPTY';
 }

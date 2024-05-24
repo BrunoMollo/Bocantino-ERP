@@ -128,4 +128,85 @@ describe.sequential('check if ingredient batch is empty and mark', () => {
 		const mod_batch = await ingredient_production_service.getBatchById(batch_id);
 		expect(mod_batch?.state).toBe('AVAILABLE');
 	});
+
+	test('production of product, empty the first batch but not the second', async () => {
+		const batch_id_1 = await purchases_defaulter_service
+			.buy({
+				supplier_id: SUPPLIER_ID,
+				bought: [{ ingredient_id: LIVER_ID, initial_amount: 100 }]
+			})
+			.then(getFirst);
+
+		const batch_id_2 = await purchases_defaulter_service
+			.buy({
+				supplier_id: SUPPLIER_ID,
+				bought: [{ ingredient_id: LIVER_ID, initial_amount: 10_000 }]
+			})
+			.then(getFirst);
+
+		const res1 = await product_service.startProduction({
+			product_id: PRODUCT_ID,
+			recipe: [{ ingredient_id: LIVER_ID, amount: 12 }], // << IMPORTANT!
+			produced_amount: 10,
+			batches_ids: [[batch_id_1, batch_id_2]]
+		});
+		expect(res1.type).toBe('SUCCESS');
+		if (res1.type != 'SUCCESS') return;
+
+		for (const id of [batch_id_1, batch_id_2]) {
+			const still_batch = await ingredient_production_service.getBatchById(id);
+			expect(still_batch?.state).toBe('AVAILABLE');
+		}
+
+		const res2 = await product_service.closeProduction({ batch_id: res1.data.id, adjustment: 0 });
+
+		expect(res2.type).toBe('SUCCESS');
+		if (res2.type != 'SUCCESS') return;
+
+		const mod_bathc_1 = await ingredient_production_service.getBatchById(batch_id_1);
+		expect(mod_bathc_1?.state).toBe('EMPTY');
+
+		const mod_batch_2 = await ingredient_production_service.getBatchById(batch_id_2);
+		expect(mod_batch_2?.state).toBe('AVAILABLE');
+	});
+
+	test('production of product, empty both batches', async () => {
+		const batch_id_1 = await purchases_defaulter_service
+			.buy({
+				supplier_id: SUPPLIER_ID,
+				bought: [{ ingredient_id: LIVER_ID, initial_amount: 100 }]
+			})
+			.then(getFirst);
+
+		const batch_id_2 = await purchases_defaulter_service
+			.buy({
+				supplier_id: SUPPLIER_ID,
+				bought: [{ ingredient_id: LIVER_ID, initial_amount: 100 }]
+			})
+			.then(getFirst);
+
+		const res1 = await product_service.startProduction({
+			product_id: PRODUCT_ID,
+			recipe: [{ ingredient_id: LIVER_ID, amount: 20 }], // << IMPORTANT!
+			produced_amount: 10,
+			batches_ids: [[batch_id_1, batch_id_2]]
+		});
+		expect(res1.type).toBe('SUCCESS');
+		if (res1.type != 'SUCCESS') return;
+
+		for (const id of [batch_id_1, batch_id_2]) {
+			const still_batch = await ingredient_production_service.getBatchById(id);
+			expect(still_batch?.state).toBe('AVAILABLE');
+		}
+
+		const res2 = await product_service.closeProduction({ batch_id: res1.data.id, adjustment: 0 });
+
+		expect(res2.type).toBe('SUCCESS');
+		if (res2.type != 'SUCCESS') return;
+
+		for (const id of [batch_id_1, batch_id_2]) {
+			const still_batch = await ingredient_production_service.getBatchById(id);
+			expect(still_batch?.state).toBe('EMPTY');
+		}
+	});
 });
