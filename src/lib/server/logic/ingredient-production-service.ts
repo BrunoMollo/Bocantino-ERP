@@ -8,7 +8,7 @@ import {
 } from '../db/schema';
 import { eq, and, asc, desc, ne, count, inArray, sql, ilike } from 'drizzle-orm';
 import { drizzle_map, copy_column, pick_columns } from 'drizzle-tools';
-import { sq_stock } from './_ingredient-stock';
+import { check_if_empry_and_mark, sq_stock } from './_ingredient-stock';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
 import { alias } from 'drizzle-orm/pg-core';
 import { ingredients_service } from './ingredient-service';
@@ -351,6 +351,16 @@ class IngredientProductionService {
 					adjustment
 				})
 				.where(eq(t_ingredient_batch.id, batch_id));
+
+			const used_batches = await tx
+				.select()
+				.from(tr_ingredient_batch_ingredient_batch)
+				.where(eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, batch_id));
+			const used_batches_id = used_batches.map((x) => x.used_batch_id);
+			for (const id of used_batches_id) {
+				await check_if_empry_and_mark(id, tx);
+			}
+
 			return { type: 'SUCCESS' } as const;
 		});
 	}

@@ -20,12 +20,14 @@ import { ingredient_production_service } from '$logic/ingredient-production-serv
 vi.mock('$lib/server/db/index.ts');
 
 let LIVER_ID = -1;
+let REDUCED_LIVER_ID = -1;
 let SUPPLIER_ID = -1;
 let PRODUCT_ID = -1;
 
 beforeAll(async () => {
 	await __DELETE_ALL_DATABASE();
 	LIVER_ID = await ingredient_defaulter_service.add_simple();
+	REDUCED_LIVER_ID = await ingredient_defaulter_service.add_derived({ from: LIVER_ID, amount: 1 });
 	SUPPLIER_ID = await suppliers_defaulter_service.add({ ingredientsIds: [LIVER_ID] });
 	PRODUCT_ID = await product_service_defaulter.add([{ ingredient_id: LIVER_ID, amount: 10 }]);
 });
@@ -38,8 +40,8 @@ beforeEach(async () => {
 	await db.delete(t_ingridient_entry);
 });
 
-describe.sequential('check if ingredient batch is empty and mark', () => {
-	test('change state to EMPYT when production ends', async () => {
+describe.sequential('check_if_empry_and_mark: product production', () => {
+	test('change state to EMPTY when production ends', async () => {
 		const batch_id = await purchases_defaulter_service
 			.buy({
 				supplier_id: SUPPLIER_ID,
@@ -76,28 +78,47 @@ describe.sequential('check if ingredient batch is empty and mark', () => {
 			})
 			.then(getFirst);
 
-		// eslint-disable-next-line @typescript-eslint/no-unused-vars
-		for (const _ of [1, 2]) {
-			const res1 = await product_service.startProduction({
-				product_id: PRODUCT_ID,
-				recipe: [{ ingredient_id: LIVER_ID, amount: 10 }],
-				produced_amount: 5,
-				batches_ids: [[batch_id]]
-			});
-			expect(res1.type).toBe('SUCCESS');
-			if (res1.type != 'SUCCESS') return;
+		const res1 = await product_service.startProduction({
+			product_id: PRODUCT_ID,
+			recipe: [{ ingredient_id: LIVER_ID, amount: 10 }],
+			produced_amount: 5,
+			batches_ids: [[batch_id]]
+		});
+		expect(res1.type).toBe('SUCCESS');
+		if (res1.type != 'SUCCESS') return;
 
-			const still_batch = await ingredient_production_service.getBatchById(batch_id);
-			expect(still_batch?.state).toBe('AVAILABLE');
+		await ingredient_production_service.getBatchById(batch_id).then((x) => {
+			expect(x?.state).toBe('AVAILABLE');
+		});
 
-			const res2 = await product_service.closeProduction({ batch_id: res1.data.id, adjustment: 0 });
+		const res2 = await product_service.startProduction({
+			product_id: PRODUCT_ID,
+			recipe: [{ ingredient_id: LIVER_ID, amount: 10 }],
+			produced_amount: 5,
+			batches_ids: [[batch_id]]
+		});
+		expect(res2.type).toBe('SUCCESS');
+		if (res2.type != 'SUCCESS') return;
 
-			expect(res2.type).toBe('SUCCESS');
-			if (res2.type != 'SUCCESS') return;
-		}
+		await ingredient_production_service.getBatchById(batch_id).then((x) => {
+			expect(x?.state).toBe('AVAILABLE');
+		});
 
-		const mod_batch = await ingredient_production_service.getBatchById(batch_id);
-		expect(mod_batch?.state).toBe('EMPTY');
+		//First close
+		await product_service.closeProduction({ batch_id: res1.data.id, adjustment: 0 }).then((x) => {
+			expect(x.type).toBe('SUCCESS');
+		});
+		await ingredient_production_service.getBatchById(batch_id).then((x) => {
+			expect(x?.state).toBe('AVAILABLE');
+		});
+
+		//Second close
+		await product_service.closeProduction({ batch_id: res2.data.id, adjustment: 0 }).then((x) => {
+			expect(x.type).toBe('SUCCESS');
+		});
+		await ingredient_production_service.getBatchById(batch_id).then((x) => {
+			expect(x?.state).toBe('EMPTY');
+		});
 	});
 
 	test('dont change state to EMPYT when production ends and stock>0', async () => {
@@ -209,4 +230,106 @@ describe.sequential('check if ingredient batch is empty and mark', () => {
 			expect(still_batch?.state).toBe('EMPTY');
 		}
 	});
+});
+
+describe.sequential('check_if_empry_and_mark: ingreidient production', () => {
+	test('change state to EMPTY when production ends', async () => {
+		const batch_id = await purchases_defaulter_service
+			.buy({
+				supplier_id: SUPPLIER_ID,
+				bought: [{ ingredient_id: LIVER_ID, initial_amount: 100 }]
+			})
+			.then(getFirst);
+
+		const res1 = await ingredient_production_service.startIngredientProduction(
+			{ ingedient_id: REDUCED_LIVER_ID, produced_amount: 100 },
+			[batch_id]
+		);
+		expect(res1.type).toBe('SUCCESS');
+		if (res1.type != 'SUCCESS') return;
+		const still_batch = await ingredient_production_service.getBatchById(batch_id);
+		expect(still_batch?.state).toBe('AVAILABLE');
+
+		const res2 = await ingredient_production_service.closeProduction({
+			batch_id: res1.id,
+			adjustment: 0
+		});
+		expect(res2.type).toBe('SUCCESS');
+		if (res2.type != 'SUCCESS') return;
+
+		const mod_batch = await ingredient_production_service.getBatchById(batch_id);
+		expect(mod_batch?.state).toBe('EMPTY');
+	});
+
+	test('change state to EMPYT when production ends (2 productions)', async () => {
+		const batch_id = await purchases_defaulter_service
+			.buy({
+				supplier_id: SUPPLIER_ID,
+				bought: [{ ingredient_id: LIVER_ID, initial_amount: 100 }]
+			})
+			.then(getFirst);
+
+		const res1 = await ingredient_production_service
+			.startIngredientProduction({ ingedient_id: REDUCED_LIVER_ID, produced_amount: 40 }, [
+				batch_id
+			])
+			.then((x) => {
+				expect(x.type).toBe('SUCCESS');
+				return x;
+			});
+
+		await ingredient_production_service.getBatchById(batch_id).then((x) => {
+			expect(x?.state).toBe('AVAILABLE');
+		});
+
+		const res2 = await ingredient_production_service
+			.startIngredientProduction({ ingedient_id: REDUCED_LIVER_ID, produced_amount: 60 }, [
+				batch_id
+			])
+			.then((x) => {
+				expect(x.type).toBe('SUCCESS');
+				return x;
+			});
+
+		await ingredient_production_service.getBatchById(batch_id).then((x) => {
+			expect(x?.state).toBe('AVAILABLE');
+		});
+
+		if (res1.type != 'SUCCESS') return;
+		if (res2.type != 'SUCCESS') return;
+
+		await ingredient_production_service
+			.closeProduction({
+				batch_id: res1.id,
+				adjustment: 0
+			})
+			.then((x) => {
+				expect(x.type).toBe('SUCCESS');
+				return x;
+			});
+
+		await ingredient_production_service.getBatchById(batch_id).then((x) => {
+			expect(x?.state).toBe('AVAILABLE');
+		});
+
+		await ingredient_production_service
+			.closeProduction({
+				batch_id: res2.id,
+				adjustment: 0
+			})
+			.then((x) => {
+				expect(x.type).toBe('SUCCESS');
+				return x;
+			});
+
+		await ingredient_production_service.getBatchById(batch_id).then((x) => {
+			expect(x?.state).toBe('EMPTY');
+		});
+	});
+
+	// test('dont change state to EMPTY when production ends and stock>0', async () => {});
+	//
+	// test('production of product, EMPYT the first batch but not the second', async () => {});
+	//
+	// test('production of product, EMPYT both batches', async () => {});
 });
