@@ -33,7 +33,7 @@
 			<p class="text-xl mb-10">Cantidad actual: {data.batch.current_amount}</p>
 
 			<form action="" method="post" use:enhance class="flex flex-col">
-				<label class="label" for="adjustment">Cantidad Perdida</label>
+				<label class="label" for="adjustment">Ajuste</label>
 				<div>
 					<input
 						class="input mb-4 w-20"
