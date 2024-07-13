@@ -148,7 +148,7 @@ describe('Add invoice to entry by refer', () => {
 		const res = await purchases_service.add_invoice_to_entry({
 			entry_id: REFER_ENRTY_ID,
 			invoice: {
-				number: 'dsadsad',
+				number: 'NUMERO FACTURA :)',
 				issue_date: new Date(),
 				due_date: new Date()
 			},
@@ -167,7 +167,8 @@ describe('Add invoice to entry by refer', () => {
 		});
 		expect(res.type).toBe('SUCCESS');
 		const entry = await purchases_service.getEntryById(REFER_ENRTY_ID);
-		expect(entry?.document.type).toBe('Factura');
+		expect(entry?.document.type).toBe('Remito & Factura');
+		expect(entry?.document.second_number).toBe('NUMERO FACTURA :)');
 		const batches = await db
 			.select()
 			.from(t_ingredient_batch)

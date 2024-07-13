@@ -55,7 +55,9 @@ export class IngredientPurchaseService {
 				id: t_ingridient_entry.id,
 				supplier: t_supplier.name,
 				date: t_ingridient_entry.creation_date,
-				document: pick_merge().table(t_entry_document, 'id', 'number', 'issue_date', 'type').build()
+				document: pick_merge()
+					.table(t_entry_document, 'id', 'number', 'issue_date', 'type', 'second_number')
+					.build()
 			})
 			.from(t_ingridient_entry)
 			.innerJoin(t_supplier, eq(t_supplier.id, t_ingridient_entry.supplier_id))
@@ -200,7 +202,7 @@ export class IngredientPurchaseService {
 			const { issue_date, due_date } = invoice;
 			await tx
 				.update(t_entry_document)
-				.set({ type: 'Factura', issue_date, due_date })
+				.set({ type: 'Remito & Factura', issue_date, due_date, second_number: invoice.number })
 				.where(eq(t_entry_document.id, entry.document.id));
 
 			await tx

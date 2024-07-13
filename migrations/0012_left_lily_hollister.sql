@@ -1,0 +1,1 @@
+ALTER TABLE "entry_document" ADD COLUMN "second_document_identifier" text;
