@@ -55,7 +55,7 @@ export class IngredientPurchaseService {
 				id: t_ingridient_entry.id,
 				supplier: t_supplier.name,
 				date: t_ingridient_entry.creation_date,
-				document: pick_merge().table(t_entry_document, 'number', 'issue_date', 'type').build()
+				document: pick_merge().table(t_entry_document, 'id', 'number', 'issue_date', 'type').build()
 			})
 			.from(t_ingridient_entry)
 			.innerJoin(t_supplier, eq(t_supplier.id, t_ingridient_entry.supplier_id))
@@ -157,6 +157,50 @@ export class IngredientPurchaseService {
 			},
 			'Remito'
 		);
+	}
+
+	/*
+	 * An entry of ingredients can come with only a refer, and the invoice is sent
+	 * by the supplier later, that why this is another action
+	 * TODO: validate that the batches
+	 */
+	async add_invoice_to_entry(data: {
+		entry_id: number;
+		invoice: InvoiceData;
+		iva_tax_percentage: number;
+		withdrawal_tax_amount: number;
+		batches: { batch_id: number; cost: number }[];
+	}) {
+		const { entry_id, invoice, iva_tax_percentage, withdrawal_tax_amount, batches } = data;
+		const entry = await this.getEntryById(entry_id);
+		if (!entry) {
+			return logic_error('entry not found');
+		}
+		if (entry.document.type !== 'Remito') {
+			return logic_error('solo se puede asignar una factura a un ingreso con remito');
+		}
+
+		await db.transaction(async (tx) => {
+			const { issue_date, due_date } = invoice;
+			await tx
+				.update(t_entry_document)
+				.set({ type: 'Factura', issue_date, due_date })
+				.where(eq(t_entry_document.id, entry.document.id));
+
+			await tx
+				.update(t_ingredient_batch)
+				.set({ iva_tax_percentage, withdrawal_tax_amount })
+				.where(eq(t_ingredient_batch.entry_id, entry_id));
+
+			for (const { batch_id, cost } of batches) {
+				await tx
+					.update(t_ingredient_batch)
+					.set({ cost })
+					.where(eq(t_ingredient_batch.id, batch_id));
+			}
+		});
+
+		return is_ok('exito');
 	}
 
 	/*
