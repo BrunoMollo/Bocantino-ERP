@@ -178,11 +178,174 @@ describe('Add invoice to entry by refer', () => {
 		}
 	});
 
-	test('validate that all bathces are correpsoinf to the entry', () => {
-		//TODO: still miising in implemntation
+	test('validate that all bathces are correpsoing to the entry (only one)', async () => {
+		const batches_id = await purchases_service
+			.getBatchesByEntryId(NOTE_ENRTY_ID)
+			.then((x) => x.map((e) => e.id));
+		const res = await purchases_service.add_invoice_to_entry({
+			entry_id: REFER_ENRTY_ID,
+			invoice: {
+				number: 'dsadsad',
+				issue_date: new Date(),
+				due_date: new Date()
+			},
+			withdrawal_tax_amount: 300,
+			iva_tax_percentage: 50,
+			batches: [
+				{
+					batch_id: batches_id[0],
+					cost: 200
+				}
+			]
+		});
+		expect(res.type).toBe('LOGIC_ERROR');
 	});
 
-	test('validate that any bathc of the entry is missing', () => {
-		//TODO: still miising in implemntation
+	test('validate that all bathces are correpsoing to the entry (all and one wrong)', async () => {
+		const batches_id_note = await purchases_service
+			.getBatchesByEntryId(NOTE_ENRTY_ID)
+			.then((x) => x.map((e) => e.id));
+
+		const batches_id_refer = await purchases_service
+			.getBatchesByEntryId(REFER_ENRTY_ID)
+			.then((x) => x.map((e) => e.id));
+
+		const res = await purchases_service.add_invoice_to_entry({
+			entry_id: REFER_ENRTY_ID,
+			invoice: {
+				number: 'dsadsad',
+				issue_date: new Date(),
+				due_date: new Date()
+			},
+			withdrawal_tax_amount: 300,
+			iva_tax_percentage: 50,
+			batches: [
+				{
+					batch_id: batches_id_refer[0],
+					cost: 200
+				},
+				{
+					batch_id: batches_id_refer[1],
+					cost: 200
+				},
+				{
+					batch_id: batches_id_note[0],
+					cost: 200
+				}
+			]
+		});
+		expect(res.type).toBe('LOGIC_ERROR');
+	});
+
+	test('validate that all bathces are correpsoing to the entry (one right and one wrong) (1)', async () => {
+		const batches_id_note = await purchases_service
+			.getBatchesByEntryId(NOTE_ENRTY_ID)
+			.then((x) => x.map((e) => e.id));
+
+		const batches_id_refer = await purchases_service
+			.getBatchesByEntryId(REFER_ENRTY_ID)
+			.then((x) => x.map((e) => e.id));
+
+		const res = await purchases_service.add_invoice_to_entry({
+			entry_id: REFER_ENRTY_ID,
+			invoice: {
+				number: 'dsadsad',
+				issue_date: new Date(),
+				due_date: new Date()
+			},
+			withdrawal_tax_amount: 300,
+			iva_tax_percentage: 50,
+			batches: [
+				{
+					batch_id: batches_id_refer[0],
+					cost: 200
+				},
+				{
+					batch_id: batches_id_note[0],
+					cost: 200
+				}
+			]
+		});
+		expect(res.type).toBe('LOGIC_ERROR');
+	});
+
+	test('validate that all bathces are correpsoing to the entry (one right and one wrong) (2)', async () => {
+		const batches_id_note = await purchases_service
+			.getBatchesByEntryId(NOTE_ENRTY_ID)
+			.then((x) => x.map((e) => e.id));
+
+		const batches_id_refer = await purchases_service
+			.getBatchesByEntryId(REFER_ENRTY_ID)
+			.then((x) => x.map((e) => e.id));
+
+		const res = await purchases_service.add_invoice_to_entry({
+			entry_id: REFER_ENRTY_ID,
+			invoice: {
+				number: 'dsadsad',
+				issue_date: new Date(),
+				due_date: new Date()
+			},
+			withdrawal_tax_amount: 300,
+			iva_tax_percentage: 50,
+			batches: [
+				{
+					batch_id: batches_id_refer[1],
+					cost: 200
+				},
+				{
+					batch_id: batches_id_note[0],
+					cost: 200
+				}
+			]
+		});
+		expect(res.type).toBe('LOGIC_ERROR');
+	});
+
+	test('validate that any bathc of the entry is missing (1)', async () => {
+		const batches_id_refer = await purchases_service
+			.getBatchesByEntryId(REFER_ENRTY_ID)
+			.then((x) => x.map((e) => e.id));
+
+		const res = await purchases_service.add_invoice_to_entry({
+			entry_id: REFER_ENRTY_ID,
+			invoice: {
+				number: 'dsadsad',
+				issue_date: new Date(),
+				due_date: new Date()
+			},
+			withdrawal_tax_amount: 300,
+			iva_tax_percentage: 50,
+			batches: [
+				{
+					batch_id: batches_id_refer[1],
+					cost: 200
+				}
+			]
+		});
+		expect(res.type).toBe('LOGIC_ERROR');
+	});
+
+	test('validate that any bathc of the entry is missing (2)', async () => {
+		const batches_id_refer = await purchases_service
+			.getBatchesByEntryId(REFER_ENRTY_ID)
+			.then((x) => x.map((e) => e.id));
+
+		const res = await purchases_service.add_invoice_to_entry({
+			entry_id: REFER_ENRTY_ID,
+			invoice: {
+				number: 'dsadsad',
+				issue_date: new Date(),
+				due_date: new Date()
+			},
+			withdrawal_tax_amount: 300,
+			iva_tax_percentage: 50,
+			batches: [
+				{
+					batch_id: batches_id_refer[0],
+					cost: 200
+				}
+			]
+		});
+		expect(res.type).toBe('LOGIC_ERROR');
 	});
 });

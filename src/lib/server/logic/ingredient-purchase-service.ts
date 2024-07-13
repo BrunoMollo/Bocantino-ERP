@@ -180,6 +180,22 @@ export class IngredientPurchaseService {
 			return logic_error('solo se puede asignar una factura a un ingreso con remito');
 		}
 
+		const batches_of_entry = await this.getBatchesByEntryId(entry_id);
+		const batches_id_of_entry = new Set(batches_of_entry.map((x) => x.id));
+		const batches_id_of_request = new Set(batches.map((x) => x.batch_id));
+
+		// Check if sets have the same size
+		if (batches_id_of_entry.size !== batches_id_of_request.size) {
+			return logic_error('los lotes indicados no coinicen con el ingreso indicado (1)');
+		}
+
+		// Check if all elements in batches_id_of_entry are also in batches_id_of_request
+		for (const item of batches_id_of_entry) {
+			if (!batches_id_of_request.has(item)) {
+				return logic_error('los lotes indicados no coinicen con el ingreso indicado (2)');
+			}
+		}
+
 		await db.transaction(async (tx) => {
 			const { issue_date, due_date } = invoice;
 			await tx
