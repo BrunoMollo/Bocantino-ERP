@@ -19,7 +19,7 @@
 </script>
 
 <main class="container mx-auto mt-12">
-	<div class="rounded-md bg-surface-100-800-token p-4 pb-10">
+	<div class="relative rounded-md bg-surface-100-800-token p-4 pb-10">
 		<div>
 			<a href="/bocantino/insumos-ingresados" class="align-middle hover:text-secondary-400">
 				<i class="bx bx-arrow-back text-2xl"></i>
@@ -37,6 +37,7 @@
 				<span class="font-bold">Numero de {selected_entry.document.type}: </span>
 				{selected_entry.document.number}
 			</p>
+
 			{#if selected_entry.document.issue_date}
 				<p class="mb-5">
 					<span class="font-bold"
@@ -44,7 +45,15 @@
 					</span>{selected_entry.document.issue_date.toLocaleDateString('es')}
 				</p>
 			{/if}
+
+			<a
+				class="absolute right-0 h-fit w-46 variant-filled lg:px-4 lg:py-2 px-2 py-1 mr-8 rounded-md"
+				href={`/bocantino/insumos-ingresados/${data.entry.id}/add-invoice`}
+			>
+				Agregar Factura
+			</a>
 		</div>
+
 		<h2 class="h3 mt-5 mb-1">Lotes ingresados</h2>
 		{#if batches}
 			{#each batches as batch}
