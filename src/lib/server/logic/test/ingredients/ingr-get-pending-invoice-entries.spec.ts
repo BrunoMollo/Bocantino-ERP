@@ -65,8 +65,8 @@ describe.sequential('assing invoice', () => {
 				.then(getFirst);
 			expect(new_doc.entry_id).toBe(entry_id);
 			expect(new_doc.number).toBe('hola');
-			compare_just_dates(new_doc.issue_date, issue_date);
-			compare_just_dates(new_doc.due_date, due_date);
+			compare_just_dates(new_doc.issue_date, issue_date, expect);
+			compare_just_dates(new_doc.due_date, due_date, expect);
 			expect(new_doc.type).toBe('Factura');
 		}
 	});
