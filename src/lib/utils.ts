@@ -213,3 +213,14 @@ export function make_filter_by_url<K extends string>(
 
 	return { filters, filter };
 }
+
+/**
+ * Rounds a number to a certain number of decimal points.
+ */
+export function round(
+	number: number,
+	decimalPoints: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12 | 13 | 14 | 15
+): number {
+	const factor = Math.pow(10, decimalPoints);
+	return Math.round(number * factor) / factor;
+}
