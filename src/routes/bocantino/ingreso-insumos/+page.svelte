@@ -11,7 +11,7 @@
 			href: '/bocantino/ingreso-insumos/nota-de-ingreso'
 		},
 		{
-			name: 'Ingreso por Remito [Pendiente] >>',
+			name: 'Ingreso por Remito >>',
 			href: '/bocantino/ingreso-insumos/remito'
 		}
 	] satisfies { name: string; href: LayoutRouteId }[];
