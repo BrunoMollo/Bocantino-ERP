@@ -46,12 +46,14 @@
 				</p>
 			{/if}
 
-			<a
-				class="absolute right-0 h-fit w-46 variant-filled lg:px-4 lg:py-2 px-2 py-1 mr-8 rounded-md"
-				href={`/bocantino/insumos-ingresados/${data.entry.id}/add-invoice`}
-			>
-				Agregar Factura
-			</a>
+			{#if selected_entry.document.type === 'Remito'}
+				<a
+					class="absolute right-0 h-fit w-46 variant-filled lg:px-4 lg:py-2 px-2 py-1 mr-8 rounded-md"
+					href={`/bocantino/insumos-ingresados/${data.entry.id}/add-invoice`}
+				>
+					Agregar Factura
+				</a>
+			{/if}
 		</div>
 
 		<h2 class="h3 mt-5 mb-1">Lotes ingresados</h2>
@@ -97,29 +99,37 @@
 							<td>{batch.code}</td>
 							<td>{new Date(batch.production_date ?? '').toLocaleDateString('es')}</td>
 							<td>{new Date(batch.expiration_date ?? '').toLocaleDateString('es')}</td>
-							<td>{batch.cost} $</td>
+							<td>
+								{#if batch.cost}
+									{batch.cost} $
+								{:else}
+									--
+								{/if}
+							</td>
 							<td>{batch.bags}</td>
 						</tr>
 					{/each}
 				</tbody>
 			</table>
 
-			{@const iva = batches[0].iva_tax_percentage}
-			{@const withdrawal = batches[0].withdrawal_tax_amount}
-			{@const subtotal = batches.map((x) => x.cost ?? 0).reduce((a, b) => a + b, 0)}
-			{@const total = subtotal * (1 + iva / 100) + withdrawal}
+			{#if selected_entry.document.type !== 'Remito'}
+				{@const iva = batches[0].iva_tax_percentage}
+				{@const withdrawal = batches[0].withdrawal_tax_amount}
+				{@const subtotal = batches.map((x) => x.cost ?? 0).reduce((a, b) => a + b, 0)}
+				{@const total = subtotal * (1 + iva / 100) + withdrawal}
 
-			<div class="flex justify-between">
-				<div>
-					<p><span class="font-bold">Iva: </span>{iva} %</p>
-					<p><span class="font-bold">Percepciones: </span>{withdrawal} $</p>
-					<p><span class="font-bold">Total:</span> {Math.round(total * 100) / 100} $</p>
+				<div class="flex justify-between">
+					<div>
+						<p><span class="font-bold">Iva: </span>{iva} %</p>
+						<p><span class="font-bold">Percepciones: </span>{withdrawal} $</p>
+						<p><span class="font-bold">Total:</span> {Math.round(total * 100) / 100} $</p>
+					</div>
+					<button
+						class=" h-fit variant-filled-error lg:px-4 lg:py-2 px-2 py-1 rounded-md"
+						on:click={() => (showModal = true)}>Eliminar ingreso insumos</button
+					>
 				</div>
-				<button
-					class=" h-fit variant-filled-error lg:px-4 lg:py-2 px-2 py-1 rounded-md"
-					on:click={() => (showModal = true)}>Eliminar ingreso insumos</button
-				>
-			</div>
+			{/if}
 			<Modal bind:showModal>
 				<h2 slot="header" class="text-bold text-center text-xl">Accion no reversible</h2>
 				<form
