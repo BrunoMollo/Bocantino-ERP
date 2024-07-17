@@ -24,7 +24,8 @@
 		dateInitial: $page.url.searchParams.get('initial_date'),
 		dateFinal: $page.url.searchParams.get('final_date'),
 		number: $page.url.searchParams.get('number'),
-		page: $page.url.searchParams.get('page')
+		page: $page.url.searchParams.get('page'),
+		doc_type: $page.url.searchParams.get('doc_type')
 	};
 	const query = new URLSearchParams($page.url.searchParams.toString());
 
@@ -84,6 +85,16 @@
 			placeholder="Ingrese el codigo..."
 			bind:value={filtros.number}
 		/>
+	</div>
+
+	<div class="">
+		<p>Tipo de documento:</p>
+		<select class="select" bind:value={filtros.doc_type}>
+			<option value="Remito">Remito</option>
+			<option value="Factura">Factura</option>
+			<option value="Nota de Ingreso">Nota de Ingreso</option>
+			<option value="Remito & Factura">Remito & Factura</option>
+		</select>
 	</div>
 	<button
 		type="button"
