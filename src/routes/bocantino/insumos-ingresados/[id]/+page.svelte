@@ -4,6 +4,7 @@
 	import { trpc } from '$lib/trpc-client';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import DocumentsDetail from './documents-detail.svelte';
 
 	export let data;
 	let showModal: boolean = false;
@@ -33,27 +34,7 @@
 				<span class="font-bold">Fecha ingreso: </span>
 				{selected_entry.date.toLocaleDateString('es')}
 			</p>
-			<p>
-				<span class="font-bold">Numero de {selected_entry.document.type}: </span>
-				{selected_entry.document.number}
-			</p>
-
-			{#if selected_entry.document.issue_date}
-				<p class="mb-5">
-					<span class="font-bold"
-						>Fecha de emision:
-					</span>{selected_entry.document.issue_date.toLocaleDateString('es')}
-				</p>
-			{/if}
-
-			{#if selected_entry.document.type === 'Remito'}
-				<a
-					class="absolute right-0 h-fit w-46 variant-filled lg:px-4 lg:py-2 px-2 py-1 mr-8 rounded-md"
-					href={`/bocantino/insumos-ingresados/${data.entry.id}/add-invoice`}
-				>
-					Agregar Factura
-				</a>
-			{/if}
+			<DocumentsDetail entry_id={selected_entry.id} doc={selected_entry.document} />
 		</div>
 
 		<h2 class="h3 mt-5 mb-1">Lotes ingresados</h2>

@@ -69,8 +69,8 @@
 					bind:value={$form.iva_tax_percentage}
 					class:error_border={$errors.iva_tax_percentage}
 				>
-					<option value="0.21">21%</option>
-					<option value="0.105">10,5%</option>
+					<option value="21">21%</option>
+					<option value="10.5">10,5%</option>
 					<option value="0">0%</option>
 				</select>
 			</label>

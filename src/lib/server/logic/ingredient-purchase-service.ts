@@ -164,7 +164,6 @@ export class IngredientPurchaseService {
 	/*
 	 * An entry of ingredients can come with only a refer, and the invoice is sent
 	 * by the supplier later, that why this is another action
-	 * TODO: validate that the batches
 	 */
 	async add_invoice_to_entry(data: {
 		entry_id: number;
