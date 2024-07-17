@@ -44,6 +44,15 @@
 		}
 		goto(`?${query.toString()}`);
 	}
+	function clear_filters() {
+		filtros.supplier = '';
+		filtros.dateInitial = '';
+		filtros.dateFinal = '';
+		filtros.number = '';
+		filtros.page = '';
+		filtros.doc_type = '';
+		filtrar();
+	}
 </script>
 
 <div
@@ -54,7 +63,7 @@
 	<i class="bx bx-search-alt text-white text-xl"></i>
 </div>
 
-<div class="card p-4 variant-filled-secondary w-80 rounded" data-popup="popupClick">
+<div class="card p-4 variant-filled-secondary w-96 rounded" data-popup="popupClick">
 	<h1 class="text-center w-full">Filtros</h1>
 	<div class="pb-1">
 		<p>Proveedor:</p>
@@ -89,13 +98,18 @@
 
 	<div class="">
 		<p>Tipo de documento:</p>
-		<select class="select" bind:value={filtros.doc_type}>
+		<select class="select rounded" bind:value={filtros.doc_type}>
 			<option value="Remito">Remito</option>
 			<option value="Factura">Factura</option>
 			<option value="Nota de Ingreso">Nota de Ingreso</option>
 			<option value="Remito & Factura">Remito & Factura</option>
 		</select>
 	</div>
+	<button
+		type="button"
+		class="btn rounded variant-filled-secondary mt-5 float-left"
+		on:click={() => clear_filters()}>Limpiar</button
+	>
 	<button
 		type="button"
 		class="btn rounded variant-filled mt-5 float-right"
