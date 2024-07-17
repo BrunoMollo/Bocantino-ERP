@@ -9,12 +9,12 @@ const add_invoice_dto = z.object({
 	invoice_number: z.string().min(4, 'Requerido').max(255),
 	issue_date: z.string().refine(isValidDateBackend).transform(parseStringToDate),
 	due_date: z.string().refine(isValidDateBackend).transform(parseStringToDate),
-	withdrawal_tax_amount: z.coerce.number().min(0),
+	withdrawal_tax_amount: z.number().min(0),
 	iva_tax_percentage: z.coerce.number().min(0),
 	batches: z
 		.object({
-			batch_id: z.coerce.number().positive().int(),
-			cost: z.coerce.number().positive()
+			batch_id: z.number().positive().int(),
+			cost: z.number().positive()
 		})
 		.array()
 		.nonempty()
