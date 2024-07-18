@@ -338,6 +338,7 @@ export class IngredientPurchaseService {
 		documentNumber?: string;
 		dateInitial?: string;
 		dateFinal?: string;
+		doc_type?: string;
 	}) {
 		const entries = await db
 			.select({
@@ -361,7 +362,8 @@ export class IngredientPurchaseService {
 						t_ingridient_entry.creation_date,
 						new Date(input.dateInitial ?? '1000-01-01'),
 						new Date(input.dateFinal ?? '4000-01-01')
-					)
+					),
+					like(t_entry_document.type, `${input.doc_type ?? '%'}`)
 				)
 			)
 			.limit(this.PAGE_SIZE)
