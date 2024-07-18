@@ -7,6 +7,7 @@ export const load: PageServerLoad = async ({ url }) => {
 	const documentNumber = url.searchParams.get('number') ?? '';
 	const dateInitial = url.searchParams.get('dateInitial') || undefined;
 	const dateFinal = url.searchParams.get('dateFinal') || undefined;
+	const doc_type = url.searchParams.get('doc_type') || undefined;
 	const count_entries = await purchases_service
 		.getCountOfAvailableEntries({
 			supplierName,
@@ -21,7 +22,8 @@ export const load: PageServerLoad = async ({ url }) => {
 		page,
 		documentNumber,
 		dateInitial,
-		dateFinal
+		dateFinal,
+		doc_type
 	});
 	const page_size = purchases_service.PAGE_SIZE;
 	return { entries, page_size, count_entries };
