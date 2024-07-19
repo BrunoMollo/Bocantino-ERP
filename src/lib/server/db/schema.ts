@@ -210,11 +210,12 @@ export const t_ingridient_entry = pgTable('ingridient_entry', {
 		.references(() => t_supplier.id)
 });
 
-export type DocumentType = 'Factura' | 'Remito' | 'Nota de Ingreso';
+export type DocumentType = 'Factura' | 'Remito' | 'Nota de Ingreso' | 'Remito & Factura';
 
 export const t_entry_document = pgTable('entry_document', {
 	id: serial('id').primaryKey(),
 	number: text('document_identifier').notNull(),
+	second_number: text('second_document_identifier'), // For Refer+Invoice entry
 	issue_date: date('issue_date', { mode: 'date' }),
 	due_date: date('due_date', { mode: 'date' }),
 	typeId: integer('type_id'), // TODO: rm later

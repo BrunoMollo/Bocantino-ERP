@@ -137,6 +137,23 @@ async function seed() {
 			}
 		]
 	});
+
+	await purchases_service.registerBoughtIngrediets_Refer({
+		supplier_id: julian.id,
+		document: {
+			number: 'R-22121'
+		},
+		batches: [
+			{
+				batch_code: 'PPPP_1234',
+				initial_amount: 200,
+				production_date: new Date(2023, 12, 30),
+				expiration_date: new Date(2023, 1, 30),
+				ingredient_id: banana.id,
+				number_of_bags: 10
+			}
+		]
+	});
 	const banana_batch_id = first_entry.batchesId[0];
 
 	const second_entry = await purchases_service.registerBoughtIngrediets_Invoice({

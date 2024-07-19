@@ -4,6 +4,7 @@
 	import { trpc } from '$lib/trpc-client';
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
+	import DocumentsDetail from './documents-detail.svelte';
 
 	export let data;
 	let showModal: boolean = false;
@@ -19,7 +20,7 @@
 </script>
 
 <main class="container mx-auto mt-12">
-	<div class="rounded-md bg-surface-100-800-token p-4 pb-10">
+	<div class="relative rounded-md bg-surface-100-800-token p-4 pb-10">
 		<div>
 			<a href="/bocantino/insumos-ingresados" class="align-middle hover:text-secondary-400">
 				<i class="bx bx-arrow-back text-2xl"></i>
@@ -33,18 +34,9 @@
 				<span class="font-bold">Fecha ingreso: </span>
 				{selected_entry.date.toLocaleDateString('es')}
 			</p>
-			<p>
-				<span class="font-bold">Numero de {selected_entry.document.type}: </span>
-				{selected_entry.document.number}
-			</p>
-			{#if selected_entry.document.issue_date}
-				<p class="mb-5">
-					<span class="font-bold"
-						>Fecha de emision:
-					</span>{selected_entry.document.issue_date.toLocaleDateString('es')}
-				</p>
-			{/if}
+			<DocumentsDetail entry_id={selected_entry.id} doc={selected_entry.document} />
 		</div>
+
 		<h2 class="h3 mt-5 mb-1">Lotes ingresados</h2>
 		{#if batches}
 			{#each batches as batch}
@@ -88,29 +80,37 @@
 							<td>{batch.code}</td>
 							<td>{new Date(batch.production_date ?? '').toLocaleDateString('es')}</td>
 							<td>{new Date(batch.expiration_date ?? '').toLocaleDateString('es')}</td>
-							<td>{batch.cost} $</td>
+							<td>
+								{#if batch.cost}
+									{batch.cost} $
+								{:else}
+									--
+								{/if}
+							</td>
 							<td>{batch.bags}</td>
 						</tr>
 					{/each}
 				</tbody>
 			</table>
 
-			{@const iva = batches[0].iva_tax_percentage}
-			{@const withdrawal = batches[0].withdrawal_tax_amount}
-			{@const subtotal = batches.map((x) => x.cost ?? 0).reduce((a, b) => a + b, 0)}
-			{@const total = subtotal * (1 + iva / 100) + withdrawal}
+			{#if selected_entry.document.type !== 'Remito'}
+				{@const iva = batches[0].iva_tax_percentage}
+				{@const withdrawal = batches[0].withdrawal_tax_amount}
+				{@const subtotal = batches.map((x) => x.cost ?? 0).reduce((a, b) => a + b, 0)}
+				{@const total = subtotal * (1 + iva / 100) + withdrawal}
 
-			<div class="flex justify-between">
-				<div>
-					<p><span class="font-bold">Iva: </span>{iva} %</p>
-					<p><span class="font-bold">Percepciones: </span>{withdrawal} $</p>
-					<p><span class="font-bold">Total:</span> {Math.round(total * 100) / 100} $</p>
+				<div class="flex justify-between">
+					<div>
+						<p><span class="font-bold">Iva: </span>{iva} %</p>
+						<p><span class="font-bold">Percepciones: </span>{withdrawal} $</p>
+						<p><span class="font-bold">Total:</span> {Math.round(total * 100) / 100} $</p>
+					</div>
+					<button
+						class=" h-fit variant-filled-error lg:px-4 lg:py-2 px-2 py-1 rounded-md"
+						on:click={() => (showModal = true)}>Eliminar ingreso insumos</button
+					>
 				</div>
-				<button
-					class=" h-fit variant-filled-error lg:px-4 lg:py-2 px-2 py-1 rounded-md"
-					on:click={() => (showModal = true)}>Eliminar ingreso insumos</button
-				>
-			</div>
+			{/if}
 			<Modal bind:showModal>
 				<h2 slot="header" class="text-bold text-center text-xl">Accion no reversible</h2>
 				<form

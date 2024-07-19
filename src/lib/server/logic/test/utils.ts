@@ -30,3 +30,16 @@ export async function __DELETE_ALL_DATABASE() {
 		await tx.delete(t_ingredient);
 	});
 }
+
+/*
+ * Just a helper for testing, ignores the time
+ * */
+export function compare_just_dates(
+	date1: Date | null,
+	date2: Date | null,
+	expect: (x: unknown) => { toBe: (y: unknown) => unknown }
+) {
+	const x = date1?.toISOString().split('T')[0];
+	const y = date2?.toISOString().split('T')[0];
+	expect(x).toBe(y);
+}
