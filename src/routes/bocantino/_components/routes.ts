@@ -64,7 +64,7 @@ export const routes = [
 			},
 			{
 				omit_from_menu: false,
-				name: 'Lotes',
+				name: 'Control de stock / Lotes',
 				href: '/bocantino/lotes',
 				icon: 'bx bx-list-check'
 			}
