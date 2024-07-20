@@ -25,7 +25,7 @@
 </script>
 
 <main class="container h-full mx-auto flex justify-center items-center">
-	<article class="card p-4 w-[600px]">
+	<article class="card p-4 w-[600px] mt-4">
 		<h2 class="h2">Agregar Factura ( Ingreso: {data.entry.id} )</h2>
 		<form class="flex flex-col gap-4 p-9" action="" method="post" use:enhance>
 			<label for="invoice_number" class="label">
