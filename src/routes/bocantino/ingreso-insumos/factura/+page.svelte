@@ -119,6 +119,7 @@
 					<small class="my-auto mr-1 font-black text-lg">Numero de factura</small>
 				</label>
 				<input
+					autocomplete="off"
 					id="invoice_number"
 					placeholder="Numero"
 					type="text"

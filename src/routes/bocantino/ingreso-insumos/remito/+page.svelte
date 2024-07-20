@@ -105,6 +105,7 @@
 					<small class="my-auto mr-1 font-black text-lg">Numero de Remito</small>
 				</label>
 				<input
+					autocomplete="off"
 					id="document_number"
 					placeholder="Numero"
 					type="text"
