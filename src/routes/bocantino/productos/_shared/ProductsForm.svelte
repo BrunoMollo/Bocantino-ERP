@@ -93,7 +93,7 @@
 					class="input"
 					class:input-error={ingredientError(i, 'amount')}
 					type="number"
-					step=".001"
+					step=".00001"
 					bind:value={$form.ingredients[i].amount}
 				/>
 			</label>
