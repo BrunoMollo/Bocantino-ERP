@@ -214,7 +214,7 @@ class IngredientProductionService {
 			.then((x) => x[0]?.value);
 	}
 
-	public PAGE_SIZE = 10;
+	public PAGE_SIZE = 20;
 	async getBatchesAvailable(filter: { page: number; batch_code: string; ingredient_name: string }) {
 		const { page, batch_code, ingredient_name } = filter;
 

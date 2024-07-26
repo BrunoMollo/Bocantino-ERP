@@ -4,6 +4,8 @@
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
 	import CompleteTable from '../../_components/complete-table.svelte';
 	import { make_filter_by_url } from '$lib/utils';
+	import { enhance } from '$app/forms';
+	import { printAvailableBatches } from './pdf-available-batches';
 	export let data;
 
 	const popupClick: PopupSettings = {
@@ -33,8 +35,27 @@
 	}
 </script>
 
-<main class="container flex flex-col mx-auto pt-10">
+<main class="container flex flex-col mx-auto pt-10 relative">
 	<div class="w-11/12 mx-auto">
+		<form
+			class="absolute right-10"
+			method="post"
+			use:enhance={() => {
+				return ({ result }) => {
+					if (result.type == 'success') {
+						if (result.data) {
+							const { batches, filters } = result.data;
+							//@ts-expect-error AAAA
+							printAvailableBatches(batches, filters);
+							return;
+						}
+					}
+					alert('Algo salio mal');
+				};
+			}}
+		>
+			<button class="btn" type="submit">Descargar Listado</button>
+		</form>
 		<div
 			class="rounded-full bg-slate-950 w-1/4 flex justify-between py-4 px-6 mb-8"
 			use:popup={popupClick}
