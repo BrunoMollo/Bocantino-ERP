@@ -6,6 +6,7 @@ import { ingredients_service } from '$logic/ingredient-service';
 import { product_service } from '$logic/product-service';
 import { suppliers_service } from '$logic/suppliers-service';
 import { __DELETE_ALL_DATABASE } from '$logic/test/utils';
+import { randomUUID } from 'crypto';
 import type { PageServerLoad } from './$types';
 import { redirect, type Actions } from '@sveltejs/kit';
 
@@ -137,6 +138,32 @@ async function seed() {
 			}
 		]
 	});
+
+	{
+		for (let i = 0; i < 40; i++) {
+			await purchases_service.registerBoughtIngrediets_Invoice({
+				withdrawal_tax_amount: 10,
+				iva_tax_percentage: 21,
+				supplier_id: julian.id,
+				document: {
+					number: 'ABCDE',
+					issue_date: new Date(2023, 12, 31),
+					due_date: new Date(2023, 4, 1)
+				},
+				batches: [
+					{
+						batch_code: randomUUID(),
+						initial_amount: 200,
+						production_date: new Date(2023, 12, 30),
+						expiration_date: new Date(2023, 1, 30),
+						ingredient_id: banana.id,
+						number_of_bags: 10,
+						cost: 2000
+					}
+				]
+			});
+		}
+	}
 
 	await purchases_service.registerBoughtIngrediets_Refer({
 		supplier_id: julian.id,
