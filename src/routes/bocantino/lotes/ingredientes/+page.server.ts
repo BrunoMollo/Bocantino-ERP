@@ -12,8 +12,6 @@ export const load: PageServerLoad = async ({ url }) => {
 	});
 	const count_batches = await ingredient_production_service.getCountOfAvailableBatches();
 	const page_size = ingredient_production_service.PAGE_SIZE;
-
-	console.log(page_size);
 	return { batches, count_batches, page_size };
 };
 
@@ -24,9 +22,7 @@ export const actions: Actions = {
 
 		let are_more = true;
 		let page_number = 0;
-		let batches = [] as Awaited<
-			ReturnType<typeof ingredient_production_service.getBatchesAvailable>
-		>;
+		let batches = [] as Awaited<ReturnType<typeof ingredient_production_service.getBatchesAvailable>>;
 
 		while (are_more) {
 			const page = await ingredient_production_service.getBatchesAvailable({

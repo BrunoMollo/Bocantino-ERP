@@ -122,7 +122,9 @@
 					<tr>
 						<th class="text-center">Materia Prima</th>
 						<th class="text-center">Cantidad</th>
-						<th class="text-center">Bolsas</th>
+						<th class="text-center"
+							>Bolsas <span class="lowercase" id="Posta q clase de mierda table">o</span> <br /> Envases</th
+						>
 						<th class="text-center w-32">Fecha produccion</th>
 						<th class="text-center w-32">Fecha vencimiento</th>
 						<th class="text-center">Lote</th>

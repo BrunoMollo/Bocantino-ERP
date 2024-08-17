@@ -10,7 +10,6 @@
 		derive_if_can_print_label,
 		printBatchLabel
 	} from '../../ingreso-insumos/_shared/pdf-batch-label';
-
 	export let data;
 	const { form, enhance, errors, delayed } = superForm(data.form, {
 		onError: ({ result }) => alert(`ERROR: ${result.error.message}`),
@@ -46,7 +45,6 @@
 	}
 
 	const optionsSuppliers = makeOptions(data.suppliers, { value: 'id', label: 'name' });
-
 	const supplier_id = derived(form, (x) => x.supplier_id);
 	const optionsIngredients = derived(supplier_id, (supplier_id) => {
 		const selectedSupplier = data.suppliers.find((x) => x.id == Number(supplier_id));
@@ -157,7 +155,9 @@
 					<tr>
 						<th class="text-center">Materia Prima</th>
 						<th class="text-center">Cantidad</th>
-						<th class="text-center">Bolsas</th>
+						<th class="text-center"
+							>Bolsas <span class="lowercase" id="Posta q clase de mierda table">o</span> <br /> Envases</th
+						>
 						<th class="text-center w-32">Fecha produccion</th>
 						<th class="text-center w-32">Fecha vencimiento</th>
 						<th class="text-center w-24">Importe</th>

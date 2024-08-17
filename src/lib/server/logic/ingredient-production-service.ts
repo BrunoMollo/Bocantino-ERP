@@ -14,7 +14,7 @@ import { alias } from 'drizzle-orm/pg-core';
 import { ingredients_service } from './ingredient-service';
 
 class IngredientProductionService {
-	constructor(private db: Db) {}
+	constructor(private db: Db) { }
 
 	async getBatchesByingredient_id(id: number) {
 		return await database
