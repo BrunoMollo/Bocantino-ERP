@@ -34,11 +34,10 @@ export function printProductionOrder(
 
 		head: [['Ingrediente', 'Número lote', 'Cantidad utilizada', 'Check']],
 		body: item.used_batches.map((x) => {
-
 			return [
 				x.ingredient_name,
 				x.batch_code,
-				x.amount_used_to_produce_batch.toString() + ' ' + x.ingredient_unit,
+				x.amount_used_to_produce_batch.toString() + ' ' + x.ingredient_unit
 			];
 		})
 	});

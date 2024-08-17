@@ -22,7 +22,9 @@ export const actions: Actions = {
 
 		let are_more = true;
 		let page_number = 0;
-		let batches = [] as Awaited<ReturnType<typeof ingredient_production_service.getBatchesAvailable>>;
+		let batches = [] as Awaited<
+			ReturnType<typeof ingredient_production_service.getBatchesAvailable>
+		>;
 
 		while (are_more) {
 			const page = await ingredient_production_service.getBatchesAvailable({
