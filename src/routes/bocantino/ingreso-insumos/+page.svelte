@@ -3,15 +3,15 @@
 
 	export const routes = [
 		{
-			name: 'Ingreso por Factura >>',
+			name: 'Ingreso por Factura',
 			href: '/bocantino/ingreso-insumos/factura'
 		},
 		{
-			name: 'Ingreso por Nota de Ingreso >>',
+			name: 'Ingreso por Nota de Ingreso',
 			href: '/bocantino/ingreso-insumos/nota-de-ingreso'
 		},
 		{
-			name: 'Ingreso por Remito >>',
+			name: 'Ingreso por Remito',
 			href: '/bocantino/ingreso-insumos/remito'
 		}
 	] satisfies { name: string; href: LayoutRouteId }[];
@@ -24,7 +24,7 @@
 		<ul>
 			{#each routes as { name, href }}
 				<li class="pt-6">
-					<a class="btn variant-filled" {href}>{name}</a>
+					<a class="btn variant-filled rounded w-full" {href}>{name}</a>
 				</li>
 			{/each}
 		</ul>
