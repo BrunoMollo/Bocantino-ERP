@@ -1,5 +1,5 @@
 import { generateUUID, getFirst, getFirstIfPosible } from '$lib/utils';
-import { eq, and, ilike, count } from 'drizzle-orm';
+import { eq, and, ilike, count, desc } from 'drizzle-orm';
 import { db, type Db } from '../db';
 import {
 	t_ingredient,
@@ -97,6 +97,7 @@ class ProductService {
 					ilike(t_ingredient_batch.batch_code, `%${batch_code}%`)
 				)
 			)
+			.orderBy(desc(limited_batches.production_date))
 			.then(drizzle_map({ one: 'batch', with_one: ['product'], with_many: [] }));
 	}
 

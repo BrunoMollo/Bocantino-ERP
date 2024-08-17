@@ -7,7 +7,7 @@ import {
 	t_supplier
 } from '$lib/server/db/schema';
 import { db } from '$lib/server/db';
-import { and, between, count, eq, inArray, like } from 'drizzle-orm';
+import { and, between, count, desc, eq, inArray, like } from 'drizzle-orm';
 import { pick_merge } from 'drizzle-tools/src/pick-columns';
 import { is_ok, logic_error } from '$logic';
 import type { DocumentType } from '$lib/server/db/schema';
@@ -367,7 +367,8 @@ export class IngredientPurchaseService {
 				)
 			)
 			.limit(this.PAGE_SIZE)
-			.offset(input.page * this.PAGE_SIZE);
+			.offset(input.page * this.PAGE_SIZE)
+			.orderBy(desc(t_ingridient_entry.creation_date));
 		return entries;
 	}
 
