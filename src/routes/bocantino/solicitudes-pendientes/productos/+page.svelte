@@ -26,7 +26,10 @@
 				<td class="p-4">{item.product.desc}</td>
 				<td class="p-4">{item.initial_amount} Kg</td>
 				<td class="gap-5 flex p-4">
-					<a class="btn" href="/bocantino/solicitudes-pendientes/productos/{item.id}">ver</a>
+					<a
+						class="font-bold text-lg align-middle pt-1 btn"
+						href="/bocantino/solicitudes-pendientes/productos/{item.id}">ver</a
+					>
 					<button
 						class="rounded-full bg-white px-3 py-2"
 						on:click={printProductionOrder(item.product.desc, item)}

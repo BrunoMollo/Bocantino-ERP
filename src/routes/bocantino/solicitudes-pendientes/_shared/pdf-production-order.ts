@@ -41,6 +41,8 @@ export function printProductionOrder(
 			];
 		})
 	});
+	doc.text('Tiempo de mezclado:', 115, 255);
+	doc.line(170, 255, 200, 255);
 	doc.text('Merma:', 10, 270);
 	doc.line(31, 270, 70, 270);
 	doc.text('Firma responsable:', 120, 270);
