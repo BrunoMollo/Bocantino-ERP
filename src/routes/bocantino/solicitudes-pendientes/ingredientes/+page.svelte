@@ -10,7 +10,7 @@
 	Ordenes de producción en proceso: Ingredientes
 </h1>
 
-<table class="table w-11/12 mx-auto p-2 rounded-md shadow-lg">
+<table class="table table-compact w-11/12 mx-auto p-2 rounded-md shadow-lg">
 	<thead>
 		<tr>
 			<th class="w-1/4">ID Produccion</th>
@@ -27,11 +27,11 @@
 				<td style="padding-left: 16px;">{item.initial_amount} {item.ingredient.unit}</td>
 				<td style="padding-left: 16px;" class="gap-5 flex align-middle">
 					<a
-						class="font-bold text-lg align-middle pt-1 btn"
+						class=" text-lg align-middle pt-1 w-1/2 btn variant-filled-primary rounded"
 						href="/bocantino/solicitudes-pendientes/ingredientes/{item.id}">ver</a
 					>
 					<button
-						class="rounded-full bg-white px-3 py-2"
+						class="rounded btn variant-filled-primary px-5 w-1/2 py-2 flex justify-center items-center"
 						on:click={printProductionOrder(item.ingredient.name, item)}
 						><i class="bx bx-printer text-xl text-black h-5 w-5"></i></button
 					>

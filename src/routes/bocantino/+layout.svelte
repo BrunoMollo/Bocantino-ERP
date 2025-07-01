@@ -10,6 +10,8 @@
 	import Navigation from './_components/Navigation.svelte';
 	import { fade } from 'svelte/transition';
 	import Loader from './_components/Loader.svelte';
+	import { LightSwitch } from '@skeletonlabs/skeleton';
+	import PopUpDashboard from './_components/popUp-dashboard.svelte';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
 
@@ -36,15 +38,18 @@
 	navigating.subscribe((x) => {
 		setTimeout(() => (debounce_flag = x), 360);
 	});
+
+	let ShowPopUp = false;
 </script>
 
 <Drawer>
 	<div class="pt-4 md:w-96 w-70">
-		<div class="w-full flex justify-between align-middle">
-			<strong class="p-4 text-xl uppercase">Bocantino</strong>
-			<button on:click={drawerStore.close}
-				><i class="md:invisible bx text-2xl bx-x my-auto mx-3 px-2"></i></button
-			>
+		<div class="w-full flex justify-between items-center p-4">
+			<strong class=" text-3xl uppercase">Bocantino</strong>
+			<button on:click={drawerStore.close}>
+				<i class="md:invisible bx text-2xl bx-x my-auto mx-3 px-2"></i>
+			</button>
+			<LightSwitch rounded={'rounded-xl'} />
 		</div>
 		<Navigation />
 	</div>
@@ -52,7 +57,7 @@
 
 <Toast class="w-64" />
 <!-- App Shell -->
-<AppShell slotSidebarLeft="w-0  bg-surface-900 ">
+<AppShell slotSidebarLeft="w-0 ">
 	<svelte:fragment slot="header">
 		<!-- App Bar -->
 		<AppBar>
@@ -72,7 +77,7 @@
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
 				<button
-					style="display: none;"
+					style="display: none"
 					class=" btn variant-filled-secondary rounded-full mr-4"
 					use:popup={popupFeatured}
 				>
@@ -82,8 +87,21 @@
 					<div><h1 class="text-xl uppercase">Notifications:</h1></div>
 					<div class="arrow bg-surface-100-800-token" />
 				</div>
+				<div>
+					<button
+						class="btn variant-filled-secondary rounded-full mr-4"
+						on:click={() => (ShowPopUp = !ShowPopUp)}><i class="bx bxs-edit"></i></button
+					>
+					<div
+						class="card p-4 w-72 shadow-xl absolute right-0 top-20 rounded-lg"
+						class:invisible={!ShowPopUp}
+					>
+						<PopUpDashboard />
+					</div>
+				</div>
+
 				<a href="/bocantino">
-					<strong class="text-xl uppercase py-auto">Bocantino</strong>
+					<strong class="text-3xl uppercase py-auto"></strong>
 				</a>
 			</svelte:fragment>
 		</AppBar>

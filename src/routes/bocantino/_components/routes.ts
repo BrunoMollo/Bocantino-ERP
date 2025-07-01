@@ -14,6 +14,12 @@ export const routes = [
 		icon: 'bxs-grid-alt',
 		routes: [
 			{
+				omit_from_menu: true,
+				name: 'Dashboard',
+				href: '/bocantino',
+				icon: 'bx bxs-home text-xl'
+			},
+			{
 				omit_from_menu: false,
 				name: 'Ingreso insumos',
 				href: '/bocantino/ingreso-insumos',

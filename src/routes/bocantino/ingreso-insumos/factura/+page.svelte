@@ -276,7 +276,7 @@
 					{/each}
 				</tbody>
 			</table>
-			<div class="w-full flex justify-end p-3 bg-gray-600">
+			<div class="w-full flex justify-end p-3">
 				<button
 					type="button"
 					class="btn variant-filled-secondary rounded-lg"
