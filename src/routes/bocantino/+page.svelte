@@ -77,7 +77,7 @@
 				<div class="table-container rounded">
 					<table class="table table-hover table-compact">
 						<tbody>
-							{#each data.pending_productions as pendiente, i}
+							{#each data.pending_productions as pendiente}
 								<tr>
 									<td>{pendiente.id}</td>
 									<td>{pendiente.product.desc}</td>
