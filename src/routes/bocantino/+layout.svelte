@@ -10,7 +10,7 @@
 	import Navigation from './_components/Navigation.svelte';
 	import { fade } from 'svelte/transition';
 	import Loader from './_components/Loader.svelte';
-	import { LightSwitch } from '@skeletonlabs/skeleton';
+	// import { LightSwitch } from '@skeletonlabs/skeleton';
 	import PopUpDashboard from './_components/popUp-dashboard.svelte';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
@@ -49,7 +49,7 @@
 			<button on:click={drawerStore.close}>
 				<i class="md:invisible bx text-2xl bx-x my-auto mx-3 px-2"></i>
 			</button>
-			<LightSwitch rounded={'rounded-xl'} />
+			<!-- <LightSwitch rounded={'rounded-xl'} /> -->
 		</div>
 		<Navigation />
 	</div>
