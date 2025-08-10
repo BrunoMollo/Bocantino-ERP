@@ -83,22 +83,24 @@
 				>
 					<i class="bx bx-notification text-2xl"></i>
 				</button>
-				<div class="card p-4 w-72 shadow-xl rounded-lg" data-popup="popupFeatured">
-					<div><h1 class="text-xl uppercase">Notifications:</h1></div>
-					<div class="arrow bg-surface-100-800-token" />
-				</div>
-				<div>
-					<button
-						class="btn variant-filled-secondary rounded-full mr-4"
-						on:click={() => (ShowPopUp = !ShowPopUp)}><i class="bx bxs-edit"></i></button
-					>
-					<div
-						class="card p-4 w-72 shadow-xl absolute right-0 top-20 rounded-lg"
-						class:invisible={!ShowPopUp}
-					>
-						<PopUpDashboard />
+				{#if $page.url.pathname === '/bocantino'}
+					<div class="card p-4 w-72 shadow-xl rounded-lg" data-popup="popupFeatured">
+						<div><h1 class="text-xl uppercase">Notifications:</h1></div>
+						<div class="arrow bg-surface-100-800-token" />
 					</div>
-				</div>
+					<div>
+						<button
+							class="btn variant-filled-secondary rounded-full mr-4"
+							on:click={() => (ShowPopUp = !ShowPopUp)}><i class="bx bxs-edit"></i></button
+						>
+						<div
+							class="card p-4 w-72 shadow-xl absolute right-0 top-20 rounded-lg"
+							class:invisible={!ShowPopUp}
+						>
+							<PopUpDashboard />
+						</div>
+					</div>
+				{/if}
 
 				<a href="/bocantino">
 					<strong class="text-3xl uppercase py-auto">Bocantino</strong>
