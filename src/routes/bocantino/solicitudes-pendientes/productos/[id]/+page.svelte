@@ -31,12 +31,12 @@
 <div class="card w-9/12 md:w-2/4 m-auto mt-14 shadow-lg rounded-lg">
 	<a
 		href="/bocantino/solicitudes-pendientes/productos"
-		class="block bg-black m-3 p-3 rounded-full h-12 w-12 align-middle shadow-md"
+		class="block card m-3 p-3 rounded-full h-12 w-12 align-middle shadow"
 	>
 		<i class="bx bx-arrow-back text-2xl"></i>
 	</a>
 	<div class="px-10">
-		<h2 class="h2 text-primary-200">Solicitud pendiente {current?.id}</h2>
+		<h2 class="h2 my-5">Solicitud pendiente {current?.id}</h2>
 		<p class="text-xl">
 			Producto: {current?.product.desc}
 		</p>
@@ -45,14 +45,19 @@
 		</p>
 		<dl class="list-dl">
 			{#each current?.used_batches ?? [] as { ingredient_name, ingredient_unit, amount_used_to_produce_batch, batch_code }}
-				<div>
-					<span class="badge p-2 bg-surface-500"><IconPaperBag /></span>
+				<div class="card shadow">
+					<span class="badge p-2 shadow rounded"><IconPaperBag /></span>
 					<span class="flex-auto">
 						<dt class="text-l">
-							{amount_used_to_produce_batch}
-							{ingredient_unit} de {ingredient_name}
+							<span class="font-bold">
+								{amount_used_to_produce_batch}
+								{ingredient_unit}</span
+							>
+							de {ingredient_name}
 						</dt>
-						<dd class="opacity-50">Lote : {batch_code}</dd>
+						<dd class="opacity-50">
+							Lote : <span class="font-bold">{batch_code}</span>
+						</dd>
 					</span>
 				</div>
 			{/each}
@@ -60,7 +65,7 @@
 
 		<h3 class="h3 pt-4">Finalizar produccion</h3>
 		<form class="flex flex-col" method="post" action="?/finish" use:enhance>
-			<div class="mb-4">
+			<div class="mb-4 flex align-middle items-center gap-3">
 				<label class="label" for="adjustment">Cantidad real producida:</label>
 				<div>
 					<input
@@ -76,7 +81,7 @@
 			</div>
 
 			<div class="flex pb-7 pt-3 w-full justify-between">
-				<button class="btn variant-filled-primary w-40" type="submit">
+				<button class="btn variant-filled-primary w-40 rounded" type="submit">
 					{#if $delayed}
 						Cerrando...
 					{:else}
@@ -86,7 +91,7 @@
 
 				<form action="?/cancel" method="post" use:cancel_enhance>
 					<button
-						class="btn variant-filled-error w-40"
+						class="btn variant-filled-error rounded w-40"
 						type="submit"
 						on:click={(event) => {
 							const question =

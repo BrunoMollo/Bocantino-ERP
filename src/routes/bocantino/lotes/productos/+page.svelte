@@ -4,6 +4,7 @@
 
 	import { Paginator, type PaginationSettings } from '@skeletonlabs/skeleton';
 	import { popup, type PopupSettings } from '@skeletonlabs/skeleton';
+	import CompleteTable from '../../_components/complete-table.svelte';
 	export let data;
 
 	const popupClick: PopupSettings = {
@@ -125,6 +126,7 @@
 					</td>
 				</tr>
 			{/each}
+			<CompleteTable list={data.product_batches} rows={7} />
 		</tbody>
 	</table>
 	<div class="pt-4 mx-auto">

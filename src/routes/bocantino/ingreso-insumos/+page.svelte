@@ -23,8 +23,8 @@
 		<p>Seleccione el tipo de ingreso correpondiente</p>
 		<ul>
 			{#each routes as { name, href }}
-				<li class="pt-6">
-					<a class="btn variant-filled rounded w-full" {href}>{name}</a>
+				<li class="mt-6 card card-hover">
+					<a class="btn variant-filled-primary rounded w-full" {href}>{name}</a>
 				</li>
 			{/each}
 		</ul>

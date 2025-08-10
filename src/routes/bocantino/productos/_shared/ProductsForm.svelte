@@ -97,18 +97,18 @@
 					bind:value={$form.ingredients[i].amount}
 				/>
 			</label>
-			<button type="button" class="btn variant-filled-primary" on:click={() => removeLine(i)}>
+			<button type="button" class="btn variant-ghost-error" on:click={() => removeLine(i)}>
 				Quitar
 			</button>
 		{/each}
 	</div>
-	<div class="grid grid-cols-2 gap-20 px-10">
-		<button type="button" class="btn variant-filled-primary" on:click={addLine}>
+	<div class="">
+		<button type="button" class="btn variant-filled-secondary" on:click={addLine}>
 			Otro ingrediente
 		</button>
 	</div>
 
-	<button type="submit" class="btn variant-filled-primary">
+	<button type="submit" class="btn variant-filled-primary mt-10">
 		<b> {btnMsj} </b>
 		<Spinner showIf={$delayed} size={4} />
 	</button>

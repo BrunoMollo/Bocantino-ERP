@@ -28,25 +28,31 @@
 <div class="card w-9/12 md:w-2/4 m-auto mt-14 shadow-lg rounded-lg">
 	<a
 		href="/bocantino/solicitudes-pendientes/ingredientes"
-		class="block bg-black m-3 p-3 rounded-full h-12 w-12 align-middle shadow-md"
+		class="block card shadow m-3 p-3 rounded-full h-12 w-12 align-middle"
 	>
 		<i class="bx bx-arrow-back text-2xl"></i>
 	</a>
 	<div class="px-10">
-		<h2 class="h2 text-primary-200">Solicitud pendiente {data.batch.id}</h2>
+		<h2 class="h2 my-5">Solicitud pendiente {data.batch.id}</h2>
 		<p>
-			Producción estimada: {data.batch.initial_amount}
-			{data.batch.ingredient.unit} de {data.batch.ingredient.name}.
+			Producción estimada: <span class="font-bold"
+				>{data.batch.initial_amount}
+				{data.batch.ingredient.unit}</span
+			>
+			de {data.batch.ingredient.name}.
 		</p>
 		<p>
-			Uso {data.used_batch.amount_used_to_produce_batch}
-			{data.used_batch.ingredient_unit} del lote {data.used_batch.batch_code}
+			Uso <span class="font-bold"
+				>{data.used_batch.amount_used_to_produce_batch}
+				{data.used_batch.ingredient_unit}</span
+			>
+			del lote {data.used_batch.batch_code}
 		</p>
 
 		<h3 class="h3 pt-4">Finalizar produccion</h3>
 		<form class="flex flex-col" method="post" action="?/finish" use:enhance>
-			<div class="mb-4">
-				<label class="label" for="adjustment">Cantidad real producida:</label>
+			<div class="mb-4 flex align-middle items-center gap-3">
+				<label class="label py-auto" for="adjustment">Cantidad real producida:</label>
 				<div>
 					<input
 						type="number"
@@ -61,7 +67,7 @@
 			</div>
 
 			<div class="flex pb-7 pt-3 w-full justify-between">
-				<button class="btn variant-filled-primary w-40" type="submit">
+				<button class="btn variant-filled-primary w-40 rounded" type="submit">
 					{#if $delayed}
 						Cerrando...
 					{:else}
@@ -71,7 +77,7 @@
 
 				<form action="?/cancel" method="post" use:cancel_enhance>
 					<button
-						class="btn variant-filled-error w-40"
+						class="btn variant-filled-error rounded w-40"
 						type="submit"
 						on:click={(event) => {
 							const question =

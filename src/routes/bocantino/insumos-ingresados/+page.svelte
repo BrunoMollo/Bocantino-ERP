@@ -56,14 +56,14 @@
 </script>
 
 <div
-	class="rounded-full bg-slate-950 w-64 flex justify-between py-2 px-5 md:mt-10 mt-4 mx-auto"
+	class="rounded-full card w-64 flex justify-between py-2 px-5 md:mt-3 mx-auto"
 	use:popup={popupClick}
 >
 	<p>Filtrar...</p>
-	<i class="bx bx-search-alt text-white text-xl"></i>
+	<i class="bx bx-search-alt text-xl"></i>
 </div>
 
-<div class="card p-4 variant-filled-secondary w-96 rounded" data-popup="popupClick">
+<div class="card p-4 w-96 rounded shadow-xl" data-popup="popupClick">
 	<h1 class="text-center w-full">Filtros</h1>
 	<div class="pb-1">
 		<p>Proveedor:</p>
@@ -107,18 +107,18 @@
 	</div>
 	<button
 		type="button"
-		class="btn rounded variant-filled-secondary mt-5 float-left"
-		on:click={() => clear_filters()}>Limpiar</button
+		class="btn rounded variant-filled-warning mt-5 float-left"
+		on:click={() => clear_filters()}>Limpiar filtros</button
 	>
 	<button
 		type="button"
-		class="btn rounded variant-filled mt-5 float-right"
+		class="btn rounded variant-filled-primary mt-5 float-right"
 		on:click={() => filtrar()}>Filtrar</button
 	>
-	<div class="arrow variant-filled-secondary" />
+	<div class="arrow bg-surface-100-800-token" />
 </div>
-<div class="md:w-11/12 md:mx-auto md:mt-10 mt-3">
-	<table class="table mb-4 rounded">
+<div class="md:w-11/12 md:mx-auto my-3">
+	<table class="table table-compact mb-4 rounded">
 		<thead>
 			<tr>
 				<th class="text-center">ID:</th>
@@ -141,7 +141,7 @@
 					>
 					<td class="text-center">
 						<a
-							class="btn variant-filled-secondary rounded"
+							class="btn variant-filled-primary rounded"
 							href={'/bocantino/insumos-ingresados/' + entrada.id}>ver detalle</a
 						>
 					</td></tr
@@ -153,6 +153,7 @@
 	<Paginator
 		settings={paginationSettings}
 		showFirstLastButtons={true}
+		controlSeparator="variant-filled-primary"
 		on:page={filtrar}
 		showPreviousNextButtons={true}
 	/>

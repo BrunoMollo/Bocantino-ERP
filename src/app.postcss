@@ -24,10 +24,11 @@ td {
 }
 
 .glass {
-	background: linear-gradient(135deg, rgba(0, 0, 0, 0.1), rgba(0, 0, 0, 0));
-	backdrop-filter: blur(10px);
-	border: 1px solid rgba(0, 0, 0, 0.1);
-	box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+	background: rgba(255, 255, 255, 0.2); /* Semi-transparent white background */
+	box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+	backdrop-filter: blur(10px); /* Blur the background */
+	-webkit-backdrop-filter: blur(10px); /* For Safari */
+	border: 1px solid rgba(255, 255, 255, 0.3); /* Subtle border */
 }
 
 @layer base {

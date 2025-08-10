@@ -234,7 +234,7 @@
 							<button
 								in:fade={{ delay: 0, duration: 200 }}
 								type="button"
-								class="btn mx-0 px-2 variant-filled-tertiary rounded-lg"
+								class="btn mx-0 px-2 variant-filled-error rounded-lg"
 								on:click={() => {
 									needs_two_batches = false;
 									$form.second_selected_batch_id = null;

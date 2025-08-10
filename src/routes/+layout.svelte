@@ -19,11 +19,9 @@
 	});
 
 	onNavigate((navigation) => {
-		//@ts-expect-error PENDING: explain
 		if (!document.startViewTransition) return;
 
 		return new Promise((resolve) => {
-			//@ts-expect-error PENDING: explain
 			document.startViewTransition(async () => {
 				resolve();
 				await navigation.complete;

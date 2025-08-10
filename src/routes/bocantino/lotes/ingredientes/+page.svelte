@@ -119,14 +119,17 @@
 		<tbody>
 			{#each data.batches as batch}
 				<tr class="align-middle">
-					<td class="w-1/12 align-middle">{batch.id}</td>
-					<td class="w-2/12">{batch.batch_code}</td>
-					<td class="w-1/12">{batch.ingredient.name}</td>
-					<td class="w-2/12">{batch.stock} {batch.ingredient.unit}</td>
+					<td class="align-middle">{batch.id}</td>
+					<td>{batch.batch_code}</td>
+					<td>{batch.ingredient.name}</td>
+					<td>{batch.stock} {batch.ingredient.unit}</td>
 					<td>{batch.used_batches.map((x) => x.batch_code).join(', ') || '-'}</td>
 
-					<td class="w-1/12">
-						<a class="btn p-0" href={`ingredientes/${batch.id.toString()}`}>Ver</a>
+					<td>
+						<a
+							class="btn variant-filled-primary rounded"
+							href={`ingredientes/${batch.id.toString()}`}>Ver</a
+						>
 					</td>
 				</tr>
 			{/each}

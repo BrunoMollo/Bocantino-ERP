@@ -28,7 +28,7 @@ export function printBatchLabel(
 	const { batch_code, initial_amount, number_of_bags } = batch;
 
 	doc.setFontSize(8);
-	doc.text('Materia prima: ' + ingredient_name ?? '[[ERROR: Ingrediente no encontrado]]', 5, 5);
+	doc.text('Materia prima: ' + (ingredient_name ?? '[[ERROR: Ingrediente no encontrado]]'), 5, 5);
 	doc.text('Fechas:', 5, 11);
 	doc.text('Produccion: ' + production_date, 25, 11);
 	doc.text('Vencimiento: ' + expiration_date, 25, 15);
