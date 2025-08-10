@@ -10,7 +10,7 @@
 	import Navigation from './_components/Navigation.svelte';
 	import { fade } from 'svelte/transition';
 	import Loader from './_components/Loader.svelte';
-	import { LightSwitch } from '@skeletonlabs/skeleton';
+	// import { LightSwitch } from '@skeletonlabs/skeleton';
 	import PopUpDashboard from './_components/popUp-dashboard.svelte';
 
 	storePopup.set({ computePosition, autoUpdate, flip, shift, offset, arrow });
