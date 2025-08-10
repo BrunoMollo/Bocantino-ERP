@@ -101,7 +101,7 @@
 				</div>
 
 				<a href="/bocantino">
-					<strong class="text-3xl uppercase py-auto"></strong>
+					<strong class="text-3xl uppercase py-auto">Bocantino</strong>
 				</a>
 			</svelte:fragment>
 		</AppBar>
