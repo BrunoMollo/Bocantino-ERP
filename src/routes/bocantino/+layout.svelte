@@ -49,7 +49,7 @@
 			<button on:click={drawerStore.close}>
 				<i class="md:invisible bx text-2xl bx-x my-auto mx-3 px-2"></i>
 			</button>
-			<LightSwitch rounded={'rounded-xl'} />
+			<!-- <LightSwitch rounded={'rounded-xl'} /> -->
 		</div>
 		<Navigation />
 	</div>
