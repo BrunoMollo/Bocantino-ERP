@@ -50,11 +50,10 @@ export const actions: Actions = {
 			case 'LOGIC_ERROR':
 				throw error(400, res.message);
 			case 'SUCCESS':
-                
-                return message(form, { 
-                    type: 'success', 
-                    batch: batch
-                });
+				return message(form, {
+					type: 'success',
+					batch: batch
+				});
 			default:
 				should_not_reach(res);
 		}

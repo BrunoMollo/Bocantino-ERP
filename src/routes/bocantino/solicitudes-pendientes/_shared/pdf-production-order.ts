@@ -13,7 +13,7 @@ export function printProductionOrder(
 			ingredient_unit: string;
 		}[];
 	},
-	ingredient : boolean = false
+	ingredient: boolean = false
 ) {
 	const fechaHoy = new Date();
 	const fechaFormateada = fechaHoy.toLocaleDateString('es');
@@ -38,14 +38,13 @@ export function printProductionOrder(
 				x.ingredient_name,
 				x.batch_code,
 				x.amount_used_to_produce_batch.toString() + ' ' + x.ingredient_unit,
-                ''
+				''
 			];
 		})
 	});
 
-
 	let finalY = (doc as any).lastAutoTable.finalY;
-	if(ingredient){
+	if (ingredient) {
 		autoTable(doc, {
 			styles: {
 				fontSize: 12,
@@ -84,22 +83,22 @@ export function printProductionOrder(
 		const finalFieldsY = finalY + 20;
 	}
 
-doc.text('horas de secado:', 125, 255);
+	doc.text('horas de secado:', 125, 255);
 
-doc.line(170, 255, 200, 255);
+	doc.line(170, 255, 200, 255);
 
-doc.text('peso neto:', 10, 270);
+	doc.text('peso neto:', 10, 270);
 
-doc.line(38, 270, 70, 270);
+	doc.line(38, 270, 70, 270);
 
-doc.text('Firma responsable:', 120, 270);
+	doc.text('Firma responsable:', 120, 270);
 
-doc.line(170, 270, 200, 270);
+	doc.line(170, 270, 200, 270);
 
-doc.text('© ' + fechaHoy.getFullYear() + ' BOCANTINO. Todos los derechos reservados.', 10, 290);
+	doc.text('© ' + fechaHoy.getFullYear() + ' BOCANTINO. Todos los derechos reservados.', 10, 290);
 
-doc.autoPrint({ variant: 'non-conform' });
+	doc.autoPrint({ variant: 'non-conform' });
 
-doc.save('Solicitud' + item.id + '.pdf');
-return null;
+	doc.save('Solicitud' + item.id + '.pdf');
+	return null;
 }

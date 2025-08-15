@@ -41,8 +41,10 @@
 		<h2 class="h3 mt-5 mb-1">Lotes ingresados</h2>
 		{#if batches}
 			{#each batches as batch}
-				<div class="invisible_pc mb-5 p-1 rounded shadow-2xl text-center border ">
-					<p class="font-bold">Ingrediennte: <span class="font-normal"> {batch.ingredient}</span></p>
+				<div class="invisible_pc mb-5 p-1 rounded shadow-2xl text-center border">
+					<p class="font-bold">
+						Ingrediennte: <span class="font-normal"> {batch.ingredient}</span>
+					</p>
 					<p class="font-bold">
 						Cantidad: <span class="font-normal"> {batch.initial_amount}</span>
 					</p>
@@ -59,10 +61,9 @@
 					</p>
 					<p class="font-bold">Importe: <span class="font-normal">{batch.cost} $</span></p>
 					<p class="font-bold">Bolsas: <span class="font-normal">{batch.bags}</span></p>
-					
 				</div>
 			{/each}
-			
+
 			<table class="w-full border-collapse table mb-5 invisible_movil">
 				<thead class="lg:text-xl text-sm">
 					<tr>
@@ -93,7 +94,10 @@
 							</td>
 							<td>{batch.bags}</td>
 							<td>
-								<button class="btn variant-outline-primary rounded" on:click={printBatchLabelFromDetail(batch)}>
+								<button
+									class="btn variant-outline-primary rounded"
+									on:click={printBatchLabelFromDetail(batch)}
+								>
 									<i class="bx bxs-printer place-self-center text-xl" />
 								</button>
 							</td>
@@ -101,7 +105,7 @@
 					{/each}
 				</tbody>
 			</table>
-			
+
 			{#if selected_entry.document.type !== 'Remito'}
 				{@const iva = batches[0].iva_tax_percentage}
 				{@const withdrawal = batches[0].withdrawal_tax_amount}
