@@ -45,7 +45,7 @@
 <Drawer>
 	<div class="pt-4 md:w-96 w-70">
 		<div class="w-full flex justify-between items-center p-4">
-			<strong class=" text-3xl uppercase">Bocantino</strong>
+			<a href="/bocantino"><strong class=" text-3xl uppercase">Bocantino</strong></a>
 			<button on:click={drawerStore.close}>
 				<i class="md:invisible bx text-2xl bx-x my-auto mx-3 px-2"></i>
 			</button>

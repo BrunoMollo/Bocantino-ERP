@@ -32,7 +32,7 @@
 					>
 					<button
 						class="rounded btn variant-filled-primary px-5 w-1/2 py-2 flex justify-center items-center"
-						on:click={printProductionOrder(item.ingredient.name, item)}
+						on:click={printProductionOrder(item.ingredient.name, item, true)}
 						><i class="bx bx-printer text-xl text-black h-5 w-5"></i></button
 					>
 				</td>

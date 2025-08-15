@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { superForm } from 'sveltekit-superforms/client';
+	import { printIngredientBatchLabel } from '../../../ingreso-insumos/_shared/pdf-batch-label';
 
 	export let data;
 
@@ -27,6 +28,10 @@
 				</p>
 				<p class="text-2xl"><span class="font-bold">Codigo lote: </span>{data.batch.batch_code}</p>
 				<p class="text-2xl">
+					<span class="font-bold"> Fecha producción:</span>
+					{data.batch.production_date?.toLocaleDateString('es') ?? '-'}
+				</p>
+				<p class="text-2xl">
 					<span class="font-bold"> Fecha vencimiento:</span>
 					{data.batch.expiration_date?.toLocaleDateString('es') ?? '-'}
 				</p>
@@ -36,6 +41,14 @@
 					{data.batch.ingredient.unit}
 				</p>
 			</div>
+			<div class="grid grid-cols-1 p-4 justify-items-center">
+			<button class="btn variant-outline-primary w-32 rounded mb-5" on:click={printIngredientBatchLabel(data.batch)} >
+						{#if $delayed}
+							........
+						{:else}
+							<i class="bx bx-printer text-xl h-5 w-5"></i>
+						{/if}
+					</button>
 			<form action="" method="post" use:enhance class="flex flex-col p-6">
 				<label class="label font-bold" for="adjustment">Ajuste</label>
 				<div>
@@ -50,14 +63,15 @@
 					/>
 					<span>{data.batch.ingredient.unit}</span>
 				</div>
-				<button class="btn variant-filled-primary w-32 rounded" type="submit">
-					{#if $delayed}
-						........
-					{:else}
-						Registrar
-					{/if}
-				</button>
+					<button class="btn variant-filled-primary w-32 rounded" type="submit">
+						{#if $delayed}
+							........
+						{:else}
+							Registrar
+						{/if}
+					</button>
 			</form>
+			</div>
 		</div>
 	</div>
 </main>

@@ -6,6 +6,7 @@
 	import { make_filter_by_url } from '$lib/utils';
 	import { enhance } from '$app/forms';
 	import { printAvailableBatches } from './pdf-available-batches';
+	import { printBatchLabel } from '../../ingreso-insumos/_shared/pdf-batch-label';
 	export let data;
 
 	const popupClick: PopupSettings = {
@@ -125,7 +126,7 @@
 					<td>{batch.stock} {batch.ingredient.unit}</td>
 					<td>{batch.used_batches.map((x) => x.batch_code).join(', ') || '-'}</td>
 
-					<td>
+					<td class="flex align-center gap-2">
 						<a
 							class="btn variant-filled-primary rounded"
 							href={`ingredientes/${batch.id.toString()}`}>Ver</a

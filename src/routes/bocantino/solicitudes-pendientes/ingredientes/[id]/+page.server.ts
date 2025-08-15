@@ -1,4 +1,4 @@
-import { superValidate } from 'sveltekit-superforms/client';
+import { message, superValidate } from 'sveltekit-superforms/client';
 import { z } from 'zod';
 import type { PageServerLoad } from './$types';
 import { error, type Actions, redirect } from '@sveltejs/kit';
@@ -50,7 +50,11 @@ export const actions: Actions = {
 			case 'LOGIC_ERROR':
 				throw error(400, res.message);
 			case 'SUCCESS':
-				throw redirect(302, '/bocantino/lotes/ingredientes');
+                
+                return message(form, { 
+                    type: 'success', 
+                    batch: batch
+                });
 			default:
 				should_not_reach(res);
 		}
