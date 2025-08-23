@@ -75,7 +75,7 @@ class IngredientService {
 			return insertedIngredient;
 		});
 	}
-
+	// todo: Revisar funcionamiento de edit y pantalla producir ingrediente
 	async edit(
 		id: number,
 		ingredient: Omit<typeof t_ingredient.$inferInsert, 'id'>,

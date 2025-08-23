@@ -8,6 +8,7 @@
 	</head>
 
 	<body data-sveltekit-preload-data="hover" data-theme="rocket">
+		<script>(function(){try{var u=localStorage.getItem('mode');var s=window.matchMedia&&window.matchMedia('(prefers-color-scheme: dark)').matches;var m=u==='dark'||(u==='system'&&s)?'dark':'light';var e=document.documentElement;e.classList.toggle('dark',m==='dark');}catch(e){}})();</script>
 		<div style="display: contents" class="h-full overflow-hidden">%sveltekit.body%</div>
 	</body>
 </html>
