@@ -43,77 +43,88 @@
 </script>
 
 <Drawer>
-	<div class="pt-4 md:w-96 w-70">
-		<div class="w-full flex justify-between items-center p-4">
-			<a href="/bocantino"><strong class=" text-3xl uppercase">Bocantino</strong></a>
-			<button on:click={drawerStore.close}>
-				<i class="md:invisible bx text-2xl bx-x my-auto mx-3 px-2"></i>
-			</button>
-			<LightSwitch rounded={'rounded-xl'} />
+	<div class="pt-4 md:w-96 w-70 bg-gradient-to-b from-surface-0-50-token to-surface-50-900-token h-full">
+		<div class="w-full flex justify-between items-center p-6 border-b border-surface-200-700-token">
+			<a href="/bocantino" class="flex items-center gap-3 group">
+				<strong class="text-2xl font-bold text-primary-600 group-hover:text-primary-500 transition-colors">Bocantino</strong>
+			</a>
+			<div class="flex items-center gap-2">
+				<LightSwitch rounded={'rounded-xl'} />
+				<button on:click={drawerStore.close} class="btn-icon btn-icon-sm variant-soft-secondary md:hidden">
+					<i class="bx bx-x text-xl"></i>
+				</button>
+			</div>
 		</div>
-		<Navigation />
+		<div class="p-4">
+			<Navigation />
+		</div>
 	</div>
 </Drawer>
 
-<Toast class="w-64" />
+<Toast class="w-80" />
 <!-- App Shell -->
-<AppShell slotSidebarLeft="w-0 ">
+<AppShell slotSidebarLeft="w-0">
 	<svelte:fragment slot="header">
 		<!-- App Bar -->
-		<AppBar>
+		<AppBar class="bg-surface-0-50-token border-b border-surface-200-700-token shadow-sm">
 			<svelte:fragment slot="lead">
-				<div class="flex items-center">
-					<button class="btn btn-sm mr-4" on:click={() => drawerStore.open({ width: '800px' })}>
-						<span>
-							<svg viewBox="0 0 100 80" class="fill-token w-4 h-4">
-								<rect width="100" height="20" />
-								<rect y="30" width="100" height="20" />
-								<rect y="60" width="100" height="20" />
-							</svg>
-						</span>
+				<div class="flex items-center gap-4">
+					<button 
+						class="btn btn-sm variant-soft-secondary hover:variant-filled-secondary transition-all" 
+						on:click={() => drawerStore.open({ width: '800px' })}
+					>
+						<i class="bx bx-menu text-xl"></i>
 					</button>
+					<div class="flex items-center gap-3">
+						<h1 class="h2 text-primary-600 font-semibold">{$title}</h1>
+					</div>
 				</div>
-				<h1 class="h2 pl-4">{$title}</h1>
 			</svelte:fragment>
 			<svelte:fragment slot="trail">
-				<button
-					style="display: none"
-					class=" btn variant-filled-secondary rounded-full mr-4"
-					use:popup={popupFeatured}
-				>
-					<i class="bx bx-notification text-2xl"></i>
-				</button>
-				{#if $page.url.pathname === '/bocantino'}
-					<div class="card p-4 w-72 shadow-xl rounded-lg" data-popup="popupFeatured">
-						<div><h1 class="text-xl uppercase">Notifications:</h1></div>
-						<div class="arrow bg-surface-100-800-token" />
-					</div>
-					<div>
-						<button
-							class="btn variant-filled-secondary rounded-full mr-4"
-							on:click={() => (ShowPopUp = !ShowPopUp)}><i class="bx bxs-edit"></i></button
-						>
-						<div
-							class="card p-4 w-72 shadow-xl absolute right-0 top-20 rounded-lg"
-							class:invisible={!ShowPopUp}
-						>
-							<PopUpDashboard />
+				<div class="flex items-center gap-3">
+					<button
+						style="display: none"
+						class="btn variant-filled-secondary rounded-full"
+						use:popup={popupFeatured}
+					>
+						<i class="bx bx-notification text-xl"></i>
+					</button>
+					{#if $page.url.pathname === '/bocantino'}
+						<div class="card p-4 w-72 shadow-xl rounded-lg" data-popup="popupFeatured">
+							<div><h1 class="text-xl uppercase">Notifications:</h1></div>
+							<div class="arrow bg-surface-100-800-token" />
 						</div>
-					</div>
-				{/if}
+						<div class="relative">
+							<button
+								class="btn variant-filled-secondary rounded-full"
+								on:click={() => (ShowPopUp = !ShowPopUp)}
+							>
+								<i class="bx bxs-edit text-xl"></i>
+							</button>
+							<div
+								class="card p-4 w-72 shadow-xl absolute right-0 top-20 rounded-lg z-50"
+								class:invisible={!ShowPopUp}
+							>
+								<PopUpDashboard />
+							</div>
+						</div>
+					{/if}
 
-				<a href="/bocantino">
-					<strong class="text-3xl uppercase py-auto">Bocantino</strong>
-				</a>
+					<a href="/bocantino" class="hidden md:flex items-center gap-2">
+						<strong class="text-xl font-bold text-primary-600">Bocantino</strong>
+					</a>
+				</div>
 			</svelte:fragment>
 		</AppBar>
 	</svelte:fragment>
 
 	{#if $navigating && debounce_flag}
-		<div class="w-full h-full flex items-center justify-center absolute opacity-80" transition:fade>
+		<div class="w-full h-full flex items-center justify-center absolute opacity-90 bg-surface-0-50-token z-50" transition:fade>
 			<Loader />
 		</div>
 	{:else}
-		<slot />
+		<div class="p-6">
+			<slot />
+		</div>
 	{/if}
 </AppShell>

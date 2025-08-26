@@ -98,7 +98,7 @@ class IngredientService {
 					await tx.update(tr_ingredient_ingredient).set({
 						amount: source.amount,
 						source_id: source.id
-					});
+					}).where(eq(tr_ingredient_ingredient.derived_id, id));
 				} else {
 					await tx.insert(tr_ingredient_ingredient).values({
 						derived_id: id,
