@@ -2,7 +2,7 @@ import { z } from 'zod';
 import type { Actions, PageServerLoad } from './$types';
 import { message, superValidate } from 'sveltekit-superforms/client';
 import { redirect } from '@sveltejs/kit';
-import { JWT_EXPIRES_IN } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { dev } from '$app/environment';
 import { auth_service } from '$logic/auth-service';
 
@@ -27,7 +27,11 @@ export const actions: Actions = {
 		if (res.type == 'LOGIC_ERROR') {
 			return message(form, 'Credenciales invalidas', { status: 401 }); // don't give to much detail
 		}
-		const token_max_age = parseInt(JWT_EXPIRES_IN) * 60;
+		
+		if (!env.JWT_EXPIRES_IN) {
+			throw new Error('JWT_EXPIRES_IN is not defined');
+		}
+		const token_max_age = parseInt(env.JWT_EXPIRES_IN) * 60;
 
 		cookies.set('token', res.token, {
 			httpOnly: true,
