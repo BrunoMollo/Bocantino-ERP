@@ -6,14 +6,33 @@ import ws from 'ws';
 import type { PgTransaction } from 'drizzle-orm/pg-core';
 import type { ExtractTablesWithRelations } from 'drizzle-orm';
 
-neonConfig.webSocketConstructor = ws; // <-- this is the key bit
+// Configure Neon only when needed
+if (typeof window === 'undefined') {
+	neonConfig.webSocketConstructor = ws;
+}
 
-const pool = new Pool({ connectionString: NEON_DATABASE_URL });
-pool.on('error', (err) => console.error(err)); // deal with e.g. re-connect
+// Lazy database connection
+let _db: ReturnType<typeof drizzle> | null = null;
 
-const client = await pool.connect();
+function getDbConnection() {
+	if (!_db) {
+		if (!NEON_DATABASE_URL) {
+			throw new Error('NEON_DATABASE_URL is not defined');
+		}
+		const pool = new Pool({ connectionString: NEON_DATABASE_URL });
+		pool.on('error', (err) => console.error('Database pool error:', err));
+		_db = drizzle(pool, { logger: dev });
+	}
+	return _db;
+}
 
-export const db = drizzle(client, { logger: dev });
+// Export db as a getter function to avoid initialization during import
+export const db = new Proxy({} as ReturnType<typeof drizzle>, {
+	get(target, prop, receiver) {
+		const dbInstance = getDbConnection();
+		return Reflect.get(dbInstance, prop, receiver);
+	}
+});
 
 export type Db = typeof db;
 

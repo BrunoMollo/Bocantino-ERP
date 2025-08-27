@@ -1,8 +1,9 @@
 version: '3.8'
-# NOTE: this docker compose is only to run the tests, it does not spin upt the development server
+
 services:
+  # PostgreSQL Database
   postgres:
-    image: postgres:latest
+    image: postgres:15-alpine
     restart: unless-stopped
     ports:
       - '5432:5432'
@@ -10,4 +11,55 @@ services:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
       POSTGRES_DB: mydatabase
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # SvelteKit Application
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    env_file:
+      - .env.docker
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+      - HOST=0.0.0.0
+    depends_on:
+      postgres:
+        condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./migrations:/app/migrations:ro
+
+  # Development service (optional - for development with hot reload)
+  app-dev:
+    build:
+      context: .
+      dockerfile: Dockerfile.dev
+    ports:
+      - '5173:5173'
+    env_file:
+      - .env.docker
+    environment:
+      - NODE_ENV=development
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - .:/app
+      - /app/node_modules
+      - ./.env.docker:/app/.env
+    profiles:
+      - dev
+
+volumes:
+  postgres_data:
 

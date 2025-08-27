@@ -1,0 +1,35 @@
+# Development Dockerfile for SvelteKit with hot reload
+
+FROM node:18-alpine
+
+# Install dumb-init for proper signal handling
+RUN apk add --no-cache dumb-init
+
+# Set working directory
+WORKDIR /app
+
+# Create app user
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S sveltekit -u 1001
+
+# Copy package files
+COPY package*.json ./
+
+# Install dependencies (including dev dependencies)
+RUN npm ci --silent
+
+# Change ownership of the app directory to the sveltekit user
+RUN chown -R sveltekit:nodejs /app
+USER sveltekit
+
+# Expose port for Vite dev server
+EXPOSE 5173
+
+# Set environment variables
+ENV NODE_ENV=development
+ENV HOST=0.0.0.0
+ENV PORT=5173
+
+# Start the development server
+ENTRYPOINT ["dumb-init", "--"]
+CMD ["npm", "run", "dev", "--", "--host", "0.0.0.0", "--port", "5173"]

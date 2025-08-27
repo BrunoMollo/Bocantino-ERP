@@ -1,0 +1,19 @@
+# Copy this file to .env and update the values
+
+# Database Configuration
+# For production: Use Neon Database connection string
+# For development with Docker: postgresql://postgres:postgres@postgres:5432/mydatabase
+# For local development: postgresql://postgres:postgres@localhost:5432/mydatabase
+NEON_DATABASE_URL=postgresql://postgres:postgres@postgres:5432/mydatabase
+
+# Application Configuration
+NODE_ENV=development
+PORT=3000
+HOST=0.0.0.0
+
+# JWT/Auth Configuration
+JWT_SECRET_KEY=your-super-secret-jwt-key-here-change-this-in-production-min-32-chars
+JWT_EXPIRES_IN=60
+
+# Additional environment variables
+# Add any other environment variables your application needs here
