@@ -33,3 +33,27 @@ export async function __DELETE_ALL_DATABASE() {
 	});
 }
 
+// Helper function to create ingredient test data with all required fields
+export function createIngredientTestData(overrides: Partial<{
+	id?: number;
+	name: string;
+	unit: 'gr' | 'Kg';
+	reorder_point: number;
+}> = {}) {
+	return {
+		name: 'Test Ingredient',
+		unit: 'Kg' as const,
+		reorder_point: 100,
+		nutrient_protein: 0,
+		nutrient_carb: 0,
+		nutrient_fat: 0,
+		nutrient_humidity: 0,
+		nutrient_fiber: 0,
+		nutrient_ashes: 0,
+		nutrient_calcium: 0,
+		nutrient_sodium: 0,
+		nutrient_phosphorus: 0,
+		...overrides
+	};
+}
+

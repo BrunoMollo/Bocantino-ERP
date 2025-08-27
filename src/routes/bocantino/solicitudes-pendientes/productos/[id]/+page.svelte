@@ -3,10 +3,23 @@
 	import { superForm } from 'sveltekit-superforms/client';
 
 	export let data;
-	const current = {};
+	const current = data.current_production || {};
 
+	// Main form for closing production
+	const { 
+		form, 
+		errors, 
+		delayed, 
+		enhance: closeEnhance 
+	} = superForm(data.form || {}, { 
+		dataType: 'json',
+		taintedMessage: null 
+	});
+
+	// Create a minimal form structure for cancel action
+	const cancelFormData = { batch_id: null };
 	const { form: cancel_form, enhance } = superForm(
-		{},
+		{ valid: true, posted: false, errors: {}, data: cancelFormData, constraints: {} },
 		{
 			taintedMessage: null,
 			defaultValidator: 'clear',
@@ -73,7 +86,7 @@
 					{/if}
 				</button>
 
-				<form action="?/cancel" method="post" use:cancel_enhance>
+				<form action="?/cancel" method="post" use:enhance>
 					<button
 						class="btn variant-filled-error w-40"
 						type="submit"

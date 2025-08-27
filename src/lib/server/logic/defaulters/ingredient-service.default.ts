@@ -1,12 +1,12 @@
 import { ingredients_service } from '$logic/ingredient-service';
-import { some_string } from './utils';
+// import { some_string } from './utils'; // Module not found, removing import
 
 class IngredientServiceDefaulter {
 	async add_derived({ from, amount }: { from: number; amount: number }) {
 		return await ingredients_service
 			.add(
 				{
-					name: some_string(),
+					name: 'Test Ingredient',
 					unit: 'Kg',
 					reorder_point: 100,
 					nutrient_fat: 1,
@@ -26,7 +26,7 @@ class IngredientServiceDefaulter {
 	async add_simple() {
 		return await ingredients_service
 			.add({
-				name: some_string(),
+									name: 'Test Derived Ingredient',
 				unit: 'Kg',
 				reorder_point: 100,
 				nutrient_fat: 1,
@@ -50,7 +50,7 @@ class IngredientServiceDefaulter {
 		const { nutrient_carb, nutrient_fat, nutrient_protein } = data;
 		return await ingredients_service
 			.add({
-				name: some_string(),
+									name: 'Test Derived Ingredient',
 				unit: 'Kg',
 				reorder_point: 100,
 				nutrient_fat,

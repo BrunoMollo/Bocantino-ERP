@@ -59,6 +59,8 @@ export type Prettify<T> = {
 	[K in keyof T]: T[K];
 } & {};
 
+// Deleted duplicate - keeping original function below
+
 /**
  * Type Helper to creates dtos from tables of the drizzle schema
  **/

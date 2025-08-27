@@ -7,7 +7,7 @@ import {
 	t_supplier,
 	tr_supplier_ingredient
 } from '$lib/server/db/schema';
-import { __DELETE_ALL_DATABASE } from './utils';
+import { __DELETE_ALL_DATABASE, createIngredientTestData } from './utils';
 import { suppliers_service } from '$logic/suppliers-service';
 import { purchases_service } from '$logic/ingredient-purchase-service';
 import { ingredients_service } from '$logic/ingredient-service';
@@ -31,19 +31,19 @@ beforeAll(async () => {
 	await db.insert(t_document_type).values(INVOICE_TYPE);
 
 	LIVER_ID = await ingredients_service
-		.add({
+		.add(createIngredientTestData({
 			name: 'Liver',
 			unit: 'Kg',
 			reorder_point: 100
-		})
+		}))
 		.then((x) => x.id);
 
 	BANANA_ID = await ingredients_service
-		.add({
+		.add(createIngredientTestData({
 			name: 'Banana',
 			unit: 'Kg',
 			reorder_point: 120
-		})
+		}))
 		.then((x) => x.id);
 
 	SUPPLIER_ID = await suppliers_service
@@ -56,11 +56,11 @@ beforeAll(async () => {
 
 	REDUCED_LIVER_ID = await ingredients_service
 		.add(
-			{
+			createIngredientTestData({
 				name: 'Liver reduced',
 				unit: 'Kg',
 				reorder_point: 80
-			},
+			}),
 			{
 				id: LIVER_ID,
 				amount: 2

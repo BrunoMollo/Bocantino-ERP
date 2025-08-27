@@ -1,7 +1,7 @@
 import { inArray } from 'drizzle-orm';
 import { db } from '../db';
 import { t_ingredient } from '../db/schema';
-import { has_repeted } from '$lib/utils';
+// import { has_repeted } from '$lib/utils'; // Function not found, removing import
 import { is_ok, logic_error } from '$logic';
 
 export type NutritionalInfo = {
@@ -35,7 +35,9 @@ export class NutricionalInformationserivce {
 	async calculateNutricionalInformation(recipe: { ingredient_id: number; amount: number }[]) {
 		const ingredients_ids = recipe.map((x) => x.ingredient_id);
 
-		if (has_repeted(ingredients_ids)) {
+		// Check for duplicated ingredients
+		const uniqueIds = new Set(ingredients_ids);
+		if (uniqueIds.size !== ingredients_ids.length) {
 			return logic_error('Se indico un mismo ingrediente  en mas de una linea');
 		}
 		const used_ingredients = await db
