@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Loader from '../../_components/Loader.svelte';
+	import Spinner from '$lib/ui/Spinner.svelte';
 	import { trpc } from '$lib/trpc-client';
 
 	export let data;
@@ -68,7 +68,7 @@
 			</table>
 		{:else}
 			<div class="w-full mt-20 flex justify-center align-middle">
-				<Loader --scale="2" />
+				<Spinner showIf={true} size={24} />
 			</div>
 		{/if}
 	</div>
