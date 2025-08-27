@@ -1,6 +1,6 @@
 import { getFirst, getFirstIfPosible } from '$lib/utils';
 import { eq, and } from 'drizzle-orm';
-import { db, type Db } from '../db';
+import { db } from '../db';
 import {
 	t_ingredient,
 	t_ingredient_batch,
@@ -23,7 +23,7 @@ class ProductService {
 			ingredients: { ingredient_id: number; amount: number }[];
 		}
 	) {
-		await this.db.transaction(async (tx) => {
+		await db().transaction(async (tx) => {
 			await tx.update(t_product).set({ desc: data.desc }).where(eq(t_product.id, product_id));
 			await tx.delete(tr_ingredient_product).where(eq(tr_ingredient_product.productId, product_id));
 			for (let { ingredient_id, amount } of data.ingredients) {
@@ -37,7 +37,7 @@ class ProductService {
 		return is_ok(null);
 	}
 	async getById(product_id: number) {
-		return await this.db
+		return await db()
 			.select({
 				t_product,
 				ingredients: pick_merge()
@@ -51,11 +51,11 @@ class ProductService {
 			.then(drizzle_map({ one: 't_product', with_one: [], with_many: ['ingredients'] }))
 			.then(getFirstIfPosible);
 	}
-	constructor(private db: Db) {}
+
 
 	public PAGE_SIZE = 10;
 	async getBatchesAvailable({ page }: { page: number }) {
-		const limited_batches = this.db.$with('limited_products_batches').as(
+		const limited_batches = db().$with('limited_products_batches').as(
 			db
 				.select()
 				.from(t_product_batch)
@@ -101,7 +101,7 @@ class ProductService {
 			return logic_error('lote indicado no existe');
 		}
 
-		await this.db.transaction(async (tx) => {
+		await db().transaction(async (tx) => {
 			await tx
 				.delete(tr_product_batch_ingredient_batch)
 				.where(eq(tr_product_batch_ingredient_batch.produced_batch_id, batch_id));
@@ -111,7 +111,7 @@ class ProductService {
 	}
 
 	private async isBatchInProduction(batch_id: number) {
-		return await this.db
+		return await db()
 			.select()
 			.from(t_product_batch)
 			.where(and(eq(t_product_batch.id, batch_id), eq(t_product_batch.state, 'IN_PRODUCTION')))
@@ -127,7 +127,7 @@ class ProductService {
 			return logic_error('lote indicado no existe');
 		}
 
-		await this.db.transaction(async (tx) => {
+		await db().transaction(async (tx) => {
 			await tx
 				.update(t_product_batch)
 				.set({ state: 'AVAILABLE', adjustment, production_date: new Date() })
@@ -138,7 +138,7 @@ class ProductService {
 	}
 
 	private async product_exists(product_id: number) {
-		return await this.db
+		return await db()
 			.select()
 			.from(t_product)
 			.where(eq(t_product.id, product_id))
@@ -148,7 +148,7 @@ class ProductService {
 	}
 
 	async getAll() {
-		return await this.db.select().from(t_product);
+		return await db().select().from(t_product);
 	}
 
 	async add({
@@ -158,7 +158,7 @@ class ProductService {
 		desc: string;
 		ingredients: { ingredient_id: number; amount: number }[];
 	}) {
-		return await this.db.transaction(async (tx) => {
+		return await db().transaction(async (tx) => {
 			const inserted = await tx
 				.insert(t_product)
 				.values({ desc })
@@ -177,7 +177,7 @@ class ProductService {
 	}
 
 	async getRecipie(product_id: number) {
-		return await this.db
+		return await db()
 			.select(
 				pick_merge()
 					.aliased(t_ingredient, 'id', 'ingredient_id')
@@ -208,7 +208,7 @@ class ProductService {
 			return logic_error('producto no existe');
 		}
 
-		return await this.db.transaction(async (tx) => {
+		return await db().transaction(async (tx) => {
 			const get_needed_amount = (ingredient_id: number) =>
 				recipe
 					.filter((x) => x.ingredient_id === ingredient_id)
@@ -326,5 +326,5 @@ class ProductService {
 	}
 }
 
-export const product_service = new ProductService(db);
+export const product_service = new ProductService();
 

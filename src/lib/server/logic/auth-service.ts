@@ -39,7 +39,7 @@ export class AuthService {
 	}
 
 	async login(recived_user: { username: string; password: string }) {
-		const db_user = await db
+		const db_user = await db()
 			.select()
 			.from(t_user)
 			.where(eq(t_user.username, recived_user.username))
@@ -61,7 +61,7 @@ export class AuthService {
 
 	async createUser(user: { username: string; password: string }) {
 		const { username, password } = user;
-		const user_already_exist = await db
+		const user_already_exist = await db()
 			.select()
 			.from(t_user)
 			.where(eq(t_user.username, username))
@@ -72,7 +72,7 @@ export class AuthService {
 			return logic_error('nombre de usario ya existe');
 		}
 
-		const { id } = await db
+		const { id } = await db()
 			.insert(t_user)
 			.values({ username, password_hash: await bcrypt.hash(password, 10) }) //TODO: investigate further
 			.returning({ id: t_user.id })

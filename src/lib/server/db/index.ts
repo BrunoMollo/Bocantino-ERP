@@ -6,16 +6,61 @@ import ws from 'ws';
 import type { PgTransaction } from 'drizzle-orm/pg-core';
 import type { ExtractTablesWithRelations } from 'drizzle-orm';
 
-neonConfig.webSocketConstructor = ws; // <-- this is the key bit
+// Configure Neon for Lambda serverless environments
+if (typeof WebSocket === 'undefined') {
+	// Only use ws polyfill if WebSocket is not available
+	neonConfig.webSocketConstructor = ws;
+}
+neonConfig.poolQueryViaFetch = true; // Prefer HTTP over WebSocket for Lambda
+neonConfig.useSecureWebSocket = true;
+neonConfig.fetchConnectionCache = true; // Enable connection caching for better Lambda performance
 
-const pool = new Pool({ connectionString: NEON_DATABASE_URL });
-pool.on('error', (err) => console.error(err)); // deal with e.g. re-connect
+// Create a connection pool but don't connect immediately
+let pool: Pool | undefined;
+let db: ReturnType<typeof drizzle> | undefined;
 
-const client = await pool.connect();
+// Lazy initialization function for Lambda compatibility
+function getDb() {
+	if (!db) {
+		if (!pool) {
+			pool = new Pool({ 
+				connectionString: NEON_DATABASE_URL,
+				// Configure for Lambda environment
+				max: 1, // Single connection for Lambda
+				idleTimeoutMillis: 30000,
+				connectionTimeoutMillis: 5000,
+			});
+			
+			pool.on('error', (err) => {
+				console.error('Database pool error:', err);
+				// Reset connections on error
+				pool = undefined;
+				db = undefined;
+			});
+		}
+		
+		db = drizzle(pool, { 
+			logger: dev,
+			// Configure for serverless
+			casing: 'snake_case'
+		});
+	}
+	return db;
+}
 
-export const db = drizzle(client, { logger: dev });
+// Graceful cleanup function for Lambda
+export async function closeDb() {
+	if (pool) {
+		await pool.end();
+		pool = undefined;
+		db = undefined;
+	}
+}
 
-export type Db = typeof db;
+// Export the lazy getter
+export { getDb as db };
+
+export type Db = ReturnType<typeof getDb>;
 
 export type Tx = PgTransaction<
 	NeonQueryResultHKT,

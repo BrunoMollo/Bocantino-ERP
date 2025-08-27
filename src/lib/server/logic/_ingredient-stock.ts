@@ -8,8 +8,8 @@ import { eq, sql, sum } from 'drizzle-orm';
 import { alias } from 'drizzle-orm/pg-core';
 
 const batches_in_production = alias(t_ingredient_batch, 'batches_in_production');
-export const sq_stock = db.$with('stock').as(
-	db
+export const sq_stock = db().$with('stock').as(
+	db()
 		.select({
 			batch_id: t_ingredient_batch.id,
 			currently_available: sql<number>`

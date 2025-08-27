@@ -12,7 +12,7 @@ class SuppliersService {
 	) {
 		const { name, email, ingredientsIds } = data;
 
-		const id = await db.transaction(async (tx) => {
+		const id = await db().transaction(async (tx) => {
 			const { generatedId } = await tx
 				.insert(t_supplier)
 				.values({ name, email })

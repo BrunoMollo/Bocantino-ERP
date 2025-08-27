@@ -1,5 +1,4 @@
 <script lang="ts">
-	import Loader from '../../_components/Loader.svelte';
 	import { trpc } from '$lib/trpc-client';
 
 	export let data;
@@ -68,7 +67,7 @@
 			</table>
 		{:else}
 			<div class="w-full mt-20 flex justify-center align-middle">
-				<Loader --scale="2" />
+				Cargando...
 			</div>
 		{/if}
 	</div>

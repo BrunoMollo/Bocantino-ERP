@@ -1,4 +1,4 @@
-import { db, type Db } from '$lib/server/db';
+import { db } from '$lib/server/db';
 import { t_ingredient, t_ingredient_batch, tr_ingredient_ingredient } from '$lib/server/db/schema';
 import { getFirst, getFirstIfPosible } from '$lib/utils';
 import { and, asc, eq, sql } from 'drizzle-orm';
@@ -6,13 +6,12 @@ import { sq_stock } from './_ingredient-stock';
 import { copy_column, drizzle_map, pick_columns } from 'drizzle-tools';
 
 class IngredientService {
-	constructor(private db: Db) {}
 	getAll() {
-		return this.db.select().from(t_ingredient);
+		return db().select().from(t_ingredient);
 	}
 
 	async getAllWithStock() {
-		return await db
+		return await db()
 			.with(sq_stock)
 			.select({
 				ingredient: pick_columns(t_ingredient, 'id', 'name', 'unit', 'reorder_point'),
@@ -36,7 +35,7 @@ class IngredientService {
 	}
 
 	async deletebyID(id: number) {
-		return await this.db.transaction(async (tx) => {
+		return await db().transaction(async (tx) => {
 			await tx.delete(tr_ingredient_ingredient).where(eq(tr_ingredient_ingredient.derived_id, id));
 			await tx.delete(t_ingredient).where(eq(t_ingredient.id, id));
 		});
@@ -44,7 +43,7 @@ class IngredientService {
 
 	async getById(id: number) {
 		if (id <= 0) return null;
-		const data = await this.db.select().from(t_ingredient).where(eq(t_ingredient.id, id));
+		const data = await db().select().from(t_ingredient).where(eq(t_ingredient.id, id));
 		const first = data[0];
 		if (first === undefined) {
 			return null;
@@ -57,7 +56,7 @@ class IngredientService {
 		ingredient: Omit<typeof t_ingredient.$inferInsert, 'id'>,
 		source?: { id: number; amount: number }
 	) {
-		return await this.db.transaction(async (tx) => {
+		return await db().transaction(async (tx) => {
 			const insertedIngredient = await tx
 				.insert(t_ingredient)
 				.values(ingredient)
@@ -80,7 +79,7 @@ class IngredientService {
 		ingredient: Omit<typeof t_ingredient.$inferInsert, 'id'>,
 		source?: { id: number; amount: number } | undefined | null
 	) {
-		return await this.db.transaction(async (tx) => {
+		return await db().transaction(async (tx) => {
 			await tx
 				.update(t_ingredient)
 				.set({
@@ -116,7 +115,7 @@ class IngredientService {
 	}
 
 	async getRecipie(id: number) {
-		return await db
+		return await db()
 			.select({
 				amount: tr_ingredient_ingredient.amount,
 				source: { id: t_ingredient.id, name: t_ingredient.name, unit: t_ingredient.unit }
@@ -128,5 +127,5 @@ class IngredientService {
 	}
 }
 
-export const ingredients_service = new IngredientService(db);
+export const ingredients_service = new IngredientService();
 

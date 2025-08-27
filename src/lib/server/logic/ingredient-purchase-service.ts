@@ -45,7 +45,7 @@ export class IngredientPurchaseService {
 			cost: number;
 		}[];
 	}) {
-		return db.transaction(async (tx) => {
+		return db().transaction(async (tx) => {
 			const { document_id } = await tx
 				.insert(t_entry_document)
 				.values(data.document)

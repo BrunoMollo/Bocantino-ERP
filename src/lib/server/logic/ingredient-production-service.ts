@@ -1,4 +1,4 @@
-import { db, type Db, type Tx } from '$lib/server/db';
+import { db, type Tx } from '$lib/server/db';
 import { getFirst, getFirstIfPosible } from '$lib/utils';
 import { is_ok, logic_error } from '$logic';
 import {
@@ -14,10 +14,10 @@ import { alias } from 'drizzle-orm/pg-core';
 import { ingredients_service } from './ingredient-service';
 
 class IngredientProductionService {
-	constructor(private db: Db) { }
+
 
 	async getBatchesByingredient_id(id: number) {
-		return await db
+		return await db()
 			.with(sq_stock)
 			.select({
 				batch: pick_columns(t_ingredient_batch, 'id', 'batch_code', 'expiration_date'),
@@ -131,7 +131,7 @@ class IngredientProductionService {
 
 		const needed_amount = produced_amount * recipe.amount;
 
-		const result = await this.db.transaction(async (tx) => {
+		const result = await db().transaction(async (tx) => {
 			const batches = [] as Exclude<Awaited<ReturnType<typeof this.getBatchById>>, undefined>[];
 
 			for (let id of batches_ids) {
@@ -196,7 +196,7 @@ class IngredientProductionService {
 	}
 
 	async getCountOfAvailableBatches() {
-		return await db
+		return await db()
 			.with(sq_stock)
 			.select({
 				value: count(t_ingredient_batch.id)
@@ -209,7 +209,7 @@ class IngredientProductionService {
 
 	public PAGE_SIZE = 10;
 	async getBatchesAvailable({ page }: { page: number }) {
-		const limited_ingredient_batch = this.db.$with('limited_ingredient_batch').as(
+		const limited_ingredient_batch = db().$with('limited_ingredient_batch').as(
 			db
 				.with(sq_stock)
 				.select(
@@ -306,7 +306,7 @@ class IngredientProductionService {
 
 	async closeProduction(obj: { batch_id: number; adjustment: number }) {
 		const { batch_id, adjustment } = obj;
-		return this.db.transaction(async (tx) => {
+		return db().transaction(async (tx) => {
 			const batch = await tx
 				.select()
 				.from(t_ingredient_batch)
@@ -345,7 +345,7 @@ class IngredientProductionService {
 			.delete(tr_ingredient_batch_ingredient_batch)
 			.where(eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, id));
 
-		await this.db.delete(t_ingredient_batch).where(eq(t_ingredient_batch.id, id));
+		await db().delete(t_ingredient_batch).where(eq(t_ingredient_batch.id, id));
 
 		return { type: 'SUCCESS' } as const;
 	}
@@ -358,7 +358,7 @@ class IngredientProductionService {
 		if (list.length !== 1) {
 			return logic_error('batch is not in porduction');
 		}
-		return this.db.transaction(async (tx) => {
+		return db().transaction(async (tx) => {
 			await tx
 				.delete(tr_ingredient_batch_ingredient_batch)
 				.where(eq(tr_ingredient_batch_ingredient_batch.produced_batch_id, id));
@@ -368,5 +368,5 @@ class IngredientProductionService {
 	}
 }
 
-export const ingredient_production_service = new IngredientProductionService(db);
+export const ingredient_production_service = new IngredientProductionService();
 
