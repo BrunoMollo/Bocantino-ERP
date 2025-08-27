@@ -5,7 +5,7 @@ import { logic_error } from '$logic';
 import bcrypt from 'bcrypt';
 import { getFirst, getFirstIfPosible, type Prettify } from '$lib/utils';
 
-import { JWT_EXPIRES_IN, JWT_SECRET_KEY } from '$env/static/private';
+import { env } from '$env/dynamic/private';
 import { SignJWT, jwtVerify } from 'jose';
 
 export type Payload = { id: number };
@@ -13,7 +13,10 @@ export type Payload = { id: number };
 export class AuthService {
 	async signJWT(payload: Payload, options: { exp: string }) {
 		try {
-			const secret = new TextEncoder().encode(JWT_SECRET_KEY);
+			if (!env.JWT_SECRET_KEY) {
+				throw new Error('JWT_SECRET_KEY is not defined');
+			}
+			const secret = new TextEncoder().encode(env.JWT_SECRET_KEY);
 			const alg = 'HS256';
 			return new SignJWT(payload)
 				.setProtectedHeader({ alg })
@@ -28,7 +31,10 @@ export class AuthService {
 
 	async verifyJWT(token: string) {
 		try {
-			const payload = (await jwtVerify(token, new TextEncoder().encode(JWT_SECRET_KEY)))
+			if (!env.JWT_SECRET_KEY) {
+				throw new Error('JWT_SECRET_KEY is not defined');
+			}
+			const payload = (await jwtVerify(token, new TextEncoder().encode(env.JWT_SECRET_KEY)))
 				.payload as Prettify<Payload>;
 			return { payload, type: 'SUCCESS' } as const;
 		} catch (error) {
@@ -54,7 +60,10 @@ export class AuthService {
 			return logic_error('constraseña incorrecta');
 		}
 
-		const token = await this.signJWT({ id: db_user.id }, { exp: `${JWT_EXPIRES_IN}m` }); //TODO: invesigate
+		if (!env.JWT_EXPIRES_IN) {
+			throw new Error('JWT_EXPIRES_IN is not defined');
+		}
+		const token = await this.signJWT({ id: db_user.id }, { exp: `${env.JWT_EXPIRES_IN}m` }); //TODO: invesigate
 
 		return { token, type: 'SUCCESS' } as const;
 	}
