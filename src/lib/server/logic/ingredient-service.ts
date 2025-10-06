@@ -95,10 +95,13 @@ class IngredientService {
 					.where(eq(tr_ingredient_ingredient.derived_id, id))
 					.then(getFirstIfPosible);
 				if (relation) {
-					await tx.update(tr_ingredient_ingredient).set({
-						amount: source.amount,
-						source_id: source.id
-					}).where(eq(tr_ingredient_ingredient.derived_id, id));
+					await tx
+						.update(tr_ingredient_ingredient)
+						.set({
+							amount: source.amount,
+							source_id: source.id
+						})
+						.where(eq(tr_ingredient_ingredient.derived_id, id));
 				} else {
 					await tx.insert(tr_ingredient_ingredient).values({
 						derived_id: id,

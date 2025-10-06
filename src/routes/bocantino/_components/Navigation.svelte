@@ -10,7 +10,7 @@
 <nav class="space-y-6">
 	<!-- Hidden anchor for styling -->
 	<a class="invisible" href={$page.url.href} on:click={drawerStore.close}>ok</a>
-	
+
 	<ul class="space-y-6">
 		{#each routes as group}
 			<li>
@@ -33,9 +33,19 @@
 								tabindex="0"
 							>
 								<div class="w-6 h-6 flex items-center justify-center">
-									<i class={`bx text-lg transition-colors ${icon} ${$page.url.pathname === href ? 'text-primary-600-400-token' : 'text-surface-600-400-token group-hover:text-primary-600-400-token'}`}></i>
+									<i
+										class={`bx text-lg transition-colors ${icon} ${
+											$page.url.pathname === href
+												? 'text-primary-600-400-token'
+												: 'text-surface-600-400-token group-hover:text-primary-600-400-token'
+										}`}
+									></i>
 								</div>
-								<span class="font-medium transition-colors {$page.url.pathname === href ? 'text-primary-600-400-token' : 'text-surface-700-300-token group-hover:text-primary-600-400-token'}">
+								<span
+									class="font-medium transition-colors {$page.url.pathname === href
+										? 'text-primary-600-400-token'
+										: 'text-surface-700-300-token group-hover:text-primary-600-400-token'}"
+								>
 									{name}
 								</span>
 								{#if $page.url.pathname === href}
@@ -71,11 +81,11 @@
 		color: white;
 		box-shadow: 0 4px 12px rgba(var(--color-primary-500), 0.3);
 	}
-	
+
 	.active i {
 		color: white !important;
 	}
-	
+
 	.active span {
 		color: white !important;
 	}

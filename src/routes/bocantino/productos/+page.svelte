@@ -7,7 +7,7 @@
 
 	let searchTerm = '';
 	let selectedFilter = 'all'; // 'all' | 'name' | 'id' | 'ingredient'
-	
+
 	$: filteredProducts = (() => {
 		if (!searchTerm.trim()) return products;
 		const term = searchTerm.toLowerCase().trim();
@@ -18,7 +18,9 @@
 				case 'id':
 					return p.id.toString().includes(term);
 				case 'ingredient':
-					return (p.ingredients ?? []).some((ing) => (ing?.name ?? '').toLowerCase().includes(term));
+					return (p.ingredients ?? []).some((ing) =>
+						(ing?.name ?? '').toLowerCase().includes(term)
+					);
 				default:
 					return (
 						p.desc.toLowerCase().includes(term) ||
@@ -52,7 +54,10 @@
 			<div class="flex-1">
 				<label class="label mb-1" for="searchTerm"><span>Buscar</span></label>
 				<div class="relative">
-					<i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-surface-500-400-token pointer-events-none" aria-hidden="true"></i>
+					<i
+						class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-surface-500-400-token pointer-events-none"
+						aria-hidden="true"
+					></i>
 					<input
 						id="searchTerm"
 						type="text"
@@ -66,7 +71,11 @@
 			</div>
 			<div>
 				<label class="label mb-1" for="fieldFilter"><span>Campo</span></label>
-				<select id="fieldFilter" bind:value={selectedFilter} class="select w-44 h-10 text-sm rounded-lg">
+				<select
+					id="fieldFilter"
+					bind:value={selectedFilter}
+					class="select w-44 h-10 text-sm rounded-lg"
+				>
 					<option value="all">Todos</option>
 					<option value="name">Nombre</option>
 					<option value="ingredient">Ingrediente</option>
@@ -109,7 +118,8 @@
 									<svelte:fragment slot="children">
 										{#each ingredients as { name, amount, unit }}
 											<TreeViewItem class="grid justify-between">
-												{name} ({amount} {unit})
+												{name} ({amount}
+												{unit})
 											</TreeViewItem>
 										{/each}
 									</svelte:fragment>
@@ -118,10 +128,18 @@
 						</td>
 						<td class="w-3/12 p-4">
 							<div class="flex justify-center gap-2">
-								<a class="btn-icon btn-icon-sm variant-soft-secondary hover:variant-filled-secondary transition-all" href="/bocantino/productos/{id}/edit" title="Editar">
+								<a
+									class="btn-icon btn-icon-sm variant-soft-secondary hover:variant-filled-secondary transition-all"
+									href="/bocantino/productos/{id}/edit"
+									title="Editar"
+								>
 									<i class="bx bx-edit text-lg"></i>
 								</a>
-								<a class="btn-icon btn-icon-sm variant-soft-tertiary hover:variant-filled-tertiary transition-all" href="/bocantino/productos/{id}/nutrients" title="Nutrientes">
+								<a
+									class="btn-icon btn-icon-sm variant-soft-tertiary hover:variant-filled-tertiary transition-all"
+									href="/bocantino/productos/{id}/nutrients"
+									title="Nutrientes"
+								>
 									<i class="bx bx-info-circle text-lg"></i>
 								</a>
 							</div>
@@ -135,13 +153,17 @@
 								<div class="flex flex-col items-center gap-2">
 									<i class="bx bx-search text-4xl"></i>
 									<p>No se encontraron productos que coincidan con "{searchTerm}"</p>
-									<button on:click={clearSearch} class="btn variant-soft-primary">Limpiar búsqueda</button>
+									<button on:click={clearSearch} class="btn variant-soft-primary"
+										>Limpiar búsqueda</button
+									>
 								</div>
 							{:else}
 								<div class="flex flex-col items-center gap-2">
 									<i class="bx bx-package text-4xl"></i>
 									<p>No hay productos registrados</p>
-									<a href="productos/add" class="btn variant-filled-primary">Agregar primer producto</a>
+									<a href="productos/add" class="btn variant-filled-primary"
+										>Agregar primer producto</a
+									>
 								</div>
 							{/if}
 						</td>

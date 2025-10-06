@@ -7,7 +7,7 @@
 
 	let searchTerm = '';
 	let selectedFilter = 'all'; // 'all' | 'name' | 'cuit' | 'email' | 'id'
-	
+
 	$: filteredSuppliers = (() => {
 		if (!searchTerm.trim()) return suppliers;
 		const term = searchTerm.toLowerCase().trim();
@@ -55,7 +55,10 @@
 			<div class="flex-1">
 				<label class="label mb-1" for="searchTerm"><span>Buscar</span></label>
 				<div class="relative">
-					<i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-surface-500-400-token pointer-events-none" aria-hidden="true"></i>
+					<i
+						class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-surface-500-400-token pointer-events-none"
+						aria-hidden="true"
+					></i>
 					<input
 						id="searchTerm"
 						type="text"
@@ -69,7 +72,11 @@
 			</div>
 			<div>
 				<label class="label mb-1" for="fieldFilter"><span>Campo</span></label>
-				<select id="fieldFilter" bind:value={selectedFilter} class="select w-44 h-10 text-sm rounded-lg">
+				<select
+					id="fieldFilter"
+					bind:value={selectedFilter}
+					class="select w-44 h-10 text-sm rounded-lg"
+				>
 					<option value="all">Todos</option>
 					<option value="name">Nombre</option>
 					<option value="cuit">CUIT</option>
@@ -133,7 +140,11 @@
 						</td>
 						<td class="p-4">
 							<div class="flex justify-center">
-								<a class="btn-icon btn-icon-sm variant-soft-secondary hover:variant-filled-secondary transition-all" href="/bocantino/proveedores/edit/{id}" title="Editar">
+								<a
+									class="btn-icon btn-icon-sm variant-soft-secondary hover:variant-filled-secondary transition-all"
+									href="/bocantino/proveedores/edit/{id}"
+									title="Editar"
+								>
 									<i class="bx bx-edit text-lg"></i>
 								</a>
 							</div>
@@ -147,13 +158,17 @@
 								<div class="flex flex-col items-center gap-2">
 									<i class="bx bx-search text-4xl"></i>
 									<p>No se encontraron proveedores que coincidan con "{searchTerm}"</p>
-									<button on:click={clearSearch} class="btn variant-soft-primary">Limpiar búsqueda</button>
+									<button on:click={clearSearch} class="btn variant-soft-primary"
+										>Limpiar búsqueda</button
+									>
 								</div>
 							{:else}
 								<div class="flex flex-col items-center gap-2">
 									<i class="bx bx-group text-4xl"></i>
 									<p>No hay proveedores registrados</p>
-									<a href="proveedores/add" class="btn variant-filled-primary">Agregar primer proveedor</a>
+									<a href="proveedores/add" class="btn variant-filled-primary"
+										>Agregar primer proveedor</a
+									>
 								</div>
 							{/if}
 						</td>

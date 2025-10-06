@@ -43,14 +43,22 @@
 </script>
 
 <Drawer>
-	<div class="pt-4 md:w-96 w-70 bg-gradient-to-b from-surface-0-50-token to-surface-50-900-token h-full">
+	<div
+		class="pt-4 md:w-96 w-70 bg-gradient-to-b from-surface-0-50-token to-surface-50-900-token h-full"
+	>
 		<div class="w-full flex justify-between items-center p-6 border-b border-surface-200-700-token">
 			<a href="/bocantino" class="flex items-center gap-3 group">
-				<strong class="text-2xl font-bold text-primary-600 group-hover:text-primary-500 transition-colors">Bocantino</strong>
+				<strong
+					class="text-2xl font-bold text-primary-600 group-hover:text-primary-500 transition-colors"
+					>Bocantino</strong
+				>
 			</a>
 			<div class="flex items-center gap-2">
 				<LightSwitch rounded={'rounded-xl'} />
-				<button on:click={drawerStore.close} class="btn-icon btn-icon-sm variant-soft-secondary md:hidden">
+				<button
+					on:click={drawerStore.close}
+					class="btn-icon btn-icon-sm variant-soft-secondary md:hidden"
+				>
 					<i class="bx bx-x text-xl"></i>
 				</button>
 			</div>
@@ -69,8 +77,8 @@
 		<AppBar class="bg-surface-0-50-token border-b border-surface-200-700-token shadow-sm">
 			<svelte:fragment slot="lead">
 				<div class="flex items-center gap-4">
-					<button 
-						class="btn btn-sm variant-soft-secondary hover:variant-filled-secondary transition-all" 
+					<button
+						class="btn btn-sm variant-soft-secondary hover:variant-filled-secondary transition-all"
 						on:click={() => drawerStore.open({ width: '800px' })}
 					>
 						<i class="bx bx-menu text-xl"></i>
@@ -119,7 +127,10 @@
 	</svelte:fragment>
 
 	{#if $navigating && debounce_flag}
-		<div class="w-full h-full flex items-center justify-center absolute opacity-90 bg-surface-0-50-token z-50" transition:fade>
+		<div
+			class="w-full h-full flex items-center justify-center absolute opacity-90 bg-surface-0-50-token z-50"
+			transition:fade
+		>
 			<Loader />
 		</div>
 	{:else}

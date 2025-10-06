@@ -6,11 +6,11 @@
 
 	let searchTerm = '';
 	let selectedFilter = 'all'; // 'all', 'name', 'unit', 'id'
-	
+
 	// Reactive filtered data
 	$: filteredIngredients = (() => {
 		if (!searchTerm.trim()) return data.list;
-		
+
 		const term = searchTerm.toLowerCase().trim();
 		return data.list.filter((ingredient) => {
 			switch (selectedFilter) {
@@ -67,7 +67,10 @@
 			<div class="flex-1">
 				<label class="label mb-1" for="searchTerm"><span>Buscar</span></label>
 				<div class="relative">
-					<i class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-surface-500-400-token pointer-events-none" aria-hidden="true"></i>
+					<i
+						class="bx bx-search absolute left-3 top-1/2 -translate-y-1/2 text-surface-500-400-token pointer-events-none"
+						aria-hidden="true"
+					></i>
 					<input
 						id="searchTerm"
 						type="text"
@@ -81,7 +84,11 @@
 			</div>
 			<div>
 				<label class="label mb-1" for="fieldFilter"><span>Campo</span></label>
-				<select id="fieldFilter" bind:value={selectedFilter} class="select w-44 h-10 text-sm rounded-lg">
+				<select
+					id="fieldFilter"
+					bind:value={selectedFilter}
+					class="select w-44 h-10 text-sm rounded-lg"
+				>
 					<option value="all">Todos</option>
 					<option value="name">Nombre</option>
 					<option value="unit">Unidad</option>
@@ -182,7 +189,7 @@
 	.table tbody td {
 		vertical-align: middle;
 	}
-	
+
 	.badge {
 		@apply px-2 py-1 text-xs font-medium rounded-full;
 	}

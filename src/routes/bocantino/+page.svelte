@@ -21,12 +21,13 @@
 </script>
 
 <div class="space-y-6">
-
 	<!-- Search and Ingredients Section -->
 	<div class="card p-6">
 		<div class="flex flex-col lg:flex-row gap-4 items-start lg:items-center mb-6">
 			<div class="flex-1 relative">
-				<i class="bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-surface-500-400-token"></i>
+				<i
+					class="bx bx-search absolute left-3 top-1/2 transform -translate-y-1/2 text-surface-500-400-token"
+				></i>
 				<input
 					class="input pl-10 w-full"
 					placeholder="Buscar materias primas..."
@@ -38,13 +39,17 @@
 				{ingredientes.length} materias primas encontradas
 			</div>
 		</div>
-		
+
 		<div class="flex overflow-x-auto gap-4 pb-4">
 			{#if ingredientes.length === 0}
-				<div class="card p-6 w-96 shadow-lg rounded-lg bg-surface-50-900-token border border-surface-200-700-token">
+				<div
+					class="card p-6 w-96 shadow-lg rounded-lg bg-surface-50-900-token border border-surface-200-700-token"
+				>
 					<div class="text-center">
 						<i class="bx bx-search text-4xl text-surface-400-500-token mb-2"></i>
-						<h3 class="text-lg font-medium text-surface-600-400-token">No se encontraron materias primas...</h3>
+						<h3 class="text-lg font-medium text-surface-600-400-token">
+							No se encontraron materias primas...
+						</h3>
 					</div>
 				</div>
 			{/if}
@@ -69,7 +74,7 @@
 							{/if}
 						</div>
 					</div>
-					
+
 					<div class="space-y-2 mb-4 w-1/2">
 						<div class="flex justify-between text-sm">
 							<span class="text-surface-600-400-token">Punto de pedido:</span>
@@ -80,7 +85,7 @@
 							<span class="font-medium">{Math.round(stock * 10) / 10}</span>
 						</div>
 					</div>
-					
+
 					<div class="absolute right-4 bottom-4">
 						{#if stock < reorder_point}
 							<ProgressRadial
@@ -114,7 +119,7 @@
 					</div>
 					<h2 class="h2 text-surface-800-200-token">Producciones Pendientes</h2>
 				</div>
-				
+
 				{#if data.pending_productions.length == 0}
 					<div class="text-center py-8">
 						<i class="bx bx-check-circle text-4xl text-success-500 mb-2"></i>
@@ -164,7 +169,7 @@
 					</div>
 					<h2 class="h2 text-surface-800-200-token">Últimos Ingresos</h2>
 				</div>
-				
+
 				{#if data.entries.length == 0}
 					<div class="text-center py-8">
 						<i class="bx bx-package text-4xl text-surface-400-500-token mb-2"></i>
@@ -173,14 +178,22 @@
 				{:else}
 					<div class="space-y-3">
 						{#each data.entries as entrada}
-							<div class="flex items-center justify-between p-3 bg-surface-50-900-token rounded-lg hover:bg-surface-100-800-token transition-colors">
+							<div
+								class="flex items-center justify-between p-3 bg-surface-50-900-token rounded-lg hover:bg-surface-100-800-token transition-colors"
+							>
 								<div class="flex items-center gap-3">
-									<div class="w-8 h-8 bg-primary-100-800-token rounded-lg flex items-center justify-center">
+									<div
+										class="w-8 h-8 bg-primary-100-800-token rounded-lg flex items-center justify-center"
+									>
 										<span class="text-xs font-mono text-primary-600-400-token">{entrada.id}</span>
 									</div>
 									<div>
-										<p class="font-medium text-surface-700-300-token truncate max-w-24">{entrada.supplier}</p>
-										<p class="text-xs text-surface-500-400-token">{entrada.creation_date.toLocaleDateString('es')}</p>
+										<p class="font-medium text-surface-700-300-token truncate max-w-24">
+											{entrada.supplier}
+										</p>
+										<p class="text-xs text-surface-500-400-token">
+											{entrada.creation_date.toLocaleDateString('es')}
+										</p>
 									</div>
 								</div>
 								<button
@@ -206,9 +219,12 @@
 				</div>
 				<h2 class="h2 text-surface-800-200-token">Acciones Rápidas</h2>
 			</div>
-			
+
 			<div class="space-y-3">
-				<a href="/bocantino/materias-primas/add" class="btn variant-soft-primary w-full justify-start">
+				<a
+					href="/bocantino/materias-primas/add"
+					class="btn variant-soft-primary w-full justify-start"
+				>
 					<i class="bx bx-plus text-lg mr-2"></i>
 					Nueva Materia Prima
 				</a>
