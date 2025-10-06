@@ -7,28 +7,50 @@
 	const drawerStore = getDrawerStore();
 </script>
 
-<nav class="list-nav p-4">
-	<!-- fist one is styled wierdly -->
+<nav class="space-y-6">
+	<!-- Hidden anchor for styling -->
 	<a class="invisible" href={$page.url.href} on:click={drawerStore.close}>ok</a>
-	<ul class="md:px-4">
+
+	<ul class="space-y-6">
 		{#each routes as group}
-			<li class="pb-5">
-				<div class="px-4 pb-1 w-full flex justify-between uppercase h-full">
-					<i class={`bx text-xl ${group.icon}`}></i>
-					<p class="align-middle my-auto">{group.name}</p>
+			<li>
+				<div class="flex items-center gap-3 px-4 py-2 mb-3">
+					<div class="w-8 h-8 bg-primary-100-800-token rounded-lg flex items-center justify-center">
+						<i class={`bx text-lg text-primary-600-400-token ${group.icon}`}></i>
+					</div>
+					<h3 class="font-semibold text-surface-800-200-token uppercase tracking-wide text-sm">
+						{group.name}
+					</h3>
 				</div>
-				<ul>
+				<ul class="space-y-2">
 					{#each group.routes.filter((x) => !x.omit_from_menu) as { name, href, icon }}
 						<li>
 							<a
-								class="btn variant-filled w-full flex justify-between hover:text-slate-50 uppercase"
+								class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 hover:bg-surface-100-800-token hover:shadow-md group"
 								{href}
 								on:click={() => setTimeout(drawerStore.close, 120)}
 								class:active={$page.url.pathname === href}
 								tabindex="0"
 							>
-								<i class={`bx text-xl ${icon}`}></i>
-								{name}
+								<div class="w-6 h-6 flex items-center justify-center">
+									<i
+										class={`bx text-lg transition-colors ${icon} ${
+											$page.url.pathname === href
+												? 'text-primary-600-400-token'
+												: 'text-surface-600-400-token group-hover:text-primary-600-400-token'
+										}`}
+									></i>
+								</div>
+								<span
+									class="font-medium transition-colors {$page.url.pathname === href
+										? 'text-primary-600-400-token'
+										: 'text-surface-700-300-token group-hover:text-primary-600-400-token'}"
+								>
+									{name}
+								</span>
+								{#if $page.url.pathname === href}
+									<div class="ml-auto w-2 h-2 bg-primary-500 rounded-full"></div>
+								{/if}
 							</a>
 						</li>
 					{/each}
@@ -38,25 +60,33 @@
 	</ul>
 
 	{#if dev}
-		<a
-			class=""
-			href="/-dev"
-			on:click={() => {
-				drawerStore.close();
-			}}>dev (!)</a
-		>
+		<div class="pt-6 border-t border-surface-200-700-token">
+			<a
+				class="flex items-center gap-3 px-4 py-3 rounded-xl bg-warning-100-800-token text-warning-600-400-token hover:bg-warning-200-800-token transition-all duration-200"
+				href="/-dev"
+				on:click={() => {
+					drawerStore.close();
+				}}
+			>
+				<i class="bx bx-code-block text-lg"></i>
+				<span class="font-medium">Dev Mode</span>
+			</a>
+		</div>
 	{/if}
 </nav>
 
 <style>
-	a {
-		border-radius: 12px;
-		box-shadow:
-			0 10px 15px -3px rgb(0 0 0 / 0.1),
-			0 4px 6px -4px rgb(0 0 0 / 0.1);
-	}
 	.active {
-		background-color: #055361;
-		color: whitesmoke;
+		background: linear-gradient(135deg, var(--color-primary-500), var(--color-primary-600));
+		color: white;
+		box-shadow: 0 4px 12px rgba(var(--color-primary-500), 0.3);
+	}
+
+	.active i {
+		color: white !important;
+	}
+
+	.active span {
+		color: white !important;
 	}
 </style>

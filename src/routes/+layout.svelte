@@ -4,6 +4,7 @@
 	import { page } from '$app/stores';
 	import { goto, onNavigate } from '$app/navigation';
 	import { dev } from '$app/environment';
+	import { onMount } from 'svelte';
 
 	initializeStores();
 
@@ -29,6 +30,26 @@
 		});
 	});
 	const title = dev ? 'DEV-BOCANTIO' : 'Bocantino';
+
+	onMount(() => {
+		try {
+			const root = document.documentElement;
+			const persist = () => {
+				const isDark = root.classList.contains('dark');
+				localStorage.setItem('mode', isDark ? 'dark' : 'light');
+			};
+			persist();
+			const observer = new MutationObserver((mutations) => {
+				for (const m of mutations) {
+					if (m.type === 'attributes' && m.attributeName === 'class') persist();
+				}
+			});
+			observer.observe(root, { attributes: true, attributeFilter: ['class'] });
+			return () => observer.disconnect();
+		} catch {
+			console.log('esto no deberia pasar, saludos');
+		}
+	});
 </script>
 
 <svelte:head>

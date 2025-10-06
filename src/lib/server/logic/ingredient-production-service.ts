@@ -59,6 +59,7 @@ class IngredientProductionService {
 					'id',
 					'batch_code',
 					'expiration_date',
+					'production_date',
 					'initial_amount',
 					'state'
 				),

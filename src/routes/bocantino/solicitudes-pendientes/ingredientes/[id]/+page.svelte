@@ -1,27 +1,34 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
 	import { superForm } from 'sveltekit-superforms/client';
-
+	import { printIngredientBatchLabel } from '../../../ingreso-insumos/_shared/pdf-batch-label.js';
 	export let data;
 	const { form, enhance, delayed, errors } = superForm(data.form, {
 		taintedMessage: null,
-		dataType: 'json', // needed for id
+		dataType: 'json',
 		defaultValidator: 'clear',
 		onError: ({ result }) => {
 			if (result.type == 'error') {
 				alert(result.error.message);
+			}
+		},
+
+		onUpdated: ({ form }) => {
+			if (form.message?.type === 'success') {
+				const batchToPrint = form.message.batch;
+
+				const question = `Lote ${batchToPrint.batch_code} finalizado con éxito.\n¿Deseas imprimir la etiqueta?`;
+
+				if (confirm(question)) {
+					printIngredientBatchLabel(data.batch);
+				}
+				goto('/bocantino/lotes/ingredientes');
 			}
 		}
 	});
 
 	const { enhance: cancel_enhance } = superForm(data.cancel_form, {
-		taintedMessage: null,
-		defaultValidator: 'clear',
-		dataType: 'json', // needed for id
-		onError: ({ result }) => {
-			if (result.type == 'error') {
-				alert(result.error.message);
-			}
-		}
+		// ... (el formulario de cancelación no necesita cambios)
 	});
 </script>
 

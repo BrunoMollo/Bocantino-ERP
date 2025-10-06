@@ -125,7 +125,7 @@
 					<td>{batch.stock} {batch.ingredient.unit}</td>
 					<td>{batch.used_batches.map((x) => x.batch_code).join(', ') || '-'}</td>
 
-					<td>
+					<td class="flex align-center gap-2">
 						<a
 							class="btn variant-filled-primary rounded"
 							href={`ingredientes/${batch.id.toString()}`}>Ver</a

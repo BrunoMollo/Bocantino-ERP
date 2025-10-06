@@ -5,6 +5,7 @@
 	import { enhance } from '$app/forms';
 	import { goto } from '$app/navigation';
 	import DocumentsDetail from './documents-detail.svelte';
+	import { printBatchLabelFromDetail } from '../../ingreso-insumos/_shared/pdf-batch-label';
 
 	export let data;
 	let showModal: boolean = false;
@@ -40,8 +41,10 @@
 		<h2 class="h3 mt-5 mb-1">Lotes ingresados</h2>
 		{#if batches}
 			{#each batches as batch}
-				<div class="invisible_pc mb-5 p-1 bg-slate-600 rounded shadow-md text-center">
-					<p class="font-bold">Ingrediente: <span class="font-normal"> {batch.ingredient}</span></p>
+				<div class="invisible_pc mb-5 p-1 rounded shadow-2xl text-center border">
+					<p class="font-bold">
+						Ingrediennte: <span class="font-normal"> {batch.ingredient}</span>
+					</p>
 					<p class="font-bold">
 						Cantidad: <span class="font-normal"> {batch.initial_amount}</span>
 					</p>
@@ -60,6 +63,7 @@
 					<p class="font-bold">Bolsas: <span class="font-normal">{batch.bags}</span></p>
 				</div>
 			{/each}
+
 			<table class="w-full border-collapse table mb-5 invisible_movil">
 				<thead class="lg:text-xl text-sm">
 					<tr>
@@ -70,6 +74,7 @@
 						<th>Fecha Vencimiento</th>
 						<th>Importe</th>
 						<th>Bolsas</th>
+						<th></th>
 					</tr>
 				</thead>
 				<tbody class="text-center">
@@ -88,6 +93,14 @@
 								{/if}
 							</td>
 							<td>{batch.bags}</td>
+							<td>
+								<button
+									class="btn variant-outline-primary rounded"
+									on:click={printBatchLabelFromDetail(batch)}
+								>
+									<i class="bx bxs-printer place-self-center text-xl" />
+								</button>
+							</td>
 						</tr>
 					{/each}
 				</tbody>
