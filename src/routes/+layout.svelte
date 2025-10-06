@@ -46,7 +46,9 @@
 			});
 			observer.observe(root, { attributes: true, attributeFilter: ['class'] });
 			return () => observer.disconnect();
-		} catch {}
+		} catch {
+			console.log('esto no deberia pasar, saludos');
+		}
 	});
 </script>
 

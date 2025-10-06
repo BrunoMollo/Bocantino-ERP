@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { jsPDF } from 'jspdf';
 import autoTable, { CellHookData } from 'jspdf-autotable';
 
@@ -79,8 +80,6 @@ export function printProductionOrder(
 		});
 
 		finalY = (doc as any).lastAutoTable.finalY;
-
-		const finalFieldsY = finalY + 20;
 	}
 
 	doc.text('horas de secado:', 125, 255);

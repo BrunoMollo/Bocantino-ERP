@@ -3,13 +3,7 @@
 	import { superForm } from 'sveltekit-superforms/client';
 	import { printIngredientBatchLabel } from '../../../ingreso-insumos/_shared/pdf-batch-label.js';
 	export let data;
-	const {
-		form,
-		enhance,
-		delayed,
-		errors,
-		message: formMessage
-	} = superForm(data.form, {
+	const { form, enhance, delayed, errors } = superForm(data.form, {
 		taintedMessage: null,
 		dataType: 'json',
 		defaultValidator: 'clear',

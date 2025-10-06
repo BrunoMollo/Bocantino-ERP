@@ -6,7 +6,6 @@
 	import { make_filter_by_url } from '$lib/utils';
 	import { enhance } from '$app/forms';
 	import { printAvailableBatches } from './pdf-available-batches';
-	import { printBatchLabel } from '../../ingreso-insumos/_shared/pdf-batch-label';
 	export let data;
 
 	const popupClick: PopupSettings = {
