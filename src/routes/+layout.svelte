@@ -32,6 +32,7 @@
 	const title = dev ? 'DEV-BOCANTIO' : 'Bocantino';
 
 	onMount(() => {
+		console.log('Version: 1.17.3');
 		try {
 			const root = document.documentElement;
 			const persist = () => {
