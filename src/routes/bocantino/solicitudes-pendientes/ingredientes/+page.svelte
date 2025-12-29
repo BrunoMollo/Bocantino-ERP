@@ -22,17 +22,17 @@
 	<tbody>
 		{#each data.pending_productions as item}
 			<tr out:fade>
-				<td style="padding-left: 16px;">{item.id}</td>
-				<td style="padding-left: 16px;">{item.ingredient.name}</td>
-				<td style="padding-left: 16px;">{item.initial_amount} {item.ingredient.unit}</td>
-				<td style="padding-left: 16px;" class="gap-5 flex align-middle">
+				<td class="pl-4">{item.id}</td>
+				<td class="pl-4">{item.ingredient.name}</td>
+				<td class="pl-4">{item.initial_amount} {item.ingredient.unit}</td>
+				<td class="pl-4 gap-5 flex align-middle">
 					<a
 						class=" text-lg align-middle pt-1 w-1/2 btn variant-filled-primary rounded"
 						href="/bocantino/solicitudes-pendientes/ingredientes/{item.id}">ver</a
 					>
 					<button
 						class="rounded btn variant-filled-primary px-5 w-1/2 py-2 flex justify-center items-center"
-						on:click={printProductionOrder(item.ingredient.name, item, true)}
+						on:click={() => printProductionOrder(item.ingredient.name, item, true)}
 						><i class="bx bx-printer text-xl text-black h-5 w-5"></i></button
 					>
 				</td>

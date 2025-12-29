@@ -3,10 +3,10 @@
 	import { derivedAsync, startAs } from '$lib/utils.js';
 	import { derived, writable } from 'svelte/store';
 	import { superForm } from 'sveltekit-superforms/client';
-	import IngredientLine from './_compoenets/ingredient-line.svelte';
-	import RecipeDiffGraph from './_compoenets/recipie-diff-graph.svelte';
+	import IngredientLine from './_components/ingredient-line.svelte';
+	import RecipeDiffGraph from './_components/recipie-diff-graph.svelte';
 	import Spinner from '$lib/ui/Spinner.svelte';
-	import RecipieDiffTable from './_compoenets/recipie-diff-table.svelte';
+	import RecipieDiffTable from './_components/recipie-diff-table.svelte';
 	import type { NutritionalInfo } from '$lib/nutrients-utils';
 
 	export let data;
@@ -176,12 +176,9 @@
 	{/if}
 </div>
 
-<dialog bind:this={dialog} class="absolute h-screen w-screen bg-transparent text-primary-100">
-	<div class="card w-full m-auto mt-14 shadow-lg rounded-lg">
-		<button
-			class="bg-black m-3 p-3 rounded-full h-12 w-12 align-middle shadow-md"
-			on:click={() => dialog.close()}
-		>
+<dialog bind:this={dialog} class="absolute h-screen w-screen bg-transparent">
+	<div class="card w-full m-auto mt-14 shadow-lg rounded-lg bg-surface-100-800-token">
+		<button class="btn-icon variant-filled m-3 shadow-md" on:click={() => dialog.close()}>
 			<i class="bx bx-arrow-back text-2xl"></i>
 		</button>
 		<div class="w-full flex flex-row">
@@ -194,19 +191,29 @@
 				{#if $recipe && $recipe != 'WAITING' && $recipe != 'ERROR'}
 					{#each $recipe as { ingredient_id }, i}
 						<div class="flex justify-center gap-1 px-5 mb-3 w-full">
-							<select class="select" bind:value={ingredient_id}>
+							<select class="select w-7/12" bind:value={ingredient_id}>
 								{#each data.ingredients_all as { id, name }}
 									<option value={id}>{name} </option>
 								{/each}
 							</select>
-							<input class="input" type="number" step="0.01" bind:value={$recipe[i].amount} />
+							<input
+								class="input w-3/12"
+								type="number"
+								step="0.01"
+								bind:value={$recipe[i].amount}
+							/>
 						</div>
 					{/each}
 				{/if}
-				<button class="btn variant-filled-primary m-5 rounded" on:click={() => dialog.close()}>
-					Aceptar
-				</button>
-				<button on:click={() => (showTable = !showTable)}>{msjViewChange}</button>
+				<div class="flex justify-center gap-4 mt-5">
+					<button class="btn variant-filled-primary rounded" on:click={() => dialog.close()}>
+						Aceptar
+					</button>
+					<button
+						class="btn variant-ringed-primary rounded"
+						on:click={() => (showTable = !showTable)}>{msjViewChange}</button
+					>
+				</div>
 			</div>
 
 			<div class="h-[700px] p-5 w-8/12">

@@ -93,6 +93,27 @@
 	);
 
 	let needs_two_batches = false;
+
+	function auto_fill() {
+		if ($batches instanceof Object && $recipe instanceof Object) {
+			const needed = $recipe.amount * ($form.producedAmount ?? 0);
+			let current = 0;
+
+			for (const batch of $batches) {
+				if (current >= needed) break;
+				if (batch.current_amount <= 0) continue;
+
+				if (!$form.selected_batch_id) {
+					$form.selected_batch_id = batch.id;
+					current += batch.current_amount;
+				} else if (!$form.second_selected_batch_id && batch.id !== $form.selected_batch_id) {
+					needs_two_batches = true;
+					$form.second_selected_batch_id = batch.id;
+					current += batch.current_amount;
+				}
+			}
+		}
+	}
 </script>
 
 <div class="flex justify-between w-11/12 mx-auto">
@@ -242,6 +263,18 @@
 							>
 								Quitar Lote
 							</button>
+						</td>
+					{:else}
+						<td>
+							{#if $batches instanceof Object && $batches.length > 0 && !$form.selected_batch_id}
+								<button
+									type="button"
+									class="btn mx-0 px-2 variant-filled-primary rounded-lg"
+									on:click={auto_fill}
+								>
+									Auto-Completar
+								</button>
+							{/if}
 						</td>
 					{/if}
 				</tr>

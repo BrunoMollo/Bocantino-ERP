@@ -23,14 +23,35 @@
 		(acc, item) => round(acc + item.current_amount, 7),
 		0
 	);
-	$: insuffiecient = !!selected_batches.length && needed_amount > current_amount;
-	const dispach = createEventDispatcher();
+	$: insufficient = !!selected_batches.length && needed_amount > current_amount;
+	const dispatch = createEventDispatcher();
 	onMount(() => {
-		dispach('insuffiecient', true); // dispatch whe  created
+		dispatch('insuffiecient', true); // dispatch whe  created
 	});
-	$: dispach('insuffiecient', insuffiecient) && current_amount; // the current_amount amoutn is to trigger
+	$: dispatch('insuffiecient', insufficient) && current_amount; // the current_amount amoutn is to trigger
 
-	let number_of_barches = 1;
+	let number_of_batches = 1;
+
+	function auto_select() {
+		if (batches !== 'WAITING') {
+			let current = 0;
+			const new_value = [];
+			let count = 0;
+
+			for (const batch of batches) {
+				if (current >= needed_amount) break;
+				if (batch.current_amount <= 0) continue;
+
+				new_value.push(batch.id);
+				current += batch.current_amount;
+				count++;
+			}
+			if (count > 0) {
+				number_of_batches = count;
+				value = new_value;
+			}
+		}
+	}
 </script>
 
 <tr in:fly={{ x: -100 }}>
@@ -45,53 +66,64 @@
 			{selected_batches[0]?.ingredient?.unit ?? ''}
 		</p>
 	</td>
-	<td class="text-center" style="vertical-align:middle;" class:text-error-400={insuffiecient}>
+	<td class="text-center" style="vertical-align:middle;" class:text-error-400={insufficient}>
 		<p class="text-base">
 			{current_amount ?? '-'}
 			{selected_batches?.[0]?.ingredient?.unit ?? ''}
 		</p>
 	</td>
 	<td class="text-center" style="vertical-align:middle;">
-		{#each Array(number_of_barches) as _, index}
+		{#each Array(number_of_batches) as _, index}
 			<select class="select my-1" bind:value={value[index]}>
 				{#if batches == 'WAITING'}
 					<option disabled>Cargando</option>
 				{:else if batches}
 					<option disabled selected value="-1">Seleccione un lote</option>
 					{#each batches as { id, batch_code, expiration_date }}
-						<option value={id}>
-							{batch_code}
-							{#if expiration_date}
-								({new Date(expiration_date).toLocaleDateString('es')})
-							{/if}
-						</option>
+						{#if !value.includes(id) || value[index] === id}
+							<option value={id}>
+								{batch_code}
+								{#if expiration_date}
+									({new Date(expiration_date).toLocaleDateString('es')})
+								{/if}
+							</option>
+						{/if}
 					{/each}
 				{:else}
 					<option disabled>No se encontraron lotes</option>
 				{/if}
 			</select>
 		{/each}
+		{#if batches !== 'WAITING' && batches.length > 0 && value.length === 0}
+			<button
+				type="button"
+				class="btn btn-sm variant-filled-primary rounded mt-2"
+				on:click={auto_select}
+			>
+				Auto
+			</button>
+		{/if}
 	</td>
-	{#if insuffiecient}
+	{#if insufficient}
 		<td>
 			<button
 				in:fade={{ delay: 0, duration: 200 }}
 				type="button"
 				class="btn mx-0 px-2 variant-filled-tertiary rounded-lg"
-				on:click={() => number_of_barches++}
+				on:click={() => number_of_batches++}
 			>
 				Otro Lote
 			</button>
 		</td>
-	{:else if number_of_barches != 1}
+	{:else if number_of_batches != 1}
 		<td>
 			<button
 				in:fade={{ delay: 0, duration: 200 }}
 				type="button"
-				class="btn mx-0 px-2 variant-filled-tertiary rounded-lg"
+				class="btn mx-0 px-2 variant-filled-error rounded-lg"
 				on:click={() => {
-					if (number_of_barches > 1) {
-						number_of_barches--;
+					if (number_of_batches > 1) {
+						number_of_batches--;
 						value.pop();
 						selected_batches = selected_batches.filter((x) => value.includes(x.id));
 					}

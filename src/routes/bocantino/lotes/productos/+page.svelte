@@ -49,7 +49,7 @@
 <main class=" container flex flex-col mx-auto pt-10">
 	<div class="w-11/12 mx-auto">
 		<div
-			class="rounded-full bg-slate-950 w-1/4 flex justify-between py-4 px-6 mb-8"
+			class="rounded-full bg-slate-950 w-1/4 flex justify-between py-4 px-6 mb-8 mx-auto"
 			use:popup={popupClick}
 		>
 			<p class="mr-10">Filtrar...</p>
@@ -57,20 +57,20 @@
 		</div>
 	</div>
 
-	<div class="card p-4 variant-filled-secondary w-80 rounded" data-popup="popupClick">
+	<div class="card p-4 shadow-xl w-80 rounded" data-popup="popupClick">
 		<h1 class="text-center w-full">Filtros</h1>
 		<div class="">
 			<p>Producto:</p>
 			<input
 				type="text"
 				class="input rounded"
-				placeholder="Ingrese el ingrediente..."
+				placeholder="Ingrese el producto..."
 				bind:value={filters.ingredient_name}
 				on:keypress={closeOnEnterKeyPress}
 			/>
 		</div>
 		<div class="">
-			<p>Codigo lote ingrediente:</p>
+			<p>Codigo lote:</p>
 			<input
 				type="text"
 				class="input rounded"
@@ -95,7 +95,7 @@
 		>
 			Filtrar
 		</button>
-		<div class="arrow variant-filled-secondary" />
+		<div class="arrow bg-surface-100-800-token" />
 	</div>
 
 	<table class="table table-hover shadow-lg rounded-lg w-11/12 mx-auto">
