@@ -31,6 +31,7 @@
 	})();
 
 	async function deleteIngredient(id: number) {
+		if (!confirm('¿Está seguro de que desea eliminar esta materia prima?')) return;
 		try {
 			const msj = await trpc.ingredient.delete.mutate(id);
 			if (msj == 'OK') {

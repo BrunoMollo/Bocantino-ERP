@@ -37,7 +37,7 @@ function generateBatchLabel(data: BatchLabelData, filename: string) {
 
 	doc.setFont('helvetica', 'bold');
 	doc.setFontSize(12);
-	doc.text('Materia prima: ' + data.ingredient_name, pageWidth / 2, pageHeight / 2, {
+	doc.text(data.ingredient_name, pageWidth / 2, pageHeight / 2, {
 		align: 'center',
 		baseline: 'middle'
 	});

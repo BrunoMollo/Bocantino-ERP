@@ -82,11 +82,11 @@ export function printProductionOrder(
 		finalY = (doc as any).lastAutoTable.finalY;
 	}
 
-	doc.text('horas de secado:', 125, 255);
+	doc.text('Tiempo de mezclado:', 115, 255);
 
 	doc.line(170, 255, 200, 255);
 
-	doc.text('peso neto:', 10, 270);
+	doc.text('Merma:', 17, 270);
 
 	doc.line(38, 270, 70, 270);
 
