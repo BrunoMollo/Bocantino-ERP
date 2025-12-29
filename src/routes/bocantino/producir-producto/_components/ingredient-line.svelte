@@ -132,5 +132,7 @@
 				Quitar Lote
 			</button>
 		</td>
+	{:else}
+		<td></td>
 	{/if}
 </tr>
